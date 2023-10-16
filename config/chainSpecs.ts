@@ -1,12 +1,14 @@
+import { chain } from "./types"
+
 /*
     Test network for bridge
 */
-const optimismTestChain = {
+const optimismTestChain: chain = {
     chain: "OP",
     rpc: "https://api.zan.top/node/v1/opt/goerli/public"
 }
 
-const bridgeTestChains = [
+const bridgeTestChains: chain[] = [
     {
         chain: "BSC",
         rpc: "https://api.zan.top/node/v1/bsc/testnet/public",
@@ -20,12 +22,12 @@ const bridgeTestChains = [
 /*
     Prod network for bridge
 */
-const optimismProdChain = {
+const optimismProdChain: chain = {
     chain: "OP",
     rpc: "https://mainnet.optimism.io"
 }
 
-const bridgeProdChains = [
+const bridgeProdChains: chain[] = [
     {
         chain: "BSC",
         rpc: "https://bsc-dataseed1.binance.org/",
@@ -37,12 +39,14 @@ const bridgeProdChains = [
 ]
 
 
-const testnet = {
+const testnetChainSpecs = {
     bridgeChains: bridgeTestChains,
     optimismChain: optimismTestChain
 }
 
-const prod = {
+const prodChainSpecs = {
     bridgeChains: bridgeProdChains,
     optimismChain: optimismProdChain
 }
+
+export { testnetChainSpecs, prodChainSpecs }

@@ -1,35 +1,38 @@
-// Setup for different environments
-const setupTestnet = () => {
-  console.log('Setting up for testnet...');
-};
+import { prodChainSpecs, testnetChainSpecs } from "../../config/chainSpecs";
+import { chainSpecs } from "../../config/types";
+import { readJsonFile } from "../../utils";
+import { waitForKeyPress } from "../../utils/functions";
+import { generateWalletsForChains, promptToGetFunding, promtDisplayHelp } from "./components";
+import { typeGuardGeneratedWallets } from "./typesGuardRuntime";
+import { promises as fs } from 'fs';
 
-const setupProduction = () => {
-  console.log('Setting up for production...');
-};
-
-// Display help information
-const displayHelp = () => {
-  console.log('Usage:');
-  console.log('  node yourScript.js [options]');
-  console.log('\nOptions:');
-  console.log('  --testnet         Setup for testnet environment');
-  console.log('  --help            Display this help message and exit');
-  console.log('\nBy default, without any options, the script sets up for production.');
-};
-
-const setup = () => {
-  // Check for --help flag
+const setup = async () => {
+  const secretsFile = 'config/secrets.json';
   if (process.argv.includes('--help')) {
-      displayHelp();
-      return;
+    promtDisplayHelp();
+    return;
   }
 
-  // Check for --testnet flag
+  let config: chainSpecs = prodChainSpecs
+
   if (process.argv.includes('--testnet')) {
-      setupTestnet();
-  } else {
-      setupProduction();
+    config = testnetChainSpecs
   }
+
+  let secrets = await readJsonFile(secretsFile)
+  if (typeGuardGeneratedWallets(secrets)) {
+    console.log("existing secrets found")
+  } else {
+    console.log("generating new secrets")
+    secrets = generateWalletsForChains(config)
+    await fs.writeFile(secretsFile, JSON.stringify(secrets));
+  }
+  let isNotFullyFunded = true
+  while (isNotFullyFunded) {
+    isNotFullyFunded = await promptToGetFunding(secrets, config);
+    await waitForKeyPress("Press [Enter] key after funding your addresses");
+  }
+
 };
 
 export { setup };

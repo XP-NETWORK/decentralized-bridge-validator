@@ -5,18 +5,19 @@ interface chain {
     intialFund: bigint
 }
 
-interface stakingCoin {
+interface stakingConfig {
     chain: string;
     rpc: string;
     coinSymbol: string;
     coinAddress: string;
+    contractAddress: string;
     intialFund: bigint
 }
 
 interface chainSpecs {
     bridgeChains: chain[];
     optimismChain: chain;
-    stakingConfig: stakingCoin;
+    stakingConfig: stakingConfig;
 }
 
-export { chain, chainSpecs , stakingCoin}
+export { chain, chainSpecs , stakingConfig}

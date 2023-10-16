@@ -1,4 +1,4 @@
-import { chain, chainSpecs, stakingCoin } from "./types"
+import { chain, chainSpecs, stakingConfig } from "./types"
 
 /*
     Test network for bridge
@@ -26,11 +26,12 @@ const bridgeTestChains: chain[] = [
     }
 ]
 
-const stakingTestChain: stakingCoin = {
+const stakingTestChain: stakingConfig = {
     chain: "BSC",
     rpc: "https://api.zan.top/node/v1/bsc/testnet/public",
     coinSymbol: "XPNET",
-    coinAddress: "0xTestAddress",
+    coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
+    contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
     intialFund: BigInt("5000000000000000")
 }
 
@@ -65,11 +66,12 @@ const bridgeProdChains: chain[] = [
         intialFund: BigInt("500000000000000000")
     }
 ]
-const stakingProdChain: stakingCoin = {
+const stakingProdChain: stakingConfig = {
     chain: "OP",
     rpc: "https://api.zan.top/node/v1/opt/goerli/public",
     coinSymbol: "OP",
     coinAddress: "0xProdCoinAddress",
+    contractAddress: "0xProdContractAddress",
     intialFund: BigInt("500000000000000000")
 }
 

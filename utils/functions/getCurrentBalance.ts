@@ -1,9 +1,6 @@
 import { ethers } from 'ethers';
+import { erc20ABI } from '../../abi';
 
-const erc20ABI = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)"
-];
 
 const getCurrentBalance = async ({ rpc, coinAddress, accAddress }: { rpc: string | undefined , coinAddress?: string, accAddress?: string }): Promise<bigint> => {
     const provider = new ethers.JsonRpcProvider(rpc);

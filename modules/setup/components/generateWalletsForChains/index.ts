@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
-import { chainSpecs } from '../../../../config/types'; // Update the path accordingly
+import { IChainSpecs } from '../../../../config/types'; // Update the path accordingly
 import { IGeneratedWallets, IWalletConfig } from '../../types';
 
-const generateWalletsForChains = (specs: chainSpecs): IGeneratedWallets => {
+const generateWalletsForChains = (specs: IChainSpecs): IGeneratedWallets => {
 
 
     const bridgeChainsWallet: IWalletConfig[] = []

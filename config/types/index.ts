@@ -1,11 +1,11 @@
-interface chain {
+interface IChain {
     chain: string;
     rpc: string;
     nativeCoinSymbol: string;
     intialFund: bigint
 }
 
-interface stakingConfig {
+interface IStakingConfig {
     chain: string;
     rpc: string;
     coinSymbol: string;
@@ -14,10 +14,10 @@ interface stakingConfig {
     intialFund: bigint
 }
 
-interface chainSpecs {
-    bridgeChains: chain[];
-    optimismChain: chain;
-    stakingConfig: stakingConfig;
+interface IChainSpecs {
+    bridgeChains: IChain[];
+    optimismChain: IChain;
+    stakingConfig: IStakingConfig;
 }
 
-export { chain, chainSpecs , stakingConfig}
+export { IChain, IChainSpecs , IStakingConfig}

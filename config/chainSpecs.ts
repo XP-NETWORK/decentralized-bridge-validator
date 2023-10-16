@@ -1,9 +1,9 @@
-import { chain, chainSpecs, stakingConfig } from "./types"
+import { IChain, IChainSpecs, IStakingConfig } from "./types"
 
 /*
     Test network for bridge
 */
-const optimismTestChain: chain = {
+const optimismTestChain: IChain = {
     chain: "OP",
     rpc: "https://api.zan.top/node/v1/opt/goerli/public",
     nativeCoinSymbol: "OP",
@@ -11,32 +11,32 @@ const optimismTestChain: chain = {
 }
 
 
-const bridgeTestChains: chain[] = [
+const bridgeTestChains: IChain[] = [
     {
         chain: "BSC",
-        rpc: "https://api.zan.top/node/v1/bsc/testnet/public",
+        rpc: "https://bsc-testnet.publicnode.com",
         nativeCoinSymbol: "BNB",
-        intialFund: BigInt("20000000000000000")
+        intialFund: BigInt("50000000000000000")
     },
     {
         chain: "ETH",
         rpc: "https://rpc.ankr.com/eth_goerli",
         nativeCoinSymbol: "ETH",
-        intialFund: BigInt("30000000000000000")
+        intialFund: BigInt("1000000000000000")
     }
 ]
 
-const stakingTestChain: stakingConfig = {
+const stakingTestChain: IStakingConfig = {
     chain: "BSC",
-    rpc: "https://api.zan.top/node/v1/bsc/testnet/public",
+    rpc: "https://bsc-testnet.publicnode.com",
     coinSymbol: "XPNET",
     coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
     contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-    intialFund: BigInt("5000000000000000")
+    intialFund: BigInt("1000000000000000000")
 }
 
 
-const testnetChainSpecs: chainSpecs = {
+const testnetChainSpecs: IChainSpecs = {
     bridgeChains: bridgeTestChains,
     optimismChain: optimismTestChain,
     stakingConfig: stakingTestChain
@@ -45,14 +45,14 @@ const testnetChainSpecs: chainSpecs = {
 /*
     Prod network for bridge
 */
-const optimismProdChain: chain = {
+const optimismProdChain: IChain = {
     chain: "OP",
     rpc: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
     intialFund: BigInt("500000000000000000")
 }
 
-const bridgeProdChains: chain[] = [
+const bridgeProdChains: IChain[] = [
     {
         chain: "BSC",
         rpc: "https://bsc-dataseed1.binance.org/",
@@ -66,7 +66,7 @@ const bridgeProdChains: chain[] = [
         intialFund: BigInt("500000000000000000")
     }
 ]
-const stakingProdChain: stakingConfig = {
+const stakingProdChain: IStakingConfig = {
     chain: "OP",
     rpc: "https://api.zan.top/node/v1/opt/goerli/public",
     coinSymbol: "OP",
@@ -76,7 +76,7 @@ const stakingProdChain: stakingConfig = {
 }
 
 
-const prodChainSpecs: chainSpecs = {
+const prodChainSpecs: IChainSpecs = {
     bridgeChains: bridgeProdChains,
     optimismChain: optimismProdChain,
     stakingConfig: stakingProdChain

@@ -32,7 +32,8 @@ const stakingTestChain: IStakingConfig = {
     coinSymbol: "XPNET",
     coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
     contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-    intialFund: BigInt("1000000000000000000")
+    intialFund: BigInt("1000000000000000000"),
+    lastBlock: 34255418
 }
 
 
@@ -72,7 +73,8 @@ const stakingProdChain: IStakingConfig = {
     coinSymbol: "OP",
     coinAddress: "0xProdCoinAddress",
     contractAddress: "0xProdContractAddress",
-    intialFund: BigInt("500000000000000000")
+    intialFund: BigInt("500000000000000000"),
+    lastBlock: 34255418
 }
 
 
@@ -82,4 +84,6 @@ const prodChainSpecs: IChainSpecs = {
     stakingConfig: stakingProdChain
 }
 
-export { testnetChainSpecs, prodChainSpecs }
+const BLOCK_CHUNKS = 1000;
+
+export { BLOCK_CHUNKS, testnetChainSpecs, prodChainSpecs }

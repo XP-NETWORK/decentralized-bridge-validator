@@ -2,6 +2,7 @@ import { prodChainSpecs, testnetChainSpecs } from "../../config/chainSpecs";
 import { IChainSpecs } from "../../config/types";
 import { readJsonFile } from "../../utils";
 import { getPrivateKeyForBridgeChain, waitForKeyPress } from "../../utils/functions";
+import { runValidators } from "../validator/components";
 import { generateWalletsForChains, isStaked, promptToGetFunding, promtDisplayHelp } from "./components";
 import stakeTokens from "./components/stakeToken";
 import { typeGuardGeneratedWallets } from "./typesGuardRuntime";
@@ -28,6 +29,8 @@ const setup = async () => {
     secrets = generateWalletsForChains(config)
     await fs.writeFile(secretsFile, JSON.stringify(secrets));
   }
+
+  // This works because staking chain also exist in bridge
   const stakingChainPrivateKey = getPrivateKeyForBridgeChain({ chainName: config.stakingConfig.chain, secrets })
 
   if (await isStaked({ stakingConfig: config.stakingConfig, privateKey: stakingChainPrivateKey })) {
@@ -41,6 +44,8 @@ const setup = async () => {
     }
     stakeTokens({ stakingConfig: config.stakingConfig, privateKey: stakingChainPrivateKey })
   }
+
+  runValidators(config)
 };
 
 export { setup };

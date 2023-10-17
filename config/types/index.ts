@@ -2,7 +2,7 @@ interface IChain {
     chain: string;
     rpc: string;
     nativeCoinSymbol: string;
-    intialFund: bigint
+    intialFund: bigint;
 }
 
 interface IStakingConfig {
@@ -11,7 +11,8 @@ interface IStakingConfig {
     coinSymbol: string;
     coinAddress: string;
     contractAddress: string;
-    intialFund: bigint
+    intialFund: bigint;
+    lastBlock: number
 }
 
 interface IChainSpecs {

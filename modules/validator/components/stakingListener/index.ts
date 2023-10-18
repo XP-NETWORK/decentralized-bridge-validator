@@ -61,10 +61,7 @@ const stakingListener = async (jobData: IStakingListener) => {
     }
 
 
-    await createJobWithWorker<{
-        config: IChainSpecs;
-        secrets: IGeneratedWallets;
-    }>({ jobData, jobName, jobFunction })
+    await createJobWithWorker<IStakingListener>({ jobData, jobName, jobFunction })
 }
 
 

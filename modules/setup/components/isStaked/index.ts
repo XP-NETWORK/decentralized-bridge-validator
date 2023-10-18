@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
-import { IStakingConfig } from "../../../../config/types";
 import { stakingABI } from "../../../../abi";
+import { IIsStaked } from "./types";
 
-const isStaked = async ({ stakingConfig, privateKey }: { stakingConfig: IStakingConfig, privateKey: string | undefined }) => {
+const isStaked = async ({ stakingConfig, privateKey }: IIsStaked): Promise<boolean> => {
     const provider = new ethers.JsonRpcProvider(stakingConfig.rpc);
     const wallet = new ethers.Wallet(privateKey || "", provider);
     const stakingContract = new ethers.Contract(stakingConfig.contractAddress, stakingABI, wallet);

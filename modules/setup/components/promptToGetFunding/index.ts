@@ -2,9 +2,10 @@ import { IChainSpecs } from "../../../../config/types";
 import { IGeneratedWallets } from "../../types";
 import { handleEvmPromt } from "./handleEvmPrompt";
 import { handleBscStakingPromt } from "./handleBscStakingPrompt";
+import { IPromptToGetFunding } from "./types";
 
 
-const promptToGetFunding = async (wallets: IGeneratedWallets, config: IChainSpecs): Promise<boolean> => {
+const promptToGetFunding = async ({wallets, config}: IPromptToGetFunding): Promise<boolean> => {
 
     let isNotFullyFunded = false;
     const evmPublicAddress = wallets.evmWallet.address;
@@ -27,6 +28,7 @@ const promptToGetFunding = async (wallets: IGeneratedWallets, config: IChainSpec
     } else {
         console.log("Initializing your node");
     }
+
     return isNotFullyFunded
 };
 

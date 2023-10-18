@@ -28,22 +28,22 @@ const setup = async () => {
     config = testnetChainSpecs
   }
 
-  let secrets: IGeneratedWallets = await readJsonFile(secretsFile)
-  if (isGeneratedWallets(secrets)) {
+  let wallets: IGeneratedWallets = await readJsonFile(secretsFile)
+  if (isGeneratedWallets(wallets)) {
     console.log("existing secrets found")
   } else {
     console.log("generating new secrets")
-    secrets = generateWalletsForChains()
-    await fs.writeFile(secretsFile, JSON.stringify(secrets));
+    wallets = generateWalletsForChains()
+    await fs.writeFile(secretsFile, JSON.stringify(wallets));
   }
 
-  if (await isStaked({ stakingConfig: config.stakingConfig, privateKey: secrets.evmWallet.privateKey })) {
+  if (await isStaked({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })) {
     console.log("Stake found");
   } else {
     let isNotFullyFunded = true
     while (isNotFullyFunded) {
       try {
-        isNotFullyFunded = await promptToGetFunding(secrets, config);
+        isNotFullyFunded = await promptToGetFunding({ wallets, config });
         console.log({ isNotFullyFunded })
       } catch (e) {
         await waitForMSWithMsg(5000, "Something went wrong")
@@ -56,7 +56,7 @@ const setup = async () => {
     while (!stakedTokens) {
       try {
         console.log("Checking staked tokens")
-        await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: secrets.evmWallet.privateKey })
+        await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })
         stakedTokens = true;
       } catch (e) {
         console.log("Error on stakeTokens, orginal error:", e)
@@ -65,7 +65,7 @@ const setup = async () => {
     }
   }
   console.log("HOW AM I??------------------------------------------------------------------")
-  await runValidators({ config, secrets })
+  await runValidators({ config, wallets })
   console.log("THERE")
 };
 

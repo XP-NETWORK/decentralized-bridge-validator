@@ -16,7 +16,7 @@ async function listener(
         rpcUrl,
         lastBlock_,
         chain,
-        handleLog }: IListener) {
+        handleLog }: IListener): Promise<void> {
 
     let lastBlock = lastBlock_;
 

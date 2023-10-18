@@ -1,11 +1,10 @@
-import { IChainSpecs } from "../../config/types"
-import { IGeneratedWallets } from "../setup/types";
 import { stakingListener } from "./components"
+import { IStakingListener } from "./types";
 
-const runValidators = async ({ config, secrets }: { config: IChainSpecs, secrets: IGeneratedWallets }) => {
+const runValidators = async ({ config, wallets }: IStakingListener) => {
     const jobData = {
         config,
-        secrets
+        wallets
     };
     await stakingListener(jobData)
 }

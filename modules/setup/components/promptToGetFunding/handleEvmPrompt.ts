@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { getCurrentBalance } from "../../../../utils/functions";
 import { IHandleEvmPromt } from "./types";
 
-const handleEvmPromt = async ({ chainConfig, evmPublicAddress, isNotFullyFunded }: IHandleEvmPromt) => {
+const handleEvmPromt = async ({ chainConfig, evmPublicAddress, isNotFullyFunded }: IHandleEvmPromt): Promise<boolean> => {
     try {
         const currentBalance = await getCurrentBalance({ rpc: chainConfig.rpc, accAddress: evmPublicAddress });
         const remainingRaw = (BigInt(chainConfig.intialFund) || BigInt("0")) - BigInt(currentBalance);

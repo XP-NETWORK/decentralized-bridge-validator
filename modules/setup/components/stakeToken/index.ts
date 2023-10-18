@@ -3,7 +3,7 @@ import { erc20ABI, stakingABI } from '../../../../abi';
 import { IStakingConfig } from '../../../../config/types';
 import { isStaked } from "../"
 
-const stakeTokens = async ({ stakingConfig, privateKey }: { stakingConfig: IStakingConfig, privateKey: string | undefined }) => {
+const stakeTokens = async ({ stakingConfig, privateKey }: { stakingConfig: IStakingConfig, privateKey: string | undefined }): Promise<void> => {
     const provider = new ethers.JsonRpcProvider(stakingConfig.rpc);
     const wallet = new ethers.Wallet(privateKey || "", provider);
     const stakingContract = new ethers.Contract(stakingConfig.contractAddress, stakingABI, wallet);

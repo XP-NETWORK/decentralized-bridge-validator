@@ -2,17 +2,15 @@ interface IChain {
     chain: string;
     rpc: string;
     nativeCoinSymbol: string;
-    intialFund: bigint;
+    intialFund: string;
+    contractAddress: string;
+    chainType: 'evm'
 }
 
-interface IStakingConfig {
-    chain: string;
-    rpc: string;
+interface IStakingConfig extends IChain {
     coinSymbol: string;
     coinAddress: string;
-    contractAddress: string;
-    intialFund: bigint;
-    lastBlock: number
+    lastBlock: number;
 }
 
 interface IChainSpecs {

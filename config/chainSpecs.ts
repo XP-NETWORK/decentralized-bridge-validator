@@ -5,9 +5,11 @@ import { IChain, IChainSpecs, IStakingConfig } from "./types"
 */
 const optimismTestChain: IChain = {
     chain: "OP",
-    rpc: "https://api.zan.top/node/v1/opt/goerli/public",
+    rpc: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
-    intialFund: BigInt("5000000000000000")
+    intialFund: "100000000000000000",
+    contractAddress: "0xCf3eA59a94c4f82974E47546589Fe51Ab3263D65",
+    chainType: 'evm'
 }
 
 
@@ -16,13 +18,17 @@ const bridgeTestChains: IChain[] = [
         chain: "BSC",
         rpc: "https://bsc-testnet.publicnode.com",
         nativeCoinSymbol: "BNB",
-        intialFund: BigInt("50000000000000000")
+        intialFund: "500000000000000000",
+        contractAddress: "0xBridgeContractAddress",
+        chainType: 'evm'
     },
     {
         chain: "ETH",
         rpc: "https://rpc.ankr.com/eth_goerli",
         nativeCoinSymbol: "ETH",
-        intialFund: BigInt("1000000000000000")
+        intialFund: "100000000000000000",
+        contractAddress: "0xBridgeContractAddress",
+        chainType: 'evm'
     }
 ]
 
@@ -30,10 +36,12 @@ const stakingTestChain: IStakingConfig = {
     chain: "BSC",
     rpc: "https://bsc-testnet.publicnode.com",
     coinSymbol: "XPNET",
+    nativeCoinSymbol: "BNB",
+    chainType: 'evm',
     coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
-    contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-    intialFund: BigInt("1000000000000000000"),
-    lastBlock: 34255418
+    contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
+    intialFund: "100000000000000000000",
+    lastBlock: 34305190
 }
 
 
@@ -50,7 +58,9 @@ const optimismProdChain: IChain = {
     chain: "OP",
     rpc: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
-    intialFund: BigInt("500000000000000000")
+    intialFund: "500000000000000000",
+    contractAddress: "0xBridgeStorageAddress",
+    chainType: 'evm'
 }
 
 const bridgeProdChains: IChain[] = [
@@ -58,22 +68,28 @@ const bridgeProdChains: IChain[] = [
         chain: "BSC",
         rpc: "https://bsc-dataseed1.binance.org/",
         nativeCoinSymbol: "BNB",
-        intialFund: BigInt("500000000000000000")
+        intialFund: "500000000000000000",
+        contractAddress: "0xBridgeContractAddress",
+        chainType: 'evm'
     },
     {
         chain: "ETH",
         rpc: "https://eth.llamarpc.com",
         nativeCoinSymbol: "ETH",
-        intialFund: BigInt("500000000000000000")
+        intialFund: "500000000000000000",
+        contractAddress: "0xBridgeContractAddress",
+        chainType: 'evm'
     }
 ]
 const stakingProdChain: IStakingConfig = {
-    chain: "OP",
-    rpc: "https://api.zan.top/node/v1/opt/goerli/public",
-    coinSymbol: "OP",
-    coinAddress: "0xProdCoinAddress",
-    contractAddress: "0xProdContractAddress",
-    intialFund: BigInt("500000000000000000"),
+    chain: "BSC",
+    rpc: "https://bsc-testnet.publicnode.com",
+    coinSymbol: "XPNET",
+    nativeCoinSymbol: "BNB",
+    chainType: 'evm',
+    coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
+    contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
+    intialFund: "100000000000000000000",
     lastBlock: 34255418
 }
 

@@ -1,4 +1,3 @@
-import runValidators from "./runValidators";
-import { stakingListener } from "./evm";
+import stakingListener from "./stakingListener"
 
-export { runValidators, stakingListener }
+export { stakingListener }

@@ -19,13 +19,13 @@ const stakeTokens = async ({ stakingConfig, privateKey }: { stakingConfig: IStak
             const approveTx = await xpTokenContract.approve(stakingConfig.contractAddress, amountToStake)
             await approveTx.wait()
             console.log(`Token Approve Transaction Hash: ${approveTx.hash}`);
-
-            const tx = await stakingContract.stakeXP(amountToStake);
+            console.log(await stakingContract.xpToken(), stakingConfig.coinAddress)
+            const tx = await stakingContract.stakeXP();
             console.log(`Tokens staked Transaction Hash: ${tx.hash}`);
             await tx.wait();
             console.log('Tokens staked successfully!');
         } catch (error) {
-            console.error('Error staking tokens:', error);
+            console.log(error)
             throw ("Error staking tokens")
         }
     }

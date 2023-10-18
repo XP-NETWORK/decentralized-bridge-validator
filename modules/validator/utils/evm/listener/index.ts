@@ -8,6 +8,7 @@ import { Block } from '../../../../../db/entity/Block';
 import { AppDataSource } from '../../../../../db/data-source';
 import { IListener, LogEntry } from './types';
 import { BLOCK_CHUNKS } from '../../../../../config/chainSpecs';
+import waitForMSWithMsg from '../../../../../utils/functions/waitForMSWithMsg';
 
 
 async function listener(
@@ -16,6 +17,7 @@ async function listener(
         lastBlock_,
         chain,
         handleLog }: IListener) {
+
     let lastBlock = lastBlock_;
 
     const web3 = new Web3(rpcUrl);
@@ -26,6 +28,7 @@ async function listener(
         where: { chain, contractAddress },
     });
 
+    console.log({ blockInstance })
     if (!blockInstance) {
         const newBlock = new Block();
         newBlock.chain = chain
@@ -33,6 +36,7 @@ async function listener(
         newBlock.lastBlock = lastBlock
         blockInstance = await blockRepository.save(newBlock);
     }
+    console.log({ blockInstance })
 
     if (blockInstance.lastBlock) {
         lastBlock = blockInstance.lastBlock;
@@ -55,11 +59,13 @@ async function listener(
         await blockRepository.save(blockInstance);
         return;
     }
+
     for (const log of logs) {
         await handleLog({ log });
     }
 
     await blockRepository.save(blockInstance);
+    await waitForMSWithMsg(5000, "Waiting to see");
 
 }
 

@@ -1,22 +1,31 @@
 {
-  "packageManager": "yarn@4.0.0-rc.53",
-  "name": "bridge-v3",
-  "description": "Decentralized bridge; Transfer your NFT from any chain to any chain; anyone can start a new node and become part of our decentralized birdge",
-  "version": "1.0.0",
-  "main": "setup.js",
-  "scripts": {
-    "dev": "ts-node setup.ts",
-    "build": "tsc",
-    "start": "node build/setup.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.8.6",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "ethers": "^6.8.0"
-  }
+   "packageManager": "yarn@4.0.0-rc.53",
+   "name": "bridge-v3",
+   "description": "Decentralized bridge; Transfer your NFT from any chain to any chain; anyone can start a new node and become part of our decentralized birdge",
+   "version": "1.0.0",
+   "main": "setup.js",
+   "scripts": {
+      "dev": "ts-node setup.ts",
+      "build": "tsc",
+      "start": "ts-node src/index.ts",
+      "typeorm": "typeorm-ts-node-commonjs"
+   },
+   "author": "",
+   "license": "ISC",
+   "devDependencies": {
+      "@types/node": "^16.11.10",
+      "ts-node": "10.7.0",
+      "typescript": "4.5.2"
+   },
+   "dependencies": {
+      "@types/web3": "^1.2.2",
+      "bullmq": "^4.12.5",
+      "ethers": "^6.8.0",
+      "ioredis": "^5.3.2",
+      "reflect-metadata": "^0.1.13",
+      "sqlite3": "^5.0.2",
+      "typeorm": "0.3.17",
+      "web3": "^4.1.2",
+      "web3-core": "^4.2.0"
+   }
 }

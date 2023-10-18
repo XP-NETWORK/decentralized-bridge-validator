@@ -1,12 +1,10 @@
-interface IWalletConfig {
-    chain: string;
+interface IEvmWallet {
     address: string;
     privateKey: string;
 }
 
 interface IGeneratedWallets {
-    optimismChainWallet: IWalletConfig;
-    bridgeChainsWallet: IWalletConfig[];
+    evmWallet: IEvmWallet
 }
 
-export { IWalletConfig , IGeneratedWallets}
+export { IEvmWallet, IGeneratedWallets }

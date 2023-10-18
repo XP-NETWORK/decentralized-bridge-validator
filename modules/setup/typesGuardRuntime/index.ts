@@ -1,4 +1,4 @@
-import typeGuardWalletConfigGuard from "./typeGuardWalletConfigGuard"
-import typeGuardGeneratedWallets from "./typeGuardGeneratedWallets"
+import isEvmWallet from "./isEvmWallet"
+import isGeneratedWallets from "./isGeneratedWallets"
 
-export { typeGuardWalletConfigGuard, typeGuardGeneratedWallets }
+export { isEvmWallet, isGeneratedWallets }

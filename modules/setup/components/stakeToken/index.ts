@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
 import { erc20ABI, stakingABI } from '../../../../abi';
-import { IStakingConfig } from '../../../../config/types';
 import { isStaked } from "../"
+import { IStakeTokens } from './types';
+import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
 
-const stakeTokens = async ({ stakingConfig, privateKey }: { stakingConfig: IStakingConfig, privateKey: string | undefined }): Promise<void> => {
+const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promise<void> => {
     const provider = new ethers.JsonRpcProvider(stakingConfig.rpc);
     const wallet = new ethers.Wallet(privateKey || "", provider);
     const stakingContract = new ethers.Contract(stakingConfig.contractAddress, stakingABI, wallet);
@@ -27,6 +28,18 @@ const stakeTokens = async ({ stakingConfig, privateKey }: { stakingConfig: IStak
         } catch (error) {
             console.log(error)
             throw ("Error staking tokens")
+        }
+    }
+}
+
+const stakeTokens = async ({ stakingConfig, privateKey }: IStakeTokens) => {
+    let stakedTokens = false
+    while (!stakedTokens) {
+        try {
+            await stakeTokens_({ stakingConfig, privateKey })
+            stakedTokens = true;
+        } catch (e) {
+            await waitForMSWithMsg(5000, "Error staking XpNets")
         }
     }
 }

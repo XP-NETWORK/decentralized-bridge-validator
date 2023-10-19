@@ -1,7 +1,7 @@
 import { stakingListener } from "./components"
-import { IStakingListener } from "./types";
+import { IConfigAndWallets } from "./types";
 
-const runValidators = async ({ config, wallets }: IStakingListener) => {
+const runValidators = async ({ config, wallets }: IConfigAndWallets) => {
     const jobData = {
         config,
         wallets

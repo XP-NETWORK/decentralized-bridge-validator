@@ -8,7 +8,7 @@ const optimismTestChain: IChain = {
     rpc: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0xCf3eA59a94c4f82974E47546589Fe51Ab3263D65",
+    contractAddress: "0x820Bc5a22bAB7987889fBF8384e64EA06BfcbD9c",
     chainType: 'evm'
 }
 

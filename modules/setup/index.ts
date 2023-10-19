@@ -3,7 +3,7 @@ import { IChainSpecs } from "../../config/types";
 import { AppDataSource } from "../../db/data-source";
 import { runValidators } from "../validator";
 import { redisIOConnection } from "../../utils";
-import { generateWalletsForChains, getInitialFunds, isStaked, promtDisplayHelp } from "./components";
+import { addSelfInBridges, generateWalletsForChains, getInitialFunds, isStaked, promtDisplayHelp } from "./components";
 import { stakeTokens } from "./components";
 import { IGeneratedWallets } from "./types";
 
@@ -35,6 +35,8 @@ const setup = async () => {
     await getInitialFunds({ wallets, config });
     await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })
   }
+
+  await addSelfInBridges({config, wallets});
 
   // Run the validators
   await runValidators({ config, wallets })

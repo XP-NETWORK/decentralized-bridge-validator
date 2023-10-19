@@ -1,14 +1,14 @@
 import Web3 from "web3";
 import { LogEntry } from "../../utils/evm/listener/types";
-import { bridgeStorage, stakingABI } from "../../../../abi";
+import { bridgeStorageAbi, stakingABI } from "../../../../abi";
 import { createJobWithWorker, listener } from '../../utils';
 import { ethers } from 'ethers';
-import { IStakingListener } from "../../types";
+import { IConfigAndWallets } from "../../types";
 
-const stakingListener = async (jobData: IStakingListener) => {
+const stakingListener = async (jobData: IConfigAndWallets) => {
     const jobName = "stakingApprover";
-    const jobFunction = async (data: IStakingListener) => {
-        const { config, wallets }: IStakingListener = data;
+    const jobFunction = async (data: IConfigAndWallets) => {
+        const { config, wallets }: IConfigAndWallets = data;
         const storageContractAddress = config.optimismChain.contractAddress;
         const storageRpcURL = config.optimismChain.rpc;
         const contractAddress = config.stakingConfig.contractAddress;
@@ -38,7 +38,7 @@ const stakingListener = async (jobData: IStakingListener) => {
 
                 const provider = new ethers.JsonRpcProvider(storageRpcURL);
                 const wallet = new ethers.Wallet(wallets.evmWallet.privateKey, provider);
-                const storageContract = new ethers.Contract(storageContractAddress, bridgeStorage, wallet);
+                const storageContract = new ethers.Contract(storageContractAddress, bridgeStorageAbi, wallet);
                 try {
                     const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress);
                     console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
@@ -58,7 +58,7 @@ const stakingListener = async (jobData: IStakingListener) => {
     }
 
 
-    await createJobWithWorker<IStakingListener>({ jobData, jobName, jobFunction })
+    await createJobWithWorker<IConfigAndWallets>({ jobData, jobName, jobFunction })
 }
 
 

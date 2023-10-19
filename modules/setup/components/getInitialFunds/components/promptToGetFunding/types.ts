@@ -1,5 +1,5 @@
-import { IChain, IChainSpecs, IStakingConfig } from "../../../../config/types";
-import { IGeneratedWallets } from "../../types";
+import { IChain, IChainSpecs, IStakingConfig } from "../../../../../../config/types";
+import { IGeneratedWallets } from "../../../../types";
 
 interface IHandleEvmPromt {
     chainConfig: IChain | IStakingConfig;

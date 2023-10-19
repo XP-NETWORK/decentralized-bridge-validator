@@ -53,7 +53,7 @@ const stakingListener = async (jobData: IStakingListener) => {
         try {
             await listener({ contractAddress, rpcUrl, lastBlock_, chain, handleLog });
         } catch (e) {
-            console.error("Error in loop", e)
+            console.error("Error Staking listner", e)
         }
     }
 

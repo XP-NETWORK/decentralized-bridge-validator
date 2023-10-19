@@ -1,7 +1,7 @@
 import generateWalletsForChains from "./generateWalletsForChains";
-import promptToGetFunding from "./promptToGetFunding"
 import promtDisplayHelp from "./promtDisplayHelp"
 import isStaked from "./isStaked";
 import getInitialFunds from "./getInitialFunds";
+import stakeTokens from "./stakeToken";
 
-export { generateWalletsForChains, promptToGetFunding, promtDisplayHelp, isStaked, getInitialFunds }
+export { generateWalletsForChains, promtDisplayHelp, isStaked, getInitialFunds, stakeTokens }

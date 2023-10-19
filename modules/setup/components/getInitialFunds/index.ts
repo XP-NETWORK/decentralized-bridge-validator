@@ -1,7 +1,7 @@
 import { waitForKeyPress } from "../../../../utils/functions";
 import waitForMSWithMsg from "../../../../utils/functions/waitForMSWithMsg";
-import promptToGetFunding from "../promptToGetFunding";
-import { IPromptToGetFunding } from "../promptToGetFunding/types";
+import { promptToGetFunding } from "./components";
+import { IPromptToGetFunding } from "./components/promptToGetFunding/types";
 
 const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promise<void> => {
 

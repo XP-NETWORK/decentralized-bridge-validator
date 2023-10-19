@@ -1,3 +1,4 @@
-import { readJsonFile } from "./functions/index"
+import { readJsonFile, getCurrentBalance, waitForKeyPress, waitForMSWithMsg } from "./functions"
+import redisIOConnection from "./constants/redisConnection"
 
-export { readJsonFile }
+export { readJsonFile, getCurrentBalance, waitForKeyPress, waitForMSWithMsg, redisIOConnection }

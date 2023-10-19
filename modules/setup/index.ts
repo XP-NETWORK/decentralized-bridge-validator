@@ -2,9 +2,9 @@ import { prodChainSpecs, testnetChainSpecs } from "../../config/chainSpecs";
 import { IChainSpecs } from "../../config/types";
 import { AppDataSource } from "../../db/data-source";
 import { runValidators } from "../validator";
-import { redisIOConnection } from "../validator/utils";
-import { generateWalletsForChains, getInitialFunds, isStaked, promptToGetFunding, promtDisplayHelp } from "./components";
-import stakeTokens from "./components/stakeToken";
+import { redisIOConnection } from "../../utils";
+import { generateWalletsForChains, getInitialFunds, isStaked, promtDisplayHelp } from "./components";
+import { stakeTokens } from "./components";
 import { IGeneratedWallets } from "./types";
 
 const setup = async () => {

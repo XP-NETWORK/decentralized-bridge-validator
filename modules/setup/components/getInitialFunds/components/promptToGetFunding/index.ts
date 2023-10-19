@@ -1,5 +1,3 @@
-import { IChainSpecs } from "../../../../config/types";
-import { IGeneratedWallets } from "../../types";
 import { handleEvmPromt } from "./handleEvmPrompt";
 import { handleBscStakingPromt } from "./handleBscStakingPrompt";
 import { IPromptToGetFunding } from "./types";

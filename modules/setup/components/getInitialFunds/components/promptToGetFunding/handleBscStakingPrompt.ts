@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { getCurrentBalance } from "../../../../utils/functions";
+import { getCurrentBalance } from "../../../../../../utils/functions";
 import { IHandleEvmPromt } from "./types";
 
 const handleBscStakingPromt = async ({ chainConfig, evmPublicAddress, isNotFullyFunded }: IHandleEvmPromt): Promise<boolean> => {

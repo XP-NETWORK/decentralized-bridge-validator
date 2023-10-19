@@ -1,16 +1,14 @@
 import Web3 from "web3";
-import { LogEntry } from "../../utils/evm/listener/types";
-import { bridgeStorageAbi, stakingABI } from "../../../../abi";
-import { createJobWithWorker, listener } from '../../utils';
-import { ethers } from 'ethers';
+import { LogEntry } from "../../utils/evmContractListener/types";
+import { stakingABI } from "../../../../abi";
+import { createJobWithWorker, evmContractListener } from '../../utils';
 import { IConfigAndWallets } from "../../types";
+import { getStorageContract } from "../../../../utils";
 
 const stakingListener = async (jobData: IConfigAndWallets) => {
     const jobName = "stakingApprover";
     const jobFunction = async (data: IConfigAndWallets) => {
         const { config, wallets }: IConfigAndWallets = data;
-        const storageContractAddress = config.optimismChain.contractAddress;
-        const storageRpcURL = config.optimismChain.rpc;
         const contractAddress = config.stakingConfig.contractAddress;
         const rpcUrl = config.stakingConfig.rpc;
         const lastBlock_ = config.stakingConfig.lastBlock;
@@ -36,9 +34,8 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
                     .privateKeyToAccount("0x" + wallets.evmWallet.privateKey)
                     .sign(web3.utils.keccak256(stakerAddress));
 
-                const provider = new ethers.JsonRpcProvider(storageRpcURL);
-                const wallet = new ethers.Wallet(wallets.evmWallet.privateKey, provider);
-                const storageContract = new ethers.Contract(storageContractAddress, bridgeStorageAbi, wallet);
+                const storageContract = getStorageContract({ storageChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
+
                 try {
                     const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress);
                     console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
@@ -51,7 +48,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
         };
 
         try {
-            await listener({ contractAddress, rpcUrl, lastBlock_, chain, handleLog });
+            await evmContractListener({ contractAddress, rpcUrl, lastBlock_, chain, handleLog });
         } catch (e) {
             console.error("Error Staking listner", e)
         }

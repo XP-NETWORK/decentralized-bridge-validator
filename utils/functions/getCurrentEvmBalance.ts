@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import { erc20ABI } from '../../abi';
+import { IGetCurrentEvmBalance } from '../types';
 
 
-const getCurrentBalance = async ({ rpc, coinAddress, accAddress }: { rpc: string | undefined, coinAddress?: string, accAddress?: string }): Promise<bigint> => {
+const getCurrentEvmBalance = async ({ rpc, coinAddress, accAddress }: IGetCurrentEvmBalance): Promise<bigint> => {
     try {
         const provider = new ethers.JsonRpcProvider(rpc);
 
@@ -14,9 +15,9 @@ const getCurrentBalance = async ({ rpc, coinAddress, accAddress }: { rpc: string
 
         const rawBalance = await provider.getBalance(accAddress || "0x00");
         return BigInt(rawBalance.toString());
-    }catch (e){
-        throw("Error while getCurrentBalance")
+    } catch (e) {
+        throw ("Error while getCurrentEvmBalance")
     }
 }
 
-export default getCurrentBalance;
+export default getCurrentEvmBalance;

@@ -13,7 +13,7 @@ interface LogObject {
 
 type LogEntry = string | LogObject;
 
-interface IListener {
+interface IEvmContractListener {
     contractAddress: string,
     rpcUrl: string,
     lastBlock_: number,
@@ -22,4 +22,4 @@ interface IListener {
 }
 
 
-export { LogEntry, IListener }
+export { LogEntry, IEvmContractListener }

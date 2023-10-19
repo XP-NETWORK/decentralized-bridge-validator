@@ -3,23 +3,29 @@ import { handleBscStakingPromt } from "./handleBscStakingPrompt";
 import { IPromptToGetFunding } from "./types";
 
 
-const promptToGetFunding = async ({wallets, config}: IPromptToGetFunding): Promise<boolean> => {
+const promptToGetFunding = async ({ wallets, config }: IPromptToGetFunding): Promise<boolean> => {
 
     let isNotFullyFunded = false;
     const evmPublicAddress = wallets.evmWallet.address;
 
     // Optimism fund promt
-    isNotFullyFunded = await handleEvmPromt({ chainConfig: config.optimismChain, evmPublicAddress, isNotFullyFunded });
+    if (await handleEvmPromt({ evmChainConfig: config.optimismChain, evmPublicAddress })) {
+        isNotFullyFunded = true
+    }
 
     // Bridge chains fund promt
-    for (const chainConfig of config.bridgeChains) {
-        if (chainConfig.chainType == 'evm') {
-            isNotFullyFunded = await handleEvmPromt({ chainConfig, evmPublicAddress, isNotFullyFunded });
+    for (const evmChainConfig of config.bridgeChains) {
+        if (evmChainConfig.chainType == 'evm') {
+            if (await handleEvmPromt({ evmChainConfig, evmPublicAddress })) {
+                isNotFullyFunded = true
+            }
         }
     }
 
     // Staking coin fund promt
-    await handleBscStakingPromt({ chainConfig: config.stakingConfig, evmPublicAddress, isNotFullyFunded })
+    if (await handleBscStakingPromt({ evmChainConfig: config.stakingConfig, evmPublicAddress })) {
+        isNotFullyFunded = true
+    }
 
     if (isNotFullyFunded) {
         console.log("To stake and initialize your node.");

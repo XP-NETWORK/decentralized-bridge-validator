@@ -1,19 +1,20 @@
 import { ethers } from "ethers";
-import { getCurrentBalance } from "../../../../../../utils/functions";
+import { getCurrentEvmBalance } from "../../../../../../utils/functions";
 import { IHandleEvmPromt } from "./types";
 
-const handleBscStakingPromt = async ({ chainConfig, evmPublicAddress, isNotFullyFunded }: IHandleEvmPromt): Promise<boolean> => {
+const handleBscStakingPromt = async ({ evmChainConfig, evmPublicAddress }: IHandleEvmPromt): Promise<boolean> => {
     try {
-        if (!('coinAddress' in chainConfig)) {
+        let isNotFullyFunded = false;
+        if (!('coinAddress' in evmChainConfig)) {
             return isNotFullyFunded;
         }
 
-        const stakingCoinCurrentBalance = await getCurrentBalance({ rpc: chainConfig.rpc, accAddress: evmPublicAddress, coinAddress: chainConfig.coinAddress });
-        const remainingStakingCoinRaw = ((BigInt(chainConfig.intialFund)) - BigInt(stakingCoinCurrentBalance));
+        const stakingCoinCurrentBalance = await getCurrentEvmBalance({ rpc: evmChainConfig.rpc, accAddress: evmPublicAddress, coinAddress: evmChainConfig.coinAddress });
+        const remainingStakingCoinRaw = ((BigInt(evmChainConfig.intialFund)) - BigInt(stakingCoinCurrentBalance));
         const remainingStakingCoinFund = ethers.formatEther(remainingStakingCoinRaw);
-        if (stakingCoinCurrentBalance < BigInt(chainConfig.intialFund)) {
+        if (stakingCoinCurrentBalance < BigInt(evmChainConfig.intialFund)) {
             isNotFullyFunded = true
-            console.log(`Current balance: ${ethers.formatEther(stakingCoinCurrentBalance)}; Fund chain your wallet ${evmPublicAddress} on ${chainConfig.chain} with ${remainingStakingCoinFund} ${chainConfig.coinSymbol} [ Coin address ${chainConfig.coinAddress}].`);
+            console.log(`Current balance: ${ethers.formatEther(stakingCoinCurrentBalance)}; Fund chain your wallet ${evmPublicAddress} on ${evmChainConfig.chain} with ${remainingStakingCoinFund} ${evmChainConfig.coinSymbol} [ Coin address ${evmChainConfig.coinAddress}].`);
         }
 
         return isNotFullyFunded

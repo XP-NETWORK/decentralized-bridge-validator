@@ -1,5 +1,6 @@
 import { Worker, Queue, Job } from 'bullmq';
-import { redisIOConnection } from ".."
+import { redisIOConnection } from '../../../../utils';
+
 
 const createJobWithWorker = async <T>({ jobData, jobName, jobFunction }: { jobData: T, jobName: string, jobFunction: (data: T) => Promise<void> }) => {
 

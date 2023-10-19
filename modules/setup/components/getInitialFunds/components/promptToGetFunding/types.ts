@@ -2,9 +2,8 @@ import { IChain, IChainSpecs, IStakingConfig } from "../../../../../../config/ty
 import { IGeneratedWallets } from "../../../../types";
 
 interface IHandleEvmPromt {
-    chainConfig: IChain | IStakingConfig;
+    evmChainConfig: IChain | IStakingConfig;
     evmPublicAddress: string;
-    isNotFullyFunded: boolean
 }
 
 interface IPromptToGetFunding{

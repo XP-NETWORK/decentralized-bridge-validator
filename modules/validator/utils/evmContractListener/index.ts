@@ -4,19 +4,19 @@
 import { Repository } from 'typeorm';
 
 import Web3 from 'web3';
-import { Block } from '../../../../../db/entity/Block';
-import { AppDataSource } from '../../../../../db/data-source';
-import { IListener, LogEntry } from './types';
-import { BLOCK_CHUNKS } from '../../../../../config/chainSpecs';
-import waitForMSWithMsg from '../../../../../utils/functions/waitForMSWithMsg';
+import { Block } from '../../../../db/entity/Block';
+import { AppDataSource } from '../../../../db/data-source';
+import { IEvmContractListener, LogEntry } from './types';
+import { BLOCK_CHUNKS } from '../../../../config/chainSpecs';
+import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
 
 
-async function listener(
+async function evmContractListener(
     { contractAddress,
         rpcUrl,
         lastBlock_,
         chain,
-        handleLog }: IListener): Promise<void> {
+        handleLog }: IEvmContractListener): Promise<void> {
 
     let lastBlock = lastBlock_;
 
@@ -69,4 +69,4 @@ async function listener(
 
 }
 
-export default listener
+export default evmContractListener

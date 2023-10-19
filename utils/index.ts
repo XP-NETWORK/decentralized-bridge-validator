@@ -1,4 +1,4 @@
-import { readJsonFile, getCurrentBalance, waitForKeyPress, waitForMSWithMsg } from "./functions"
+import { readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg, confirmationCountNeeded, getStorageContract } from "./functions"
 import redisIOConnection from "./constants/redisConnection"
 
-export { readJsonFile, getCurrentBalance, waitForKeyPress, waitForMSWithMsg, redisIOConnection }
+export { readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg, redisIOConnection, confirmationCountNeeded, getStorageContract }

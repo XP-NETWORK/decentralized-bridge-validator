@@ -20,18 +20,18 @@ const bridgeTestChains: IChain[] = [
         rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
         nativeCoinSymbol: "BNB",
         intialFund: "100000000000000000",
-        contractAddress: "0x0471fcD1De1fCB7C9f426630c8D1579fb3496c87",
+        contractAddress: "0x6daa97BC61aa0B9731fc9249EaB7Dd439Af2e4f3",
         chainType: 'evm',
-        lastBlock: 34404611
+        lastBlock: 	34410865
     },
     {
         chain: "ETH",
         rpc: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
-        contractAddress: "0xBE65Ba9DC7DE80e5B80f7d93a14450E2Ad25a16B",
+        contractAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
         chainType: 'evm',
-        lastBlock: 4534687
+        lastBlock: 4536179
     }
 ]
 

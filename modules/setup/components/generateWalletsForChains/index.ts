@@ -21,15 +21,22 @@ const generateWalletsForChains_ = (): IGeneratedWallets => {
 
 const generateWalletsForChains = async (): Promise<IGeneratedWallets> => {
     const secretsFile = 'config/secrets.json';
-    let wallets: IGeneratedWallets = await readJsonFile(secretsFile)
-    if (isGeneratedWallets(wallets)) {
-        console.log("existing secrets found")
-    } else {
-        console.log("generating new secrets")
-        wallets = generateWalletsForChains_()
+    let wallets: IGeneratedWallets | null = null;
+
+    try {
+        wallets = await readJsonFile(secretsFile);
+        if (!isGeneratedWallets(wallets)) {
+            throw new Error("Invalid secrets in file");
+        }
+        console.log("existing secrets found");
+    } catch (error) {
+        console.log("generating new secrets");
+        wallets = generateWalletsForChains_();
         await fs.writeFile(secretsFile, JSON.stringify(wallets));
     }
-    return wallets
+
+    return wallets;
 };
+
 
 export default generateWalletsForChains

@@ -4,6 +4,7 @@ interface IChain {
     nativeCoinSymbol: string;
     intialFund: string;
     contractAddress: string;
+    lastBlock: number;
     chainType: 'evm'
 }
 

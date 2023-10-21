@@ -8,7 +8,7 @@ const stakingABI = [
 			},
 			{
 				"internalType": "address",
-				"name": "_erc20Token",
+				"name": "_ERC20Token",
 				"type": "address"
 			}
 		],
@@ -36,7 +36,20 @@ const stakingABI = [
 	},
 	{
 		"inputs": [],
-		"name": "stakeXP",
+		"name": "ERC20Token",
+		"outputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "stakeERC20",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -68,19 +81,6 @@ const stakingABI = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "xpToken",
-		"outputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

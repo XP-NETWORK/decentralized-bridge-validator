@@ -1,4 +1,4 @@
-import { listener } from "./evm";
+import evmContractListener from "./evmContractListener";
 import createJobWithWorker from "./createJobWithWorker";
 
-export { listener, createJobWithWorker }
+export { evmContractListener, createJobWithWorker }

@@ -1,21 +1,22 @@
 import Web3 from "web3";
-import { LogEntry } from "../../utils/evm/listener/types";
-import { bridgeStorage, stakingABI } from "../../../../abi";
-import { createJobWithWorker, listener } from '../../utils';
-import { ethers } from 'ethers';
-import { IStakingListener } from "../../types";
+import { LogEntry } from "../../utils/evmContractListener/types";
+import { stakingABI } from "../../../../abi";
+import { createJobWithWorker, evmContractListener } from '../../utils';
+import { IConfigAndWallets } from "../../types";
+import { getStorageContract } from "../../../../utils";
 
-const stakingListener = async (jobData: IStakingListener) => {
+const stakingListener = async (jobData: IConfigAndWallets) => {
     const jobName = "stakingApprover";
-    const jobFunction = async (data: IStakingListener) => {
-        const { config, wallets }: IStakingListener = data;
-        const storageContractAddress = config.optimismChain.contractAddress;
-        const storageRpcURL = config.optimismChain.rpc;
+    const jobFunction = async (data: IConfigAndWallets) => {
+        const { config, wallets }: IConfigAndWallets = data;
         const contractAddress = config.stakingConfig.contractAddress;
         const rpcUrl = config.stakingConfig.rpc;
         const lastBlock_ = config.stakingConfig.lastBlock;
         const chain = config.stakingConfig.chain;
-        const topic = Web3.utils.keccak256('Staked(address,uint256)');
+        const storageContract = getStorageContract({ evmChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
+
+        const { topicHash } = storageContract.interface.getEvent("Staked");
+        
         const web3 = new Web3(config.stakingConfig.rpc);
         const stakedEventAbi = stakingABI.find(abi => abi.name === "Staked" && abi.type === "event");
 
@@ -23,7 +24,7 @@ const stakingListener = async (jobData: IStakingListener) => {
 
         const handleLog = async ({ log }: { log: LogEntry; }) => {
 
-            if (typeof log !== "string" && log.topics.includes(topic)) {
+            if (typeof log !== "string" && log.topics.includes(topicHash)) {
                 const decodedLog = web3.eth.abi.decodeLog(
                     stakedEventAbi.inputs,
                     log.data,
@@ -36,11 +37,10 @@ const stakingListener = async (jobData: IStakingListener) => {
                     .privateKeyToAccount("0x" + wallets.evmWallet.privateKey)
                     .sign(web3.utils.keccak256(stakerAddress));
 
-                const provider = new ethers.JsonRpcProvider(storageRpcURL);
-                const wallet = new ethers.Wallet(wallets.evmWallet.privateKey, provider);
-                const storageContract = new ethers.Contract(storageContractAddress, bridgeStorage, wallet);
+
+
                 try {
-                    const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress);
+                    const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress.signature);
                     console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
                 } catch (e) {
                     if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
@@ -51,14 +51,14 @@ const stakingListener = async (jobData: IStakingListener) => {
         };
 
         try {
-            await listener({ contractAddress, rpcUrl, lastBlock_, chain, handleLog });
+            await evmContractListener({ contractAddress, rpcUrl, lastBlock_, chain, handleLog });
         } catch (e) {
             console.error("Error Staking listner", e)
         }
     }
 
 
-    await createJobWithWorker<IStakingListener>({ jobData, jobName, jobFunction })
+    await createJobWithWorker<IConfigAndWallets>({ jobData, jobName, jobFunction })
 }
 
 

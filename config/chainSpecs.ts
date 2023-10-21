@@ -8,8 +8,9 @@ const optimismTestChain: IChain = {
     rpc: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0xCf3eA59a94c4f82974E47546589Fe51Ab3263D65",
-    chainType: 'evm'
+    contractAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
+    chainType: 'evm',
+    lastBlock: 16237329
 }
 
 
@@ -18,17 +19,19 @@ const bridgeTestChains: IChain[] = [
         chain: "BSC",
         rpc: "https://bsc-testnet.publicnode.com",
         nativeCoinSymbol: "BNB",
-        intialFund: "500000000000000000",
+        intialFund: "100000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 1231
     },
     {
         chain: "ETH",
-        rpc: "https://rpc.ankr.com/eth_goerli",
+        rpc: "wss://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 1231
     }
 ]
 
@@ -38,10 +41,10 @@ const stakingTestChain: IStakingConfig = {
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
-    coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
-    contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
+    coinAddress: "0x60F0Fa700E399Aa2a94F6a621fCecF5D7C4062A5",
+    contractAddress: "0x91C6E26aB681458CB87a67bba9D499A1c9b5E86C",
     intialFund: "100000000000000000000",
-    lastBlock: 34305190
+    lastBlock: 34401766
 }
 
 
@@ -60,7 +63,8 @@ const optimismProdChain: IChain = {
     nativeCoinSymbol: "OP",
     intialFund: "500000000000000000",
     contractAddress: "0xBridgeStorageAddress",
-    chainType: 'evm'
+    chainType: 'evm',
+    lastBlock: 21321
 }
 
 const bridgeProdChains: IChain[] = [
@@ -70,7 +74,8 @@ const bridgeProdChains: IChain[] = [
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 21321
     },
     {
         chain: "ETH",
@@ -78,7 +83,8 @@ const bridgeProdChains: IChain[] = [
         nativeCoinSymbol: "ETH",
         intialFund: "500000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 21321
     }
 ]
 const stakingProdChain: IStakingConfig = {

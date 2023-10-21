@@ -78,7 +78,6 @@ export interface BridgeInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "addValidator"
-      | "claimFee"
       | "claimNFT1155"
       | "claimNFT721"
       | "duplicateStorageMapping1155"
@@ -107,10 +106,6 @@ export interface BridgeInterface extends Interface {
   encodeFunctionData(
     functionFragment: "addValidator",
     values: [AddressLike, BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "claimFee",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "claimNFT1155",
@@ -170,7 +165,6 @@ export interface BridgeInterface extends Interface {
     functionFragment: "addValidator",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "claimFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimNFT1155",
     data: BytesLike
@@ -250,7 +244,7 @@ export namespace LockedEvent {
     sourceNftContractAddress: AddressLike,
     tokenAmount: BigNumberish,
     nftType: string,
-    chain: string
+    sourceChain: string
   ];
   export type OutputTuple = [
     tokenId: bigint,
@@ -259,7 +253,7 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: bigint,
     nftType: string,
-    chain: string
+    sourceChain: string
   ];
   export interface OutputObject {
     tokenId: bigint;
@@ -268,7 +262,7 @@ export namespace LockedEvent {
     sourceNftContractAddress: string;
     tokenAmount: bigint;
     nftType: string;
-    chain: string;
+    sourceChain: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -368,8 +362,6 @@ export interface Bridge extends BaseContract {
     "nonpayable"
   >;
 
-  claimFee: TypedContractMethod<[receiver: AddressLike], [void], "nonpayable">;
-
   claimNFT1155: TypedContractMethod<
     [data: Bridge.ClaimDataStruct, signatures: BytesLike[]],
     [void],
@@ -460,9 +452,6 @@ export interface Bridge extends BaseContract {
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "claimFee"
-  ): TypedContractMethod<[receiver: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "claimNFT1155"
   ): TypedContractMethod<

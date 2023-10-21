@@ -23,6 +23,7 @@ const setup = async () => {
   let config: IChainSpecs = prodChainSpecs
   if (process.argv.includes('--testnet')) {
     config = testnetChainSpecs
+    console.log("-------------------------- Running in testnet --------------------------------")
   }
 
   // Generate wallets

@@ -73,16 +73,16 @@ const bridgeProdChains: IChain[] = [
         rpc: "https://bsc-dataseed1.binance.org/",
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
-        contractAddress: "0xBridgeContractAddress",
+        contractAddress: "0x0471fcD1De1fCB7C9f426630c8D1579fb3496c87",
         chainType: 'evm',
-        lastBlock: 21321
+        lastBlock: 34404611
     },
     {
         chain: "ETH",
-        rpc: "https://eth.llamarpc.com",
+        rpc: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "500000000000000000",
-        contractAddress: "0xBridgeContractAddress",
+        contractAddress: "0xBE65Ba9DC7DE80e5B80f7d93a14450E2Ad25a16B",
         chainType: 'evm',
         lastBlock: 21321
     }

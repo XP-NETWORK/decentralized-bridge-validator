@@ -17,7 +17,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
     while (failiure) {
         try {
             const isAlreadyAdded = await bridgeContract.validators(evmWallet.address);
-            
+
             if (isAlreadyAdded) {
                 console.log(`Already added in ${evmChainConfig.chain}`)
             } else {
@@ -29,7 +29,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
                     validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 }
 
-                const stakingSignatures = await storageContract.getStakingSignatures(evmWallet.address);
+                const stakingSignatures = [...(await storageContract.getStakingSignatures(evmWallet.address))];
 
                 let isNotFullyFunded = true;
 

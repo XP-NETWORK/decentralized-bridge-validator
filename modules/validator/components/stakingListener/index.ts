@@ -34,7 +34,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
                 console.log({ stakerAddress, pv: wallets.evmWallet.privateKey })
 
                 const signedStakerAddress = web3.eth.accounts
-                    .privateKeyToAccount("0x" + wallets.evmWallet.privateKey)
+                    .privateKeyToAccount( wallets.evmWallet.privateKey)
                     .sign(web3.utils.keccak256(web3.eth.abi.encodeParameters(
                         ["address"],
                         [stakerAddress]

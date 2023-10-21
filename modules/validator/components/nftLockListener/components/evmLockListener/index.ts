@@ -114,7 +114,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
 
                 const signedNftTransferDetails = web3.eth.accounts
-                    .privateKeyToAccount("0x" + evmWallet.privateKey)
+                    .privateKeyToAccount( evmWallet.privateKey)
                     .sign(web3.utils.keccak256(
                         web3.eth.abi.encodeParameters(
                             nftTransferDetailsTypes,

@@ -25,6 +25,7 @@
     "hardhat": "^2.18.2",
     "ioredis": "^5.3.2",
     "reflect-metadata": "^0.1.13",
+    "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "typeorm": "0.3.17",
     "web3": "^4.1.2",

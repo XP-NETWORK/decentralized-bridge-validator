@@ -17,32 +17,32 @@ const optimismTestChain: IChain = {
 const bridgeTestChains: IChain[] = [
     {
         chain: "BSC",
-        rpc: "https://bsc-testnet.publicnode.com",
+        rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
         nativeCoinSymbol: "BNB",
         intialFund: "100000000000000000",
-        contractAddress: "0xBridgeContractAddress",
+        contractAddress: "0x0471fcD1De1fCB7C9f426630c8D1579fb3496c87",
         chainType: 'evm',
-        lastBlock: 1231
+        lastBlock: 34404611
     },
     {
         chain: "ETH",
-        rpc: "wss://ethereum-sepolia.publicnode.com",
+        rpc: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
-        contractAddress: "0xBridgeContractAddress",
+        contractAddress: "0xBE65Ba9DC7DE80e5B80f7d93a14450E2Ad25a16B",
         chainType: 'evm',
-        lastBlock: 1231
+        lastBlock: 4534687
     }
 ]
 
 const stakingTestChain: IStakingConfig = {
     chain: "BSC",
-    rpc: "https://bsc-testnet.publicnode.com",
-    coinSymbol: "XPNET",
+    rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
+    coinSymbol: "ERC",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
-    coinAddress: "0x60F0Fa700E399Aa2a94F6a621fCecF5D7C4062A5",
-    contractAddress: "0x91C6E26aB681458CB87a67bba9D499A1c9b5E86C",
+    coinAddress: "0xbcae1e781EF02995cf169c4918e929eB98B2d94A",
+    contractAddress: "0xd0eB9e45cD5477353027f876105bd88e55F0A422",
     intialFund: "100000000000000000000",
     lastBlock: 34401766
 }

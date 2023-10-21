@@ -17,6 +17,8 @@ async function evmContractListener(
         lastBlock_,
         chain,
         handleLog }: IEvmContractListener): Promise<void> {
+            
+    await waitForMSWithMsg(5000, "Waiting to see");
 
     let lastBlock = lastBlock_;
 
@@ -65,7 +67,6 @@ async function evmContractListener(
     }
 
     await blockRepository.save(blockInstance);
-    await waitForMSWithMsg(5000, "Waiting to see");
 
 }
 

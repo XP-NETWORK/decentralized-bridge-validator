@@ -3,11 +3,12 @@ import { erc20ABI, stakingABI } from '../../../../abi';
 import { isStaked } from "../"
 import { IStakeTokens } from './types';
 import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
+import { getStakingContract } from '../../../../utils';
 
 const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promise<void> => {
     const provider = new ethers.JsonRpcProvider(stakingConfig.rpc);
     const wallet = new ethers.Wallet(privateKey || "", provider);
-    const stakingContract = new ethers.Contract(stakingConfig.contractAddress, stakingABI, wallet);
+    const stakingContract = getStakingContract({ evmChainConfig: stakingConfig, evmWallet: { address: wallet.address, privateKey } })
     const xpTokenContract = new ethers.Contract(stakingConfig.coinAddress, erc20ABI, wallet);
 
     const stakedAmount = await stakingContract.stakingBalances(wallet.address);
@@ -20,8 +21,8 @@ const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promis
             const approveTx = await xpTokenContract.approve(stakingConfig.contractAddress, amountToStake)
             await approveTx.wait()
             console.log(`Token Approve Transaction Hash: ${approveTx.hash}`);
-            console.log(await stakingContract.xpToken(), stakingConfig.coinAddress)
-            const tx = await stakingContract.stakeXP();
+            console.log(await stakingContract.ERC20Token(), stakingConfig.coinAddress)
+            const tx = await stakingContract.stakeERC20();
             console.log(`Tokens staked Transaction Hash: ${tx.hash}`);
             await tx.wait();
             console.log('Tokens staked successfully!');

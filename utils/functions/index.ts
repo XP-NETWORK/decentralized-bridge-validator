@@ -7,9 +7,10 @@ import getStorageContract from "./getStorageContract"
 import getEvmBridgeContract from "./getEvmBridgeContract"
 import getEvmSingleNftContract from "./getEvmSingleNftContract"
 import getEvmMultiNftContract from "./getEvmMultiNftContract"
+import getStakingContract from "./getStakingContract"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
     confirmationCountNeeded, getStorageContract, getEvmBridgeContract,
-    getEvmSingleNftContract, getEvmMultiNftContract
+    getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract
 }

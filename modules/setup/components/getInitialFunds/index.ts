@@ -12,6 +12,7 @@ const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promis
             if (isNotFullyFunded)
                 await waitForKeyPress("Press [Enter] key after funding your addresses");
         } catch (e) {
+            console.log(e)
             await waitForMSWithMsg(5000, "Something went wrong")
             isNotFullyFunded = true
         }

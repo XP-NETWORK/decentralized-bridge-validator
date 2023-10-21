@@ -2,17 +2,23 @@ import { confirmationCountNeeded, getStorageContract, waitForMSWithMsg } from ".
 import { handleEvmPromt } from "../../getInitialFunds/components/promptToGetFunding/handleEvmPrompt";
 import { getEvmBridgeContract } from "../../../../../utils/functions";
 import { IHandleEvmValidatorAddition } from "./types";
+import { ethers } from "ethers";
 
 const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, evmWallet }: IHandleEvmValidatorAddition) => {
 
-    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
+
+
     const storageContract = getStorageContract({ evmChainConfig: storageChainConfig, evmWallet });
 
-    let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
+    let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address.trim()));
     let failiure = true
+    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
+
     while (failiure) {
         try {
-            if (await bridgeContract.validators(evmWallet.address)) {
+            const isAlreadyAdded = await bridgeContract.validators(evmWallet.address);
+            
+            if (isAlreadyAdded) {
                 console.log(`Already added in ${evmChainConfig.chain}`)
             } else {
 
@@ -32,13 +38,13 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
                     isNotFullyFunded = await handleEvmPromt({ evmChainConfig, evmPublicAddress: evmWallet.address });
                 };
 
-
                 const addValidatorTx = await bridgeContract.addValidator(evmWallet.address, stakingSignatures);
                 console.log(`Added self as validator in chain: ${evmChainConfig.chain}, txHash: ${addValidatorTx.hash}`);
-                failiure = false
             }
+            failiure = false
         } catch (e) {
-            waitForMSWithMsg(5000, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
+            console.log(e)
+            await waitForMSWithMsg(5000, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
         }
     }
 

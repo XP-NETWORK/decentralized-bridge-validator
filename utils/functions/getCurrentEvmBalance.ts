@@ -16,6 +16,7 @@ const getCurrentEvmBalance = async ({ rpc, coinAddress, accAddress }: IGetCurren
         const rawBalance = await provider.getBalance(accAddress || "0x00");
         return BigInt(rawBalance.toString());
     } catch (e) {
+        console.error("RPC issue:", rpc )
         throw ("Error while getCurrentEvmBalance")
     }
 }

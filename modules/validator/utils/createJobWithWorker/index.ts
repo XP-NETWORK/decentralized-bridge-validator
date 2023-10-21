@@ -7,20 +7,27 @@ const createJobWithWorker = async <T>({ jobData, jobName, jobFunction }: { jobDa
     const bullQueue = new Queue(jobName, { connection: redisIOConnection });
 
     const worker = new Worker(jobName, async (job) => {
-        const data : T = job.data; 
+        const data: T = job.data;
         await jobFunction(data);
     }, { connection: redisIOConnection });
 
-    await bullQueue.add(`${jobName}Job`, jobData);
+    await bullQueue.add(`${jobName}Job`, jobData, {
+        removeOnComplete: true,  // Automatically remove when the job completes
+        removeOnFail: true       // Automatically remove when the job fails
+    });
 
     worker.on('completed', async (job) => {
-        await job.remove();
-        await bullQueue.add(`${jobName}Job`, job.data);
+        await bullQueue.add(`${jobName}Job`, job.data, {
+            removeOnComplete: true,  // Automatically remove when the job completes
+            removeOnFail: true       // Automatically remove when the job fails
+        });
     });
 
     worker.on('failed', async (job, err) => {
-        await job.remove();
-        await bullQueue.add(`${jobName}Job`, job.data);
+        await bullQueue.add(`${jobName}Job`, job.data, {
+            removeOnComplete: true,  // Automatically remove when the job completes
+            removeOnFail: true       // Automatically remove when the job fails
+        });
     });
 }
 

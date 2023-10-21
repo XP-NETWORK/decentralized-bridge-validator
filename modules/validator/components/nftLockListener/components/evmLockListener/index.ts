@@ -6,6 +6,7 @@ import { IConfigAndWallets } from "../../../../types";
 import { getEvmMultiNftContract, getStorageContract, getEvmSingleNftContract } from "../../../../../../utils";
 import { IEvmChainConfigAndEvmWallet } from "../../../../../../utils/types";
 import { NftTransferDetailsStruct } from "../../../../../../contractsTypes/contracts/BridgeStorage";
+import { getEvmBridgeContract } from "../../../../../../utils/functions";
 
 const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
@@ -15,7 +16,9 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
         const rpcUrl = evmChainConfig.rpc;
         const lastBlock_ = evmChainConfig.lastBlock;
         const chain = evmChainConfig.chain;
-        const topic = Web3.utils.keccak256('Locked(uint256,string,string,address,uint256,string,string)');
+        const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
+        const { topicHash } = bridgeContract.interface.getEvent("Locked");
+        
         const web3 = new Web3(evmChainConfig.rpc);
 
         const lockEventAbi = bridgeContractAbi.find(abi => abi.name === "Locked" && abi.type === "event");
@@ -24,14 +27,13 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
         const handleLog = async ({ log }: { log: LogEntry; }) => {
 
-            if (typeof log !== "string" && log.topics.includes(topic)) {
+            if (typeof log !== "string" && log.topics.includes(topicHash)) {
                 const decodedLog = web3.eth.abi.decodeLog(
                     lockEventAbi.inputs,
                     log.data,
                     log.topics.slice(1)
                 );
 
-                
                 const tokenId = String(decodedLog.tokenId); // Unique ID for the NFT transfer
                 const destinationChain = String(decodedLog.destinationChain); // Chain to where the NFT is being transferred
                 const destinationUserAddress = String(decodedLog.destinationUserAddress); // User's address in the destination chain
@@ -42,8 +44,8 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
                 const sourceChainRpcURL = configAndWallets.config.bridgeChains.find(item => item.chain === sourceChain).rpc;
 
-                const evmSingleNftContract = getEvmSingleNftContract({ contractConfig: {contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL}, evmWallet })
-                const evmMultiNftContract = getEvmMultiNftContract({ contractConfig: {contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL}, evmWallet })
+                const evmSingleNftContract = getEvmSingleNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL }, evmWallet })
+                const evmMultiNftContract = getEvmMultiNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL }, evmWallet })
 
                 const name = await evmSingleNftContract.name(); // name of NFT collection
                 const symbol = await evmSingleNftContract.symbol(); // symbol of nft collection
@@ -89,7 +91,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                     fee,
                 }
                 const nftTransferDetails = Object.values(nftTransferDetailsStruct_);
-                
+
                 const nftTransferDetailsTypes = [
                     "uint256",
                     "string",

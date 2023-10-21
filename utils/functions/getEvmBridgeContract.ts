@@ -1,5 +1,4 @@
-import { Contract, ethers } from "ethers";
-import { bridgeContractAbi } from "../../abi";
+import {  ethers } from "ethers";
 import { IEvmChainConfigAndEvmWallet } from "../types";
 import { Bridge, Bridge__factory } from "../../contractsTypes";
 

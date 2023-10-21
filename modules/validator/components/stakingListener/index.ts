@@ -13,7 +13,10 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
         const rpcUrl = config.stakingConfig.rpc;
         const lastBlock_ = config.stakingConfig.lastBlock;
         const chain = config.stakingConfig.chain;
-        const topic = Web3.utils.keccak256('Staked(address,uint256)');
+        const storageContract = getStorageContract({ evmChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
+
+        const { topicHash } = storageContract.interface.getEvent("Staked");
+        
         const web3 = new Web3(config.stakingConfig.rpc);
         const stakedEventAbi = stakingABI.find(abi => abi.name === "Staked" && abi.type === "event");
 
@@ -21,7 +24,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
 
         const handleLog = async ({ log }: { log: LogEntry; }) => {
 
-            if (typeof log !== "string" && log.topics.includes(topic)) {
+            if (typeof log !== "string" && log.topics.includes(topicHash)) {
                 const decodedLog = web3.eth.abi.decodeLog(
                     stakedEventAbi.inputs,
                     log.data,
@@ -34,7 +37,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
                     .privateKeyToAccount("0x" + wallets.evmWallet.privateKey)
                     .sign(web3.utils.keccak256(stakerAddress));
 
-                const storageContract = getStorageContract({ evmChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
+
 
                 try {
                     const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress.signature);

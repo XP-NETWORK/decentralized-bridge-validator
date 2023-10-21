@@ -12,21 +12,27 @@ const createJobWithWorker = async <T>({ jobData, jobName, jobFunction }: { jobDa
     }, { connection: redisIOConnection });
 
     await bullQueue.add(`${jobName}Job`, jobData, {
-        removeOnComplete: true,  // Automatically remove when the job completes
-        removeOnFail: true       // Automatically remove when the job fails
+        removeOnComplete: true,
+        removeOnFail: true,
+        delay: 6000
     });
 
     worker.on('completed', async (job) => {
         await bullQueue.add(`${jobName}Job`, job.data, {
-            removeOnComplete: true,  // Automatically remove when the job completes
-            removeOnFail: true       // Automatically remove when the job fails
+            removeOnComplete: true,
+            removeOnFail: true,
+            delay: 6000
         });
     });
 
     worker.on('failed', async (job, err) => {
+
+        console.log({err})
+
         await bullQueue.add(`${jobName}Job`, job.data, {
-            removeOnComplete: true,  // Automatically remove when the job completes
-            removeOnFail: true       // Automatically remove when the job fails
+            removeOnComplete: true,
+            removeOnFail: true,
+            delay: 6000
         });
     });
 }

@@ -6,9 +6,9 @@ import { IHandleEvmValidatorAddition } from "./types";
 const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, evmWallet }: IHandleEvmValidatorAddition) => {
 
     const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
-    const storageContract = getStorageContract({ storageChainConfig, evmWallet });
+    const storageContract = getStorageContract({ evmChainConfig: storageChainConfig, evmWallet });
 
-    let signatureCount = (await storageContract.getStakingSignaturesCount(evmWallet.address)).toNumber();
+    let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
     let failiure = true
     while (failiure) {
         try {
@@ -16,11 +16,11 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
                 console.log(`Already added in ${evmChainConfig.chain}`)
             } else {
 
-                let validatorCountInChain = (await bridgeContract.validatorsCount()).toNumber();
+                let validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 while (signatureCount < confirmationCountNeeded(validatorCountInChain)) {
                     await waitForMSWithMsg(5000, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${validatorCountInChain}`)
-                    signatureCount = (await storageContract.getStakingSignaturesCount(evmWallet.address)).toNumber();
-                    validatorCountInChain = (await bridgeContract.validatorsCount()).toNumber();
+                    signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
+                    validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 }
 
                 const stakingSignatures = await storageContract.getStakingSignatures(evmWallet.address);
@@ -28,6 +28,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
                 let isNotFullyFunded = true;
 
                 while (isNotFullyFunded) {
+                    // @TODO handle staking + intial fund case 
                     isNotFullyFunded = await handleEvmPromt({ evmChainConfig, evmPublicAddress: evmWallet.address });
                 };
 

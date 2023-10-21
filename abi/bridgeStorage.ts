@@ -33,7 +33,7 @@ const bridgeStorageAbi = [
 				"components": [
 					{
 						"internalType": "uint256",
-						"name": "id",
+						"name": "tokenId",
 						"type": "uint256"
 					},
 					{
@@ -47,19 +47,34 @@ const bridgeStorageAbi = [
 						"type": "string"
 					},
 					{
-						"internalType": "string",
-						"name": "sourceUserAddress",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
+						"internalType": "address",
 						"name": "destinationUserAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "sourceNftContractAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
 						"type": "string"
 					},
 					{
 						"internalType": "string",
-						"name": "sourceNftContractAddress",
+						"name": "symbol",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "royalty",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "royaltyReceiver",
+						"type": "address"
 					},
 					{
 						"internalType": "string",
@@ -73,13 +88,18 @@ const bridgeStorageAbi = [
 					},
 					{
 						"internalType": "uint256",
-						"name": "count",
+						"name": "tokenAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "string",
 						"name": "nftType",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fee",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct NftTransferDetails",
@@ -243,7 +263,7 @@ const bridgeStorageAbi = [
 			},
 			{
 				"internalType": "bool",
-				"name": "status",
+				"name": "_status",
 				"type": "bool"
 			}
 		],
@@ -297,7 +317,7 @@ const bridgeStorageAbi = [
 						"components": [
 							{
 								"internalType": "uint256",
-								"name": "id",
+								"name": "tokenId",
 								"type": "uint256"
 							},
 							{
@@ -311,19 +331,34 @@ const bridgeStorageAbi = [
 								"type": "string"
 							},
 							{
-								"internalType": "string",
-								"name": "sourceUserAddress",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
+								"internalType": "address",
 								"name": "destinationUserAddress",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "sourceNftContractAddress",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
 								"type": "string"
 							},
 							{
 								"internalType": "string",
-								"name": "sourceNftContractAddress",
+								"name": "symbol",
 								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "royalty",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "royaltyReceiver",
+								"type": "address"
 							},
 							{
 								"internalType": "string",
@@ -337,13 +372,18 @@ const bridgeStorageAbi = [
 							},
 							{
 								"internalType": "uint256",
-								"name": "count",
+								"name": "tokenAmount",
 								"type": "uint256"
 							},
 							{
 								"internalType": "string",
 								"name": "nftType",
 								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "fee",
+								"type": "uint256"
 							}
 						],
 						"internalType": "struct NftTransferDetails",
@@ -440,7 +480,7 @@ const bridgeStorageAbi = [
 				"components": [
 					{
 						"internalType": "uint256",
-						"name": "id",
+						"name": "tokenId",
 						"type": "uint256"
 					},
 					{
@@ -454,19 +494,34 @@ const bridgeStorageAbi = [
 						"type": "string"
 					},
 					{
-						"internalType": "string",
-						"name": "sourceUserAddress",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
+						"internalType": "address",
 						"name": "destinationUserAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "sourceNftContractAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
 						"type": "string"
 					},
 					{
 						"internalType": "string",
-						"name": "sourceNftContractAddress",
+						"name": "symbol",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "royalty",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "royaltyReceiver",
+						"type": "address"
 					},
 					{
 						"internalType": "string",
@@ -480,13 +535,18 @@ const bridgeStorageAbi = [
 					},
 					{
 						"internalType": "uint256",
-						"name": "count",
+						"name": "tokenAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "string",
 						"name": "nftType",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fee",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct NftTransferDetails",
@@ -574,11 +634,6 @@ const bridgeStorageAbi = [
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
 			{
 				"internalType": "address",
 				"name": "",

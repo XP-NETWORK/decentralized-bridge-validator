@@ -36,7 +36,7 @@ const setup = async () => {
     await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })
   }
 
-  // await addSelfInBridges({config, wallets});
+  await addSelfInBridges({config, wallets});
 
   // Run the validators
   await runValidators({ config, wallets })

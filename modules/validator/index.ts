@@ -1,4 +1,4 @@
-import { stakingListener } from "./components"
+import { nftLockListener, stakingListener } from "./components"
 import { IConfigAndWallets } from "./types";
 
 const runValidators = async ({ config, wallets }: IConfigAndWallets) => {
@@ -6,7 +6,8 @@ const runValidators = async ({ config, wallets }: IConfigAndWallets) => {
         config,
         wallets
     };
-    await stakingListener(jobData)
+    await stakingListener(jobData);
+    await nftLockListener(jobData);
 }
 
 export { runValidators }

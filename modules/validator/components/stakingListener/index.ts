@@ -34,10 +34,10 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
                     .privateKeyToAccount("0x" + wallets.evmWallet.privateKey)
                     .sign(web3.utils.keccak256(stakerAddress));
 
-                const storageContract = getStorageContract({ storageChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
+                const storageContract = getStorageContract({ evmChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet });
 
                 try {
-                    const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress);
+                    const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress.signature);
                     console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
                 } catch (e) {
                     if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {

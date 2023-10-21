@@ -1,12 +1,14 @@
 import { Contract, ethers } from "ethers";
-import { bridgeStorageAbi } from "../../abi";
-import { IGetStorageContract } from "../types";
+
+import { IEvmChainConfigAndEvmWallet } from "../types";
+import { BridgeStorage, BridgeStorage__factory } from "../../contractsTypes";
 
 
-const getStorageContract = ({ storageChainConfig, evmWallet }: IGetStorageContract): Contract => {
-    const opProvider = new ethers.JsonRpcProvider(storageChainConfig.rpc);
+const getStorageContract = ({ evmChainConfig, evmWallet }: IEvmChainConfigAndEvmWallet): BridgeStorage => {
+    const opProvider = new ethers.JsonRpcProvider(evmChainConfig.rpc);
     const opWallet = new ethers.Wallet(evmWallet.privateKey, opProvider);
-    return new ethers.Contract(storageChainConfig.contractAddress, bridgeStorageAbi, opWallet);
+
+    return BridgeStorage__factory.connect(evmChainConfig.contractAddress, opWallet);
 }
 
 export default getStorageContract

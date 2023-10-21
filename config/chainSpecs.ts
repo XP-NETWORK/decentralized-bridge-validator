@@ -9,7 +9,8 @@ const optimismTestChain: IChain = {
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
     contractAddress: "0x820Bc5a22bAB7987889fBF8384e64EA06BfcbD9c",
-    chainType: 'evm'
+    chainType: 'evm',
+    lastBlock: 1231
 }
 
 
@@ -20,7 +21,8 @@ const bridgeTestChains: IChain[] = [
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 1231
     },
     {
         chain: "ETH",
@@ -28,7 +30,8 @@ const bridgeTestChains: IChain[] = [
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 1231
     }
 ]
 
@@ -60,7 +63,8 @@ const optimismProdChain: IChain = {
     nativeCoinSymbol: "OP",
     intialFund: "500000000000000000",
     contractAddress: "0xBridgeStorageAddress",
-    chainType: 'evm'
+    chainType: 'evm',
+    lastBlock: 21321
 }
 
 const bridgeProdChains: IChain[] = [
@@ -70,7 +74,8 @@ const bridgeProdChains: IChain[] = [
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 21321
     },
     {
         chain: "ETH",
@@ -78,7 +83,8 @@ const bridgeProdChains: IChain[] = [
         nativeCoinSymbol: "ETH",
         intialFund: "500000000000000000",
         contractAddress: "0xBridgeContractAddress",
-        chainType: 'evm'
+        chainType: 'evm',
+        lastBlock: 21321
     }
 ]
 const stakingProdChain: IStakingConfig = {

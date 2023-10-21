@@ -1,4 +1,4 @@
-import { Worker, Queue, Job } from 'bullmq';
+import { Worker, Queue } from 'bullmq';
 import { redisIOConnection } from '../../../../utils';
 
 

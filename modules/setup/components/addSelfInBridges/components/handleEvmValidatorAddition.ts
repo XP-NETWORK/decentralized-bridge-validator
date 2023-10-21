@@ -24,7 +24,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
                 let validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 while (signatureCount < confirmationCountNeeded(validatorCountInChain)) {
-                    await waitForMSWithMsg(5000, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${validatorCountInChain}`)
+                    await waitForMSWithMsg(5000, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${confirmationCountNeeded(validatorCountInChain)}`)
                     signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
                     validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 }

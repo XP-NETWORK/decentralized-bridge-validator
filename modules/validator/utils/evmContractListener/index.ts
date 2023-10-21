@@ -8,7 +8,6 @@ import { Block } from '../../../../db/entity/Block';
 import { AppDataSource } from '../../../../db/data-source';
 import { IEvmContractListener, LogEntry } from './types';
 import { BLOCK_CHUNKS } from '../../../../config/chainSpecs';
-import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
 
 
 async function evmContractListener(
@@ -18,8 +17,6 @@ async function evmContractListener(
         chain,
         handleLog }: IEvmContractListener): Promise<void> {
             
-    await waitForMSWithMsg(5000, "Waiting to see");
-
     let lastBlock = lastBlock_;
 
     const web3 = new Web3(rpcUrl);

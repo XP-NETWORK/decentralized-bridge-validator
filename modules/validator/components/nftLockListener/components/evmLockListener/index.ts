@@ -50,7 +50,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 const name = await evmSingleNftContract.name(); // name of NFT collection
                 const symbol = await evmSingleNftContract.symbol(); // symbol of nft collection
 
-                let royalty = BigInt("0");
+                let royalty : bigint | string = BigInt("0");
                 let royaltyReceiver = "0x000000000";
 
                 let metadata = "";
@@ -58,6 +58,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 if (nftType === "multiple") {
                     try {
                         [royaltyReceiver, royalty] = await evmMultiNftContract.royaltyInfo(tokenId, BigInt(10000)); // royality of nft collection
+                        royalty = String(royalty);
                     } catch (e) {
                         console.log("Royalty not found")
                     }
@@ -65,6 +66,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 } else {
                     try {
                         [royaltyReceiver, royalty] = await evmSingleNftContract.royaltyInfo(tokenId, BigInt(10000)); // royality of nft collection
+                        royalty = String(royalty);
                     } catch (e) {
                         console.log("Royalty not found")
                     }
@@ -72,7 +74,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 }
 
                 const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
-                const fee = await storageContract.chainFee(evmChainConfig.chain) // Required fee for claming nft on target chain
+                const fee = String(await storageContract.chainFee(evmChainConfig.chain)) // Required fee for claming nft on target chain
 
                 const nftTransferDetailsStruct_: NftTransferDetailsStruct = {
                     tokenId,

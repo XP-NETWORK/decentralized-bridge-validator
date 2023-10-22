@@ -29,9 +29,9 @@ const bridgeTestChains: IChain[] = [
         rpc: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
-        contractAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
+        contractAddress: "0x5aB1Fbd625CC8E343d08B0cDAc9EE88e7f8f9022",
         chainType: 'evm',
-        lastBlock: 4536179
+        lastBlock: 4539493
     }
 ]
 

@@ -7,3 +7,4 @@ tmp/
 temp/
 secrets.json
 database.sqlite
+test.ts

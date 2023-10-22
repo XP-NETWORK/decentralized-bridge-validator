@@ -92,14 +92,15 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                     nftType,
                     fee,
                 }
+                   
                 const nftTransferDetails = Object.values(nftTransferDetailsStruct_);
 
                 const nftTransferDetailsTypes = [
                     "uint256",
                     "string",
                     "string",
-                    "string",
-                    "string",
+                    "address",
+                    "address",
                     "string",
                     "string",
                     "uint256",
@@ -125,7 +126,8 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
 
                 try {
-
+                    console.log({nftTransferDetailsStruct_, sig: signedNftTransferDetails.signature});
+                    
                     const tx = await storageContract.approveLockNft(nftTransferDetailsStruct_, signedNftTransferDetails.signature);
                     console.log(`Lock Approved Transaction Hash: ${tx.hash}`);
 

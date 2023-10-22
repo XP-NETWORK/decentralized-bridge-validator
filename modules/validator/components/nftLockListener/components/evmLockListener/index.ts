@@ -125,7 +125,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 try {
 
                     const tx = await storageContract.approveLockNft(nftTransferDetailsStruct_, signedNftTransferDetails.signature);
-                    console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
+                    console.log(`Lock Approved Transaction Hash: ${tx.hash}`);
 
                 } catch (e) {
                     if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {

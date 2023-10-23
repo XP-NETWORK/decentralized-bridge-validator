@@ -34,13 +34,14 @@ const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promis
 }
 
 const stakeTokens = async ({ stakingConfig, privateKey }: IStakeTokens) => {
-    let stakedTokens = false
+    let stakedTokens = false;
+    const waitForMs = 5000;
     while (!stakedTokens) {
         try {
             await stakeTokens_({ stakingConfig, privateKey })
             stakedTokens = true;
         } catch (e) {
-            await waitForMSWithMsg(5000, "Error staking XpNets")
+            await waitForMSWithMsg(waitForMs, "Error staking XpNets")
         }
     }
 }

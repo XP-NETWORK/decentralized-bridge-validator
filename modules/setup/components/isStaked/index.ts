@@ -7,7 +7,8 @@ const isStaked = async ({ stakingConfig, privateKey }: IIsStaked): Promise<boole
     const wallet = new ethers.Wallet(privateKey || "", provider);
     const stakingContract = new ethers.Contract(stakingConfig.contractAddress, stakingABI, wallet);
     const stakedAmount = await stakingContract.stakingBalances(wallet.address);
-    return stakedAmount > BigInt(0)
+    const zero = 0;
+    return stakedAmount > BigInt(zero)
 }
 
 export default isStaked

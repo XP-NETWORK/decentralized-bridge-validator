@@ -4,7 +4,7 @@ import { promptToGetFunding } from "./components";
 import { IPromptToGetFunding } from "./components/promptToGetFunding/types";
 
 const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promise<void> => {
-
+    const waitForMs = 5000;
     let isNotFullyFunded = true;
     while (isNotFullyFunded) {
         try {
@@ -13,7 +13,7 @@ const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promis
                 await waitForKeyPress("Press [Enter] key after funding your addresses");
         } catch (e) {
             console.log(e)
-            await waitForMSWithMsg(5000, "Something went wrong")
+            await waitForMSWithMsg(waitForMs, "Something went wrong")
             isNotFullyFunded = true
         }
     }

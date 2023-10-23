@@ -18,7 +18,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
         const chain = evmChainConfig.chain;
         const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
         const { topicHash } = bridgeContract.interface.getEvent("Locked");
-        
+        const salePriceToGetTotalRoyalityPercentage = 10000; 
         const web3 = new Web3(evmChainConfig.rpc);
 
         const lockEventAbi = bridgeContractAbi.find(abi => abi.name === "Locked" && abi.type === "event");
@@ -28,10 +28,11 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
         const handleLog = async ({ log }: { log: LogEntry; }) => {
 
             if (typeof log !== "string" && log.topics.includes(topicHash)) {
+                const topicToIgnore = 1;
                 const decodedLog = web3.eth.abi.decodeLog(
                     lockEventAbi.inputs,
                     log.data,
-                    log.topics.slice(1)
+                    log.topics.slice(topicToIgnore)
                 );
 
                 const tokenId = String(decodedLog.tokenId); // Unique ID for the NFT transfer
@@ -57,7 +58,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
 
                 if (nftType === "multiple") {
                     try {
-                        [royaltyReceiver, royalty] = await evmMultiNftContract.royaltyInfo(tokenId, BigInt(10000)); // royality of nft collection
+                        [royaltyReceiver, royalty] = await evmMultiNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage)); // royality of nft collection
                         royalty = String(royalty);
                     } catch (e) {
                         console.log("Royalty not found")
@@ -65,7 +66,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                     metadata = await evmMultiNftContract.uri(tokenId);
                 } else {
                     try {
-                        [royaltyReceiver, royalty] = await evmSingleNftContract.royaltyInfo(tokenId, BigInt(10000)); // royality of nft collection
+                        [royaltyReceiver, royalty] = await evmSingleNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage)); // royality of nft collection
                         royalty = String(royalty);
                     } catch (e) {
                         console.log("Royalty not found")

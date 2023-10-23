@@ -12,6 +12,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
     let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address.trim()));
     let failiure = true
     const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
+    const waitForMs = 5000;
 
     while (failiure) {
         try {
@@ -23,7 +24,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
                 let validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 while (signatureCount < confirmationCountNeeded(validatorCountInChain)) {
-                    await waitForMSWithMsg(5000, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${confirmationCountNeeded(validatorCountInChain)}`)
+                    await waitForMSWithMsg(waitForMs, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${confirmationCountNeeded(validatorCountInChain)}`)
                     signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
                     validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 }
@@ -45,7 +46,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
             failiure = false
         } catch (e) {
             console.log(e)
-            await waitForMSWithMsg(5000, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
+            await waitForMSWithMsg(waitForMs, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
         }
     }
 

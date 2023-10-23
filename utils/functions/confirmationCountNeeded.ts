@@ -1,5 +1,7 @@
 const confirmationCountNeeded = (validatorCount: number) => {
-    return (Math.floor(2 / 3 * validatorCount)) + 1
+    const twoByThree = 0.666666667;
+    const paddedValidatorCount = 1;
+    return (Math.floor(twoByThree * validatorCount)) + paddedValidatorCount
 }
 
 export default confirmationCountNeeded

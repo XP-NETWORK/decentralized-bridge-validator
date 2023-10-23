@@ -25,10 +25,11 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
         const handleLog = async ({ log }: { log: LogEntry; }) => {
 
             if (typeof log !== "string" && log.topics.includes(topicHash)) {
+                const topicToIgnore = 1;
                 const decodedLog = web3.eth.abi.decodeLog(
                     stakedEventAbi.inputs,
                     log.data,
-                    log.topics.slice(1)
+                    log.topics.slice(topicToIgnore)
                 );
                 const stakerAddress = String(decodedLog.user);
                 console.log({ stakerAddress, pv: wallets.evmWallet.privateKey })

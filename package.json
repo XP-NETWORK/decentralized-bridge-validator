@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "main": "setup.js",
   "scripts": {
-    "dev": "ts-node setup.ts",
+    "dev": "ts-node -T src/setup.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs"
@@ -20,7 +20,10 @@
   "dependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.4",
     "@types/web3": "^1.2.2",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "bullmq": "^4.12.5",
+    "eslint": "^8.52.0",
     "ethers": "^6.8.0",
     "hardhat": "^2.18.2",
     "ioredis": "^5.3.2",

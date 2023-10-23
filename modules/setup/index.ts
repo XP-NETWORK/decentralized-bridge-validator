@@ -27,7 +27,7 @@ const setup = async () => {
   }
 
   // Generate wallets
-  let wallets: IGeneratedWallets = await generateWalletsForChains()
+  const wallets: IGeneratedWallets = await generateWalletsForChains()
 
   // Check if staked then contininue else get initial funding and stake
   if (await isStaked({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })) {

@@ -2,7 +2,6 @@ import { confirmationCountNeeded, getStorageContract, waitForMSWithMsg } from ".
 import { handleEvmPromt } from "../../getInitialFunds/components/promptToGetFunding/handleEvmPrompt";
 import { getEvmBridgeContract, waitForKeyPress } from "../../../../../utils/functions";
 import { IHandleEvmValidatorAddition } from "./types";
-import { ethers } from "ethers";
 
 const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, evmWallet }: IHandleEvmValidatorAddition) => {
 
@@ -38,7 +37,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
                     isNotFullyFunded = await handleEvmPromt({ evmChainConfig, evmPublicAddress: evmWallet.address });
                     if (isNotFullyFunded)
                         await waitForKeyPress("Press [Enter] key after funding your addresses")
-                };
+                }
 
                 const addValidatorTx = await bridgeContract.addValidator(evmWallet.address, stakingSignatures);
                 console.log(`Added self as validator in chain: ${evmChainConfig.chain}, txHash: ${addValidatorTx.hash}`);

@@ -1,6 +1,6 @@
 const promtDisplayHelp = () => {
     console.log('Usage:');
-    console.log('  node yourScript.js [options]');
+    console.log('  npm run dev [options]');
     console.log('\nOptions:');
     console.log('  --testnet         Setup for testnet environment');
     console.log('  --help            Display this help message and exit');

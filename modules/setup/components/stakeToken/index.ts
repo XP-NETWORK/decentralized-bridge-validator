@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { erc20ABI, stakingABI } from '../../../../abi';
+import { erc20ABI } from '../../../../abi';
 import { isStaked } from "../"
 import { IStakeTokens } from './types';
 import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';

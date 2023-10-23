@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers";
+import {  ethers } from "ethers";
 
 import { IEvmChainConfigAndEvmWallet } from "../types";
 import {  ERC20Staking, ERC20Staking__factory } from "../../contractsTypes";

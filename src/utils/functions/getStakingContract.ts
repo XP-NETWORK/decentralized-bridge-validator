@@ -1,14 +1,13 @@
-import {  ethers } from "ethers";
+import { ethers } from "ethers";
 
-import { IEvmChainConfigAndEvmWallet } from "../types";
-import {  ERC20Staking, ERC20Staking__factory } from "../../contractsTypes";
+import { ERC20Staking, ERC20Staking__factory } from "../../contractsTypes";
 
 
-const getStakingContract = ({ evmChainConfig, evmWallet }: IEvmChainConfigAndEvmWallet): ERC20Staking => {
-    const opProvider = new ethers.JsonRpcProvider(evmChainConfig.rpc);
+const getStakingContract = ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): ERC20Staking => {
+    const opProvider = new ethers.JsonRpcProvider(stakingChainConfig.rpcURL);
     const opWallet = new ethers.Wallet(evmWallet.privateKey, opProvider);
 
-    return ERC20Staking__factory.connect(evmChainConfig.contractAddress, opWallet);
+    return ERC20Staking__factory.connect(stakingChainConfig.contractAddress, opWallet);
 }
 
 export default getStakingContract

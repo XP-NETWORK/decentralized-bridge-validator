@@ -1,22 +1,21 @@
 import { ethers } from 'ethers';
 import { erc20ABI } from '../../abi';
-import { IGetCurrentEvmBalance } from '../types';
 
 
-const getCurrentEvmBalance = async ({ rpc, coinAddress, accAddress }: IGetCurrentEvmBalance): Promise<bigint> => {
+const getCurrentEvmBalance = async (configs: IEvmChainConfigAndEvmWallet | IStakingChainConfigAndEvmWallet): Promise<bigint> => {
     try {
+        const rpc = "stakingChainConfig" in configs ? configs.stakingChainConfig.rpcURL : configs.evmChainConfig.rpcURL;
         const provider = new ethers.JsonRpcProvider(rpc);
-
-        if (coinAddress) {
-            const contract = new ethers.Contract(coinAddress, erc20ABI, provider);
-            const rawBalance = await contract.balanceOf(accAddress);
+        if ("stakingChainConfig" in configs) {
+            const contract = new ethers.Contract(configs.stakingChainConfig.coinAddress, erc20ABI, provider);
+            const rawBalance = await contract.balanceOf(configs.evmWallet.address);
             return BigInt(rawBalance.toString());
         }
 
-        const rawBalance = await provider.getBalance(accAddress || "0x00");
+        const rawBalance = await provider.getBalance(configs.evmWallet.address);
         return BigInt(rawBalance.toString());
     } catch (e) {
-        console.error("RPC issue:", rpc )
+        console.error("RPC issue:", { configs })
         throw ("Error while getCurrentEvmBalance")
     }
 }

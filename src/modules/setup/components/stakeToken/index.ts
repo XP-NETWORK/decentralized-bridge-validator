@@ -1,30 +1,34 @@
 import { ethers } from 'ethers';
 import { erc20ABI } from '../../../../abi';
 import { isStaked } from "../"
-import { IStakeTokens } from './types';
 import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
 import { getStakingContract } from '../../../../utils';
+import { processDelayMilliseconds } from '../../../../utils/constants/processDelayMilliseconds';
 
-const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promise<void> => {
-    const provider = new ethers.JsonRpcProvider(stakingConfig.rpc);
-    const wallet = new ethers.Wallet(privateKey || "", provider);
-    const stakingContract = getStakingContract({ evmChainConfig: stakingConfig, evmWallet: { address: wallet.address, privateKey } })
-    const xpTokenContract = new ethers.Contract(stakingConfig.coinAddress, erc20ABI, wallet);
+const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<void> => {
+
+    const provider = new ethers.JsonRpcProvider(stakingChainConfig.rpcURL);
+    const privateKey = evmWallet.privateKey;
+    const wallet = new ethers.Wallet(privateKey, provider);
+    const stakingContract = getStakingContract({ stakingChainConfig, evmWallet })
+    const xpTokenContract = new ethers.Contract(stakingChainConfig.coinAddress, erc20ABI, wallet);
 
     const stakedAmount = await stakingContract.stakingBalances(wallet.address);
 
-    if (await isStaked({ stakingConfig, privateKey })) {
+    if (await isStaked({ stakingChainConfig, evmWallet })) {
         console.log("Stake Found", stakedAmount.toString())
     } else {
-        const amountToStake = stakingConfig.intialFund;
+        const amountToStake = stakingChainConfig.intialFund;
         try {
-            const approveTx = await xpTokenContract.approve(stakingConfig.contractAddress, amountToStake)
+
+            const approveTx = await xpTokenContract.approve(stakingChainConfig.contractAddress, amountToStake)
             await approveTx.wait()
             console.log(`Token Approve Transaction Hash: ${approveTx.hash}`);
-            console.log(await stakingContract.ERC20Token(), stakingConfig.coinAddress)
-            const tx = await stakingContract.stakeERC20();
-            console.log(`Tokens staked Transaction Hash: ${tx.hash}`);
-            await tx.wait();
+
+            const stakeTx = await stakingContract.stakeERC20();
+            await stakeTx.wait();
+            console.log(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
+
             console.log('Tokens staked successfully!');
         } catch (error) {
             console.log(error)
@@ -33,15 +37,14 @@ const stakeTokens_ = async ({ stakingConfig, privateKey }: IStakeTokens): Promis
     }
 }
 
-const stakeTokens = async ({ stakingConfig, privateKey }: IStakeTokens) => {
+const stakeTokens = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet) => {
     let stakedTokens = false;
-    const waitForMs = 5000;
     while (!stakedTokens) {
         try {
-            await stakeTokens_({ stakingConfig, privateKey })
+            await stakeTokens_({ stakingChainConfig, evmWallet })
             stakedTokens = true;
         } catch (e) {
-            await waitForMSWithMsg(waitForMs, "Error staking XpNets")
+            await waitForMSWithMsg(processDelayMilliseconds, "Error staking XpNets")
         }
     }
 }

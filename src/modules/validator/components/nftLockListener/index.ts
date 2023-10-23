@@ -1,4 +1,3 @@
-import { IConfigAndWallets } from "../../types"
 import { evmLockListener } from "./components"
 
 const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {

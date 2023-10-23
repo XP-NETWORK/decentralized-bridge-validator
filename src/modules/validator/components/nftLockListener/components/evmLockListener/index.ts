@@ -2,9 +2,7 @@ import Web3 from "web3";
 import { LogEntry } from "../../../../utils/evmContractListener/types";
 import { bridgeContractAbi } from "../../../../../../abi";
 import { createJobWithWorker, evmContractListener } from '../../../../utils';
-import { IConfigAndWallets } from "../../../../types";
 import { getEvmMultiNftContract, getStorageContract, getEvmSingleNftContract } from "../../../../../../utils";
-import { IEvmChainConfigAndEvmWallet } from "../../../../../../utils/types";
 import { NftTransferDetailsStruct } from "../../../../../../contractsTypes/contracts/BridgeStorage";
 import { getEvmBridgeContract } from "../../../../../../utils/functions";
 
@@ -13,13 +11,13 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
     const jobFunction = async (data: IEvmChainConfigAndEvmWallet) => {
         const { evmChainConfig, evmWallet } = data
         const contractAddress = evmChainConfig.contractAddress;
-        const rpcUrl = evmChainConfig.rpc;
+        const rpcUrl = evmChainConfig.rpcURL;
         const lastBlock_ = evmChainConfig.lastBlock;
         const chain = evmChainConfig.chain;
         const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
         const { topicHash } = bridgeContract.interface.getEvent("Locked");
         const salePriceToGetTotalRoyalityPercentage = 10000; 
-        const web3 = new Web3(evmChainConfig.rpc);
+        const web3 = new Web3(evmChainConfig.rpcURL);
 
         const lockEventAbi = bridgeContractAbi.find(abi => abi.name === "Locked" && abi.type === "event");
 
@@ -43,7 +41,7 @@ const evmLockListener = async (configAndWallets: IConfigAndWallets) => {
                 const nftType = String(decodedLog.nftType);
                 const sourceChain = String(decodedLog.sourceChain); // Source chain of NFT
 
-                const sourceChainRpcURL = configAndWallets.config.bridgeChains.find(item => item.chain === sourceChain).rpc;
+                const sourceChainRpcURL = configAndWallets.config.bridgeChains.find(item => item.chain === sourceChain).rpcURL;
 
                 const evmSingleNftContract = getEvmSingleNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL }, evmWallet })
                 const evmMultiNftContract = getEvmMultiNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL }, evmWallet })

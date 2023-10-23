@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { IContractConfigAndEvmWallet } from "../types";
 import { ERC1155Royalty__factory, ERC1155Royalty } from "../../contractsTypes";
 
 

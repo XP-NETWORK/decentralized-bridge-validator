@@ -2,6 +2,7 @@ import { confirmationCountNeeded, getStorageContract, waitForMSWithMsg } from ".
 import { handleEvmPromt } from "../../getInitialFunds/components/promptToGetFunding/handleEvmPrompt";
 import { getEvmBridgeContract, waitForKeyPress } from "../../../../../utils/functions";
 import { IHandleEvmValidatorAddition } from "./types";
+import { processDelayMilliseconds } from "../../../../../utils/constants/processDelayMilliseconds";
 
 const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, evmWallet }: IHandleEvmValidatorAddition) => {
 
@@ -9,10 +10,9 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
     const storageContract = getStorageContract({ evmChainConfig: storageChainConfig, evmWallet });
 
-    let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address.trim()));
+    let signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
     let failiure = true
     const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
-    const waitForMs = 5000;
 
     while (failiure) {
         try {
@@ -24,7 +24,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
                 let validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 while (signatureCount < confirmationCountNeeded(validatorCountInChain)) {
-                    await waitForMSWithMsg(waitForMs, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${confirmationCountNeeded(validatorCountInChain)}`)
+                    await waitForMSWithMsg(processDelayMilliseconds, `Signature count not sufficient; current count: ${signatureCount}, needed count: ${confirmationCountNeeded(validatorCountInChain)}`)
                     signatureCount = Number(await storageContract.getStakingSignaturesCount(evmWallet.address));
                     validatorCountInChain = Number(await bridgeContract.validatorsCount());
                 }
@@ -35,7 +35,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
                 while (isNotFullyFunded) {
                     // @TODO handle staking + intial fund case 
-                    isNotFullyFunded = await handleEvmPromt({ evmChainConfig, evmPublicAddress: evmWallet.address });
+                    isNotFullyFunded = await handleEvmPromt({ evmChainConfig, evmWallet });
                     if (isNotFullyFunded)
                         await waitForKeyPress("Press [Enter] key after funding your addresses")
                 }
@@ -46,7 +46,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
             failiure = false
         } catch (e) {
             console.log(e)
-            await waitForMSWithMsg(waitForMs, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
+            await waitForMSWithMsg(processDelayMilliseconds, `Something went wrong in handleEvmValidatorAddition chain ${evmChainConfig.chain}`)
         }
     }
 

@@ -1,8 +1,4 @@
-import { IConfigAndWallets } from "../../../validator/types";
 import { handleEvmValidatorAddition } from "./components";
-
-
-// @TODO after getting the bridge contract see if this still works
 
 const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {
 

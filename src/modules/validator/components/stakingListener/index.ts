@@ -2,7 +2,6 @@ import Web3 from "web3";
 import { LogEntry } from "../../utils/evmContractListener/types";
 import { stakingABI } from "../../../../abi";
 import { createJobWithWorker, evmContractListener } from '../../utils';
-import { IConfigAndWallets } from "../../types";
 import { getStakingContract, getStorageContract } from "../../../../utils";
 
 const stakingListener = async (jobData: IConfigAndWallets) => {
@@ -10,14 +9,14 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
     const jobFunction = async (data: IConfigAndWallets) => {
         const { config, wallets }: IConfigAndWallets = data;
         const contractAddress = config.stakingConfig.contractAddress;
-        const rpcUrl = config.stakingConfig.rpc;
+        const rpcUrl = config.stakingConfig.rpcURL;
         const lastBlock_ = config.stakingConfig.lastBlock;
         const chain = config.stakingConfig.chain;
         const storageContract = getStorageContract({ evmChainConfig: config.optimismChain, evmWallet: wallets.evmWallet });
-        const stakingContract = getStakingContract({ evmChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })
+        const stakingContract = getStakingContract({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })
         const { topicHash } = stakingContract.interface.getEvent("Staked");
 
-        const web3 = new Web3(config.stakingConfig.rpc);
+        const web3 = new Web3(config.stakingConfig.rpcURL);
         const stakedEventAbi = stakingABI.find(abi => abi.name === "Staked" && abi.type === "event");
 
 

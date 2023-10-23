@@ -1,4 +1,3 @@
-import { IGeneratedWallets } from "../types";
 import isEvmWallet from "./isEvmWallet";
 
 function isGeneratedWallets(object: unknown): object is IGeneratedWallets {

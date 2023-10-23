@@ -1,11 +1,9 @@
-import { prodChainConfigs, testnetChainConfigs } from "../../config/chainSpecs";
-import { IBridgeConfig } from "../../config/types";
+import { prodBridgeConfig, testnetBridgeConfig } from "../../config/chainSpecs";
 import { AppDataSource } from "../../db/data-source";
 import { runValidators } from "../validator";
 import { redisIOConnection } from "../../utils";
 import { addSelfInBridges, generateWalletsForChains, getInitialFunds, isStaked, promtDisplayHelp } from "./components";
 import { stakeTokens } from "./components";
-import { IGeneratedWallets } from "./types";
 
 const setup = async () => {
 
@@ -20,9 +18,9 @@ const setup = async () => {
   await redisIOConnection.flushall()
 
   // Setup Configs
-  let config: IBridgeConfig = prodChainConfigs
+  let config: IBridgeConfig = prodBridgeConfig
   if (process.argv.includes('--testnet')) {
-    config = testnetChainConfigs
+    config = testnetBridgeConfig
     console.log("-------------------------- Running in testnet --------------------------------")
   }
 
@@ -30,11 +28,12 @@ const setup = async () => {
   const wallets: IGeneratedWallets = await generateWalletsForChains()
 
   // Check if staked then contininue else get initial funding and stake
-  if (await isStaked({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })) {
+  if (await isStaked({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })) {
     console.log("Stake found");
   } else {
+
     await getInitialFunds({ wallets, config });
-    await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })
+    await stakeTokens({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })
   }
 
   await addSelfInBridges({ config, wallets });

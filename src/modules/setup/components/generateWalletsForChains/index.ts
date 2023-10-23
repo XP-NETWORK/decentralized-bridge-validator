@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import { IGeneratedWallets } from '../../types';
 import { readJsonFile } from '../../../../utils';
 import { isGeneratedWallets } from '../../typesGuardRuntime';
 import { promises as fs } from 'fs';

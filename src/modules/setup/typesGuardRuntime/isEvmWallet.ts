@@ -1,4 +1,3 @@
-import { IEvmWallet } from "../types";
 
 function isEvmWallet(object: unknown): object is IEvmWallet {
 

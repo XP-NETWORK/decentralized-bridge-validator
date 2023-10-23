@@ -1,11 +1,10 @@
-import { IChainConfig, IBridgeConfig, IStakingConfig } from "./types"
 
 /*
     Test network for bridge
 */
 const optimismTestChain: IChainConfig = {
     chain: "OP",
-    rpc: "https://optimism-goerli.publicnode.com",
+    rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
     contractAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
@@ -17,7 +16,7 @@ const optimismTestChain: IChainConfig = {
 const bridgeTestChains: IChainConfig[] = [
     {
         chain: "BSC",
-        rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
+        rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
         nativeCoinSymbol: "BNB",
         intialFund: "100000000000000000",
         contractAddress: "0x6daa97BC61aa0B9731fc9249EaB7Dd439Af2e4f3",
@@ -26,7 +25,7 @@ const bridgeTestChains: IChainConfig[] = [
     },
     {
         chain: "ETH",
-        rpc: "https://ethereum-sepolia.publicnode.com",
+        rpcURL: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "100000000000000000",
         contractAddress: "0x5aB1Fbd625CC8E343d08B0cDAc9EE88e7f8f9022",
@@ -37,7 +36,7 @@ const bridgeTestChains: IChainConfig[] = [
 
 const stakingTestChain: IStakingConfig = {
     chain: "BSC",
-    rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
+    rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
     coinSymbol: "ERC",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
@@ -48,7 +47,7 @@ const stakingTestChain: IStakingConfig = {
 }
 
 
-const testnetChainConfigs: IBridgeConfig = {
+const testnetBridgeConfig: IBridgeConfig = {
     bridgeChains: bridgeTestChains,
     optimismChain: optimismTestChain,
     stakingConfig: stakingTestChain
@@ -59,7 +58,7 @@ const testnetChainConfigs: IBridgeConfig = {
 */
 const optimismProdChain: IChainConfig = {
     chain: "OP",
-    rpc: "https://mainnet.optimism.io",
+    rpcURL: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
     intialFund: "500000000000000000",
     contractAddress: "0xBridgeStorageAddress",
@@ -70,7 +69,7 @@ const optimismProdChain: IChainConfig = {
 const bridgeProdChains: IChainConfig[] = [
     {
         chain: "BSC",
-        rpc: "https://bsc-dataseed1.binance.org/",
+        rpcURL: "https://bsc-dataseed1.binance.org/",
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
         contractAddress: "0x0471fcD1De1fCB7C9f426630c8D1579fb3496c87",
@@ -79,7 +78,7 @@ const bridgeProdChains: IChainConfig[] = [
     },
     {
         chain: "ETH",
-        rpc: "https://ethereum-sepolia.publicnode.com",
+        rpcURL: "https://ethereum-sepolia.publicnode.com",
         nativeCoinSymbol: "ETH",
         intialFund: "500000000000000000",
         contractAddress: "0xBE65Ba9DC7DE80e5B80f7d93a14450E2Ad25a16B",
@@ -89,7 +88,7 @@ const bridgeProdChains: IChainConfig[] = [
 ]
 const stakingProdChain: IStakingConfig = {
     chain: "BSC",
-    rpc: "https://bsc-testnet.publicnode.com",
+    rpcURL: "https://bsc-testnet.publicnode.com",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
@@ -100,7 +99,7 @@ const stakingProdChain: IStakingConfig = {
 }
 
 
-const prodChainConfigs: IBridgeConfig = {
+const prodBridgeConfig: IBridgeConfig = {
     bridgeChains: bridgeProdChains,
     optimismChain: optimismProdChain,
     stakingConfig: stakingProdChain
@@ -108,4 +107,4 @@ const prodChainConfigs: IBridgeConfig = {
 
 const BLOCK_CHUNKS = 1000;
 
-export { BLOCK_CHUNKS, testnetChainConfigs, prodChainConfigs }
+export { BLOCK_CHUNKS, testnetBridgeConfig, prodBridgeConfig }

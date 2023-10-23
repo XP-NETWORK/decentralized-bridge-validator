@@ -1,10 +1,10 @@
+import { processDelayMilliseconds } from "../../../../utils/constants/processDelayMilliseconds";
 import { waitForKeyPress } from "../../../../utils/functions";
 import waitForMSWithMsg from "../../../../utils/functions/waitForMSWithMsg";
 import { promptToGetFunding } from "./components";
-import { IPromptToGetFunding } from "./components/promptToGetFunding/types";
 
-const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promise<void> => {
-    const waitForMs = 5000;
+const getInitialFunds = async ({ config, wallets }: IConfigAndWallets): Promise<void> => {
+
     let isNotFullyFunded = true;
     while (isNotFullyFunded) {
         try {
@@ -13,7 +13,7 @@ const getInitialFunds = async ({ wallets, config }: IPromptToGetFunding): Promis
                 await waitForKeyPress("Press [Enter] key after funding your addresses");
         } catch (e) {
             console.log(e)
-            await waitForMSWithMsg(waitForMs, "Something went wrong")
+            await waitForMSWithMsg(processDelayMilliseconds, "Something went wrong")
             isNotFullyFunded = true
         }
     }

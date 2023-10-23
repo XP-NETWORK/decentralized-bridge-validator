@@ -1,10 +1,6 @@
-import { IChainConfig } from "../../../../../config/types";
-import { IEvmWallet } from "../../../types";
 
-interface IHandleEvmValidatorAddition {
+interface IHandleEvmValidatorAddition extends IEvmChainConfigAndEvmWallet {
     storageChainConfig: IChainConfig;
-    evmChainConfig: IChainConfig;
-    evmWallet: IEvmWallet;
 }
 
 export { IHandleEvmValidatorAddition }

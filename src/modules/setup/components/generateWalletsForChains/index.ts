@@ -20,7 +20,7 @@ const generateWalletsForChains_ = (): IGeneratedWallets => {
 
 
 const generateWalletsForChains = async (): Promise<IGeneratedWallets> => {
-    const secretsFile = 'config/secrets.json';
+    const secretsFile = 'src/config/secrets.json';
     let wallets: IGeneratedWallets | null = null;
 
     try {

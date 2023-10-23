@@ -1,5 +1,5 @@
-import { prodChainSpecs, testnetChainSpecs } from "../../config/chainSpecs";
-import { IChainSpecs } from "../../config/types";
+import { prodChainConfigs, testnetChainConfigs } from "../../config/chainSpecs";
+import { IBridgeConfig } from "../../config/types";
 import { AppDataSource } from "../../db/data-source";
 import { runValidators } from "../validator";
 import { redisIOConnection } from "../../utils";
@@ -20,9 +20,9 @@ const setup = async () => {
   await redisIOConnection.flushall()
 
   // Setup Configs
-  let config: IChainSpecs = prodChainSpecs
+  let config: IBridgeConfig = prodChainConfigs
   if (process.argv.includes('--testnet')) {
-    config = testnetChainSpecs
+    config = testnetChainConfigs
     console.log("-------------------------- Running in testnet --------------------------------")
   }
 
@@ -37,7 +37,7 @@ const setup = async () => {
     await stakeTokens({ stakingConfig: config.stakingConfig, privateKey: wallets.evmWallet.privateKey })
   }
 
-  await addSelfInBridges({config, wallets});
+  await addSelfInBridges({ config, wallets });
 
   // Run the validators
   await runValidators({ config, wallets })

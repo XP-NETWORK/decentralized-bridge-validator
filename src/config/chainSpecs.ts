@@ -1,9 +1,9 @@
-import { IChain, IChainSpecs, IStakingConfig } from "./types"
+import { IChainConfig, IBridgeConfig, IStakingConfig } from "./types"
 
 /*
     Test network for bridge
 */
-const optimismTestChain: IChain = {
+const optimismTestChain: IChainConfig = {
     chain: "OP",
     rpc: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
@@ -14,7 +14,7 @@ const optimismTestChain: IChain = {
 }
 
 
-const bridgeTestChains: IChain[] = [
+const bridgeTestChains: IChainConfig[] = [
     {
         chain: "BSC",
         rpc: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
@@ -22,7 +22,7 @@ const bridgeTestChains: IChain[] = [
         intialFund: "100000000000000000",
         contractAddress: "0x6daa97BC61aa0B9731fc9249EaB7Dd439Af2e4f3",
         chainType: 'evm',
-        lastBlock: 	34410865
+        lastBlock: 34410865
     },
     {
         chain: "ETH",
@@ -48,7 +48,7 @@ const stakingTestChain: IStakingConfig = {
 }
 
 
-const testnetChainSpecs: IChainSpecs = {
+const testnetChainConfigs: IBridgeConfig = {
     bridgeChains: bridgeTestChains,
     optimismChain: optimismTestChain,
     stakingConfig: stakingTestChain
@@ -57,7 +57,7 @@ const testnetChainSpecs: IChainSpecs = {
 /*
     Prod network for bridge
 */
-const optimismProdChain: IChain = {
+const optimismProdChain: IChainConfig = {
     chain: "OP",
     rpc: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
@@ -67,7 +67,7 @@ const optimismProdChain: IChain = {
     lastBlock: 21321
 }
 
-const bridgeProdChains: IChain[] = [
+const bridgeProdChains: IChainConfig[] = [
     {
         chain: "BSC",
         rpc: "https://bsc-dataseed1.binance.org/",
@@ -100,7 +100,7 @@ const stakingProdChain: IStakingConfig = {
 }
 
 
-const prodChainSpecs: IChainSpecs = {
+const prodChainConfigs: IBridgeConfig = {
     bridgeChains: bridgeProdChains,
     optimismChain: optimismProdChain,
     stakingConfig: stakingProdChain
@@ -108,4 +108,4 @@ const prodChainSpecs: IChainSpecs = {
 
 const BLOCK_CHUNKS = 1000;
 
-export { BLOCK_CHUNKS, testnetChainSpecs, prodChainSpecs }
+export { BLOCK_CHUNKS, testnetChainConfigs, prodChainConfigs }

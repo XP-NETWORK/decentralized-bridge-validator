@@ -1,4 +1,4 @@
-interface IChain {
+interface IChainConfig {
     chain: string;
     rpc: string;
     nativeCoinSymbol: string;
@@ -8,16 +8,16 @@ interface IChain {
     chainType: 'evm'
 }
 
-interface IStakingConfig extends IChain {
+interface IStakingConfig extends IChainConfig {
     coinSymbol: string;
     coinAddress: string;
     lastBlock: number;
 }
 
-interface IChainSpecs {
-    bridgeChains: IChain[];
-    optimismChain: IChain;
+interface IBridgeConfig {
+    bridgeChains: IChainConfig[];
+    optimismChain: IChainConfig;
     stakingConfig: IStakingConfig;
 }
 
-export { IChain, IChainSpecs , IStakingConfig}
+export { IChainConfig, IBridgeConfig, IStakingConfig }

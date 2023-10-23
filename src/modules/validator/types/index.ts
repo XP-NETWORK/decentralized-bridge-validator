@@ -1,8 +1,8 @@
-import { IChainSpecs } from "../../../config/types";
+import { IBridgeConfig } from "../../../config/types";
 import { IGeneratedWallets } from "../../setup/types";
 
 interface IConfigAndWallets {
-    config: IChainSpecs;
+    config: IBridgeConfig;
     wallets: IGeneratedWallets;
 }
 

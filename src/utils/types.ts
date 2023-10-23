@@ -1,8 +1,8 @@
-import { IChain } from "../config/types";
+import { IChainConfig } from "../config/types";
 import { IEvmWallet } from "../modules/setup/types";
 
 interface IEvmChainConfigAndEvmWallet {
-    evmChainConfig: IChain;
+    evmChainConfig: IChainConfig;
     evmWallet: IEvmWallet;
 }
 
@@ -14,7 +14,7 @@ interface IGetCurrentEvmBalance {
 }
 interface IContractConfig {
     contractAddress: string;
-    rpcURL : string;
+    rpcURL: string;
 }
 
 

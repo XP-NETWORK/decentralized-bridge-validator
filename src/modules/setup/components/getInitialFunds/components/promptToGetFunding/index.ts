@@ -6,15 +6,15 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
 
     let isNotFullyFunded = false;
 
-    // Optimism fund promt
-    if (await handleEvmPromt({ evmChainConfig: config.optimismChain, evmWallet: wallets.evmWallet })) {
+    // Storage chain fund promt
+    if (await handleEvmPromt({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet })) {
         isNotFullyFunded = true
     }
 
     // Bridge chains fund promt
-    for (const evmChainConfig of config.bridgeChains) {
-        if (evmChainConfig.chainType == 'evm') {
-            if (await handleEvmPromt({ evmChainConfig,  evmWallet: wallets.evmWallet  })) {
+    for (const chainConfig of config.bridgeChains) {
+        if (chainConfig.chainType == 'evm') {
+            if (await handleEvmPromt({ evmChainConfig: chainConfig, evmWallet: wallets.evmWallet })) {
                 isNotFullyFunded = true
             }
         }

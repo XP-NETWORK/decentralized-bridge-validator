@@ -80,6 +80,7 @@ export interface BridgeInterface extends Interface {
       | "addValidator"
       | "claimNFT1155"
       | "claimNFT721"
+      | "collectionDeployer"
       | "duplicateStorageMapping1155"
       | "duplicateStorageMapping721"
       | "duplicateToOriginalMapping"
@@ -89,6 +90,7 @@ export interface BridgeInterface extends Interface {
       | "originalStorageMapping721"
       | "originalToDuplicateMapping"
       | "selfChain"
+      | "storageDeployer"
       | "uniqueIdentifier"
       | "validators"
       | "validatorsCount"
@@ -114,6 +116,10 @@ export interface BridgeInterface extends Interface {
   encodeFunctionData(
     functionFragment: "claimNFT721",
     values: [Bridge.ClaimDataStruct, BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "collectionDeployer",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "duplicateStorageMapping1155",
@@ -149,6 +155,10 @@ export interface BridgeInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "selfChain", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "storageDeployer",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "uniqueIdentifier",
     values: [BytesLike]
   ): string;
@@ -171,6 +181,10 @@ export interface BridgeInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "claimNFT721",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collectionDeployer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -200,6 +214,10 @@ export interface BridgeInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "selfChain", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "storageDeployer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "uniqueIdentifier",
     data: BytesLike
@@ -374,6 +392,8 @@ export interface Bridge extends BaseContract {
     "payable"
   >;
 
+  collectionDeployer: TypedContractMethod<[], [string], "view">;
+
   duplicateStorageMapping1155: TypedContractMethod<
     [arg0: AddressLike, arg1: string],
     [string],
@@ -435,6 +455,8 @@ export interface Bridge extends BaseContract {
 
   selfChain: TypedContractMethod<[], [string], "view">;
 
+  storageDeployer: TypedContractMethod<[], [string], "view">;
+
   uniqueIdentifier: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
   validators: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
@@ -466,6 +488,9 @@ export interface Bridge extends BaseContract {
     [void],
     "payable"
   >;
+  getFunction(
+    nameOrSignature: "collectionDeployer"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "duplicateStorageMapping1155"
   ): TypedContractMethod<[arg0: AddressLike, arg1: string], [string], "view">;
@@ -519,6 +544,9 @@ export interface Bridge extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "selfChain"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "storageDeployer"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "uniqueIdentifier"

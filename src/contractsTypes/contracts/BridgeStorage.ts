@@ -28,64 +28,15 @@ export type ChainFeeStructOutput = [chain: string, fee: bigint] & {
   fee: bigint;
 };
 
-export type NftTransferDetailsStruct = {
-  tokenId: BigNumberish;
-  sourceChain: string;
-  destinationChain: string;
-  destinationUserAddress: AddressLike;
-  sourceNftContractAddress: AddressLike;
-  name: string;
-  symbol: string;
-  royalty: BigNumberish;
-  royaltyReceiver: AddressLike;
-  metadata: string;
-  transactionHash: string;
-  tokenAmount: BigNumberish;
-  nftType: string;
-  fee: BigNumberish;
+export type SignerAndSignatureStruct = {
+  publicAddress: AddressLike;
+  signature: string;
 };
 
-export type NftTransferDetailsStructOutput = [
-  tokenId: bigint,
-  sourceChain: string,
-  destinationChain: string,
-  destinationUserAddress: string,
-  sourceNftContractAddress: string,
-  name: string,
-  symbol: string,
-  royalty: bigint,
-  royaltyReceiver: string,
-  metadata: string,
-  transactionHash: string,
-  tokenAmount: bigint,
-  nftType: string,
-  fee: bigint
-] & {
-  tokenId: bigint;
-  sourceChain: string;
-  destinationChain: string;
-  destinationUserAddress: string;
-  sourceNftContractAddress: string;
-  name: string;
-  symbol: string;
-  royalty: bigint;
-  royaltyReceiver: string;
-  metadata: string;
-  transactionHash: string;
-  tokenAmount: bigint;
-  nftType: string;
-  fee: bigint;
-};
-
-export type NftTransferWithSignaturesStruct = {
-  transferDetails: NftTransferDetailsStruct;
-  signatures: string[];
-};
-
-export type NftTransferWithSignaturesStructOutput = [
-  transferDetails: NftTransferDetailsStructOutput,
-  signatures: string[]
-] & { transferDetails: NftTransferDetailsStructOutput; signatures: string[] };
+export type SignerAndSignatureStructOutput = [
+  publicAddress: string,
+  signature: string
+] & { publicAddress: string; signature: string };
 
 export interface BridgeStorageInterface extends Interface {
   getFunction(
@@ -98,7 +49,6 @@ export interface BridgeStorageInterface extends Interface {
       | "chainFeeVotes"
       | "changeChainFee"
       | "changeValidatorStatus"
-      | "concatenate"
       | "getLockNftSignatures"
       | "getLockNftSignaturesCount"
       | "getStakingSignatures"
@@ -115,7 +65,7 @@ export interface BridgeStorageInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "approveLockNft",
-    values: [NftTransferDetailsStruct, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "approveStake",
@@ -140,10 +90,6 @@ export interface BridgeStorageInterface extends Interface {
     values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "concatenate",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getLockNftSignatures",
     values: [string, string]
   ): string;
@@ -161,7 +107,7 @@ export interface BridgeStorageInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "lockSignatures",
-    values: [string]
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "stakingSignatures",
@@ -216,10 +162,6 @@ export interface BridgeStorageInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeValidatorStatus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "concatenate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -313,13 +255,13 @@ export interface BridgeStorage extends BaseContract {
   ): Promise<this>;
 
   approveLockNft: TypedContractMethod<
-    [nftTransferDetails: NftTransferDetailsStruct, signature: string],
+    [_transactionHash: string, _chain: string, _signature: string],
     [void],
     "nonpayable"
   >;
 
   approveStake: TypedContractMethod<
-    [stakerAddress: AddressLike, signature: string],
+    [_stakerAddress: AddressLike, _signature: string],
     [void],
     "nonpayable"
   >;
@@ -341,7 +283,7 @@ export interface BridgeStorage extends BaseContract {
   >;
 
   changeChainFee: TypedContractMethod<
-    [chain: string, fee: BigNumberish],
+    [_chain: string, _fee: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -352,23 +294,21 @@ export interface BridgeStorage extends BaseContract {
     "nonpayable"
   >;
 
-  concatenate: TypedContractMethod<[a: string, b: string], [string], "view">;
-
   getLockNftSignatures: TypedContractMethod<
-    [chain: string, txHash: string],
-    [NftTransferWithSignaturesStructOutput],
+    [transactionHash: string, chain: string],
+    [SignerAndSignatureStructOutput[]],
     "view"
   >;
 
   getLockNftSignaturesCount: TypedContractMethod<
-    [chain: string, txHash: string],
+    [transactionHash: string, chain: string],
     [bigint],
     "view"
   >;
 
   getStakingSignatures: TypedContractMethod<
     [stakerAddress: AddressLike],
-    [string[]],
+    [SignerAndSignatureStructOutput[]],
     "view"
   >;
 
@@ -379,14 +319,14 @@ export interface BridgeStorage extends BaseContract {
   >;
 
   lockSignatures: TypedContractMethod<
-    [arg0: string],
-    [NftTransferDetailsStructOutput],
+    [arg0: string, arg1: string, arg2: BigNumberish],
+    [[string, string] & { publicAddress: string; signature: string }],
     "view"
   >;
 
   stakingSignatures: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
-    [string],
+    [[string, string] & { publicAddress: string; signature: string }],
     "view"
   >;
 
@@ -417,14 +357,14 @@ export interface BridgeStorage extends BaseContract {
   getFunction(
     nameOrSignature: "approveLockNft"
   ): TypedContractMethod<
-    [nftTransferDetails: NftTransferDetailsStruct, signature: string],
+    [_transactionHash: string, _chain: string, _signature: string],
     [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "approveStake"
   ): TypedContractMethod<
-    [stakerAddress: AddressLike, signature: string],
+    [_stakerAddress: AddressLike, _signature: string],
     [void],
     "nonpayable"
   >;
@@ -451,7 +391,7 @@ export interface BridgeStorage extends BaseContract {
   getFunction(
     nameOrSignature: "changeChainFee"
   ): TypedContractMethod<
-    [chain: string, fee: BigNumberish],
+    [_chain: string, _fee: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -463,36 +403,41 @@ export interface BridgeStorage extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "concatenate"
-  ): TypedContractMethod<[a: string, b: string], [string], "view">;
-  getFunction(
     nameOrSignature: "getLockNftSignatures"
   ): TypedContractMethod<
-    [chain: string, txHash: string],
-    [NftTransferWithSignaturesStructOutput],
+    [transactionHash: string, chain: string],
+    [SignerAndSignatureStructOutput[]],
     "view"
   >;
   getFunction(
     nameOrSignature: "getLockNftSignaturesCount"
-  ): TypedContractMethod<[chain: string, txHash: string], [bigint], "view">;
+  ): TypedContractMethod<
+    [transactionHash: string, chain: string],
+    [bigint],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "getStakingSignatures"
-  ): TypedContractMethod<[stakerAddress: AddressLike], [string[]], "view">;
+  ): TypedContractMethod<
+    [stakerAddress: AddressLike],
+    [SignerAndSignatureStructOutput[]],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "getStakingSignaturesCount"
   ): TypedContractMethod<[stakerAddress: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "lockSignatures"
   ): TypedContractMethod<
-    [arg0: string],
-    [NftTransferDetailsStructOutput],
+    [arg0: string, arg1: string, arg2: BigNumberish],
+    [[string, string] & { publicAddress: string; signature: string }],
     "view"
   >;
   getFunction(
     nameOrSignature: "stakingSignatures"
   ): TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
-    [string],
+    [[string, string] & { publicAddress: string; signature: string }],
     "view"
   >;
   getFunction(

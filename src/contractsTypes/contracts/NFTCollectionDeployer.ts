@@ -3,7 +3,6 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -21,58 +20,46 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface NftStorageERC721Interface extends Interface {
+export interface NFTCollectionDeployerInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "collectionAddress"
-      | "depositToken"
-      | "onERC721Received"
+      | "deployNFT1155Collection"
+      | "deployNFT721Collection"
       | "owner"
-      | "unlockToken"
+      | "setOwner"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "collectionAddress",
+    functionFragment: "deployNFT1155Collection",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "depositToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "onERC721Received",
-    values: [AddressLike, AddressLike, BigNumberish, BytesLike]
+    functionFragment: "deployNFT721Collection",
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "unlockToken",
-    values: [BigNumberish]
+    functionFragment: "setOwner",
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "collectionAddress",
+    functionFragment: "deployNFT1155Collection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "depositToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "onERC721Received",
+    functionFragment: "deployNFT721Collection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "unlockToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
 }
 
-export interface NftStorageERC721 extends BaseContract {
-  connect(runner?: ContractRunner | null): NftStorageERC721;
+export interface NFTCollectionDeployer extends BaseContract {
+  connect(runner?: ContractRunner | null): NFTCollectionDeployer;
   waitForDeployment(): Promise<this>;
 
-  interface: NftStorageERC721Interface;
+  interface: NFTCollectionDeployerInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -111,42 +98,29 @@ export interface NftStorageERC721 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  collectionAddress: TypedContractMethod<[], [string], "view">;
+  deployNFT1155Collection: TypedContractMethod<[], [string], "nonpayable">;
 
-  depositToken: TypedContractMethod<
-    [tokenId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  onERC721Received: TypedContractMethod<
-    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
+  deployNFT721Collection: TypedContractMethod<
+    [name: string, symbol: string],
     [string],
     "nonpayable"
   >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  unlockToken: TypedContractMethod<
-    [tokenId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+  setOwner: TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "collectionAddress"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "deployNFT1155Collection"
+  ): TypedContractMethod<[], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "depositToken"
-  ): TypedContractMethod<[tokenId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "onERC721Received"
+    nameOrSignature: "deployNFT721Collection"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
+    [name: string, symbol: string],
     [string],
     "nonpayable"
   >;
@@ -154,8 +128,8 @@ export interface NftStorageERC721 extends BaseContract {
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "unlockToken"
-  ): TypedContractMethod<[tokenId: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
 
   filters: {};
 }

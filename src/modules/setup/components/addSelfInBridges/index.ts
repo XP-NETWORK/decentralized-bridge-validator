@@ -2,8 +2,8 @@ import { handleEvmValidatorAddition } from "./components";
 
 const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {
 
-    const storageChainConfig = config.optimismChain;
-    
+    const storageChainConfig = config.storageConfig;
+
     for (const chainConfig of config.bridgeChains) {
 
         if (chainConfig.chainType === "evm") {

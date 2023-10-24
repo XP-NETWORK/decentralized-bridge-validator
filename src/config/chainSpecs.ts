@@ -2,7 +2,7 @@
 /*
     Test network for bridge
 */
-const optimismTestChain: IChainConfig = {
+const storageTestnetConfig: IChainConfig = {
     chain: "OP",
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
@@ -49,14 +49,14 @@ const stakingTestChain: IStakingConfig = {
 
 const testnetBridgeConfig: IBridgeConfig = {
     bridgeChains: bridgeTestChains,
-    optimismChain: optimismTestChain,
+    storageConfig: storageTestnetConfig,
     stakingConfig: stakingTestChain
 }
 
 /*
     Prod network for bridge
 */
-const optimismProdChain: IChainConfig = {
+const storageProdConfig: IChainConfig = {
     chain: "OP",
     rpcURL: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
@@ -101,7 +101,7 @@ const stakingProdChain: IStakingConfig = {
 
 const prodBridgeConfig: IBridgeConfig = {
     bridgeChains: bridgeProdChains,
-    optimismChain: optimismProdChain,
+    storageConfig: storageProdConfig,
     stakingConfig: stakingProdChain
 }
 

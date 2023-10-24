@@ -142,13 +142,45 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Royalty__factory>;
     getContractFactory(
-      name: "NftStorageERC1155",
+      name: "IERC1155Royalty",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.NftStorageERC1155__factory>;
+    ): Promise<Contracts.IERC1155Royalty__factory>;
     getContractFactory(
-      name: "NftStorageERC721",
+      name: "IERC721Royalty",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.NftStorageERC721__factory>;
+    ): Promise<Contracts.IERC721Royalty__factory>;
+    getContractFactory(
+      name: "INFTCollectionDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INFTCollectionDeployer__factory>;
+    getContractFactory(
+      name: "INFTStorageDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INFTStorageDeployer__factory>;
+    getContractFactory(
+      name: "INFTStorageERC1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INFTStorageERC1155__factory>;
+    getContractFactory(
+      name: "INFTStorageERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INFTStorageERC721__factory>;
+    getContractFactory(
+      name: "NFTCollectionDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTCollectionDeployer__factory>;
+    getContractFactory(
+      name: "NFTStorageDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTStorageDeployer__factory>;
+    getContractFactory(
+      name: "NFTStorageERC1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTStorageERC1155__factory>;
+    getContractFactory(
+      name: "NFTStorageERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTStorageERC721__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -311,15 +343,55 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Royalty>;
     getContractAt(
-      name: "NftStorageERC1155",
+      name: "IERC1155Royalty",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.NftStorageERC1155>;
+    ): Promise<Contracts.IERC1155Royalty>;
     getContractAt(
-      name: "NftStorageERC721",
+      name: "IERC721Royalty",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.NftStorageERC721>;
+    ): Promise<Contracts.IERC721Royalty>;
+    getContractAt(
+      name: "INFTCollectionDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INFTCollectionDeployer>;
+    getContractAt(
+      name: "INFTStorageDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INFTStorageDeployer>;
+    getContractAt(
+      name: "INFTStorageERC1155",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INFTStorageERC1155>;
+    getContractAt(
+      name: "INFTStorageERC721",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INFTStorageERC721>;
+    getContractAt(
+      name: "NFTCollectionDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTCollectionDeployer>;
+    getContractAt(
+      name: "NFTStorageDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTStorageDeployer>;
+    getContractAt(
+      name: "NFTStorageERC1155",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTStorageERC1155>;
+    getContractAt(
+      name: "NFTStorageERC721",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTStorageERC721>;
 
     deployContract(
       name: "Ownable",
@@ -450,13 +522,45 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC721Royalty>;
     deployContract(
-      name: "NftStorageERC1155",
+      name: "IERC1155Royalty",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.NftStorageERC1155>;
+    ): Promise<Contracts.IERC1155Royalty>;
     deployContract(
-      name: "NftStorageERC721",
+      name: "IERC721Royalty",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.NftStorageERC721>;
+    ): Promise<Contracts.IERC721Royalty>;
+    deployContract(
+      name: "INFTCollectionDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTCollectionDeployer>;
+    deployContract(
+      name: "INFTStorageDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageDeployer>;
+    deployContract(
+      name: "INFTStorageERC1155",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageERC1155>;
+    deployContract(
+      name: "INFTStorageERC721",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageERC721>;
+    deployContract(
+      name: "NFTCollectionDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTCollectionDeployer>;
+    deployContract(
+      name: "NFTStorageDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageDeployer>;
+    deployContract(
+      name: "NFTStorageERC1155",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageERC1155>;
+    deployContract(
+      name: "NFTStorageERC721",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageERC721>;
 
     deployContract(
       name: "Ownable",
@@ -619,15 +723,55 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC721Royalty>;
     deployContract(
-      name: "NftStorageERC1155",
+      name: "IERC1155Royalty",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.NftStorageERC1155>;
+    ): Promise<Contracts.IERC1155Royalty>;
     deployContract(
-      name: "NftStorageERC721",
+      name: "IERC721Royalty",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.NftStorageERC721>;
+    ): Promise<Contracts.IERC721Royalty>;
+    deployContract(
+      name: "INFTCollectionDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTCollectionDeployer>;
+    deployContract(
+      name: "INFTStorageDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageDeployer>;
+    deployContract(
+      name: "INFTStorageERC1155",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageERC1155>;
+    deployContract(
+      name: "INFTStorageERC721",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFTStorageERC721>;
+    deployContract(
+      name: "NFTCollectionDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTCollectionDeployer>;
+    deployContract(
+      name: "NFTStorageDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageDeployer>;
+    deployContract(
+      name: "NFTStorageERC1155",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageERC1155>;
+    deployContract(
+      name: "NFTStorageERC721",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NFTStorageERC721>;
 
     // default types
     getContractFactory(

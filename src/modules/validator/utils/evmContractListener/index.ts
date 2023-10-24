@@ -12,14 +12,14 @@ import { BLOCK_CHUNKS } from '../../../../config/chainSpecs';
 
 async function evmContractListener(
     { contractAddress,
-        rpcUrl,
+        rpcURL,
         lastBlock_,
         chain,
         handleLog }: IEvmContractListener): Promise<void> {
-            
+
     let lastBlock = lastBlock_;
 
-    const web3 = new Web3(rpcUrl);
+    const web3 = new Web3(rpcURL);
 
     const blockRepository: Repository<Block> = AppDataSource.getRepository(Block);
 

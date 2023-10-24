@@ -23,15 +23,19 @@ interface IChainConfig {
     chainType: 'evm'
 }
 
-interface IStakingConfig extends IChainConfig {
+type IEvmChainConfig = IChainConfig & {
+    chainType: 'evm';
+};
+
+interface IEvmChainConfigAndEvmWallet {
+    evmChainConfig: IEvmChainConfig;
+    evmWallet: IEvmWallet;
+}
+
+interface IStakingConfig extends IEvmChainConfig {
     coinSymbol: string;
     coinAddress: string;
     lastBlock: number;
-}
-
-interface IEvmChainConfigAndEvmWallet {
-    evmChainConfig: IChainConfig;
-    evmWallet: IEvmWallet;
 }
 
 interface IStakingChainConfigAndEvmWallet {
@@ -54,6 +58,6 @@ interface IContractConfigAndEvmWallet {
 
 interface IBridgeConfig {
     bridgeChains: IChainConfig[];
-    optimismChain: IChainConfig;
+    storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }

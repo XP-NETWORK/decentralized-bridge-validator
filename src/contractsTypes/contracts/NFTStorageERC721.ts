@@ -21,15 +21,13 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface NftStorageERC1155Interface extends Interface {
+export interface NFTStorageERC721Interface extends Interface {
   getFunction(
     nameOrSignature:
       | "collectionAddress"
       | "depositToken"
-      | "onERC1155BatchReceived"
-      | "onERC1155Received"
+      | "onERC721Received"
       | "owner"
-      | "supportsInterface"
       | "unlockToken"
   ): FunctionFragment;
 
@@ -39,30 +37,16 @@ export interface NftStorageERC1155Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "depositToken",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "onERC1155BatchReceived",
-    values: [
-      AddressLike,
-      AddressLike,
-      BigNumberish[],
-      BigNumberish[],
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "onERC1155Received",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
+    functionFragment: "onERC721Received",
+    values: [AddressLike, AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "unlockToken",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -74,29 +58,21 @@ export interface NftStorageERC1155Interface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "onERC1155BatchReceived",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "onERC1155Received",
+    functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "unlockToken",
     data: BytesLike
   ): Result;
 }
 
-export interface NftStorageERC1155 extends BaseContract {
-  connect(runner?: ContractRunner | null): NftStorageERC1155;
+export interface NFTStorageERC721 extends BaseContract {
+  connect(runner?: ContractRunner | null): NFTStorageERC721;
   waitForDeployment(): Promise<this>;
 
-  interface: NftStorageERC1155Interface;
+  interface: NFTStorageERC721Interface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -138,45 +114,21 @@ export interface NftStorageERC1155 extends BaseContract {
   collectionAddress: TypedContractMethod<[], [string], "view">;
 
   depositToken: TypedContractMethod<
-    [tokenId: BigNumberish, amount: BigNumberish],
+    [tokenId: BigNumberish],
     [void],
     "nonpayable"
   >;
 
-  onERC1155BatchReceived: TypedContractMethod<
-    [
-      arg0: AddressLike,
-      arg1: AddressLike,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike
-    ],
-    [string],
-    "nonpayable"
-  >;
-
-  onERC1155Received: TypedContractMethod<
-    [
-      arg0: AddressLike,
-      arg1: AddressLike,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike
-    ],
+  onERC721Received: TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
     [string],
     "nonpayable"
   >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
-    [boolean],
-    "view"
-  >;
-
   unlockToken: TypedContractMethod<
-    [tokenId: BigNumberish, amount: BigNumberish],
+    [tokenId: BigNumberish, to: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -190,34 +142,11 @@ export interface NftStorageERC1155 extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "depositToken"
-  ): TypedContractMethod<
-    [tokenId: BigNumberish, amount: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[tokenId: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "onERC1155BatchReceived"
+    nameOrSignature: "onERC721Received"
   ): TypedContractMethod<
-    [
-      arg0: AddressLike,
-      arg1: AddressLike,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike
-    ],
-    [string],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "onERC1155Received"
-  ): TypedContractMethod<
-    [
-      arg0: AddressLike,
-      arg1: AddressLike,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike
-    ],
+    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
     [string],
     "nonpayable"
   >;
@@ -225,12 +154,9 @@ export interface NftStorageERC1155 extends BaseContract {
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
-  getFunction(
     nameOrSignature: "unlockToken"
   ): TypedContractMethod<
-    [tokenId: BigNumberish, amount: BigNumberish],
+    [tokenId: BigNumberish, to: AddressLike],
     [void],
     "nonpayable"
   >;

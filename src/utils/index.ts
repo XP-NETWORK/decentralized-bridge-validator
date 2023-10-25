@@ -1,11 +1,12 @@
 import {
-    readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
-    confirmationCountNeeded, getStorageContract, getEvmMultiNftContract, getEvmSingleNftContract, getStakingContract
+    readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg, getRedisConnection,
+    confirmationCountNeeded, getStorageContract, getEvmMultiNftContract, getEvmSingleNftContract, getStakingContract,
+    getEvmBridgeContract,
 } from "./functions"
-import redisIOConnection from "./constants/redisConnection"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress,
-    waitForMSWithMsg, redisIOConnection, confirmationCountNeeded, getStorageContract, getEvmMultiNftContract,
-    getEvmSingleNftContract, getStakingContract
+    waitForMSWithMsg, getRedisConnection, confirmationCountNeeded, getStorageContract, getEvmMultiNftContract,
+    getEvmSingleNftContract, getStakingContract, getEvmBridgeContract
 }
+

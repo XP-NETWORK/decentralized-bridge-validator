@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
-import { readJsonFile } from '../../../../utils';
-import { isGeneratedWallets } from '../../typesGuardRuntime';
+import { readJsonFile } from '@src/utils';
+import { isGeneratedWallets } from '@src/modules/setup/typesGuardRuntime';
 import { promises as fs } from 'fs';
+import { IGeneratedWallets } from '@src/types';
 
 const generateWalletsForChains_ = (): IGeneratedWallets => {
 
@@ -27,9 +28,9 @@ const generateWalletsForChains = async (): Promise<IGeneratedWallets> => {
         if (!isGeneratedWallets(wallets)) {
             throw new Error("Invalid secrets in file");
         }
-        console.log("existing secrets found");
+        console.info("existing secrets found");
     } catch (error) {
-        console.log("generating new secrets");
+        console.info("generating new secrets");
         wallets = generateWalletsForChains_();
         await fs.writeFile(secretsFile, JSON.stringify(wallets));
     }

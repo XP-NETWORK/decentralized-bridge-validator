@@ -1,6 +1,6 @@
-import { processDelayMilliseconds } from "../../../../utils/constants/processDelayMilliseconds";
-import { waitForKeyPress } from "../../../../utils/functions";
-import waitForMSWithMsg from "../../../../utils/functions/waitForMSWithMsg";
+import { IConfigAndWallets } from "@src/types";
+import { processDelayMilliseconds } from "@src/utils/constants/processDelayMilliseconds";
+import { waitForKeyPress, waitForMSWithMsg } from "@src/utils";
 import { promptToGetFunding } from "./components";
 
 const getInitialFunds = async ({ config, wallets }: IConfigAndWallets): Promise<void> => {

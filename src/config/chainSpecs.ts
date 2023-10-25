@@ -1,3 +1,4 @@
+import { IBridgeConfig, IChainConfig, IStakingConfig } from "@src/types"
 
 /*
     Test network for bridge

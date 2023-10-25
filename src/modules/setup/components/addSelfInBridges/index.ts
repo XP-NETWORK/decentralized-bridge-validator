@@ -1,3 +1,4 @@
+import { IConfigAndWallets } from "@src/types";
 import { handleEvmValidatorAddition } from "./components";
 
 const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {

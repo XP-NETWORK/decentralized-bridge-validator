@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { erc20ABI } from '../../abi';
+import { IEvmChainConfigAndEvmWallet, IStakingChainConfigAndEvmWallet } from '@src/types';
 
 
 const getCurrentEvmBalance = async (configs: IEvmChainConfigAndEvmWallet | IStakingChainConfigAndEvmWallet): Promise<bigint> => {

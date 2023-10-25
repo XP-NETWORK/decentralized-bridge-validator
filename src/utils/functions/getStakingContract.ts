@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 
 import { ERC20Staking, ERC20Staking__factory } from "../../contractsTypes";
+import { IStakingChainConfigAndEvmWallet } from "@src/types";
 
 
 const getStakingContract = ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): ERC20Staking => {

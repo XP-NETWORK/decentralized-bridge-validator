@@ -1,5 +1,6 @@
-import {  ethers } from "ethers";
+import { ethers } from "ethers";
 import { Bridge, Bridge__factory } from "../../contractsTypes";
+import { IEvmChainConfigAndEvmWallet } from "@src/types";
 
 const getEvmBridgeContract = ({ evmChainConfig, evmWallet }: IEvmChainConfigAndEvmWallet): Bridge => {
     const provider = new ethers.JsonRpcProvider(evmChainConfig.rpcURL);

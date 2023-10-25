@@ -8,9 +8,11 @@ import getEvmBridgeContract from "./getEvmBridgeContract"
 import getEvmSingleNftContract from "./getEvmSingleNftContract"
 import getEvmMultiNftContract from "./getEvmMultiNftContract"
 import getStakingContract from "./getStakingContract"
+import getRedisConnection from "./getRedisConnection"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
     confirmationCountNeeded, getStorageContract, getEvmBridgeContract,
-    getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract
+    getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract,
+    getRedisConnection
 }

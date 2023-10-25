@@ -1,8 +1,9 @@
 import Web3 from "web3";
 import { LogEntry } from "../../utils/evmContractListener/types";
-import { stakingABI } from "../../../../abi";
+import { stakingABI } from "@src/abi";
 import { createJobWithWorker, evmContractListener } from '../../utils';
-import { getStakingContract, getStorageContract } from "../../../../utils";
+import { getStakingContract, getStorageContract } from "@src/utils";
+import { IConfigAndWallets } from "@src/types";
 
 const stakingListener = async (jobData: IConfigAndWallets) => {
     const jobName = "stakingApprover";
@@ -21,7 +22,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
 
 
         const handleLog = async ({ log }: { log: LogEntry; }) => {
-            
+
             if (typeof log === "string" || !log.topics.includes(topicHash)) return;
 
             const topicToIgnore = 1;

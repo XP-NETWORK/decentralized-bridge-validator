@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { ERC1155Royalty__factory, ERC1155Royalty } from "../../contractsTypes";
+import { IContractConfigAndEvmWallet } from "@src/types";
 
 
 const getEvmMultiNftContract = ({ contractConfig, evmWallet }: IContractConfigAndEvmWallet): ERC1155Royalty => {

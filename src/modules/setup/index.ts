@@ -1,9 +1,10 @@
-import { prodBridgeConfig, testnetBridgeConfig } from "../../config/chainSpecs";
-import { AppDataSource } from "../../db/data-source";
-import { runValidators } from "../validator";
-import { redisIOConnection } from "../../utils";
+import { getRedisConnection } from "@src/utils";
+import { prodBridgeConfig, testnetBridgeConfig } from "@src/config/chainSpecs";
+import { AppDataSource } from "@src/db/data-source";
+import { runValidators } from "@src/modules/validator";
 import { addSelfInBridges, generateWalletsForChains, getInitialFunds, isStaked, promtDisplayHelp } from "./components";
 import { stakeTokens } from "./components";
+import { IBridgeConfig, IGeneratedWallets } from "@src/types";
 
 const setup = async () => {
 
@@ -15,7 +16,7 @@ const setup = async () => {
 
   // Initialize Databases
   await AppDataSource.initialize()
-  await redisIOConnection.flushall()
+  await getRedisConnection().flushall()
 
   // Setup Configs
   let config: IBridgeConfig = prodBridgeConfig

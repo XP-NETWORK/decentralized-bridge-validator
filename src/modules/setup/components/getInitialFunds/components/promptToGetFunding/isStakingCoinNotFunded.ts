@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
-import { getCurrentEvmBalance } from "../../../../../../utils/functions";
+import { getCurrentEvmBalance } from "@src/utils";
+import { IStakingChainConfigAndEvmWallet } from "@src/types";
 
-const handleBscStakingPromt = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<boolean> => {
+const isStakingCoinNotFunded = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<boolean> => {
     try {
         let isNotFullyFunded = false;
 
@@ -15,9 +16,9 @@ const handleBscStakingPromt = async ({ stakingChainConfig, evmWallet }: IStaking
 
         return isNotFullyFunded
     } catch (e) {
-        throw (`Error while handleBscStakingPromt, orignal error: ${e}`)
+        throw (`Error while isStakingCoinNotFunded, orignal error: ${e}`)
     }
 }
 
 
-export { handleBscStakingPromt }
+export { isStakingCoinNotFunded }

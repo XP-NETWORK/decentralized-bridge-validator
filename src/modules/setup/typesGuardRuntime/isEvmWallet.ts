@@ -1,3 +1,4 @@
+import { IEvmWallet } from "@src/types";
 
 function isEvmWallet(object: unknown): object is IEvmWallet {
 

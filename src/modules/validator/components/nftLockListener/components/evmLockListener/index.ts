@@ -5,6 +5,7 @@ import { getEvmBridgeContract } from "../../../../../../utils/functions";
 import { approveEvmDestinationLock } from "./components";
 import { INftTransferDetailsObject } from "./types";
 import { getLockEventDecodedLog, getNftDetails } from "./utils";
+import { IChainConfig, IConfigAndWallets, IEvmChainConfigAndEvmWallet } from "@src/types";
 
 
 const evmLockListener = async ({ evmChainConfig, evmWallet, config }: IEvmChainConfigAndEvmWallet & IConfigAndWallets) => {

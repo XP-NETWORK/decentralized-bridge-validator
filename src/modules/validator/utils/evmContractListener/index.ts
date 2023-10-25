@@ -4,10 +4,10 @@
 import { Repository } from 'typeorm';
 
 import Web3 from 'web3';
-import { Block } from '../../../../db/entity/Block';
-import { AppDataSource } from '../../../../db/data-source';
+import { Block } from '@src/db/entity/Block';
+import { AppDataSource } from '@src/db/data-source';
 import { IEvmContractListener, LogEntry } from './types';
-import { BLOCK_CHUNKS } from '../../../../config/chainSpecs';
+import { BLOCK_CHUNKS } from '@src/config/chainSpecs';
 
 
 async function evmContractListener(

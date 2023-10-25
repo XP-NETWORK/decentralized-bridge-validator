@@ -61,3 +61,18 @@ interface IBridgeConfig {
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }
+
+
+export {
+    IEvmWallet,
+    IEvmChainConfig,
+    IGeneratedWallets,
+    IConfigAndWallets,
+    IChainConfig,
+    IEvmChainConfigAndEvmWallet,
+    IStakingConfig,
+    IStakingChainConfigAndEvmWallet,
+    IContractConfig,
+    IContractConfigAndEvmWallet,
+    IBridgeConfig
+}

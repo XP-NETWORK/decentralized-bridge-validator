@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
-import { getCurrentEvmBalance } from "../../../../../../utils/functions";
+import { getCurrentEvmBalance } from "@src/utils";
+import { IEvmChainConfigAndEvmWallet } from "@src/types";
 
-const handleEvmPromt = async ({ evmChainConfig, evmWallet }: IEvmChainConfigAndEvmWallet): Promise<boolean> => {
+const isEvmChainNotFunded = async ({ evmChainConfig, evmWallet }: IEvmChainConfigAndEvmWallet): Promise<boolean> => {
     let isNotFullyFunded = false;
     try {
         const currentBalance = await getCurrentEvmBalance({ evmChainConfig, evmWallet });
@@ -15,9 +16,9 @@ const handleEvmPromt = async ({ evmChainConfig, evmWallet }: IEvmChainConfigAndE
 
         return isNotFullyFunded
     } catch (e) {
-        throw (`Error while handleEvmPromt, orignal error: ${e}`)
+        throw (`Error while isEvmChainNotFunded, orignal error: ${e}`)
     }
 }
 
 
-export { handleEvmPromt }
+export { isEvmChainNotFunded }

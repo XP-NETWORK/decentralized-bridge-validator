@@ -1,3 +1,4 @@
+import { IConfigAndWallets, IEvmChainConfigAndEvmWallet } from "@src/types"
 import { createJobWithWorker } from "../../utils"
 import { evmLockListener } from "./components"
 

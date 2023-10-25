@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
-import { erc20ABI } from '../../../../abi';
+import { erc20ABI } from '@src/abi';
 import { isStaked } from "../"
-import waitForMSWithMsg from '../../../../utils/functions/waitForMSWithMsg';
-import { getStakingContract } from '../../../../utils';
-import { processDelayMilliseconds } from '../../../../utils/constants/processDelayMilliseconds';
+import { waitForMSWithMsg, getStakingContract } from '@src/utils';
+import { processDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
+import { IStakingChainConfigAndEvmWallet } from '@src/types';
 
 const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<void> => {
 

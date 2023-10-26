@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import {
     handleEvmValidatorAddition,
 } from '@src/modules/setup/components/addSelfInBridges/components'; // Import the function to test
-import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/isEvmChainNotFunded";
+import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/isEvmChainFunded";
 import * as utils from "@src/utils/functions"
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 describe('handleEvmValidatorAddition', () => {
@@ -77,7 +77,7 @@ describe('handleEvmValidatorAddition', () => {
             })
 
             // overriding; wallets already funded
-            sinon.stub(promts, "isEvmChainNotFunded").resolves(false);
+            sinon.stub(promts, "isEvmChainFunded").resolves(true);
 
 
             // Call the function

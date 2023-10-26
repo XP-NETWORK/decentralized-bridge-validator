@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "@types/mocha": "^10.0.3",
     "@types/web3": "^1.2.2",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",

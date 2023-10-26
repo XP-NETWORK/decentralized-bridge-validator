@@ -1441,6 +1441,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mocha@npm:^10.0.3":
+  version: 10.0.3
+  resolution: "@types/mocha@npm:10.0.3"
+  checksum: 52481d72c0f2eb6afcf9a43f851f81d78211880f765b5922a1aa322ed6d557bddc60786a3ae7b6c5e388e2f0cddc09d9ead3c9b80e66102eb41b58acae1e4894
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 20.8.8
   resolution: "@types/node@npm:20.8.8"
@@ -2061,6 +2068,7 @@ __metadata:
     "@nomicfoundation/hardhat-ethers": ^3.0.4
     "@types/chai": ^4.3.9
     "@types/jest": ^29.5.6
+    "@types/mocha": ^10.0.3
     "@types/node": ^16.11.10
     "@types/sinon": latest
     "@types/web3": ^1.2.2

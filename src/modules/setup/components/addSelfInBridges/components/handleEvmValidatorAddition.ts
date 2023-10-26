@@ -1,5 +1,5 @@
 import { confirmationCountNeeded, getStorageContract, waitForMSWithMsg } from "@src/utils";
-import { isEvmChainNotFunded } from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/isEvmChainNotFunded";
+import { isEvmChainFunded } from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/isEvmChainFunded";
 import { getEvmBridgeContract, waitForKeyPress } from "@src/utils";
 import { processDelayMilliseconds } from "@src/utils/constants/processDelayMilliseconds";
 import { IEvmChainConfig, IEvmChainConfigAndEvmWallet } from "@src/types";
@@ -32,12 +32,12 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
                 const stakingSignatures: string[] = [...(await storageContract.getStakingSignatures(evmWallet.address))].map(item => item.signature);
 
-                let isNotFullyFunded = true;
+                let isFunded = false;
 
-                while (isNotFullyFunded) {
+                while (!isFunded) {
                     // @TODO handle staking + intial fund case 
-                    isNotFullyFunded = await isEvmChainNotFunded({ evmChainConfig, evmWallet });
-                    if (isNotFullyFunded)
+                    isFunded = await isEvmChainFunded({ evmChainConfig, evmWallet });
+                    if (!isFunded)
                         await waitForKeyPress("Press [Enter] key after funding your addresses")
                 }
 

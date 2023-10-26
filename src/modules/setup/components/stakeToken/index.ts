@@ -16,22 +16,22 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
     const stakedAmount = await stakingContract.stakingBalances(wallet.address);
 
     if (await isStaked({ stakingChainConfig, evmWallet })) {
-        console.log("Stake Found", stakedAmount.toString())
+        console.info("Stake Found", stakedAmount.toString())
     } else {
         const amountToStake = stakingChainConfig.intialFund;
         try {
 
             const approveTx = await xpTokenContract.approve(stakingChainConfig.contractAddress, amountToStake)
             await approveTx.wait()
-            console.log(`Token Approve Transaction Hash: ${approveTx.hash}`);
+            console.info(`Token Approve Transaction Hash: ${approveTx.hash}`);
 
             const stakeTx = await stakingContract.stakeERC20();
             await stakeTx.wait();
-            console.log(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
+            console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
 
-            console.log('Tokens staked successfully!');
+            console.info('Tokens staked successfully!');
         } catch (error) {
-            console.log(error)
+            console.info(error)
             throw ("Error staking tokens")
         }
     }

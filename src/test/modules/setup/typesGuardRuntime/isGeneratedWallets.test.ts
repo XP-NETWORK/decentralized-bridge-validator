@@ -50,6 +50,10 @@ describe('isGeneratedWallets', () => {
         },
     ];
 
+    beforeEach(() => {
+        console.info = () => { };
+    });
+
     testCases.forEach(({ input, expected, description }) => {
         it(description, () => {
             expect(isGeneratedWallets(input)).to.equal(expected);

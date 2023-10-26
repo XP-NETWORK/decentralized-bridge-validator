@@ -35,7 +35,7 @@ const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmChainCon
 
 
     try {
-        console.log({ nftTransferDetailsObject, sig: signedNftTransferDetails.signature });
+        console.info({ nftTransferDetailsObject, sig: signedNftTransferDetails.signature });
 
         const tx = await storageContract.approveLockNft(
             nftTransferDetailsObject.transactionHash,
@@ -43,7 +43,7 @@ const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmChainCon
             signedNftTransferDetails.signature
         );
 
-        console.log(`Lock Approved Transaction Hash: ${tx.hash}`);
+        console.info(`Lock Approved Transaction Hash: ${tx.hash}`);
 
     } catch (e) {
         if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {

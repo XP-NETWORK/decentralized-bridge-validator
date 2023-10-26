@@ -11,7 +11,7 @@ const isStakingCoinFunded = async ({ stakingChainConfig, evmWallet }: IStakingCh
         const remainingStakingCoinFund = ethers.formatEther(remainingStakingCoinRaw);
         if (stakingCoinCurrentBalance < BigInt(stakingChainConfig.intialFund)) {
             isFunded = false
-            console.log(`Current balance: ${ethers.formatEther(stakingCoinCurrentBalance)}; Fund chain your wallet ${evmWallet.address} on ${stakingChainConfig.chain} with ${remainingStakingCoinFund} ${stakingChainConfig.coinSymbol} [ Coin address ${stakingChainConfig.coinAddress}].`);
+            console.info(`Current balance: ${ethers.formatEther(stakingCoinCurrentBalance)}; Fund chain your wallet ${evmWallet.address} on ${stakingChainConfig.chain} with ${remainingStakingCoinFund} ${stakingChainConfig.coinSymbol} [ Coin address ${stakingChainConfig.coinAddress}].`);
         }
 
         return isFunded
@@ -21,4 +21,4 @@ const isStakingCoinFunded = async ({ stakingChainConfig, evmWallet }: IStakingCh
 }
 
 
-export { isStakingCoinFunded }
+export default isStakingCoinFunded

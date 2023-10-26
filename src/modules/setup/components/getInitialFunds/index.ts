@@ -6,13 +6,13 @@ import { promptToGetFunding } from "./components";
 const getInitialFunds = async ({ config, wallets }: IConfigAndWallets): Promise<void> => {
 
     let isFunded = false;
-    while (isFunded) {
+    while (!isFunded) {
         try {
             isFunded = await promptToGetFunding({ wallets, config });
             if (!isFunded)
                 await waitForKeyPress("Press [Enter] key after funding your addresses");
         } catch (e) {
-            console.log(e)
+            console.info(e)
             await waitForMSWithMsg(processDelayMilliseconds, "Something went wrong")
             isFunded = true
         }

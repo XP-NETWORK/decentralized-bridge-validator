@@ -32,7 +32,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
                 log.topics.slice(topicToIgnore)
             );
             const stakerAddress = String(decodedLog.user);
-            console.log({ stakerAddress, pv: wallets.evmWallet.privateKey })
+            console.info({ stakerAddress, pv: wallets.evmWallet.privateKey })
 
             const signedStakerAddress = web3.eth.accounts
                 .privateKeyToAccount(wallets.evmWallet.privateKey)
@@ -43,7 +43,7 @@ const stakingListener = async (jobData: IConfigAndWallets) => {
 
             try {
                 const tx = await storageContract.approveStake(stakerAddress, signedStakerAddress.signature);
-                console.log(`Stake Approved Transaction Hash: ${tx.hash}`);
+                console.info(`Stake Approved Transaction Hash: ${tx.hash}`);
             } catch (e) {
                 if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
                     throw ("Error while processing log")

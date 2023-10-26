@@ -1,5 +1,4 @@
-import { isEvmChainFunded } from "./isEvmChainFunded";
-import { isStakingCoinFunded } from "./isStakingCoinFunded";
+import { isEvmChainFunded, isStakingCoinFunded } from "./components";
 import { IConfigAndWallets } from "@src/types";
 
 
@@ -27,9 +26,9 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
     }
 
     if (isFunded) {
-        console.log("To stake and initialize your node.");
+        console.info("To stake and initialize your node.");
     } else {
-        console.log("Initializing your node");
+        console.info("Initializing your node");
     }
 
     return isFunded

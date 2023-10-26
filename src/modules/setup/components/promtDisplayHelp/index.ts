@@ -1,10 +1,10 @@
 const promtDisplayHelp = () => {
-    console.log('Usage:');
-    console.log('  npm run dev [options]');
-    console.log('\nOptions:');
-    console.log('  --testnet         Setup for testnet environment');
-    console.log('  --help            Display this help message and exit');
-    console.log('\nBy default, without any options, the script sets up for production.');
+    console.info('Usage:');
+    console.info('  npm run dev [options]');
+    console.info('\nOptions:');
+    console.info('  --testnet         Setup for testnet environment');
+    console.info('  --help            Display this help message and exit');
+    console.info('\nBy default, without any options, the script sets up for production.');
 };
 
 export default promtDisplayHelp

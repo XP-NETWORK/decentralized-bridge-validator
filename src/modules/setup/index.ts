@@ -22,7 +22,7 @@ const setup = async () => {
   let config: IBridgeConfig = prodBridgeConfig
   if (process.argv.includes('--testnet')) {
     config = testnetBridgeConfig
-    console.log("-------------------------- Running in testnet --------------------------------")
+    console.info("-------------------------- Running in testnet --------------------------------")
   }
 
   // Generate wallets
@@ -30,7 +30,7 @@ const setup = async () => {
 
   // Check if staked then contininue else get initial funding and stake
   if (await isStaked({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })) {
-    console.log("Stake found");
+    console.info("Stake found");
   } else {
 
     await getInitialFunds({ wallets, config });

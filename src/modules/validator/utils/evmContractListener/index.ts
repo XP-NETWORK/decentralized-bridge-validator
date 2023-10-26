@@ -27,7 +27,7 @@ async function evmContractListener(
         where: { chain, contractAddress },
     });
 
-    console.log({ blockInstance })
+    console.info({ blockInstance })
     if (!blockInstance) {
         const newBlock = new Block();
         newBlock.chain = chain
@@ -35,7 +35,7 @@ async function evmContractListener(
         newBlock.lastBlock = lastBlock
         blockInstance = await blockRepository.save(newBlock);
     }
-    console.log({ blockInstance })
+    console.info({ blockInstance })
 
     if (blockInstance.lastBlock) {
         lastBlock = blockInstance.lastBlock;
@@ -54,7 +54,7 @@ async function evmContractListener(
     blockInstance.lastBlock = latestBlock;
 
     if (!logs.length) {
-        console.log('No Transactions found');
+        console.info('No Transactions found');
         await blockRepository.save(blockInstance);
         return;
     }

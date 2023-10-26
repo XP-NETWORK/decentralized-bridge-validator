@@ -9,6 +9,10 @@ describe('addSelfInBridges', () => {
     afterEach(() => {
         sinon.restore();
     });
+    beforeEach(() => {
+        console.info = () => { };
+    });
+
 
     it('should call handleEvmValidatorAddition for each EVM chain', async () => {
       

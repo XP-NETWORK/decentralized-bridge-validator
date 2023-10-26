@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import {
     handleEvmValidatorAddition,
 } from '@src/modules/setup/components/addSelfInBridges/components'; // Import the function to test
-import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/isEvmChainFunded";
+import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components";
 import * as utils from "@src/utils/functions"
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 describe('handleEvmValidatorAddition', () => {

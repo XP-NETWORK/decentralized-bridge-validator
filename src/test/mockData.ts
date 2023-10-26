@@ -2,7 +2,7 @@ import { IBridgeConfig } from '@src/types';
 
 const mockBridgeConfig: IBridgeConfig = {
     storageConfig: {
-        chain: 'chainMock',
+        chain: 'storageChainMock',
         rpcURL: 'rpcURLMock',
         nativeCoinSymbol: 'nativeCoinSymbolMock',
         intialFund: 'intialFundMock',
@@ -12,7 +12,7 @@ const mockBridgeConfig: IBridgeConfig = {
     },
     bridgeChains: [
         {
-            chain: 'chainMock',
+            chain: 'bridgeChainMock1',
             rpcURL: 'rpcURLMock',
             nativeCoinSymbol: 'nativeCoinSymbolMock',
             intialFund: 'intialFundMock ETH',
@@ -21,7 +21,7 @@ const mockBridgeConfig: IBridgeConfig = {
             chainType: 'evm',
         },
         {
-            chain: 'chainMock',
+            chain: 'bridgeChainMock2',
             rpcURL: 'rpcURLMock',
             nativeCoinSymbol: 'nativeCoinSymbolMock',
             intialFund: 'intialFundMock',
@@ -31,7 +31,7 @@ const mockBridgeConfig: IBridgeConfig = {
         },
     ],
     stakingConfig: {
-        chain: 'chainMock',
+        chain: 'stakingChainMock',
         rpcURL: 'rpcURLMock',
         nativeCoinSymbol: 'nativeCoinSymbolMock',
         intialFund: 'intialFundMock',

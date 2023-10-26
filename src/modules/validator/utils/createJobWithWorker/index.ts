@@ -28,7 +28,7 @@ const createJobWithWorker = async <T>({ jobData, jobName, jobFunction }: { jobDa
 
     worker.on('failed', async (job, err) => {
 
-        console.log({ err })
+        console.info({ err })
 
         await bullQueue.add(`${jobName}Job`, job.data, {
             removeOnComplete: true,

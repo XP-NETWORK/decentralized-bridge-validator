@@ -11,7 +11,7 @@ const isEvmChainFunded = async ({ evmChainConfig, evmWallet }: IEvmChainConfigAn
         const remainingFund = ethers.formatEther(remainingRaw)
         if (currentBalance < (BigInt(evmChainConfig.intialFund) || BigInt("0"))) {
             isFunded = false
-            console.log(`Current balance: ${ethers.formatEther(currentBalance)}; Fund chain your wallet ${evmWallet.address} on ${evmChainConfig.chain} with ${remainingFund} ${evmChainConfig.nativeCoinSymbol}.`);
+            console.info(`Current balance: ${ethers.formatEther(currentBalance)}; Fund chain your wallet ${evmWallet.address} on ${evmChainConfig.chain} with ${remainingFund} ${evmChainConfig.nativeCoinSymbol}.`);
         }
 
         return isFunded
@@ -21,4 +21,4 @@ const isEvmChainFunded = async ({ evmChainConfig, evmWallet }: IEvmChainConfigAn
 }
 
 
-export { isEvmChainFunded }
+export default isEvmChainFunded

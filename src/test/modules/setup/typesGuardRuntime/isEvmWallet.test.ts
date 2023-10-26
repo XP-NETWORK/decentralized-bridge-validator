@@ -69,6 +69,11 @@ describe('isEvmWallet', () => {
         },
     ];
 
+    beforeEach(() => {
+        console.info = () => { };
+    });
+
+
     testCases.forEach(({ input, expected, description }) => {
         it(description, () => {
             expect(isEvmWallet(input)).to.equal(expected);

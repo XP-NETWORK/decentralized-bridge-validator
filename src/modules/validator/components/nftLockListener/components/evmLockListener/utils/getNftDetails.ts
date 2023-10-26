@@ -18,7 +18,7 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
         symbol = await evmSingleNftContract.symbol(); // symbol of nft collection
         name = await evmSingleNftContract.name(); // name of NFT collection
     } catch (e) {
-        console.log("Name or symbol not found")
+        console.info("Name or symbol not found")
     }
 
 
@@ -27,14 +27,14 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
         try {
             [royaltyReceiver, royalty] = (await evmMultiNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage))).map(String); // royality of nft collection
         } catch (e) {
-            console.log("Royalty not found")
+            console.info("Royalty not found")
         }
         metadata = await evmMultiNftContract.uri(tokenId);
     } else {
         try {
             [royaltyReceiver, royalty] = (await evmSingleNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage))).map(String); // royality of nft collection
         } catch (e) {
-            console.log("Royalty not found")
+            console.info("Royalty not found")
         }
         metadata = await evmSingleNftContract.tokenURI(tokenId); // Metadata related to the NFT being transferred
     }

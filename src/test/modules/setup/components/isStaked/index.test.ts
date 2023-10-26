@@ -5,9 +5,6 @@ import * as utils from "@src/utils/functions";
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 
 describe('isStaked', () => {
-    afterEach(() => {
-        sinon.restore();
-    });
 
     const testCases = [
         {
@@ -21,6 +18,14 @@ describe('isStaked', () => {
             description: 'should return false if stakedAmount is zero',
         },
     ];
+
+    afterEach(() => {
+        sinon.restore();
+    });
+    beforeEach(() => {
+        console.info = () => { };
+    });
+
 
     testCases.forEach(({ stakedAmount, expected, description }) => {
         it(description, async () => {

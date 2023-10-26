@@ -42,7 +42,7 @@ const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmChainCon
             nftTransferDetailsObject.sourceChain,
             signedNftTransferDetails.signature
         );
-
+        await tx.wait();
         console.info(`Lock Approved Transaction Hash: ${tx.hash}`);
 
     } catch (e) {

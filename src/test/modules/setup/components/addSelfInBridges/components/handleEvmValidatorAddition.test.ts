@@ -55,7 +55,7 @@ describe('handleEvmValidatorAddition', () => {
             const bridgeContractStub = {
                 validators: sinon.stub().resolves(isAlreadyAdded),
                 validatorsCount: sinon.stub().resolves(BigInt(totalExistingValidators)),
-                addValidator: sinon.stub().resolves({ hash }), // Mock adding validator
+                addValidator: sinon.stub().resolves({ hash, wait: sinon.stub().resolves() }), // Mock adding validator
             };
 
             const storageContractStub = {

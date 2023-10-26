@@ -1,27 +1,20 @@
-import { ethers } from 'ethers';
-import { erc20ABI } from '@src/abi';
 import { isStaked } from "../"
-import { waitForMSWithMsg, getStakingContract } from '@src/utils';
+import { waitForMSWithMsg, getStakingContract, getEvmFungibleContract } from '@src/utils';
 import { processDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
 import { IStakingChainConfigAndEvmWallet } from '@src/types';
 
 const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<void> => {
 
-    const provider = new ethers.JsonRpcProvider(stakingChainConfig.rpcURL);
-    const privateKey = evmWallet.privateKey;
-    const wallet = new ethers.Wallet(privateKey, provider);
     const stakingContract = getStakingContract({ stakingChainConfig, evmWallet })
-    const xpTokenContract = new ethers.Contract(stakingChainConfig.coinAddress, erc20ABI, wallet);
-
-    const stakedAmount = await stakingContract.stakingBalances(wallet.address);
+    const tokenContract = getEvmFungibleContract({ stakingChainConfig, evmWallet })
 
     if (await isStaked({ stakingChainConfig, evmWallet })) {
-        console.info("Stake Found", stakedAmount.toString())
+        console.info("Stake Found")
     } else {
         const amountToStake = stakingChainConfig.intialFund;
         try {
 
-            const approveTx = await xpTokenContract.approve(stakingChainConfig.contractAddress, amountToStake)
+            const approveTx = await tokenContract.approve(stakingChainConfig.contractAddress, amountToStake)
             await approveTx.wait()
             console.info(`Token Approve Transaction Hash: ${approveTx.hash}`);
 
@@ -30,9 +23,11 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
             console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
 
             console.info('Tokens staked successfully!');
-        } catch (error) {
-            console.info(error)
-            throw ("Error staking tokens")
+        } catch (e) {
+            if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "You can only stake once"`)) {
+                console.log("Staked Tokens......")
+                throw ("Error staking tokens")
+            }
         }
     }
 }
@@ -41,10 +36,11 @@ const stakeTokens = async ({ stakingChainConfig, evmWallet }: IStakingChainConfi
     let stakedTokens = false;
     while (!stakedTokens) {
         try {
-            await stakeTokens_({ stakingChainConfig, evmWallet })
+            await stakeTokens_({ stakingChainConfig, evmWallet });
+            console.log("Staked Tokens......")
             stakedTokens = true;
         } catch (e) {
-            await waitForMSWithMsg(processDelayMilliseconds, "Error staking XpNets")
+            await waitForMSWithMsg(processDelayMilliseconds, "Error staking tokens")
         }
     }
 }

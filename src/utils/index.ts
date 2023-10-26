@@ -1,12 +1,12 @@
 import {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg, getRedisConnection,
     confirmationCountNeeded, getStorageContract, getEvmMultiNftContract, getEvmSingleNftContract, getStakingContract,
-    getEvmBridgeContract,
+    getEvmBridgeContract, getEvmFungibleContract
 } from "./functions"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress,
     waitForMSWithMsg, getRedisConnection, confirmationCountNeeded, getStorageContract, getEvmMultiNftContract,
-    getEvmSingleNftContract, getStakingContract, getEvmBridgeContract
+    getEvmSingleNftContract, getStakingContract, getEvmBridgeContract, getEvmFungibleContract
 }
 

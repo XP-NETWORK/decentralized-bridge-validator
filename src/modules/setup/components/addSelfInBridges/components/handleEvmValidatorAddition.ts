@@ -43,6 +43,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
             }
 
             const addValidatorTx = await bridgeContract.addValidator(evmWallet.address, stakingSignatures);
+            await addValidatorTx.wait();
             console.info(`Added self as validator in chain: ${evmChainConfig.chain}, txHash: ${addValidatorTx.hash}`);
             failiure = false
         } catch (e) {

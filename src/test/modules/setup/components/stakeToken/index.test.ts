@@ -2,8 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import * as utils from "@src/utils/functions"
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
-import * as stakeUtils from '@src/modules/setup/components';
-import { stakeTokens } from '@src/modules/setup/components';
+import * as setupComponents from '@src/modules/setup/components';
 
 describe('stakeTokens', () => {
 
@@ -117,14 +116,14 @@ describe('stakeTokens', () => {
                 ...tokenContractStub
             })
 
-            sinon.stub(stakeUtils, "isStaked").resolves(isStaked);
+            sinon.stub(setupComponents, "isStaked").resolves(isStaked);
 
 
 
 
 
             // Call the function
-            await stakeTokens({ stakingChainConfig: stakingConfig, evmWallet })
+            await setupComponents.stakeTokens({ stakingChainConfig: stakingConfig, evmWallet })
 
 
             expect(stakingContractStub.stakeERC20.callCount).to.equal(callCountStake);

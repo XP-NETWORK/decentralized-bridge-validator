@@ -20,9 +20,10 @@ const setup = async () => {
 
   // Setup Configs
   let config: IBridgeConfig = prodBridgeConfig
+
   if (process.argv.includes('--testnet')) {
     config = testnetBridgeConfig
-    console.info("-------------------------- Running in testnet --------------------------------")
+    console.info("TESTNET_INITIATED")
   }
 
   // Generate wallets

@@ -25,7 +25,6 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
             console.info('Tokens staked successfully!');
         } catch (e) {
             if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "You can only stake once"`)) {
-                console.log("Staked Tokens......")
                 throw ("Error staking tokens")
             }
         }
@@ -37,7 +36,6 @@ const stakeTokens = async ({ stakingChainConfig, evmWallet }: IStakingChainConfi
     while (!stakedTokens) {
         try {
             await stakeTokens_({ stakingChainConfig, evmWallet });
-            console.log("Staked Tokens......")
             stakedTokens = true;
         } catch (e) {
             await waitForMSWithMsg(processDelayMilliseconds, "Error staking tokens")

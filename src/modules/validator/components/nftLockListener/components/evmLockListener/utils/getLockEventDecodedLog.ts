@@ -7,11 +7,10 @@ const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
     const web3 = new Web3();  // Not connected to any node
     const lockEventAbi = bridgeContractAbi.find(abi => abi.name === "Locked" && abi.type === "event");
 
-    const topicIndexToIgnore = 1;
     const decodedLog = web3.eth.abi.decodeLog(
         lockEventAbi.inputs,
         log.data,
-        log.topics.slice(topicIndexToIgnore)
+        []
     );
 
     const [

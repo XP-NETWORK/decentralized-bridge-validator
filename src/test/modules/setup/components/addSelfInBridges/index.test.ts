@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import { addSelfInBridges } from '@src/modules/setup/components';
 import * as addSelfInBridgesComponents from '@src/modules/setup/components/addSelfInBridges/components';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
+import { IEvmChainConfig } from '@src/types';
 
 describe('addSelfInBridges', () => {
 
@@ -28,14 +29,15 @@ describe('addSelfInBridges', () => {
         expect(
             handleEvmValidatorAdditionStub.calledWithExactly({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: mockBridgeConfig.bridgeChains[0], // First EVM chain
+                evmChainConfig:(mockBridgeConfig.bridgeChains.filter(item => item.chainType === "evm"))[0] as IEvmChainConfig, // First EVM chain
                 evmWallet: mockWallets.evmWallet,
             })
         ).to.be.true;
+        
         expect(
             handleEvmValidatorAdditionStub.calledWithExactly({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: mockBridgeConfig.bridgeChains[1], // Second EVM chain
+                evmChainConfig:(mockBridgeConfig.bridgeChains.filter(item => item.chainType === "evm"))[1] as IEvmChainConfig, // Second EVM chain
                 evmWallet: mockWallets.evmWallet,
             })
         ).to.be.true;

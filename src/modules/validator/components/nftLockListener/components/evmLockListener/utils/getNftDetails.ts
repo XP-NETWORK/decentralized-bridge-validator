@@ -44,7 +44,7 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
         }
     } else {
         try {
-            metadata = await evmSingleNftContract.tokenURI(tokenId); 
+            metadata = await evmSingleNftContract.tokenURI(tokenId);
         } catch (e) {
             console.info("Meta data not found");
         }
@@ -56,4 +56,4 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
 
 }
 
-export { getNftDetails }
+export default getNftDetails

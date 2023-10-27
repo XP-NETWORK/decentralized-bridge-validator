@@ -1,4 +1,4 @@
-import { IConfigAndWallets } from "@src/types";
+import { IConfigAndWallets, IEvmChainConfig } from "@src/types";
 import { handleEvmValidatorAddition } from "./components";
 
 const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {
@@ -12,7 +12,7 @@ const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {
             const evmChainConfig = chainConfig;
             const evmWallet = wallets.evmWallet;
 
-            await handleEvmValidatorAddition({ storageChainConfig, evmChainConfig, evmWallet })
+            await handleEvmValidatorAddition({ storageChainConfig, evmChainConfig: evmChainConfig as IEvmChainConfig, evmWallet })
         }
     }
 

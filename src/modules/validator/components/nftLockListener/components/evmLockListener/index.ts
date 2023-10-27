@@ -1,9 +1,9 @@
-import { IConfigAndWallets, IEvmChainConfigAndEvmWallet } from "@src/types";
+import { IBridgeConfig, IEvmChainConfig, IEvmWallet } from "@src/types";
 import { evmContractListener } from "@src/modules/validator/utils";
-import handleLockEventLog from "./utils/handleLockEventLog";
+import { handleLockEventLog } from "./utils";
 
 
-const evmLockListener = async ({ evmChainConfig, evmWallet, config }: IEvmChainConfigAndEvmWallet & IConfigAndWallets) => {
+const evmLockListener = async ({ config, evmChainConfig, evmWallet }: { evmChainConfig: IEvmChainConfig, config: IBridgeConfig, evmWallet: IEvmWallet }) => {
 
     const { contractAddress, rpcURL, lastBlock: lastBlock_, chain } = evmChainConfig;
 

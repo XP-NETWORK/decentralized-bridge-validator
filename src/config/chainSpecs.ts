@@ -1,9 +1,9 @@
-import { IBridgeConfig, IChainConfig, IStakingConfig } from "@src/types"
+import { IBridgeConfig, IChainConfig, IEvmChainConfig, IStakingConfig } from "@src/types"
 
 /*
     Test network for bridge
 */
-const storageTestnetConfig: IChainConfig = {
+const storageTestnetConfig: IEvmChainConfig = {
     chain: "OP",
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
@@ -14,7 +14,7 @@ const storageTestnetConfig: IChainConfig = {
 }
 
 
-const bridgeTestChains: IChainConfig[] = [
+const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
     {
         chain: "BSC",
         rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
@@ -57,7 +57,7 @@ const testnetBridgeConfig: IBridgeConfig = {
 /*
     Prod network for bridge
 */
-const storageProdConfig: IChainConfig = {
+const storageProdConfig: IEvmChainConfig = {
     chain: "OP",
     rpcURL: "https://mainnet.optimism.io",
     nativeCoinSymbol: "OP",
@@ -67,7 +67,7 @@ const storageProdConfig: IChainConfig = {
     lastBlock: 21321
 }
 
-const bridgeProdChains: IChainConfig[] = [
+const bridgeProdChains: (IChainConfig | IEvmChainConfig)[] = [
     {
         chain: "BSC",
         rpcURL: "https://bsc-dataseed1.binance.org/",

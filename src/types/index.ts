@@ -20,7 +20,7 @@ interface IChainConfig {
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
-    chainType: 'evm'
+    chainType: 'evm' | 'non-evm'
 }
 
 type IEvmChainConfig = IChainConfig & {
@@ -57,7 +57,7 @@ interface IContractConfigAndEvmWallet {
 
 
 interface IBridgeConfig {
-    bridgeChains: IChainConfig[];
+    bridgeChains: (IChainConfig | IEvmChainConfig)[];
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }

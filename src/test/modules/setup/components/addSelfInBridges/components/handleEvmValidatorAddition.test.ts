@@ -6,6 +6,7 @@ import {
 import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components";
 import * as utils from "@src/utils/functions"
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
+import { IEvmChainConfig } from '@src/types';
 describe('handleEvmValidatorAddition', () => {
 
 
@@ -83,7 +84,7 @@ describe('handleEvmValidatorAddition', () => {
             // Call the function
             await handleEvmValidatorAddition({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: mockBridgeConfig.bridgeChains[0],
+                evmChainConfig: (mockBridgeConfig.bridgeChains.find(item => item.chainType === 'evm')) as IEvmChainConfig,
                 evmWallet: mockWallets.evmWallet,
             });
 

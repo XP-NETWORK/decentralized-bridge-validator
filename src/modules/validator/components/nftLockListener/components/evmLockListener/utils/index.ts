@@ -1,4 +1,5 @@
 import getLockEventDecodedLog from "./getLockEventDecodedLog";
-import { getNftDetails } from "./getNftDetails";
+import getNftDetails  from "./getNftDetails";
+import handleLockEventLog from "./handleLockEventLog";
 
-export { getLockEventDecodedLog, getNftDetails }
+export { getLockEventDecodedLog, getNftDetails, handleLockEventLog }

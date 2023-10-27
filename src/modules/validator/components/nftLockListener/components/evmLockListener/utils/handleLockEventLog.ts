@@ -1,12 +1,12 @@
-import { IBridgeConfig, IChainConfig, IEvmChainConfig, IEvmWallet } from "@src/types";
-import getLockEventDecodedLog from "./getLockEventDecodedLog";
+import { IChainConfig } from "@src/types";
 import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
 import { getEvmBridgeContract, getStorageContract } from "@src/utils";
-import { getNftDetails } from "./getNftDetails";
 import { INftTransferDetailsObject } from "../types";
 import { approveEvmDestinationLock } from "../components";
+import { IHandleLockEventLog } from "./types";
+import { getNftDetails , getLockEventDecodedLog } from ".";
 
-const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: {  config: IBridgeConfig, evmChainConfig: IEvmChainConfig, evmWallet: IEvmWallet }) => {
+const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: IHandleLockEventLog) => {
 
 
     const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
@@ -29,8 +29,7 @@ const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: {  config: IB
         const destChain: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
-        if (!destChain.chain) return;
-
+        if (!destChain) return;
         const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
         const sourceChainRpcURL = config.bridgeChains.find(item => item.chain === sourceChain).rpcURL;
 

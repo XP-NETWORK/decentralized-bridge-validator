@@ -12,7 +12,7 @@ const mockBridgeConfig: IBridgeConfig = {
     },
     bridgeChains: [
         {
-            chain: 'bridgeChainMock1',
+            chain: 'BSC',
             rpcURL: 'rpcURLMock',
             nativeCoinSymbol: 'nativeCoinSymbolMock',
             intialFund: 'intialFundMock ETH',
@@ -21,13 +21,22 @@ const mockBridgeConfig: IBridgeConfig = {
             chainType: 'evm',
         },
         {
-            chain: 'bridgeChainMock2',
+            chain: 'ETH',
             rpcURL: 'rpcURLMock',
             nativeCoinSymbol: 'nativeCoinSymbolMock',
             intialFund: 'intialFundMock',
             contractAddress: 'contractAddressMock',
             lastBlock: 54321,
             chainType: 'evm',
+        },
+        {
+            chain: 'nonEvmChainMock',
+            rpcURL: 'rpcURLMock',
+            nativeCoinSymbol: 'nativeCoinSymbolMock',
+            intialFund: 'intialFundMock',
+            contractAddress: 'contractAddressMock',
+            lastBlock: 54321,
+            chainType: 'non-evm',
         },
     ],
     stakingConfig: {

@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import { isEvmChainFunded } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import * as utils from '@src/utils/functions';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
+import { IEvmChainConfig } from '@src/types';
 
 describe('isEvmChainFunded', () => {
 
@@ -58,7 +59,7 @@ describe('isEvmChainFunded', () => {
     }) => {
         it(description, async () => {
             const { evmWallet } = mockWallets;
-            const evmChainConfig = { ...mockBridgeConfig.bridgeChains[0], ...evmChainConfig_ };
+            const evmChainConfig = { ...((mockBridgeConfig.bridgeChains.find(item => item.chain === "evm")) as IEvmChainConfig), ...evmChainConfig_ };
 
             if (throwError) {
                 // Stub getCurrentEvmBalance to throw an error

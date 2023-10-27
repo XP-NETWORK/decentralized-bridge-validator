@@ -1,4 +1,4 @@
-import { IBridgeConfig, IEvmChainConfig, IEvmWallet } from "@src/types";
+import { IEvmWallet } from "@src/types";
 
 interface IGetNftDetails {
     sourceNftContractAddress: string;
@@ -7,10 +7,6 @@ interface IGetNftDetails {
     tokenId: string;
     nftType: string;
 }
-interface IHandleLockEventLog {
-    config: IBridgeConfig;
-    evmChainConfig: IEvmChainConfig;
-    evmWallet: IEvmWallet
-}
 
-export { IGetNftDetails, IHandleLockEventLog }
+
+export { IGetNftDetails }

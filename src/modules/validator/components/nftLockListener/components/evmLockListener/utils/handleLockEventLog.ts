@@ -3,14 +3,14 @@ import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types
 import { getEvmBridgeContract, getStorageContract } from "@src/utils";
 import { INftTransferDetailsObject } from "../types";
 import { approveEvmDestinationLock } from "../components";
-import { IHandleLockEventLog } from "./types";
-import { getNftDetails , getLockEventDecodedLog } from ".";
+import { getNftDetails, getLockEventDecodedLog } from ".";
+import { IEvmLockListener } from "../../../types";
 
-const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: IHandleLockEventLog) => {
+const handleLockEventLog = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
 
 
-    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet });
-    const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet });
+    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet: wallets.evmWallet });
+    const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
     const { topicHash } = bridgeContract.interface.getEvent("Locked");
 
     const handleLog = async ({ log }: { log: LogEntry }) => {
@@ -36,7 +36,7 @@ const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: IHandleLockEv
         const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
 
         const { royalty, royaltyReceiver, name, symbol, metadata } = await getNftDetails({
-            sourceNftContractAddress, sourceChainRpcURL, evmWallet, tokenId, nftType
+            sourceNftContractAddress, sourceChainRpcURL, evmWallet: wallets.evmWallet, tokenId, nftType
         })
 
         const nftTransferDetailsObject: INftTransferDetailsObject = {
@@ -58,7 +58,7 @@ const handleLockEventLog = ({ config, evmChainConfig, evmWallet }: IHandleLockEv
 
 
         if (destChain.chainType === "evm") {
-            await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract })
+            await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet: wallets.evmWallet, storageContract })
         }
     }
 

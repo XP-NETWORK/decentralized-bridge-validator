@@ -1,14 +1,14 @@
-import { IBridgeConfig, IEvmChainConfig, IEvmWallet } from "@src/types";
 import { evmContractListener } from "@src/modules/validator/utils";
 import { handleLockEventLog } from "./utils";
+import { IEvmLockListener } from "../../types";
 
 
-const evmLockListener = async ({ config, evmChainConfig, evmWallet }: { evmChainConfig: IEvmChainConfig, config: IBridgeConfig, evmWallet: IEvmWallet }) => {
+const evmLockListener = async ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
 
     const { contractAddress, rpcURL, lastBlock: lastBlock_, chain } = evmChainConfig;
 
 
-    const handleLog = handleLockEventLog({ config, evmChainConfig, evmWallet })
+    const handleLog = handleLockEventLog({ config, evmChainConfig, wallets })
 
     try {
         await evmContractListener({ contractAddress, rpcURL, lastBlock_, chain, handleLog });

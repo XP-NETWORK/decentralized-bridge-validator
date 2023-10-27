@@ -1,11 +1,10 @@
-import { LogEntry } from "../../../../utils/evmContractListener/types";
-import { evmContractListener } from '../../../../utils';
-import { getStorageContract } from "../../../../../../utils";
-import { getEvmBridgeContract } from "../../../../../../utils/functions";
 import { approveEvmDestinationLock } from "./components";
 import { INftTransferDetailsObject } from "./types";
 import { getLockEventDecodedLog, getNftDetails } from "./utils";
 import { IChainConfig, IConfigAndWallets, IEvmChainConfigAndEvmWallet } from "@src/types";
+import { evmContractListener } from "@src/modules/validator/utils";
+import { getEvmBridgeContract, getStorageContract } from "@src/utils";
+import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
 
 
 const evmLockListener = async ({ evmChainConfig, evmWallet, config }: IEvmChainConfigAndEvmWallet & IConfigAndWallets) => {

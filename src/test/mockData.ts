@@ -47,7 +47,7 @@ const mockWallets = {
     evmWallet: {
         address: '0x1234567890abcdef1234567890abcdef12345678',
         privateKey:
-            '0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef',
+            '0x8a6a4e9e3865814dc8f1e4fca103051162921715d1e517ba638ba05656f320b0',
     },
 };
 export { mockBridgeConfig, mockWallets }

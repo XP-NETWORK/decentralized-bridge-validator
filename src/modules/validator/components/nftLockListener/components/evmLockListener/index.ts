@@ -63,7 +63,7 @@ const evmLockListener = async ({ evmChainConfig, evmWallet, config }: IEvmChainC
 
 
         if (destChain.chainType === "evm") {
-            await approveEvmDestinationLock({ nftTransferDetailsObject, evmChainConfigAndEvmWallet: { evmChainConfig, evmWallet }, storageContract })
+            await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract })
         }
     };
 

@@ -15,29 +15,41 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
     const evmMultiNftContract = getEvmMultiNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChainRpcURL }, evmWallet })
 
     try {
-        symbol = await evmSingleNftContract.symbol(); // symbol of nft collection
         name = await evmSingleNftContract.name(); // name of NFT collection
     } catch (e) {
-        console.info("Name or symbol not found")
+        console.info("Name not found")
+    }
+
+    try {
+        symbol = await evmSingleNftContract.symbol(); // symbol of nft collection
+    } catch (e) {
+        console.info("symbol not found")
+    }
+
+    try {
+        [royaltyReceiver, royalty] = (await evmSingleNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage))).map(String); // royality of nft collection
+    } catch (e) {
+        console.info("Royalty not found")
     }
 
 
-    // Try to get royality if exists
+
+    // This is the only function thats different for singular and multi nft contracts in evm
+
     if (nftType === "multiple") {
         try {
-            [royaltyReceiver, royalty] = (await evmMultiNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage))).map(String); // royality of nft collection
+            metadata = await evmMultiNftContract.uri(tokenId);
         } catch (e) {
-            console.info("Royalty not found")
+            console.info("Meta data not found");
         }
-        metadata = await evmMultiNftContract.uri(tokenId);
     } else {
         try {
-            [royaltyReceiver, royalty] = (await evmSingleNftContract.royaltyInfo(tokenId, BigInt(salePriceToGetTotalRoyalityPercentage))).map(String); // royality of nft collection
+            metadata = await evmSingleNftContract.tokenURI(tokenId); 
         } catch (e) {
-            console.info("Royalty not found")
+            console.info("Meta data not found");
         }
-        metadata = await evmSingleNftContract.tokenURI(tokenId); // Metadata related to the NFT being transferred
     }
+
 
 
     return { royalty, royaltyReceiver, name, symbol, metadata }

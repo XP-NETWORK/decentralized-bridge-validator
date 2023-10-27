@@ -112,7 +112,7 @@ describe('handleLockEventLog', () => {
             const handleLog = lockEventUtils.handleLockEventLog({
                 config: mockBridgeConfig,
                 evmChainConfig: mockBridgeConfig.bridgeChains[1] as IEvmChainConfig,
-                evmWallet: mockWallets.evmWallet
+                wallets: mockWallets
             })
 
             await handleLog({

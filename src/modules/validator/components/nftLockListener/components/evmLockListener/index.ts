@@ -13,7 +13,7 @@ const evmLockListener = async ({ config, evmChainConfig, evmWallet }: { evmChain
     try {
         await evmContractListener({ contractAddress, rpcURL, lastBlock_, chain, handleLog });
     } catch (e) {
-        console.error("Error Staking listner", e)
+        console.error("Error in evmLockListener", e)
     }
 }
 

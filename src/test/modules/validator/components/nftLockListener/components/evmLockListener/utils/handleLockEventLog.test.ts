@@ -6,7 +6,7 @@ import * as lockEventUtils from '@src/modules/validator/components/nftLockListen
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import { IEvmChainConfig } from '@src/types';
 
-describe('stakeTokens', () => {
+describe('handleLockEventLog', () => {
 
 
     beforeEach(() => {

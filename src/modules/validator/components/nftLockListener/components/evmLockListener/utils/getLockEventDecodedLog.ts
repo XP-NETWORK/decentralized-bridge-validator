@@ -10,7 +10,7 @@ const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
     const decodedLog = web3.eth.abi.decodeLog(
         lockEventAbi.inputs,
         log.data,
-        []
+        [...log.topics.slice(1)]
     );
 
     const [

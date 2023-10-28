@@ -2,8 +2,6 @@ import { getLockEventDecodedLog } from '@src/modules/validator/components/nftLoc
 import { expect } from 'chai';
 
 
-
-
 describe("getLockEventDecodedLog", () => {
     const testCases = [
         {
@@ -30,7 +28,5 @@ describe("getLockEventDecodedLog", () => {
             expect(decodedLog).to.deep.equal(expectedDecodedLog);
         });
     });
-
-
 })
 

@@ -6,7 +6,7 @@ import { approveEvmDestinationLock } from "../components";
 import { getNftDetails, getLockEventDecodedLog } from ".";
 import { IEvmLockListener } from "../../../types";
 
-const handleLockEventLog = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
+const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
 
 
     const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet: wallets.evmWallet });
@@ -66,4 +66,4 @@ const handleLockEventLog = ({ config, evmChainConfig, wallets }: IEvmLockListene
 
 };
 
-export default handleLockEventLog
+export default getEvmLockListenerHandler

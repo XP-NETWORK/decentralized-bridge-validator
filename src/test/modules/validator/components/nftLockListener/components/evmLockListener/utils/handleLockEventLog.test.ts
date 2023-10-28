@@ -6,7 +6,7 @@ import * as lockEventUtils from '@src/modules/validator/components/nftLockListen
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import { IEvmChainConfig } from '@src/types';
 
-describe('handleLockEventLog', () => {
+describe('getEvmLockListenerHandler', () => {
 
 
     beforeEach(() => {
@@ -109,7 +109,7 @@ describe('handleLockEventLog', () => {
             sinon.stub(lockEventUtils, "getNftDetails").resolves(nftDetails);
 
 
-            const handleLog = lockEventUtils.handleLockEventLog({
+            const handleLog = lockEventUtils.getEvmLockListenerHandler({
                 config: mockBridgeConfig,
                 evmChainConfig: mockBridgeConfig.bridgeChains[1] as IEvmChainConfig,
                 wallets: mockWallets

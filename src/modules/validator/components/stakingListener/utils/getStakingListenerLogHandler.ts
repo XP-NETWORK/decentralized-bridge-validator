@@ -1,7 +1,7 @@
 import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
 import { getStakingContract, getStorageContract } from "@src/utils";
-import getStakeEventDecodedLog from "./getStakeEventDecodedLog";
-import { approveStake } from "../components";
+import { getStakeEventDecodedLog } from ".";
+import { approveStake } from "../stakingListenerJob/components";
 import { IConfigAndWallets } from "@src/types";
 
 const getStakingListenerLogHandler = ({ config, wallets }: IConfigAndWallets) => {
@@ -19,11 +19,11 @@ const getStakingListenerLogHandler = ({ config, wallets }: IConfigAndWallets) =>
 
 
 
-        await approveStake({  wallets, stakerAddress, storageContract })
+        await approveStake({ wallets, stakerAddress, storageContract })
     };
 
     return handleLog
 
 }
 
-export { getStakingListenerLogHandler }
+export default getStakingListenerLogHandler

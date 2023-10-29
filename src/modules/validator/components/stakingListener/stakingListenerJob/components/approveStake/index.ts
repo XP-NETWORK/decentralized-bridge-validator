@@ -16,7 +16,7 @@ const approveStake = async ({ wallets, stakerAddress, storageContract }: IApprov
         console.info(`Stake Approved Transaction Hash: ${tx.hash}`);
     } catch (e) {
         if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
-            throw ("Error while processing log")
+            throw new Error("Error while processing log")
         }
     }
 }

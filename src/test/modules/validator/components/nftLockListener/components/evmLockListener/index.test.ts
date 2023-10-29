@@ -9,7 +9,6 @@ import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types
 
 describe('evmLockListener', () => {
 
-
     afterEach(() => {
         sinon.restore();
     });
@@ -18,8 +17,8 @@ describe('evmLockListener', () => {
         const config = mockBridgeConfig;
         const evmChainConfig = mockBridgeConfig.bridgeChains[1] as IEvmChainConfig;
         const wallets = mockWallets
-        const handleLogFunctionMock = async ({ log }: { log: LogEntry; }) => { console.info(log) };
         const evmContractListenerStub = sinon.stub(validatorUtils, 'evmContractListener').resolves();
+        const handleLogFunctionMock = async ({ log }: { log: LogEntry; }) => { console.info(log) };
         sinon.stub(evmLockListenerUtils, 'getEvmLockListenerHandler').returns(handleLogFunctionMock)
 
         await evmLockListener({ config, evmChainConfig, wallets });
@@ -34,6 +33,5 @@ describe('evmLockListener', () => {
             handleLog: handleLogFunctionMock,
         });
     });
-
 
 });

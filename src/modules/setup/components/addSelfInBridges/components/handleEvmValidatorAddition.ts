@@ -13,7 +13,7 @@ const handleEvmValidatorAddition = async ({ storageChainConfig, evmChainConfig, 
 
     while (failiure) {
         try {
-            const isAlreadyAdded = await bridgeContract.validators(evmWallet.address);
+            const isAlreadyAdded = (await bridgeContract.validators(evmWallet.address)).added;
             console.info({ isAlreadyAdded }, evmChainConfig.chain)
 
             if (isAlreadyAdded) {

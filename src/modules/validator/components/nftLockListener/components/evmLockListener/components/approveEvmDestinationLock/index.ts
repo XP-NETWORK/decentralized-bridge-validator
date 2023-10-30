@@ -2,7 +2,7 @@ import Web3 from "web3";
 import { IApproveEvmDestinationLock } from "./types";
 
 
-const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmWallet, storageContract }: IApproveEvmDestinationLock) => {
+const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmWallet, storageContract, txChain }: IApproveEvmDestinationLock) => {
     const web3 = new Web3();
     const nftTransferDetailsValues = Object.values(nftTransferDetailsObject);
 
@@ -38,7 +38,7 @@ const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmWallet, 
 
         const tx = await storageContract.approveLockNft(
             nftTransferDetailsObject.transactionHash,
-            nftTransferDetailsObject.sourceChain,
+            txChain,
             signedNftTransferDetails.signature
         );
         await tx.wait();
@@ -47,6 +47,8 @@ const approveEvmDestinationLock = async ({ nftTransferDetailsObject, evmWallet, 
     } catch (e) {
         if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
             throw new Error("Error while processing log")
+        } else {
+            console.log("Transaction already processed")
         }
     }
 }

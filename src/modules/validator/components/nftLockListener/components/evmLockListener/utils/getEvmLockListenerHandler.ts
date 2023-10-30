@@ -15,7 +15,7 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
 
     const handleLog = async ({ log }: { log: LogEntry }) => {
         // if its not the lock nft event we early return
-        if (typeof log === "string" || !log.topics.includes(topicHash)) return;
+        if (typeof log === "string" || !log.topics || !log.topics.includes(topicHash)) return;
 
         const {
             tokenId, // Unique ID for the NFT transfer

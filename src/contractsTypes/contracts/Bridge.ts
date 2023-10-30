@@ -80,6 +80,7 @@ export interface BridgeInterface extends Interface {
       | "addValidator"
       | "claimNFT1155"
       | "claimNFT721"
+      | "claimValidatorRewards"
       | "collectionDeployer"
       | "duplicateStorageMapping1155"
       | "duplicateStorageMapping721"
@@ -101,6 +102,8 @@ export interface BridgeInterface extends Interface {
       | "AddNewValidator"
       | "Claimed"
       | "Locked"
+      | "LogHash"
+      | "RewardValidator"
       | "UnLock1155"
       | "UnLock721"
   ): EventFragment;
@@ -116,6 +119,10 @@ export interface BridgeInterface extends Interface {
   encodeFunctionData(
     functionFragment: "claimNFT721",
     values: [Bridge.ClaimDataStruct, BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimValidatorRewards",
+    values: [AddressLike, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "collectionDeployer",
@@ -181,6 +188,10 @@ export interface BridgeInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "claimNFT721",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimValidatorRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -288,6 +299,31 @@ export namespace LockedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace LogHashEvent {
+  export type InputTuple = [hashValue: BytesLike, arg1: BytesLike[]];
+  export type OutputTuple = [hashValue: string, arg1: string[]];
+  export interface OutputObject {
+    hashValue: string;
+    arg1: string[];
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RewardValidatorEvent {
+  export type InputTuple = [_validator: AddressLike];
+  export type OutputTuple = [_validator: string];
+  export interface OutputObject {
+    _validator: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace UnLock1155Event {
   export type InputTuple = [
     to: AddressLike,
@@ -375,7 +411,7 @@ export interface Bridge extends BaseContract {
   ): Promise<this>;
 
   addValidator: TypedContractMethod<
-    [_validator: AddressLike, sigs: BytesLike[]],
+    [_validator: AddressLike, signatures: BytesLike[]],
     [void],
     "nonpayable"
   >;
@@ -390,6 +426,12 @@ export interface Bridge extends BaseContract {
     [data: Bridge.ClaimDataStruct, signatures: BytesLike[]],
     [void],
     "payable"
+  >;
+
+  claimValidatorRewards: TypedContractMethod<
+    [_validator: AddressLike, signatures: BytesLike[]],
+    [void],
+    "nonpayable"
   >;
 
   collectionDeployer: TypedContractMethod<[], [string], "view">;
@@ -421,7 +463,7 @@ export interface Bridge extends BaseContract {
       tokenAmount: BigNumberish
     ],
     [void],
-    "payable"
+    "nonpayable"
   >;
 
   lock721: TypedContractMethod<
@@ -459,7 +501,11 @@ export interface Bridge extends BaseContract {
 
   uniqueIdentifier: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
-  validators: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  validators: TypedContractMethod<
+    [arg0: AddressLike],
+    [[boolean, bigint] & { added: boolean; pendingReward: bigint }],
+    "view"
+  >;
 
   validatorsCount: TypedContractMethod<[], [bigint], "view">;
 
@@ -470,7 +516,7 @@ export interface Bridge extends BaseContract {
   getFunction(
     nameOrSignature: "addValidator"
   ): TypedContractMethod<
-    [_validator: AddressLike, sigs: BytesLike[]],
+    [_validator: AddressLike, signatures: BytesLike[]],
     [void],
     "nonpayable"
   >;
@@ -487,6 +533,13 @@ export interface Bridge extends BaseContract {
     [data: Bridge.ClaimDataStruct, signatures: BytesLike[]],
     [void],
     "payable"
+  >;
+  getFunction(
+    nameOrSignature: "claimValidatorRewards"
+  ): TypedContractMethod<
+    [_validator: AddressLike, signatures: BytesLike[]],
+    [void],
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "collectionDeployer"
@@ -515,7 +568,7 @@ export interface Bridge extends BaseContract {
       tokenAmount: BigNumberish
     ],
     [void],
-    "payable"
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "lock721"
@@ -553,7 +606,11 @@ export interface Bridge extends BaseContract {
   ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "validators"
-  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  ): TypedContractMethod<
+    [arg0: AddressLike],
+    [[boolean, bigint] & { added: boolean; pendingReward: bigint }],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "validatorsCount"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -578,6 +635,20 @@ export interface Bridge extends BaseContract {
     LockedEvent.InputTuple,
     LockedEvent.OutputTuple,
     LockedEvent.OutputObject
+  >;
+  getEvent(
+    key: "LogHash"
+  ): TypedContractEvent<
+    LogHashEvent.InputTuple,
+    LogHashEvent.OutputTuple,
+    LogHashEvent.OutputObject
+  >;
+  getEvent(
+    key: "RewardValidator"
+  ): TypedContractEvent<
+    RewardValidatorEvent.InputTuple,
+    RewardValidatorEvent.OutputTuple,
+    RewardValidatorEvent.OutputObject
   >;
   getEvent(
     key: "UnLock1155"
@@ -626,6 +697,28 @@ export interface Bridge extends BaseContract {
       LockedEvent.InputTuple,
       LockedEvent.OutputTuple,
       LockedEvent.OutputObject
+    >;
+
+    "LogHash(bytes32,bytes[])": TypedContractEvent<
+      LogHashEvent.InputTuple,
+      LogHashEvent.OutputTuple,
+      LogHashEvent.OutputObject
+    >;
+    LogHash: TypedContractEvent<
+      LogHashEvent.InputTuple,
+      LogHashEvent.OutputTuple,
+      LogHashEvent.OutputObject
+    >;
+
+    "RewardValidator(address)": TypedContractEvent<
+      RewardValidatorEvent.InputTuple,
+      RewardValidatorEvent.OutputTuple,
+      RewardValidatorEvent.OutputObject
+    >;
+    RewardValidator: TypedContractEvent<
+      RewardValidatorEvent.InputTuple,
+      RewardValidatorEvent.OutputTuple,
+      RewardValidatorEvent.OutputObject
     >;
 
     "UnLock1155(address,uint256,address,uint256)": TypedContractEvent<

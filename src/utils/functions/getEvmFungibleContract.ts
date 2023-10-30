@@ -5,10 +5,10 @@ import { IStakingChainConfigAndEvmWallet } from "@src/types";
 
 
 const getEvmFungibleContract = ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): ERC20Token => {
-    const opProvider = new ethers.JsonRpcProvider(stakingChainConfig.rpcURL);
-    const opWallet = new ethers.Wallet(evmWallet.privateKey, opProvider);
+    const provider = new ethers.JsonRpcProvider(stakingChainConfig.rpcURL);
+    const wallet = new ethers.Wallet(evmWallet.privateKey, provider);
 
-    return ERC20Token__factory.connect(stakingChainConfig.contractAddress, opWallet);
+    return ERC20Token__factory.connect(stakingChainConfig.coinAddress, wallet);
 }
 
 export default getEvmFungibleContract

@@ -7,6 +7,7 @@ import type {
   FunctionFragment,
   Result,
   Interface,
+  EventFragment,
   AddressLike,
   ContractRunner,
   ContractMethod,
@@ -16,6 +17,7 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
+  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
 } from "../common";
@@ -28,6 +30,8 @@ export interface NFTCollectionDeployerInterface extends Interface {
       | "owner"
       | "setOwner"
   ): FunctionFragment;
+
+  getEvent(nameOrSignatureOrTopic: "CreatedCollection"): EventFragment;
 
   encodeFunctionData(
     functionFragment: "deployNFT1155Collection",
@@ -53,6 +57,18 @@ export interface NFTCollectionDeployerInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+}
+
+export namespace CreatedCollectionEvent {
+  export type InputTuple = [collectionAddress: AddressLike];
+  export type OutputTuple = [collectionAddress: string];
+  export interface OutputObject {
+    collectionAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export interface NFTCollectionDeployer extends BaseContract {
@@ -131,5 +147,24 @@ export interface NFTCollectionDeployer extends BaseContract {
     nameOrSignature: "setOwner"
   ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
 
-  filters: {};
+  getEvent(
+    key: "CreatedCollection"
+  ): TypedContractEvent<
+    CreatedCollectionEvent.InputTuple,
+    CreatedCollectionEvent.OutputTuple,
+    CreatedCollectionEvent.OutputObject
+  >;
+
+  filters: {
+    "CreatedCollection(address)": TypedContractEvent<
+      CreatedCollectionEvent.InputTuple,
+      CreatedCollectionEvent.OutputTuple,
+      CreatedCollectionEvent.OutputObject
+    >;
+    CreatedCollection: TypedContractEvent<
+      CreatedCollectionEvent.InputTuple,
+      CreatedCollectionEvent.OutputTuple,
+      CreatedCollectionEvent.OutputObject
+    >;
+  };
 }

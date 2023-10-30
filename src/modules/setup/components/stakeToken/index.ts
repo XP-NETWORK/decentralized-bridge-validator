@@ -14,8 +14,6 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
         const amountToStake = stakingChainConfig.intialFund;
         try {
 
-            console.log(await tokenContract.symbol())
-
             const approveTx = await tokenContract.approve(stakingChainConfig.contractAddress, amountToStake)
             await approveTx.wait()
             console.info(`Token Approve Transaction Hash: ${approveTx.hash}`);
@@ -26,7 +24,6 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
 
             console.info('Tokens staked successfully!');
         } catch (e) {
-            console.log(e)
             if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "You can only stake once"`)) {
                 throw ("Error staking tokens")
             }

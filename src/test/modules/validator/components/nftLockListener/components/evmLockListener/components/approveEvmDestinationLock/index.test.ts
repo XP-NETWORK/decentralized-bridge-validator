@@ -59,7 +59,7 @@ describe('approveEvmDestinationLock', () => {
     testCases.forEach(({ approveLockNft, expectedToThrow, description }) => {
 
         it(description, async () => {
-
+            const txChain = "BSC"
             const storageContractStub = {
                 approveLockNft
             };
@@ -68,13 +68,13 @@ describe('approveEvmDestinationLock', () => {
             const storageContract = getStorageContractStub({ evmChainConfig: storageConfig, evmWallet });
             if (expectedToThrow) {
                 try {
-                    await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract })
+                    await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract, txChain })
                 } catch (error) {
                     expect(error).to.exist;
                     expect(error.message).to.equal("Error while processing log");
                 }
             } else
-                await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract });
+                await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract, txChain });
 
         });
     });

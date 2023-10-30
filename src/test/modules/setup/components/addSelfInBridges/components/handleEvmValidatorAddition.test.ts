@@ -54,7 +54,7 @@ describe('handleEvmValidatorAddition', () => {
             const hash = "some unique hash";
 
             const bridgeContractStub = {
-                validators: sinon.stub().resolves(isAlreadyAdded),
+                validators: sinon.stub().resolves({ added: isAlreadyAdded }),
                 validatorsCount: sinon.stub().resolves(BigInt(totalExistingValidators)),
                 addValidator: sinon.stub().resolves({ hash, wait: sinon.stub().resolves() }), // Mock adding validator
             };

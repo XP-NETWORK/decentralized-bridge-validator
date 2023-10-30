@@ -5,7 +5,8 @@ import { INftTransferDetailsObject } from "../../types";
 interface IApproveEvmDestinationLock {
     nftTransferDetailsObject: INftTransferDetailsObject,
     evmWallet: IEvmWallet;
-    storageContract: BridgeStorage
+    storageContract: BridgeStorage;
+    txChain: string;
 }
 
 export { IApproveEvmDestinationLock }

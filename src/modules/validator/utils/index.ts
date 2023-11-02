@@ -1,4 +1,5 @@
 import evmContractListener from "./evmContractListener";
 import createJobWithWorker from "./createJobWithWorker";
+import multiversXContractListener from "./multiversXContractListener";
 
-export { evmContractListener, createJobWithWorker }
+export { evmContractListener, createJobWithWorker, multiversXContractListener }

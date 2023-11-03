@@ -9,7 +9,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
     contractAddress: "0x5bB1EdcACf79F59Dfa9d0e054847B33eb20d2AA4",
-    chainType: 'evm',
+    signType: 'ecdsa',
     lastBlock: 16237329
 }
 
@@ -21,7 +21,7 @@ const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
         contractAddress: "0x661b12aC3648642bad0843C3A88B519cF310CFf2",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 34650296
     },
     {
@@ -30,7 +30,7 @@ const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "ETH",
         intialFund: "50000000000000000",
         contractAddress: "0x7935f469298002c0Fb11F853B415B08aDCaC9Cf7",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 4592411
     },
     {
@@ -39,7 +39,7 @@ const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
         contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 41817080
     },
     {
@@ -48,7 +48,7 @@ const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
         contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 41817080
     }
 ]
@@ -58,7 +58,7 @@ const stakingTestChain: IStakingConfig = {
     rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
     coinSymbol: "ERC",
     nativeCoinSymbol: "BNB",
-    chainType: 'evm',
+    signType: 'ecdsa',
     coinAddress: "0x303C8FB57b86F70996E7988Cd3832EA717aD4E7C",
     contractAddress: "0x6f2C150f6D11B813d9175ebE3A3212f7BBB89E65",
     intialFund: "100000000000000000000",
@@ -81,7 +81,7 @@ const storageProdConfig: IEvmChainConfig = {
     nativeCoinSymbol: "OP",
     intialFund: "500000000000000000",
     contractAddress: "0xBridgeStorageAddress",
-    chainType: 'evm',
+    signType: 'ecdsa',
     lastBlock: 21321
 }
 
@@ -92,7 +92,7 @@ const bridgeProdChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "BNB",
         intialFund: "500000000000000000",
         contractAddress: "0x0471fcD1De1fCB7C9f426630c8D1579fb3496c87",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 34404611
     },
     {
@@ -101,7 +101,7 @@ const bridgeProdChains: (IChainConfig | IEvmChainConfig)[] = [
         nativeCoinSymbol: "ETH",
         intialFund: "500000000000000000",
         contractAddress: "0xBE65Ba9DC7DE80e5B80f7d93a14450E2Ad25a16B",
-        chainType: 'evm',
+        signType: 'ecdsa',
         lastBlock: 21321
     }
 ]
@@ -110,7 +110,7 @@ const stakingProdChain: IStakingConfig = {
     rpcURL: "https://bsc-testnet.publicnode.com",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
-    chainType: 'evm',
+    signType: 'ecdsa',
     coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
     contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
     intialFund: "100000000000000000000",

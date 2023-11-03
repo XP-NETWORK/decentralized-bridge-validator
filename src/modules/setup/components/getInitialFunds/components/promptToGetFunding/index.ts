@@ -13,7 +13,7 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
 
     // Bridge chains fund promt
     for (const chainConfig of config.bridgeChains) {
-        if (chainConfig.chainType == 'evm') {
+        if (chainConfig.signType == 'ecdsa') {
             if (!await isEvmChainFunded({ evmChainConfig: chainConfig as IEvmChainConfig, evmWallet: wallets.evmWallet })) {
                 isFunded = false
             }

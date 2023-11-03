@@ -6,7 +6,7 @@ import { IEvmLockListener } from "./types";
 const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
 
     for (const chainConfig of config.bridgeChains) {
-        if (chainConfig.chainType === 'evm') {
+        if (chainConfig.signType === 'ecdsa') {
             const jobData: IEvmLockListener = { evmChainConfig: chainConfig as IEvmChainConfig, config, wallets };
 
             const jobName: string = `evmLockedEventListener_${chainConfig.chain}`

@@ -52,11 +52,11 @@ interface IChainConfig {
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
-    chainType: 'evm' | 'non-evm'
+    signType: 'ecdsa' | 'non-evm'
 }
 
 type IEvmChainConfig = IChainConfig & {
-    chainType: 'evm';
+    signType: 'ecdsa';
 };
 
 interface IEvmChainConfigAndEvmWallet {

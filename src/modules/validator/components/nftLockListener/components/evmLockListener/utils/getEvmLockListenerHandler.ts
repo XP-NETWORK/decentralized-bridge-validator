@@ -57,7 +57,7 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
         };
 
 
-        if (destChain.chainType === "evm") {
+        if (destChain.signType === 'ecdsa') {
             await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet: wallets.evmWallet, storageContract, txChain: evmChainConfig.chain })
         }
     }

@@ -8,7 +8,7 @@ const mockBridgeConfig: IBridgeConfig = {
         intialFund: 'intialFundMock',
         contractAddress: 'contractAddressMock',
         lastBlock: 3214,
-        chainType: 'evm',
+        signType: 'ecdsa',
     },
     bridgeChains: [
         {
@@ -18,7 +18,7 @@ const mockBridgeConfig: IBridgeConfig = {
             intialFund: 'intialFundMock ETH',
             contractAddress: 'contractAddressMock',
             lastBlock: 12345,
-            chainType: 'evm',
+            signType: 'ecdsa',
         },
         {
             chain: 'ETH',
@@ -27,7 +27,7 @@ const mockBridgeConfig: IBridgeConfig = {
             intialFund: 'intialFundMock',
             contractAddress: 'contractAddressMock',
             lastBlock: 54321,
-            chainType: 'evm',
+            signType: 'ecdsa',
         },
         {
             chain: 'nonEvmChainMock',
@@ -36,7 +36,7 @@ const mockBridgeConfig: IBridgeConfig = {
             intialFund: 'intialFundMock',
             contractAddress: 'contractAddressMock',
             lastBlock: 54321,
-            chainType: 'non-evm',
+            signType: 'non-evm',
         },
     ],
     stakingConfig: {
@@ -48,7 +48,7 @@ const mockBridgeConfig: IBridgeConfig = {
         lastBlock: 12345,
         coinAddress: "coinAddressMock",
         coinSymbol: "coinSymbolMock",
-        chainType: 'evm',
+        signType: 'ecdsa',
     }
 };
 

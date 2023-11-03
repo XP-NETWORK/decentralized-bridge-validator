@@ -1,4 +1,4 @@
-const bridgeContractAbi = [
+const evmBridgeABI = [
     {
         "inputs": [
             {
@@ -658,4 +658,4 @@ const bridgeContractAbi = [
     }
 ]
 
-export default bridgeContractAbi
+export default evmBridgeABI

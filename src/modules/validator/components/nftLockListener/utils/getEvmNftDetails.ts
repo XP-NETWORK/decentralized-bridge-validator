@@ -1,11 +1,11 @@
-import { getEvmMultiNftContract, getEvmSingleNftContract } from "../../../../../../../utils";
-import { IGetNftDetails } from "./types";
+import { getEvmMultiNftContract, getEvmSingleNftContract } from "@src/utils";
+import { IGetEvmNftDetails } from "./types";
 
-const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmWallet, tokenId, nftType }: IGetNftDetails) => {
+const getEvmNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmWallet, tokenId, nftType }: IGetEvmNftDetails) => {
 
     const salePriceToGetTotalRoyalityPercentage = 10000;
 
-    let royalty: string = String(BigInt("0")); // set default royalty 0
+    let royalty = String(BigInt("0")); // set default royalty 0
     let royaltyReceiver = "0x0000000000000000000000000000000000000000"; // set default reciever none
     let metadata = ""; // set default matadata empty
     let name = "" // set empty default name
@@ -56,4 +56,4 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChainRpcURL, evmW
 
 }
 
-export default getNftDetails
+export default getEvmNftDetails

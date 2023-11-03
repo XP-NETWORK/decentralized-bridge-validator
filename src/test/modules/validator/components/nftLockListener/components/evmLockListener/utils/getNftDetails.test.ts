@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import * as utils from "@src/utils/functions";
 import { mockWallets } from '@src/test/mockData';
-import { getNftDetails } from '@src/modules/validator/components/nftLockListener/components/evmLockListener/utils';
+import { getEvmNftDetails } from '@src/modules/validator/components/nftLockListener/utils';
 
-describe('getNftDetails', () => {
+describe('getEvmNftDetails', () => {
     const sourceNftContractAddress = "0xDummySource";
     const sourceChainRpcURL = "mockRpcURL";
     const { evmWallet } = mockWallets;
@@ -228,7 +228,7 @@ describe('getNftDetails', () => {
             const getEvmMultiNftContract = sinon.stub(utils, 'getEvmMultiNftContract');
             getEvmMultiNftContract.returns({ ...getEvmMultiNftContract[1], ...evmMultiNftContractStub });
 
-            const result = await getNftDetails({ sourceChainRpcURL, sourceNftContractAddress, tokenId, evmWallet, nftType });
+            const result = await getEvmNftDetails({ sourceChainRpcURL, sourceNftContractAddress, tokenId, evmWallet, nftType });
             expect(result).to.deep.equal(expected);
         });
     });

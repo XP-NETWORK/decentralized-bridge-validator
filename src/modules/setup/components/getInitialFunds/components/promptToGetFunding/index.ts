@@ -1,5 +1,5 @@
-import { isEvmChainFunded, isStakingCoinFunded } from "./components";
-import { IConfigAndWallets, IEvmChainConfig } from "@src/types";
+import { isEvmChainFunded, isMultiversXChainFunded, isStakingCoinFunded } from "./components";
+import { IConfigAndWallets } from "@src/types";
 
 
 const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promise<boolean> => {
@@ -13,8 +13,12 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
 
     // Bridge chains fund promt
     for (const chainConfig of config.bridgeChains) {
-        if (chainConfig.chainType == 'evm') {
-            if (!await isEvmChainFunded({ evmChainConfig: chainConfig as IEvmChainConfig, evmWallet: wallets.evmWallet })) {
+        if (chainConfig.chainType === 'evm') {
+            if (!await isEvmChainFunded({ evmChainConfig: chainConfig, evmWallet: wallets.evmWallet })) {
+                isFunded = false
+            }
+        } else if (chainConfig.chainType === "multiversX") {
+            if (!await isMultiversXChainFunded({ multiversXChainConfig: chainConfig, multiversXWallet: wallets.multiversXWallet })) {
                 isFunded = false
             }
         }

@@ -3,8 +3,9 @@ import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types
 import { getEvmBridgeContract, getStorageContract } from "@src/utils";
 import { INftTransferDetailsObject } from "../types";
 import { approveEvmDestinationLock } from "../components";
-import { getNftDetails, getLockEventDecodedLog } from ".";
+import { getLockEventDecodedLog } from ".";
 import { IEvmLockListener } from "../../../types";
+import { getEvmNftDetails } from "../../../utils";
 
 const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
 
@@ -31,34 +32,48 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
         // if user gives a destination chain which is not registered with us, we early return
         if (!destChain) return;
         const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
-        const sourceChainRpcURL = config.bridgeChains.find(item => item.chain === sourceChain).rpcURL;
+        const sourceChain_ = config.bridgeChains.find(item => item.chain === sourceChain);
 
-        const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
+        if (sourceChain_) {
 
-        const { royalty, royaltyReceiver, name, symbol, metadata } = await getNftDetails({
-            sourceNftContractAddress, sourceChainRpcURL, evmWallet: wallets.evmWallet, tokenId, nftType
-        })
+            const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
 
-        const nftTransferDetailsObject: INftTransferDetailsObject = {
-            tokenId,
-            sourceChain,
-            destinationChain,
-            destinationUserAddress,
-            sourceNftContractAddress,
-            name,
-            symbol,
-            royalty,
-            royaltyReceiver,
-            metadata,
-            transactionHash,
-            tokenAmount,
-            nftType,
-            fee,
-        };
+            let nftDetails = {
+                royalty: String(BigInt("0")),
+                royaltyReceiver: "0x0000000000000000000000000000000000000000",
+                name: "",
+                symbol: "",
+                metadata: "",
+            };
+            if (sourceChain_.chainType === "evm") {
+                const sourceChainRpcURL = sourceChain_.rpcURL;
+                nftDetails = await getEvmNftDetails({
+                    sourceNftContractAddress, sourceChainRpcURL, evmWallet: wallets.evmWallet, tokenId, nftType
+                })
+            }
+            const { royalty, royaltyReceiver, name, symbol, metadata } = nftDetails;
+
+            const nftTransferDetailsObject: INftTransferDetailsObject = {
+                tokenId,
+                sourceChain,
+                destinationChain,
+                destinationUserAddress,
+                sourceNftContractAddress,
+                name,
+                symbol,
+                royalty,
+                royaltyReceiver,
+                metadata,
+                transactionHash,
+                tokenAmount,
+                nftType,
+                fee,
+            };
 
 
-        if (destChain.chainType === 'evm') {
-            await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet: wallets.evmWallet, storageContract, txChain: evmChainConfig.chain })
+            if (destChain.chainType === 'evm') {
+                await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet: wallets.evmWallet, storageContract, txChain: evmChainConfig.chain })
+            }
         }
     }
 

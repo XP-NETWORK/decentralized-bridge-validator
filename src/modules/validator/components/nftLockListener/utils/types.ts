@@ -1,6 +1,6 @@
 import { IEvmWallet } from "@src/types";
 
-interface IGetNftDetails {
+interface IGetEvmNftDetails {
     sourceNftContractAddress: string;
     sourceChainRpcURL: string;
     evmWallet: IEvmWallet;
@@ -9,4 +9,4 @@ interface IGetNftDetails {
 }
 
 
-export { IGetNftDetails }
+export { IGetEvmNftDetails }

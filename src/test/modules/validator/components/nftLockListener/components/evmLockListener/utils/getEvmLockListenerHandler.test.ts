@@ -2,7 +2,8 @@ import sinon from 'sinon';
 import * as utils from "@src/utils/functions"
 import * as lockEventComponents from '@src/modules/validator/components/nftLockListener/components/evmLockListener/components';
 import { expect } from 'chai';
-import * as lockEventUtils from '@src/modules/validator/components/nftLockListener/components/evmLockListener/utils';
+import * as evmLockEventUtils from '@src/modules/validator/components/nftLockListener/components/evmLockListener/utils';
+import * as lockEventUtils from '@src/modules/validator/components/nftLockListener/utils';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import { IEvmChainConfig } from '@src/types';
 
@@ -105,11 +106,11 @@ describe('getEvmLockListenerHandler', () => {
             })
 
             const approveEvmDestinationLockStub = sinon.stub(lockEventComponents, "approveEvmDestinationLock").resolves();
-            sinon.stub(lockEventUtils, "getLockEventDecodedLog").returns(decodedLogs);
-            sinon.stub(lockEventUtils, "getNftDetails").resolves(nftDetails);
+            sinon.stub(evmLockEventUtils, "getLockEventDecodedLog").returns(decodedLogs);
+            sinon.stub(lockEventUtils, "getEvmNftDetails").resolves(nftDetails);
 
 
-            const handleLog = lockEventUtils.getEvmLockListenerHandler({
+            const handleLog = evmLockEventUtils.getEvmLockListenerHandler({
                 config: mockBridgeConfig,
                 evmChainConfig: mockBridgeConfig.bridgeChains[1] as IEvmChainConfig,
                 wallets: mockWallets

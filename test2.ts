@@ -12,3 +12,22 @@
 //     })
 // })
 
+
+// import { Mnemonic, UserWallet } from '@multiversx/sdk-wallet/out';
+// import * as fs from "fs"
+// const generateElrondWallet = () => {
+//     const mnemonic = Mnemonic.generate();
+//     const secretKey = mnemonic.deriveKey(0);
+//     const password = Math.random().toString(36).slice(2);
+//     const userWallet = UserWallet.fromSecretKey({ secretKey, password });
+//     const multiversXWallet = userWallet.toJSON();
+//     return { multiversXWallet, password };
+// };
+
+// fs.writeFile("s.txt", JSON.stringify(generateElrondWallet()), ()=> {})
+
+import { getCurrentMultiversXBalance } from "./src/utils"
+import { mockBridgeConfig, mockWallets } from "./src/test/mockData"
+import { IMultiversXChainConfig } from "./src/types"
+
+getCurrentMultiversXBalance({ multiversXChainConfig: mockBridgeConfig.bridgeChains[2] as IMultiversXChainConfig, multiversXWallet: mockWallets.multiversXWallet }).then(r => console.log(r))

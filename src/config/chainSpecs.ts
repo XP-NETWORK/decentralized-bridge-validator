@@ -44,12 +44,12 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
     },
     {
         chain: "MULTIVERSX",
-        rpcURL: "https://rpc-mumbai.maticvigil.com/",
-        nativeCoinSymbol: "MATIC",
+        nativeCoinSymbol: "EGLD",
         intialFund: "50000000000000000",
         contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
-        chainType: 'ed25519',
+        chainType: 'multiversX',
         elasticSearchURL: "https://devnet-index.multiversx.com",
+        gatewayURL: "https://devnet-gateway.multiversx.com",
         lastBlock: 0
     }
 ]

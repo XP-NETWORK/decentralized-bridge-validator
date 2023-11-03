@@ -47,27 +47,37 @@ interface IConfigAndWallets {
 
 interface IChainConfig {
     chain: string;
-    rpcURL: string;
     nativeCoinSymbol: string;
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
     chainType: string
 }
-
+interface IChainConfigAndWallets {
+    chainConfig: IEvmChainConfig | IMultiversXChainConfig;
+    wallets: IGeneratedWallets;
+}
 interface IEvmChainConfig extends IChainConfig {
     chainType: 'evm';
+    rpcURL: string;
 }
 
 interface IMultiversXChainConfig extends IChainConfig {
-    chainType: 'ed25519';
+    chainType: 'multiversX';
     elasticSearchURL: string;
+    gatewayURL: string;
 }
 
 
 interface IEvmChainConfigAndEvmWallet {
     evmChainConfig: IEvmChainConfig;
     evmWallet: IEvmWallet;
+}
+
+
+interface IMultiversXChainConfigAndMultiversXWallet {
+    multiversXChainConfig: IMultiversXChainConfig;
+    multiversXWallet: IMultiversXWallet;
 }
 
 interface IStakingConfig extends IEvmChainConfig {
@@ -95,7 +105,7 @@ interface IContractConfigAndEvmWallet {
 
 
 interface IBridgeConfig {
-    bridgeChains: (IChainConfig | IEvmChainConfig)[];
+    bridgeChains: (IMultiversXChainConfig | IEvmChainConfig)[];
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }
@@ -107,8 +117,10 @@ export {
     IEvmChainConfig,
     IGeneratedWallets,
     IConfigAndWallets,
+    IChainConfigAndWallets,
     IChainConfig,
     IEvmChainConfigAndEvmWallet,
+    IMultiversXChainConfigAndMultiversXWallet,
     IStakingConfig,
     IStakingChainConfigAndEvmWallet,
     IContractConfig,

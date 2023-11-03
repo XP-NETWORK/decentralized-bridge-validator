@@ -52,12 +52,18 @@ interface IChainConfig {
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
-    signType: 'ecdsa' | 'non-evm'
+    chainType: string
 }
 
-type IEvmChainConfig = IChainConfig & {
-    signType: 'ecdsa';
-};
+interface IEvmChainConfig extends IChainConfig {
+    chainType: 'evm';
+}
+
+interface IMultiversXChainConfig extends IChainConfig {
+    chainType: 'ed25519';
+    elasticSearchURL: string;
+}
+
 
 interface IEvmChainConfigAndEvmWallet {
     evmChainConfig: IEvmChainConfig;
@@ -108,4 +114,5 @@ export {
     IContractConfig,
     IContractConfigAndEvmWallet,
     IBridgeConfig,
+    IMultiversXChainConfig
 }

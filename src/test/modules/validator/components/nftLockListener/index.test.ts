@@ -16,7 +16,7 @@ describe('nftLockListener', () => {
 
         // Assert that createJobWithWorker was called for each EVM chain
         mockBridgeConfig.bridgeChains.forEach((chainConfig) => {
-            if (chainConfig.signType === 'ecdsa') {
+            if (chainConfig.chainType === 'evm') {
                 const expectedJobData = {
                     evmChainConfig: chainConfig,
                     config: mockBridgeConfig,

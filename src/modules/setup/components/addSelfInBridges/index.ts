@@ -7,7 +7,7 @@ const addSelfInBridges = async ({ config, wallets }: IConfigAndWallets) => {
 
     for (const chainConfig of config.bridgeChains) {
 
-        if (chainConfig.signType === 'ecdsa') {
+        if (chainConfig.chainType === 'evm') {
 
             const evmChainConfig = chainConfig;
             const evmWallet = wallets.evmWallet;

@@ -61,7 +61,7 @@ describe('getEvmLockListenerHandler', () => {
             }
         },
         {
-            description: 'should call approveEvmDestinationLock of nft if destination chain is non-evm',
+            description: 'should not call approveEvmDestinationLock of nft if destination chain is non-evm',
             approveEvmDestinationLockCalled: false,
             chainFeeStubCalled: true,
             decodedLogs: {

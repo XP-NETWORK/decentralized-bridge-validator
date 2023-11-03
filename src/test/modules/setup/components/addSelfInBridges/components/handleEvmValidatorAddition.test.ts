@@ -84,7 +84,7 @@ describe('handleEvmValidatorAddition', () => {
             // Call the function
             await handleEvmValidatorAddition({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: (mockBridgeConfig.bridgeChains.find(item => item.signType === 'ecdsa')) as IEvmChainConfig,
+                evmChainConfig: (mockBridgeConfig.bridgeChains.find(item => item.chainType === 'evm')) as IEvmChainConfig,
                 evmWallet: mockWallets.evmWallet,
             });
 

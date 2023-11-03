@@ -29,7 +29,7 @@ describe('addSelfInBridges', () => {
         expect(
             handleEvmValidatorAdditionStub.calledWithExactly({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: (mockBridgeConfig.bridgeChains.filter(item => item.signType === 'ecdsa'))[0] as IEvmChainConfig, // First EVM chain
+                evmChainConfig: (mockBridgeConfig.bridgeChains.filter(item => item.chainType === 'evm'))[0] as IEvmChainConfig, // First EVM chain
                 evmWallet: mockWallets.evmWallet,
             })
         ).to.be.true;
@@ -37,7 +37,7 @@ describe('addSelfInBridges', () => {
         expect(
             handleEvmValidatorAdditionStub.calledWithExactly({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: (mockBridgeConfig.bridgeChains.filter(item => item.signType === 'ecdsa'))[1] as IEvmChainConfig, // Second EVM chain
+                evmChainConfig: (mockBridgeConfig.bridgeChains.filter(item => item.chainType === 'evm'))[1] as IEvmChainConfig, // Second EVM chain
                 evmWallet: mockWallets.evmWallet,
             })
         ).to.be.true;

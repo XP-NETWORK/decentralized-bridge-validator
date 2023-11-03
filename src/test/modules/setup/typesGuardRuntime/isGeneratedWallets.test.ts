@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { isGeneratedWallets } from '@src/modules/setup/typesGuardRuntime';
+import { mockWallets } from '@src/test/mockData';
 
 describe('isGeneratedWallets', () => {
     const testCases = [
@@ -44,7 +45,7 @@ describe('isGeneratedWallets', () => {
             description: 'should return false for objects with invalid evmWallet structure',
         },
         {
-            input: { evmWallet: { address: "0x1234", privateKey: "0x5678" } },
+            input: mockWallets,
             expected: true,
             description: 'should return true for valid IGeneratedWallets structure',
         },

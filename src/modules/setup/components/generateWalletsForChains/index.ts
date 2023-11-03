@@ -3,20 +3,33 @@ import { readJsonFile } from '@src/utils';
 import { isGeneratedWallets } from '@src/modules/setup/typesGuardRuntime';
 import { promises as fs } from 'fs';
 import { IGeneratedWallets } from '@src/types';
+import { Mnemonic, UserWallet } from '@multiversx/sdk-wallet/out';
+
+const generateMultiversXWallet = () => {
+    const mnemonic = Mnemonic.generate();
+    const secretKey = mnemonic.deriveKey(0);
+    const password = Math.random().toString(36).slice(2);
+    const userWallet = UserWallet.fromSecretKey({ secretKey, password });
+    return { userWallet: userWallet.toJSON(), password };
+};
 
 const generateWalletsForChains_ = (): IGeneratedWallets => {
 
-    const wallet = ethers.Wallet.createRandom();
+    const evmWallet = ethers.Wallet.createRandom();
+    const multiversXWallet = generateMultiversXWallet();
 
     const generatedWAllets: IGeneratedWallets = {
         evmWallet: {
-            address: wallet.address,
-            privateKey: wallet.privateKey
-        }
+            address: evmWallet.address,
+            privateKey: evmWallet.privateKey
+        },
+        multiversXWallet: multiversXWallet
     }
 
     return generatedWAllets
 };
+
+
 
 
 const generateWalletsForChains = async (): Promise<IGeneratedWallets> => {

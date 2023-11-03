@@ -1,3 +1,34 @@
+interface ISecretKeyCrypto {
+    ciphertext: string;
+    cipherparams: {
+        iv: string;
+    };
+    cipher: string;
+    kdf: string;
+    kdfparams: {
+        dklen: number;
+        salt: string;
+        n: number;
+        r: number;
+        p: number;
+    };
+    mac: string;
+}
+
+interface ISecretKey {
+    version: number;
+    kind: string;
+    id: string;
+    address: string;
+    bech32: string;
+    crypto: ISecretKeyCrypto;
+}
+
+interface IMultiversXWallet {
+    password: string;
+    userWallet: ISecretKey
+}
+
 
 interface IEvmWallet {
     address: string;
@@ -5,7 +36,8 @@ interface IEvmWallet {
 }
 
 interface IGeneratedWallets {
-    evmWallet: IEvmWallet
+    evmWallet: IEvmWallet;
+    multiversXWallet: IMultiversXWallet;
 }
 
 interface IConfigAndWallets {
@@ -65,6 +97,7 @@ interface IBridgeConfig {
 
 export {
     IEvmWallet,
+    IMultiversXWallet,
     IEvmChainConfig,
     IGeneratedWallets,
     IConfigAndWallets,
@@ -74,5 +107,5 @@ export {
     IStakingChainConfigAndEvmWallet,
     IContractConfig,
     IContractConfigAndEvmWallet,
-    IBridgeConfig
+    IBridgeConfig,
 }

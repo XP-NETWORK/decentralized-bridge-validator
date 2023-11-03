@@ -41,6 +41,15 @@ const bridgeTestChains: (IChainConfig | IEvmChainConfig)[] = [
         contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
         chainType: 'evm',
         lastBlock: 41817080
+    },
+    {
+        chain: "MULTIVERSX",
+        rpcURL: "https://rpc-mumbai.maticvigil.com/",
+        nativeCoinSymbol: "MATIC",
+        intialFund: "50000000000000000",
+        contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
+        chainType: 'evm',
+        lastBlock: 41817080
     }
 ]
 

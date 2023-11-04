@@ -110,8 +110,15 @@ interface IBridgeConfig {
     stakingConfig: IStakingConfig;
 }
 
+interface IBridge {
+    validators: (address: string) => Promise<{ added: boolean }>;
+    validatorsCount: () => Promise<bigint>;
+    addValidator: (validatorAddress: string, signatures: string[]) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+}
+
 
 export {
+    IBridge,
     IEvmWallet,
     IMultiversXWallet,
     IEvmChainConfig,

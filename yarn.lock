@@ -760,6 +760,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@multiversx/sdk-network-providers@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@multiversx/sdk-network-providers@npm:2.0.0"
+  dependencies:
+    axios: 0.24.0
+    bech32: 1.1.4
+    bignumber.js: 9.0.1
+    buffer: 6.0.3
+    json-bigint: 1.0.0
+  checksum: 6c6f5a8121503d76a4198124c0709abb10a1de5dca92d29863720dcf716ad2f4b9d118d4c1d597497c07a16a1c70c37140fc93a2500c681be21d96a8db79a455
+  languageName: node
+  linkType: hard
+
 "@multiversx/sdk-transaction-decoder@npm:1.0.2":
   version: 1.0.2
   resolution: "@multiversx/sdk-transaction-decoder@npm:1.0.2"
@@ -2130,6 +2143,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:0.24.0":
+  version: 0.24.0
+  resolution: "axios@npm:0.24.0"
+  dependencies:
+    follow-redirects: ^1.14.4
+  checksum: 468cf496c08a6aadfb7e699bebdac02851e3043d4e7d282350804ea8900e30d368daa6e3cd4ab83b8ddb5a3b1e17a5a21ada13fc9cebd27b74828f47a4236316
+  languageName: node
+  linkType: hard
+
 "axios@npm:^1.6.0":
   version: 1.6.0
   resolution: "axios@npm:1.6.0"
@@ -2196,6 +2218,13 @@ __metadata:
   version: 9.0.1
   resolution: "bignumber.js@npm:9.0.1"
   checksum: 6e72f6069d9db32fc8d27561164de9f811b15f9144be61f323d8b36150a239eea50c92e20ba38af2ba5e717af10b8ef12db8f9948fe2ff02bf17ede5239d15d3
+  languageName: node
+  linkType: hard
+
+"bignumber.js@npm:^9.0.0":
+  version: 9.1.2
+  resolution: "bignumber.js@npm:9.1.2"
+  checksum: 582c03af77ec9cb0ebd682a373ee6c66475db94a4325f92299621d544aa4bd45cb45fd60001610e94aef8ae98a0905fa538241d9638d4422d57abbeeac6fadaf
   languageName: node
   linkType: hard
 
@@ -2291,6 +2320,7 @@ __metadata:
   resolution: "bridge-v3@workspace:."
   dependencies:
     "@multiversx/sdk-core": ^12.12.0
+    "@multiversx/sdk-network-providers": ^2.0.0
     "@multiversx/sdk-wallet": ^4.2.0
     "@nomicfoundation/hardhat-ethers": ^3.0.4
     "@types/chai": ^4.3.9
@@ -3484,7 +3514,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.12.1, follow-redirects@npm:^1.15.0":
+"follow-redirects@npm:^1.12.1, follow-redirects@npm:^1.14.4, follow-redirects@npm:^1.15.0":
   version: 1.15.3
   resolution: "follow-redirects@npm:1.15.3"
   peerDependenciesMeta:
@@ -4399,6 +4429,15 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: c7830dfd456c3ef2c6e355cc5a92e6700ceafa1d14bba54497b34a99f0376cecbb3e9ac14d3e5849b426d5a5140709a66237a8c991c675431271c4ce5504151a
+  languageName: node
+  linkType: hard
+
+"json-bigint@npm:1.0.0":
+  version: 1.0.0
+  resolution: "json-bigint@npm:1.0.0"
+  dependencies:
+    bignumber.js: ^9.0.0
+  checksum: c67bb93ccb3c291e60eb4b62931403e378906aab113ec1c2a8dd0f9a7f065ad6fd9713d627b732abefae2e244ac9ce1721c7a3142b2979532f12b258634ce6f6
   languageName: node
   linkType: hard
 

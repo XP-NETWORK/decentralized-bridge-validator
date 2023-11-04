@@ -11,10 +11,12 @@ import getStakingContract from "./getStakingContract"
 import getRedisConnection from "./getRedisConnection"
 import getEvmFungibleContract from "./getEvmFungibleContract"
 import getCurrentMultiversXBalance from "./getCurrentMultiversXBalance"
+import getMultiversXBridgeContract from "./getMultiversXBridgeContract"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
     confirmationCountNeeded, getStorageContract, getEvmBridgeContract,
     getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract,
-    getRedisConnection, getEvmFungibleContract, getCurrentMultiversXBalance
+    getRedisConnection, getEvmFungibleContract, getCurrentMultiversXBalance,
+    getMultiversXBridgeContract
 }

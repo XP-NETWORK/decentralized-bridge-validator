@@ -90,17 +90,31 @@ interface IStakingChainConfigAndEvmWallet {
     stakingChainConfig: IStakingConfig;
     evmWallet: IEvmWallet;
 }
+interface IStakingChainConfigAndWallets {
+    stakingChainConfig: IStakingConfig;
+    wallets: IGeneratedWallets;
+}
 
-interface IContractConfig {
+interface IEvmContractConfig {
     contractAddress: string;
     rpcURL: string;
 }
 
+interface IMultiversXContractConfig {
+    contractAddress: string;
+    gatewayURL: string;
+}
 
-interface IContractConfigAndEvmWallet {
-    contractConfig: IContractConfig;
+interface IEvmContractConfigAndEvmWallet {
+    contractConfig: IEvmContractConfig;
     evmWallet: IEvmWallet;
 }
+
+interface IMultiversXContractConfigAndMultiversXWallet {
+    contractConfig: IMultiversXContractConfig;
+    multiversXWallet: IMultiversXWallet;
+}
+
 
 
 
@@ -113,7 +127,17 @@ interface IBridgeConfig {
 interface IBridge {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
-    addValidator: (validatorAddress: string, signatures: string[]) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    addValidator: (validatorAddress: string, signatures: {
+        signerAddress: string;
+        signature: string
+    }[]) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+}
+
+interface INftContract {
+    name: () => Promise<string>;
+    symbol: () => Promise<string>;
+    royaltyInfo: (tokenId: bigint) => Promise<string>;
+    tokenURI: (tokenId: bigint) => Promise<string>;
 }
 
 
@@ -130,8 +154,12 @@ export {
     IMultiversXChainConfigAndMultiversXWallet,
     IStakingConfig,
     IStakingChainConfigAndEvmWallet,
-    IContractConfig,
-    IContractConfigAndEvmWallet,
+    IEvmContractConfig,
+    IEvmContractConfigAndEvmWallet,
     IBridgeConfig,
-    IMultiversXChainConfig
+    IMultiversXChainConfig,
+    IMultiversXContractConfig,
+    IStakingChainConfigAndWallets,
+    IMultiversXContractConfigAndMultiversXWallet,
+    INftContract
 }

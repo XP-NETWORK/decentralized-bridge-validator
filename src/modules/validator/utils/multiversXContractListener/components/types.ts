@@ -11,7 +11,7 @@ interface IPoolTxStatus {
 }
 
 interface IHandleLog {
-    ({ log }: { log: IMultiverseXLogEvent & { txHash: string } }): Promise<void>;
+    ({ log }: { log: IMultiverseXLogEvent & { transactionHash: string } }): Promise<void>;
 }
 
 interface IProcessLogs {

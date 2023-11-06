@@ -70,7 +70,6 @@ describe('stakeTokens', () => {
 
             const hash = "some unique hash";
             const { stakingConfig } = mockBridgeConfig;
-            const { evmWallet } = mockWallets;
 
 
             sinon.stub(utils, "waitForMSWithMsg").resolves();
@@ -123,7 +122,7 @@ describe('stakeTokens', () => {
 
 
             // Call the function
-            await setupComponents.stakeTokens({ stakingChainConfig: stakingConfig, evmWallet })
+            await setupComponents.stakeTokens({ stakingChainConfig: stakingConfig, wallets: mockWallets })
 
 
             expect(stakingContractStub.stakeERC20.callCount).to.equal(callCountStake);

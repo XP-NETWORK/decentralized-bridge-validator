@@ -38,7 +38,10 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
             const decodedValue = new BinaryCodec().decodeTopLevel(count, new BigUIntType());
             return decodedValue.valueOf();
         },
-        addValidator: async (validatorAddress: string, signatures: string[]) => {
+        addValidator: async (validatorAddress: string, signatures: {
+            signerAddress: string;
+            signature: string
+        }[]) => {
             const signer = UserSigner.fromWallet(multiversXWallet.userWallet, multiversXWallet.password)
             const interaction = multiversXBridgeContract.methods.addValidator([validatorAddress, signatures]).withSender(signer.getAddress())
             const transaction = interaction.buildTransaction();

@@ -1,23 +1,19 @@
 import { IChainConfig } from "@src/types";
-import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
-import { getEvmBridgeContract, getStorageContract } from "@src/utils";
+import { getStorageContract } from "@src/utils";
+import { IMultiversXLockListener } from "../types";
 import { getLockEventDecodedLog } from ".";
-import { IEvmLockListener } from "../../../types";
 import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
+import { IHandleLog } from "@src/modules/validator/utils/multiversXContractListener/components/types";
 
-const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
+const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, wallets }: IMultiversXLockListener) => {
 
 
-    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet: wallets.evmWallet });
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
-    const { topicHash } = bridgeContract.interface.getEvent("Locked");
 
-    const handleLog = async ({ log }: { log: LogEntry }) => {
-        // if its not the lock nft event we early return
-        if (typeof log === "string" || !log.topics || !log.topics.includes(topicHash)) return;
-
+    const handleLog: IHandleLog = async ({ log }) => {
+        
         const {
             tokenId, // Unique ID for the NFT transfer
             destinationChain, // Chain to where the NFT is being transferred
@@ -66,7 +62,7 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
                 fee,
             };
 
-            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: evmChainConfig.chain, destinationChainObject })
+            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: multiversXChainConfig.chain, destinationChainObject })
         }
     }
 
@@ -74,4 +70,4 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
 
 };
 
-export default getEvmLockListenerHandler
+export default getMultiversXLockListenerHandler

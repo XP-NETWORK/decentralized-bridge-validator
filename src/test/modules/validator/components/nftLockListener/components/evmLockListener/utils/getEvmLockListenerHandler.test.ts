@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as utils from "@src/utils/functions"
-import * as lockEventComponents from '@src/modules/validator/components/nftLockListener/components/evmLockListener/components';
+import * as lockEventComponents from '@src/modules/validator/components/nftLockListener/components';
 import { expect } from 'chai';
 import * as evmLockEventUtils from '@src/modules/validator/components/nftLockListener/components/evmLockListener/utils';
 import * as lockEventUtils from '@src/modules/validator/components/nftLockListener/utils';
@@ -21,7 +21,7 @@ describe('getEvmLockListenerHandler', () => {
     const testCases = [
         {
             description: 'should approve locking of nft if destination chain is correct',
-            approveEvmDestinationLockCalled: true,
+            approveLockCalled: true,
             chainFeeStubCalled: true,
             decodedLogs: {
                 tokenId: "1", // Unique ID for the NFT transfer
@@ -42,7 +42,7 @@ describe('getEvmLockListenerHandler', () => {
         },
         {
             description: 'should return early if destination chain is incorrect',
-            approveEvmDestinationLockCalled: false,
+            approveLockCalled: false,
             chainFeeStubCalled: false,
             decodedLogs: {
                 tokenId: "1", // Unique ID for the NFT transfer
@@ -62,8 +62,8 @@ describe('getEvmLockListenerHandler', () => {
             }
         },
         {
-            description: 'should not call approveEvmDestinationLock of nft if destination chain is non-evm',
-            approveEvmDestinationLockCalled: false,
+            description: 'should not call approveLock of nft if destination chain is non-evm',
+            approveLockCalled: false,
             chainFeeStubCalled: true,
             decodedLogs: {
                 tokenId: "1", // Unique ID for the NFT transfer
@@ -87,7 +87,7 @@ describe('getEvmLockListenerHandler', () => {
 
     testCases.forEach(({
         description,
-        approveEvmDestinationLockCalled,
+        approveLockCalled,
         chainFeeStubCalled,
         decodedLogs,
         nftDetails
@@ -105,9 +105,9 @@ describe('getEvmLockListenerHandler', () => {
                 ...storageContractStub
             })
 
-            const approveEvmDestinationLockStub = sinon.stub(lockEventComponents, "approveEvmDestinationLock").resolves();
+            const approveLockStub = sinon.stub(lockEventComponents, "approveLock").resolves();
             sinon.stub(evmLockEventUtils, "getLockEventDecodedLog").returns(decodedLogs);
-            sinon.stub(lockEventUtils, "getEvmNftDetails").resolves(nftDetails);
+            sinon.stub(lockEventUtils, "getNftDetails").resolves(nftDetails);
 
 
             const handleLog = evmLockEventUtils.getEvmLockListenerHandler({
@@ -132,7 +132,7 @@ describe('getEvmLockListenerHandler', () => {
                 }
             });
             expect(chainFeeStub.calledOnce).to.be.equals(chainFeeStubCalled);
-            expect(approveEvmDestinationLockStub.calledOnce).to.be.equals(approveEvmDestinationLockCalled)
+            expect(approveLockStub.calledOnce).to.be.equals(approveLockCalled)
 
         });
     })

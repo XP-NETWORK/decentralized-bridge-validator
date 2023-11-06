@@ -1,14 +1,14 @@
 import { isStaked } from "../"
 import { waitForMSWithMsg, getStakingContract, getEvmFungibleContract } from '@src/utils';
 import { processDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
-import { IStakingChainConfigAndEvmWallet } from '@src/types';
+import { IStakingChainConfigAndWallets } from '@src/types';
 
-const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet): Promise<void> => {
+const stakeTokens_ = async ({ stakingChainConfig, wallets }: IStakingChainConfigAndWallets): Promise<void> => {
 
-    const stakingContract = getStakingContract({ stakingChainConfig, evmWallet })
-    const tokenContract = getEvmFungibleContract({ stakingChainConfig, evmWallet })
+    const stakingContract = getStakingContract({ stakingChainConfig, evmWallet: wallets.evmWallet })
+    const tokenContract = getEvmFungibleContract({ stakingChainConfig, evmWallet: wallets.evmWallet })
 
-    if (await isStaked({ stakingChainConfig, evmWallet })) {
+    if (await isStaked({ stakingChainConfig, evmWallet: wallets.evmWallet })) {
         console.info("Stake Found")
     } else {
         const amountToStake = stakingChainConfig.intialFund;
@@ -18,7 +18,16 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
             await approveTx.wait()
             console.info(`Token Approve Transaction Hash: ${approveTx.hash}`);
 
-            const stakeTx = await stakingContract.stakeERC20();
+            const stakeTx = await stakingContract.stakeERC20([
+                {
+                    validatorAddress: wallets.evmWallet.address,
+                    chainSymbol: "evm"
+                },
+                {
+                    validatorAddress: wallets.multiversXWallet.userWallet.bech32,
+                    chainSymbol: "multiversX"
+                }
+            ]);
             await stakeTx.wait();
             console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
 
@@ -31,11 +40,11 @@ const stakeTokens_ = async ({ stakingChainConfig, evmWallet }: IStakingChainConf
     }
 }
 
-const stakeTokens = async ({ stakingChainConfig, evmWallet }: IStakingChainConfigAndEvmWallet) => {
+const stakeTokens = async ({ stakingChainConfig, wallets }: IStakingChainConfigAndWallets) => {
     let stakedTokens = false;
     while (!stakedTokens) {
         try {
-            await stakeTokens_({ stakingChainConfig, evmWallet });
+            await stakeTokens_({ stakingChainConfig, wallets });
             stakedTokens = true;
         } catch (e) {
             await waitForMSWithMsg(processDelayMilliseconds, "Error staking tokens")

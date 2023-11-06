@@ -1,3 +1,6 @@
-import getEvmNftDetails from "./getEvmNftDetails";
+import getNftDetails from "./getNftDetails";
+import getEvmSignedNftDetails from "./getEvmSignedNftDetails";
+import getMultiversXSignedNftDetails from "./getMultiversXSignedNftDetails";
 
-export { getEvmNftDetails }
+
+export { getNftDetails, getEvmSignedNftDetails, getMultiversXSignedNftDetails }

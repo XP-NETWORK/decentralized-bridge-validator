@@ -21,22 +21,27 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export type ChainFeeStruct = { chain: string; fee: BigNumberish };
-
-export type ChainFeeStructOutput = [chain: string, fee: bigint] & {
+export type ChainFeeStruct = {
   chain: string;
-  fee: bigint;
+  fee: BigNumberish;
+  royaltyReceiver: string;
 };
 
+export type ChainFeeStructOutput = [
+  chain: string,
+  fee: bigint,
+  royaltyReceiver: string
+] & { chain: string; fee: bigint; royaltyReceiver: string };
+
 export type SignerAndSignatureStruct = {
-  publicAddress: AddressLike;
-  signature: string;
+  signerAddress: string;
+  signature: BytesLike;
 };
 
 export type SignerAndSignatureStructOutput = [
-  publicAddress: string,
+  signerAddress: string,
   signature: string
-] & { publicAddress: string; signature: string };
+] & { signerAddress: string; signature: string };
 
 export interface BridgeStorageInterface extends Interface {
   getFunction(
@@ -47,7 +52,10 @@ export interface BridgeStorageInterface extends Interface {
       | "chainFee"
       | "chainFeeVoted"
       | "chainFeeVotes"
+      | "chainRoyaltyVoted"
+      | "chainRoyaltyVotes"
       | "changeChainFee"
+      | "changeChainRoyalty"
       | "changeValidatorStatus"
       | "getLockNftSignatures"
       | "getLockNftSignaturesCount"
@@ -65,11 +73,11 @@ export interface BridgeStorageInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "approveLockNft",
-    values: [string, string, string]
+    values: [string, string, BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "approveStake",
-    values: [AddressLike, string]
+    values: [string, SignerAndSignatureStruct[]]
   ): string;
   encodeFunctionData(functionFragment: "chainEpoch", values: [string]): string;
   encodeFunctionData(functionFragment: "chainFee", values: [string]): string;
@@ -82,12 +90,24 @@ export interface BridgeStorageInterface extends Interface {
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "chainRoyaltyVoted",
+    values: [string, string, AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "chainRoyaltyVotes",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "changeChainFee",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "changeChainRoyalty",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "changeValidatorStatus",
-    values: [AddressLike, boolean]
+    values: [string, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "getLockNftSignatures",
@@ -99,11 +119,11 @@ export interface BridgeStorageInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getStakingSignatures",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getStakingSignaturesCount",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "lockSignatures",
@@ -111,11 +131,11 @@ export interface BridgeStorageInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "stakingSignatures",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "usedSignatures",
-    values: [string]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "validatorCount",
@@ -123,20 +143,17 @@ export interface BridgeStorageInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "validatorEpoch",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "validatorStatusChangeVotes",
-    values: [AddressLike, boolean, BigNumberish]
+    values: [string, boolean, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "validatorVoted",
-    values: [AddressLike, AddressLike, BigNumberish]
+    values: [string, AddressLike, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "validators",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "validators", values: [string]): string;
 
   decodeFunctionResult(
     functionFragment: "approveLockNft",
@@ -157,7 +174,19 @@ export interface BridgeStorageInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "chainRoyaltyVoted",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "chainRoyaltyVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "changeChainFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeChainRoyalty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -255,20 +284,29 @@ export interface BridgeStorage extends BaseContract {
   ): Promise<this>;
 
   approveLockNft: TypedContractMethod<
-    [_transactionHash: string, _chain: string, _signature: string],
+    [
+      _transactionHash: string,
+      _chain: string,
+      _signature: BytesLike,
+      _signerAddress: string
+    ],
     [void],
     "nonpayable"
   >;
 
   approveStake: TypedContractMethod<
-    [_stakerAddress: AddressLike, _signature: string],
+    [_stakerAddress: string, _signatures: SignerAndSignatureStruct[]],
     [void],
     "nonpayable"
   >;
 
   chainEpoch: TypedContractMethod<[arg0: string], [bigint], "view">;
 
-  chainFee: TypedContractMethod<[arg0: string], [bigint], "view">;
+  chainFee: TypedContractMethod<
+    [arg0: string],
+    [[bigint, string] & { fee: bigint; royaltyReceiver: string }],
+    "view"
+  >;
 
   chainFeeVoted: TypedContractMethod<
     [arg0: string, arg1: BigNumberish, arg2: AddressLike, arg3: BigNumberish],
@@ -282,14 +320,32 @@ export interface BridgeStorage extends BaseContract {
     "view"
   >;
 
+  chainRoyaltyVoted: TypedContractMethod<
+    [arg0: string, arg1: string, arg2: AddressLike, arg3: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
+  chainRoyaltyVotes: TypedContractMethod<
+    [arg0: string, arg1: string, arg2: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   changeChainFee: TypedContractMethod<
     [_chain: string, _fee: BigNumberish],
     [void],
     "nonpayable"
   >;
 
+  changeChainRoyalty: TypedContractMethod<
+    [_chain: string, _royaltyReceiver: string],
+    [void],
+    "nonpayable"
+  >;
+
   changeValidatorStatus: TypedContractMethod<
-    [_validatorAddress: AddressLike, _status: boolean],
+    [_validatorAddress: string, _status: boolean],
     [void],
     "nonpayable"
   >;
@@ -307,48 +363,48 @@ export interface BridgeStorage extends BaseContract {
   >;
 
   getStakingSignatures: TypedContractMethod<
-    [stakerAddress: AddressLike],
+    [stakerAddress: string],
     [SignerAndSignatureStructOutput[]],
     "view"
   >;
 
   getStakingSignaturesCount: TypedContractMethod<
-    [stakerAddress: AddressLike],
+    [stakerAddress: string],
     [bigint],
     "view"
   >;
 
   lockSignatures: TypedContractMethod<
     [arg0: string, arg1: string, arg2: BigNumberish],
-    [[string, string] & { publicAddress: string; signature: string }],
+    [[string, string] & { signerAddress: string; signature: string }],
     "view"
   >;
 
   stakingSignatures: TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [[string, string] & { publicAddress: string; signature: string }],
+    [arg0: string, arg1: BigNumberish],
+    [[string, string] & { signerAddress: string; signature: string }],
     "view"
   >;
 
-  usedSignatures: TypedContractMethod<[arg0: string], [boolean], "view">;
+  usedSignatures: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
   validatorCount: TypedContractMethod<[], [bigint], "view">;
 
-  validatorEpoch: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  validatorEpoch: TypedContractMethod<[arg0: string], [bigint], "view">;
 
   validatorStatusChangeVotes: TypedContractMethod<
-    [arg0: AddressLike, arg1: boolean, arg2: BigNumberish],
+    [arg0: string, arg1: boolean, arg2: BigNumberish],
     [bigint],
     "view"
   >;
 
   validatorVoted: TypedContractMethod<
-    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish],
+    [arg0: string, arg1: AddressLike, arg2: BigNumberish],
     [boolean],
     "view"
   >;
 
-  validators: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  validators: TypedContractMethod<[arg0: string], [boolean], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -357,14 +413,19 @@ export interface BridgeStorage extends BaseContract {
   getFunction(
     nameOrSignature: "approveLockNft"
   ): TypedContractMethod<
-    [_transactionHash: string, _chain: string, _signature: string],
+    [
+      _transactionHash: string,
+      _chain: string,
+      _signature: BytesLike,
+      _signerAddress: string
+    ],
     [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "approveStake"
   ): TypedContractMethod<
-    [_stakerAddress: AddressLike, _signature: string],
+    [_stakerAddress: string, _signatures: SignerAndSignatureStruct[]],
     [void],
     "nonpayable"
   >;
@@ -373,7 +434,11 @@ export interface BridgeStorage extends BaseContract {
   ): TypedContractMethod<[arg0: string], [bigint], "view">;
   getFunction(
     nameOrSignature: "chainFee"
-  ): TypedContractMethod<[arg0: string], [bigint], "view">;
+  ): TypedContractMethod<
+    [arg0: string],
+    [[bigint, string] & { fee: bigint; royaltyReceiver: string }],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "chainFeeVoted"
   ): TypedContractMethod<
@@ -389,6 +454,20 @@ export interface BridgeStorage extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "chainRoyaltyVoted"
+  ): TypedContractMethod<
+    [arg0: string, arg1: string, arg2: AddressLike, arg3: BigNumberish],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "chainRoyaltyVotes"
+  ): TypedContractMethod<
+    [arg0: string, arg1: string, arg2: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "changeChainFee"
   ): TypedContractMethod<
     [_chain: string, _fee: BigNumberish],
@@ -396,9 +475,16 @@ export interface BridgeStorage extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "changeChainRoyalty"
+  ): TypedContractMethod<
+    [_chain: string, _royaltyReceiver: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "changeValidatorStatus"
   ): TypedContractMethod<
-    [_validatorAddress: AddressLike, _status: boolean],
+    [_validatorAddress: string, _status: boolean],
     [void],
     "nonpayable"
   >;
@@ -419,53 +505,53 @@ export interface BridgeStorage extends BaseContract {
   getFunction(
     nameOrSignature: "getStakingSignatures"
   ): TypedContractMethod<
-    [stakerAddress: AddressLike],
+    [stakerAddress: string],
     [SignerAndSignatureStructOutput[]],
     "view"
   >;
   getFunction(
     nameOrSignature: "getStakingSignaturesCount"
-  ): TypedContractMethod<[stakerAddress: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<[stakerAddress: string], [bigint], "view">;
   getFunction(
     nameOrSignature: "lockSignatures"
   ): TypedContractMethod<
     [arg0: string, arg1: string, arg2: BigNumberish],
-    [[string, string] & { publicAddress: string; signature: string }],
+    [[string, string] & { signerAddress: string; signature: string }],
     "view"
   >;
   getFunction(
     nameOrSignature: "stakingSignatures"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [[string, string] & { publicAddress: string; signature: string }],
+    [arg0: string, arg1: BigNumberish],
+    [[string, string] & { signerAddress: string; signature: string }],
     "view"
   >;
   getFunction(
     nameOrSignature: "usedSignatures"
-  ): TypedContractMethod<[arg0: string], [boolean], "view">;
+  ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "validatorCount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "validatorEpoch"
-  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<[arg0: string], [bigint], "view">;
   getFunction(
     nameOrSignature: "validatorStatusChangeVotes"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: boolean, arg2: BigNumberish],
+    [arg0: string, arg1: boolean, arg2: BigNumberish],
     [bigint],
     "view"
   >;
   getFunction(
     nameOrSignature: "validatorVoted"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish],
+    [arg0: string, arg1: AddressLike, arg2: BigNumberish],
     [boolean],
     "view"
   >;
   getFunction(
     nameOrSignature: "validators"
-  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  ): TypedContractMethod<[arg0: string], [boolean], "view">;
 
   filters: {};
 }

@@ -1,11 +1,12 @@
-import { IEvmWallet } from "@src/types";
+import { IEvmChainConfig, IEvmWallet, IMultiversXChainConfig } from "@src/types";
 
 interface IGetEvmNftDetails {
     sourceNftContractAddress: string;
-    sourceChainRpcURL: string;
+    sourceChain: IMultiversXChainConfig | IEvmChainConfig;
     evmWallet: IEvmWallet;
     tokenId: string;
     nftType: string;
+    chainType: string;
 }
 
 

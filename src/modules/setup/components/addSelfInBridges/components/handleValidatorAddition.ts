@@ -49,7 +49,12 @@ const handleValidatorAddition = async ({ storageChainConfig, chainConfig, wallet
                 validatorCountInChain = Number(await bridgeContract.validatorsCount());
             }
 
-            const stakingSignatures: string[] = [...(await storageContract.getStakingSignatures(publicWalletAddress))].map(item => item.signature);
+            const stakingSignatures = [...(await storageContract.getStakingSignatures(publicWalletAddress))].map(item => {
+                return {
+                    signerAddress: item.signerAddress,
+                    signature: item.signature
+                }
+            });
 
             let isFunded = false;
 

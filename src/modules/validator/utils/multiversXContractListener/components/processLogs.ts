@@ -23,7 +23,7 @@ const processLogs = async ({ gatewayURL, eventIdentifier, handleLog }: IProcessL
         const handleLogPromises: Promise<void>[] = [];
 
         for (const log of resultantLogs) {
-            handleLogPromises.push(handleLog({ log }));
+            handleLogPromises.push(handleLog({ log: { ...log, transactionHash: log.txHash } }));
         }
 
         await Promise.all(handleLogPromises);

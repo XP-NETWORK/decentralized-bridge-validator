@@ -23,12 +23,15 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export type ChainStruct = { validatorAddress: string; chainSymbol: string };
+export type ValidatorAddressAndChainTypeStruct = {
+  validatorAddress: string;
+  chainType: string;
+};
 
-export type ChainStructOutput = [
+export type ValidatorAddressAndChainTypeStructOutput = [
   validatorAddress: string,
-  chainSymbol: string
-] & { validatorAddress: string; chainSymbol: string };
+  chainType: string
+] & { validatorAddress: string; chainType: string };
 
 export interface ERC20StakingInterface extends Interface {
   getFunction(
@@ -47,7 +50,7 @@ export interface ERC20StakingInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "stakeERC20",
-    values: [ChainStruct[]]
+    values: [ValidatorAddressAndChainTypeStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "stakingAmount",
@@ -72,19 +75,16 @@ export interface ERC20StakingInterface extends Interface {
 
 export namespace StakedEvent {
   export type InputTuple = [
-    user: AddressLike,
     amount: BigNumberish,
-    chains: ChainStruct[]
+    validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]
   ];
   export type OutputTuple = [
-    user: string,
     amount: bigint,
-    chains: ChainStructOutput[]
+    validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[]
   ];
   export interface OutputObject {
-    user: string;
     amount: bigint;
-    chains: ChainStructOutput[];
+    validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[];
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -138,7 +138,7 @@ export interface ERC20Staking extends BaseContract {
   ERC20Token: TypedContractMethod<[], [string], "view">;
 
   stakeERC20: TypedContractMethod<
-    [chains: ChainStruct[]],
+    [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
     [void],
     "nonpayable"
   >;
@@ -156,7 +156,11 @@ export interface ERC20Staking extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "stakeERC20"
-  ): TypedContractMethod<[chains: ChainStruct[]], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "stakingAmount"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -173,7 +177,7 @@ export interface ERC20Staking extends BaseContract {
   >;
 
   filters: {
-    "Staked(address,uint256,tuple[])": TypedContractEvent<
+    "Staked(uint256,tuple[])": TypedContractEvent<
       StakedEvent.InputTuple,
       StakedEvent.OutputTuple,
       StakedEvent.OutputObject

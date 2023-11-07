@@ -20,8 +20,10 @@ const getCurrentMultiversXBalance = async ({ multiversXChainConfig, multiversXWa
             },
         })).data
 
+        if (response.hits.hits.length === 0) {
+            return BigInt(0)
+        }
         const balance = response.hits.hits[0]._source.balance;
-
         return BigInt(balance)
     } catch (e) {
         console.error(e)

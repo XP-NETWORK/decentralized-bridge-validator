@@ -8,9 +8,9 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x5bB1EdcACf79F59Dfa9d0e054847B33eb20d2AA4",
+    contractAddress: "0x7EEE43Cd3A083F00646ba04bC5F30764CD2ee41e",
     chainType: 'evm',
-    lastBlock: 16237329
+    lastBlock: 16970859
 }
 
 
@@ -20,16 +20,16 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
-        contractAddress: "0x661b12aC3648642bad0843C3A88B519cF310CFf2",
+        contractAddress: "0x02f9b3cC780D0e82086940ec6cb65dDfAA12666e",
         chainType: 'evm',
-        lastBlock: 34650296
+        lastBlock: 34890455
     },
     {
         chain: "ETH",
-        rpcURL: "https://ethereum-sepolia.publicnode.com",
+        rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
         nativeCoinSymbol: "ETH",
         intialFund: "50000000000000000",
-        contractAddress: "0x7935f469298002c0Fb11F853B415B08aDCaC9Cf7",
+        contractAddress: "0x1017Edd369D9824437D79427777724733bb588D0",
         chainType: 'evm',
         lastBlock: 4592411
     },
@@ -38,19 +38,20 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         rpcURL: "https://rpc-mumbai.maticvigil.com/",
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
-        contractAddress: "0xe8A305aa7cf2Fed6fe27436529E7cF0bBEf1e61E",
+        contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
         chainType: 'evm',
-        lastBlock: 41817080
+        lastBlock: 42116275
     },
     {
         chain: "MULTIVERSX",
         nativeCoinSymbol: "EGLD",
         intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgq5sup58y38q3pwyqklagxmuraetshrqwpd8ssh0ssph",
+        contractAddress: "erd1qqqqqqqqqqqqqpgq2pm3v2qe6k5m2kr4c03l395nwfjtgdfj6n9sw33epx",
         chainType: 'multiversX',
         elasticSearchURL: "https://devnet-index.multiversx.com",
         gatewayURL: "https://devnet-gateway.multiversx.com",
-        lastBlock: 0
+        lastBlock: 0,
+        chainID: "D"
     }
 ]
 
@@ -61,9 +62,9 @@ const stakingTestChain: IStakingConfig = {
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
     coinAddress: "0x303C8FB57b86F70996E7988Cd3832EA717aD4E7C",
-    contractAddress: "0x6f2C150f6D11B813d9175ebE3A3212f7BBB89E65",
+    contractAddress: "0x65362860149e4DebA10b3341B9F86C53143a7a2C",
     intialFund: "100000000000000000000",
-    lastBlock: 34650357
+    lastBlock: 34890565
 }
 
 

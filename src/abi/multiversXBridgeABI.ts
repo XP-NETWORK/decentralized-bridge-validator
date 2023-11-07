@@ -13,28 +13,53 @@ const multiversXBridgeABI = {
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.43.5"
+            "version": "0.44.0"
         }
     },
     "name": "BridgeContract",
     "constructor": {
         "inputs": [
             {
-                "name": "args",
-                "type": "ValidatorInfo"
+                "name": "public_key",
+                "type": "Address"
             }
         ],
         "outputs": []
     },
     "endpoints": [
         {
-            "name": "validators",
+            "name": "tokens",
             "mutability": "readonly",
             "inputs": [],
             "outputs": [
                 {
-                    "type": "variadic<multi<Address,bytes>>",
+                    "type": "variadic<multi<TokenInfo,TokenInfo>>",
                     "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "validators",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Validator"
+                }
+            ]
+        },
+        {
+            "name": "validatorsCount",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
                 }
             ]
         },
@@ -50,9 +75,41 @@ const multiversXBridgeABI = {
             ]
         },
         {
-            "name": "add",
+            "name": "verifySigs",
             "mutability": "mutable",
-            "inputs": [],
+            "inputs": [
+                {
+                    "name": "key",
+                    "type": "bytes"
+                },
+                {
+                    "name": "message",
+                    "type": "bytes"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "verifySigsAddresses",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "key",
+                    "type": "Address"
+                },
+                {
+                    "name": "message",
+                    "type": "Address"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes"
+                }
+            ],
             "outputs": []
         },
         {
@@ -60,8 +117,70 @@ const multiversXBridgeABI = {
             "mutability": "mutable",
             "inputs": [
                 {
-                    "name": "args",
-                    "type": "AddValidatorInfo"
+                    "name": "new_validator_public_key",
+                    "type": "Address"
+                },
+                {
+                    "name": "signatures",
+                    "type": "List<SignatureInfo>"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "lock721",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "token_id",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "destination_chain",
+                    "type": "bytes"
+                },
+                {
+                    "name": "destination_user_address",
+                    "type": "bytes"
+                },
+                {
+                    "name": "source_nft_contract_address",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "nonce",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "lock1155",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "token_id",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "destination_chain",
+                    "type": "bytes"
+                },
+                {
+                    "name": "destination_user_address",
+                    "type": "bytes"
+                },
+                {
+                    "name": "source_nft_contract_address",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "nonce",
+                    "type": "u64"
                 }
             ],
             "outputs": []
@@ -153,6 +272,11 @@ const multiversXBridgeABI = {
                     "name": "chain",
                     "type": "bytes",
                     "indexed": true
+                },
+                {
+                    "name": "nonce",
+                    "type": "u64",
+                    "indexed": true
                 }
             ]
         },
@@ -165,13 +289,13 @@ const multiversXBridgeABI = {
                     "indexed": true
                 },
                 {
-                    "name": "token_id",
-                    "type": "TokenIdentifier",
+                    "name": "nonce",
+                    "type": "u64",
                     "indexed": true
                 },
                 {
                     "name": "contract_address",
-                    "type": "Address",
+                    "type": "TokenIdentifier",
                     "indexed": true
                 }
             ]
@@ -185,18 +309,18 @@ const multiversXBridgeABI = {
                     "indexed": true
                 },
                 {
-                    "name": "token_id",
-                    "type": "TokenIdentifier",
+                    "name": "nonce",
+                    "type": "u64",
                     "indexed": true
                 },
                 {
                     "name": "contract_address",
-                    "type": "Address",
+                    "type": "TokenIdentifier",
                     "indexed": true
                 },
                 {
                     "name": "amount",
-                    "type": "BigUint",
+                    "type": "u64",
                     "indexed": true
                 }
             ]
@@ -217,35 +341,15 @@ const multiversXBridgeABI = {
             ]
         }
     ],
+    "esdtAttributes": [],
     "hasCallback": true,
     "types": {
-        "AddValidatorInfo": {
-            "type": "struct",
-            "fields": [
-                {
-                    "name": "new_validator_address",
-                    "type": "Address"
-                },
-                {
-                    "name": "new_validator_public_key",
-                    "type": "bytes"
-                },
-                {
-                    "name": "hash",
-                    "type": "bytes"
-                },
-                {
-                    "name": "signatures",
-                    "type": "List<SignatureInfo>"
-                }
-            ]
-        },
         "ClaimData": {
             "type": "struct",
             "fields": [
                 {
                     "name": "token_id",
-                    "type": "TokenIdentifier"
+                    "type": "bytes"
                 },
                 {
                     "name": "source_chain",
@@ -261,7 +365,7 @@ const multiversXBridgeABI = {
                 },
                 {
                     "name": "source_nft_contract_address",
-                    "type": "TokenIdentifier"
+                    "type": "bytes"
                 },
                 {
                     "name": "name",
@@ -306,7 +410,7 @@ const multiversXBridgeABI = {
             "fields": [
                 {
                     "name": "public_key",
-                    "type": "bytes"
+                    "type": "Address"
                 },
                 {
                     "name": "sig",
@@ -314,21 +418,37 @@ const multiversXBridgeABI = {
                 }
             ]
         },
-        "ValidatorInfo": {
+        "TokenInfo": {
             "type": "struct",
             "fields": [
                 {
-                    "name": "public_key",
+                    "name": "token_id",
                     "type": "bytes"
                 },
                 {
-                    "name": "address",
-                    "type": "Address"
+                    "name": "chain",
+                    "type": "bytes"
+                },
+                {
+                    "name": "contract_address",
+                    "type": "bytes"
+                }
+            ]
+        },
+        "Validator": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "added",
+                    "type": "bool"
+                },
+                {
+                    "name": "pending_reward",
+                    "type": "BigUint"
                 }
             ]
         }
     }
 }
-
 
 export default multiversXBridgeABI

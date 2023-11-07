@@ -66,6 +66,7 @@ interface IMultiversXChainConfig extends IChainConfig {
     chainType: 'multiversX';
     elasticSearchURL: string;
     gatewayURL: string;
+    chainID: string
 }
 
 

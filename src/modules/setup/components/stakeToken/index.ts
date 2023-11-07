@@ -21,11 +21,11 @@ const stakeTokens_ = async ({ stakingChainConfig, wallets }: IStakingChainConfig
             const stakeTx = await stakingContract.stakeERC20([
                 {
                     validatorAddress: wallets.evmWallet.address,
-                    chainSymbol: "evm"
+                    chainType: "evm"
                 },
                 {
-                    validatorAddress: wallets.multiversXWallet.userWallet.bech32,
-                    chainSymbol: "multiversX"
+                    validatorAddress: wallets.multiversXWallet.userWallet.address,
+                    chainType: "multiversX"
                 }
             ]);
             await stakeTx.wait();

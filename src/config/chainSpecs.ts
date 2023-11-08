@@ -29,13 +29,13 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
         nativeCoinSymbol: "ETH",
         intialFund: "50000000000000000",
-        contractAddress: "0x1017Edd369D9824437D79427777724733bb588D0",
+        contractAddress: "0x3a42753657f0F493082Ae67D980a087c47f5A174",
         chainType: 'evm',
-        lastBlock: 4592411
+        lastBlock: 4652716
     },
     {
         chain: "MATIC",
-        rpcURL: "https://rpc-mumbai.maticvigil.com/",
+        rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
         contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
@@ -46,7 +46,7 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         chain: "MULTIVERSX",
         nativeCoinSymbol: "EGLD",
         intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgq2pm3v2qe6k5m2kr4c03l395nwfjtgdfj6n9sw33epx",
+        contractAddress: "erd1qqqqqqqqqqqqqpgqdwlpfvkvnp6l8mk57c878vat780lgk9k6n9sxmduau",
         chainType: 'multiversX',
         elasticSearchURL: "https://devnet-index.multiversx.com",
         gatewayURL: "https://devnet-gateway.multiversx.com",

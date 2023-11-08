@@ -50,7 +50,7 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
 
     const signedData = await signer.sign(Buffer.from(keccak256(data), "hex"));
 
-    return { publicAddress: multiversXWallet.userWallet.address, signature: signedData.toString("hex") }
+    return { publicAddress: multiversXWallet.userWallet.address, signature: "0x"+signedData.toString("hex") }
 }
 
 export default getMultiversXSignedNftDetails

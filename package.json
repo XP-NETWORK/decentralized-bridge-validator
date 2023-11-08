@@ -33,6 +33,7 @@
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
     "axios": "^1.6.0",
+    "borsh": "^1.0.0",
     "bullmq": "^4.12.5",
     "chai": "^4.3.10",
     "eslint": "^8.52.0",

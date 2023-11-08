@@ -13,7 +13,7 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
 
     const handleLog: IHandleLog = async ({ log }) => {
-        
+
         const {
             tokenId, // Unique ID for the NFT transfer
             destinationChain, // Chain to where the NFT is being transferred
@@ -35,8 +35,9 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
         if (sourceChainObject) {
 
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
+            const royaltyReceiver = await storageContract.chainRoyalty(destinationChainObject.chainType);
 
-            const { royalty, royaltyReceiver, name, symbol, metadata } = await getNftDetails({
+            const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
                 sourceChain: sourceChainObject,
                 evmWallet: wallets.evmWallet,

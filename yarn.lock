@@ -2287,6 +2287,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"borsh@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "borsh@npm:1.0.0"
+  checksum: fbb2101a30e94537a330b6158d513c497d760f4ddfc457e1431120a201f06eb05b7879100581e95deff07aad974cabc394da708a0be322ad26697177eadd123b
+  languageName: node
+  linkType: hard
+
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -2332,6 +2339,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.8.0
     "@typescript-eslint/parser": ^6.8.0
     axios: ^1.6.0
+    borsh: ^1.0.0
     bullmq: ^4.12.5
     chai: ^4.3.10
     eslint: ^8.52.0

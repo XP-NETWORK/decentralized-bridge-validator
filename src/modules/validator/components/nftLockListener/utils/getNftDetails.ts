@@ -6,7 +6,6 @@ import getMultiversXNftContract from "@src/utils/functions/getMultiversXNftContr
 const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet, tokenId, nftType }: IGetEvmNftDetails) => {
 
     let royalty = String(BigInt("0")); // set default royalty 0
-    const royaltyReceiver = "0x0000000000000000000000000000000000000000"; // set default reciever none
     let metadata = ""; // set default matadata empty
     let name = "" // set empty default name
     let symbol = "" // set empty default symbol
@@ -28,7 +27,7 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet,
     royalty = await nftContract.royaltyInfo(BigInt(tokenId)); // royality of nft collection
     metadata = await nftContract.tokenURI(BigInt(tokenId));
 
-    return { royalty, royaltyReceiver, name, symbol, metadata }
+    return { royalty, name, symbol, metadata }
 
 }
 

@@ -39,8 +39,9 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
         if (sourceChainObject) {
 
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
-
-            const { royalty, royaltyReceiver, name, symbol, metadata } = await getNftDetails({
+            const royaltyReceiver = await storageContract.chainRoyalty(destinationChainObject.chainType);
+            
+            const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
                 sourceChain: sourceChainObject,
                 evmWallet: wallets.evmWallet,

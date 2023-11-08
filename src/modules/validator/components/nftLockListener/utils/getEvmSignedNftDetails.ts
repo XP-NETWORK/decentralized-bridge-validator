@@ -1,6 +1,8 @@
 import Web3 from "web3";
+import { INftTransferDetailsObject } from "../components/types";
+import { IEvmWallet } from "@src/types";
 
-const getEvmSignedNftDetails = ({ nftTransferDetailsObject, evmWallet }) => {
+const getEvmSignedNftDetails = ({ nftTransferDetailsObject, evmWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, evmWallet: IEvmWallet }) => {
     const web3 = new Web3();
     const nftTransferDetailsValues = Object.values(nftTransferDetailsObject);
 

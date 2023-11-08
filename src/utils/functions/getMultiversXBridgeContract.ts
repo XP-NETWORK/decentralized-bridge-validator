@@ -101,7 +101,6 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
                 console.log(e)
                 throw new Error("Error adding validator in multiversX bridge")
             }
-
         }
     }
 }

@@ -17,7 +17,7 @@ const storageTestnetConfig: IEvmChainConfig = {
 const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
     {
         chain: "BSC",
-        rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
+        rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
         contractAddress: "0x02f9b3cC780D0e82086940ec6cb65dDfAA12666e",

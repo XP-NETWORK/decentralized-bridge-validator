@@ -20,19 +20,23 @@ const getTxHashes = async ({ gatewayURL, contractAddress, from }) => {
         ]
     };
 
-    const logs: IMultiverseXTxStatus = (await axios.get(`${gatewayURL}/transactions/_search`, {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data
-    })).data
+    const resultantLogs: { txHash: string, status: string }[] = [];
 
+    try {
+        const logs: IMultiverseXTxStatus = (await axios.get(`${gatewayURL}/transactions/_search`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data
+        })).data
 
-    const resultantLogs: { txHash: string, status: string }[] = []
+        logs.hits.hits.forEach((log) => {
+            resultantLogs.push({ ...log._source, txHash: log._id })
+        });
+    } catch (error) {
+        console.info("No transactions found")
+    }
 
-    logs.hits.hits.forEach((log) => {
-        resultantLogs.push({ ...log._source, txHash: log._id })
-    });
 
     return resultantLogs
 }

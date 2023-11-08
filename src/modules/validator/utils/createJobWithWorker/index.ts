@@ -12,6 +12,9 @@ const createJobWithWorker = async <T>({ jobData, jobName, jobFunction }: { jobDa
         await jobFunction(data);
     }, { connection: getRedisConnection() });
 
+
+
+
     await bullQueue.add(`${jobName}Job`, jobData, {
         removeOnComplete: true,
         removeOnFail: true,

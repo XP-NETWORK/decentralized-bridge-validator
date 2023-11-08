@@ -33,6 +33,7 @@ const stakeTokens_ = async ({ stakingChainConfig, wallets }: IStakingChainConfig
 
             console.info('Tokens staked successfully!');
         } catch (e) {
+            console.log(e)
             if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "You can only stake once"`)) {
                 throw ("Error staking tokens")
             }

@@ -19,16 +19,28 @@ const stakingABI = [
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "validatorAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "chainType",
+						"type": "string"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct ValidatorAddressAndChainType[]",
+				"name": "validatorAddressAndChainType",
+				"type": "tuple[]"
 			}
 		],
 		"name": "Staked",
@@ -48,7 +60,25 @@ const stakingABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "validatorAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "chainType",
+						"type": "string"
+					}
+				],
+				"internalType": "struct ValidatorAddressAndChainType[]",
+				"name": "_validatorAddressAndChainType",
+				"type": "tuple[]"
+			}
+		],
 		"name": "stakeERC20",
 		"outputs": [],
 		"stateMutability": "nonpayable",

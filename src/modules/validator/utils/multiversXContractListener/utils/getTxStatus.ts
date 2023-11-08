@@ -2,7 +2,8 @@ import axios from "axios";
 import { IMultiverseXTxStatus } from "./types";
 
 const getTxStatus = async ({ gatewayURL, txHashes }) => {
-    const logs: IMultiverseXTxStatus = (await axios.get(`${gatewayURL}/transactions/_search`, {
+
+    const data = {
         headers: {
             'Content-Type': 'application/json'
         },
@@ -14,13 +15,20 @@ const getTxStatus = async ({ gatewayURL, txHashes }) => {
                 }
             }
         }
-    })).data
+    }
 
     const resultantLogs: { txHash: string, status: string }[] = []
 
-    logs.hits.hits.forEach((log) => {
-        resultantLogs.push({ ...log._source, txHash: log._id })
-    });
+    try {
+        const logs: IMultiverseXTxStatus = (await axios.get(`${gatewayURL}/transactions/_search`, data)).data
+
+        logs.hits.hits.forEach((log) => {
+            resultantLogs.push({ ...log._source, txHash: log._id })
+        });
+    } catch (error) {
+        throw new Error("Error while getting status")
+    }
+
 
     return resultantLogs
 }

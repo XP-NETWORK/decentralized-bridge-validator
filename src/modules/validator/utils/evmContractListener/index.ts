@@ -23,7 +23,6 @@ async function evmContractListener(
         where: { chain, contractAddress },
     });
 
-    console.info({ blockInstance })
     if (!blockInstance) {
         const newBlock = new Block();
         newBlock.chain = chain

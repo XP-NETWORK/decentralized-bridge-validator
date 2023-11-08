@@ -32,9 +32,9 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
         validatorAddress: newMultiversXValidator.validatorAddress,
         signerAndSignature: {
             signerAddress: wallets.multiversXWallet.userWallet.address,
-            signature: (await signer.sign(Buffer.from(
+            signature: "0x" + ((await signer.sign(Buffer.from(
                 newMultiversXValidator.validatorAddress
-            ))).toString("hex"),
+            ))).toString("hex")),
         }
     }
 
@@ -45,6 +45,11 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
         ]);
         console.info(`Stake Approved Transaction Hash: ${tx.hash}`);
     } catch (e) {
+        console.log({
+            evmSingerAndSignature,
+            multiversXSingerAndSignature
+        })
+        console.log(e)
         if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
             throw new Error("Error while processing log")
         }

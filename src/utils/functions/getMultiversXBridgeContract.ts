@@ -57,19 +57,11 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
 
                 const data = [new AddressValue(new Address(Buffer.from(validatorAddress, "hex"))), signatures.map(item => {
                     return {
-                        sig: new BytesValue(Buffer.from(item.signature, "hex")),
+                        sig: new BytesValue(Buffer.from(item.signature.replace("0x",""), "hex")),
                         public_key: new AddressValue(new Address(Buffer.from(item.signerAddress, "hex")))
                     }
                 })]
 
-                // const data = [new BytesValue(Buffer.from(validatorAddress, "hex")), signatures.map(item => {
-                //     return [{
-                //         sig: new BytesValue(Buffer.from(item.signature, "hex")),
-                //         public_key: new BytesValue(Buffer.from(item.signerAddress, "hex"))
-                //     }]
-                // })]
-
-                console.log(data)
 
                 const transaction = multiversXBridgeContract.methods
                     .addValidator(data)

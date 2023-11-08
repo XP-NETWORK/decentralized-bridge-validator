@@ -3,7 +3,7 @@ import { IGetMultiverseXLogs, IMultiverseXLogEvent, IMultiverseXLogs } from "./t
 
 const getLogs = async ({ gatewayURL, txHashes, eventIdentifier }: IGetMultiverseXLogs) => {
 
-    const logs: IMultiverseXLogs = (await axios.get(`${gatewayURL}/logs/_search`, {
+    const data = {
         headers: {
             'Content-Type': 'application/json'
         },
@@ -15,21 +15,27 @@ const getLogs = async ({ gatewayURL, txHashes, eventIdentifier }: IGetMultiverse
                 }
             }
         }
-    })).data
+    }
 
     const resultantLogs: (IMultiverseXLogEvent & { txHash: string })[] = []
     const incompleteTx: { [txHash: string]: boolean } = {};
-    logs.hits.hits.forEach((log) => {
-        const eventLog = log._source.events.find(_event => {
-            return _event.identifier === eventIdentifier
-        })
-        const isCompletedTx = log._source.events.find(_event => _event.identifier === "completedTxEvent")
-        if (eventLog && isCompletedTx) {
-            resultantLogs.push({ ...eventLog, txHash: log._id })
-        } else if (eventLog && !isCompletedTx) {
-            incompleteTx[log._id] = true
-        }
-    });
+
+    try {
+        const logs: IMultiverseXLogs = (await axios.get(`${gatewayURL}/logs/_search`, data)).data
+        logs.hits.hits.forEach((log) => {
+            const eventLog = log._source.events.find(_event => {
+                return _event.identifier === eventIdentifier
+            })
+            const isCompletedTx = log._source.events.find(_event => _event.identifier === "completedTxEvent")
+            if (eventLog && isCompletedTx) {
+                resultantLogs.push({ ...eventLog, txHash: log._id })
+            } else if (eventLog && !isCompletedTx) {
+                incompleteTx[log._id] = true
+            }
+        });
+    } catch (error) {
+        throw new Error("Error while getting logs")
+    }
 
     return { resultantLogs, incompleteTx }
 }

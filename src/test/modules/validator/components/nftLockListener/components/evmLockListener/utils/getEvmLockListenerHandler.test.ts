@@ -92,7 +92,7 @@ describe('getEvmLockListenerHandler', () => {
         decodedLogs,
         nftDetails
     }) => {
-        it(description, async () => {
+        it.only(description, async () => {
 
             const chainFeeStub = sinon.stub().resolves(BigInt(100));
             const storageContractStub = {

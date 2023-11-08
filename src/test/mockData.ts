@@ -38,6 +38,7 @@ const mockBridgeConfig: IBridgeConfig = {
             chainType: 'multiversX',
             elasticSearchURL: "https://devnet-index.multiversx.com",
             gatewayURL: "https://devnet-gateway.multiversx.com",
+            chainID: "D"
         },
     ],
     stakingConfig: {

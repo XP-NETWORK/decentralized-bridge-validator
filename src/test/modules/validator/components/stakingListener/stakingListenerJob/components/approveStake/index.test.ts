@@ -59,13 +59,23 @@ describe('approveStake', () => {
             const storageContract = getStorageContractStub({ evmChainConfig: mockBridgeConfig[0], evmWallet: mockWallets.evmWallet })
             if (expectError) {
                 try {
-                    await approveStake({ wallets: mockWallets, stakerAddress: "0x0000000000000000000000000000000000000000", storageContract, otherChains: [] })
+                    await approveStake({
+                        wallets: mockWallets, validatorAddressAndChainType: [{
+                            validatorAddress: "0x0000000000000000000000000000000000000000",
+                            chainType: "evm"
+                        }], storageContract
+                    })
                 } catch (error) {
                     expect(error).to.exist
                     expect(error.message).to.equals("Error while processing log")
                 }
             } else {
-                await approveStake({ wallets: mockWallets, stakerAddress: "0x0000000000000000000000000000000000000000", storageContract, otherChains: []  })
+                await approveStake({
+                    wallets: mockWallets, validatorAddressAndChainType: [{
+                        validatorAddress: "0x0000000000000000000000000000000000000000",
+                        chainType: "evm"
+                    }], storageContract
+                })
 
             }
 

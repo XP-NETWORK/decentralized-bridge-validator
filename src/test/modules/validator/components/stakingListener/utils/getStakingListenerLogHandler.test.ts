@@ -19,7 +19,14 @@ describe('getStakingListenerLogHandler', () => {
     it("should be able to approve stake", async () => {
 
         const getStakeEventDecodedLogStub = sinon.stub(stakingEventUtils, "getStakeEventDecodedLog").
-            returns("0x8f1fd3a5dbbd5659579ae7d9b258cc6cbcb3e53d");
+            returns({
+                validatorAddressAndChainType: [
+                    {
+                        validatorAddress: "0x8f1fd3a5dbbd5659579ae7d9b258cc6cbcb3e53d",
+                        chainType: "evm"
+                    }
+                ]
+            });
         const approveStakeStub = sinon.stub(stakingComponents, "approveStake").resolves()
 
         const handleLog = stakingEventUtils.getStakingListenerLogHandler({

@@ -41,7 +41,7 @@ const multiversXChainConfig: IMultiversXChainConfig = {
     chain: "MULTIVERSX",
     nativeCoinSymbol: "EGLD",
     intialFund: "50000000000000000",
-    contractAddress: "erd1qqqqqqqqqqqqqpgqdwlpfvkvnp6l8mk57c878vat780lgk9k6n9sxmduau",
+    contractAddress: "erd1qqqqqqqqqqqqqpgqvvn30mvdl9amgkkursrt8qhevd84c5q46n9srmkph4",
     chainType: "multiversX",
     chainID: "D",
     elasticSearchURL: "https://devnet-index.multiversx.com",
@@ -72,7 +72,7 @@ const multiversXWallet = {
 const bridge: IBridge = getMultiversXBridgeContract({ multiversXChainConfig, multiversXWallet })
 
 bridge.validatorsCount().then(r => console.log(r.toString()))
-bridge.validators("2130d2c16f919f634de847801cdccefbbc1f89bdd2524d5b6b94edbf821b2b00").then(r => console.log(r))
+// bridge.validators("2130d2c16f919f634de847801cdccefbbc1f89bdd2524d5b6b94edbf821b2b00").then(r => console.log(r))
 // bridge.validators("be0d718373bdc7bba3a313f25a0d8abd9736b831ba07a4ef4521df0ef93ef270").then(r => console.log(r))
 
 const addValidatorFunc = async () => {

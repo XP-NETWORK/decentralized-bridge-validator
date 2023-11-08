@@ -32,11 +32,14 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
         validatorAddress: newMultiversXValidator.validatorAddress,
         signerAndSignature: {
             signerAddress: wallets.multiversXWallet.userWallet.address,
-            signature: "0x" + ((await signer.sign(Buffer.from(
-                newMultiversXValidator.validatorAddress
-            ))).toString("hex")),
+            signature: "0x" + (
+                (await signer.sign(
+                    Buffer.from(newMultiversXValidator.validatorAddress, "hex")
+                )).toString("hex")
+            ),
         }
     }
+
 
     try {
         const tx = await storageContract.approveStake(newEvmValidator.validatorAddress, [

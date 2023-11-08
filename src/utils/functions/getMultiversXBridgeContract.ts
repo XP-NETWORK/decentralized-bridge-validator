@@ -57,7 +57,7 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
 
                 const data = [new AddressValue(new Address(Buffer.from(validatorAddress, "hex"))), signatures.map(item => {
                     return {
-                        sig: new BytesValue(Buffer.from(item.signature.replace("0x",""), "hex")),
+                        sig: new BytesValue(Buffer.from(item.signature.replace("0x", ""), "hex")),
                         public_key: new AddressValue(new Address(Buffer.from(item.signerAddress, "hex")))
                     }
                 })]
@@ -75,9 +75,19 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
 
                 return {
                     hash, wait: async () => {
-                        while (!((await proxyNetworkProvider.getTransaction(hash, true)).isCompleted)) {
+
+                        const isTransactionCompleted = async () => {
+                            try {
+                                return (await proxyNetworkProvider.getTransaction(hash, true)).isCompleted
+                            } catch (error) {
+                                return false
+                            }
+                        }
+
+                        while (!(await isTransactionCompleted())) {
                             await waitForMSWithMsg(processDelayMilliseconds, "Waiting for MultiversX transaction to finish");
                         }
+
                         const transactionReceipt = await proxyNetworkProvider.getTransaction(hash, true)
                         if (transactionReceipt.status.isFailed()) {
                             console.log({ hash })

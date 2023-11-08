@@ -8,9 +8,9 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x7EEE43Cd3A083F00646ba04bC5F30764CD2ee41e",
+    contractAddress: "0x05f625377A7800366fc39b9992F4e58747723FB8",
     chainType: 'evm',
-    lastBlock: 16970859
+    lastBlock: 17007099
 }
 
 

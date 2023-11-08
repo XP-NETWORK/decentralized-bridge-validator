@@ -54,7 +54,7 @@ const getMultiversXBridgeContract = ({ multiversXChainConfig, multiversXWallet }
                 const userAccount = new Account(userAddress);
                 const userOnNetwork = await proxyNetworkProvider.getAccount(userAddress);
                 userAccount.update(userOnNetwork);
-                signatures = [signatures[0]]
+                
                 const data = [new AddressValue(new Address(Buffer.from(validatorAddress, "hex"))), signatures.map(item => {
                     return {
                         sig: new BytesValue(Buffer.from(item.signature.replace("0x", ""), "hex")),

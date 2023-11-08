@@ -27,13 +27,20 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
     multiversXWallet: IMultiversXWallet
 }) => {
 
-    const signer = UserSigner.fromWallet(multiversXWallet.userWallet, multiversXWallet.password)
+    const signer = UserSigner.fromWallet(multiversXWallet.userWallet, multiversXWallet.password);
+
+    let destinationAddress = new Address(nftTransferDetailsObject.royaltyReceiver)
+    try {
+        destinationAddress = new Address(nftTransferDetailsObject.destinationUserAddress)
+    }catch(e) {
+        console.error("wrong destination address, nft sent to royality reciever address")
+    }
 
     const claimDataArgs = new Struct(structClaimData, [
         new Field(new BytesValue(Buffer.from(Number(nftTransferDetailsObject.tokenId).toString(16), "hex")), 'token_id'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.sourceChain)), 'source_chain'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.destinationChain)), 'destination_chain'),
-        new Field(new AddressValue(new Address(nftTransferDetailsObject.destinationUserAddress)), 'destination_user_address'),
+        new Field(new AddressValue(new Address(destinationAddress)), 'destination_user_address'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.sourceNftContractAddress)), 'source_nft_contract_address'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.name)), 'name'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.symbol)), 'symbol'),

@@ -30,7 +30,7 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
     const signer = UserSigner.fromWallet(multiversXWallet.userWallet, multiversXWallet.password)
 
     const claimDataArgs = new Struct(structClaimData, [
-        new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.tokenId)), 'token_id'),
+        new Field(new BytesValue(Buffer.from(Number(nftTransferDetailsObject.tokenId).toString(16), "hex")), 'token_id'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.sourceChain)), 'source_chain'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.destinationChain)), 'destination_chain'),
         new Field(new AddressValue(new Address(nftTransferDetailsObject.destinationUserAddress)), 'destination_user_address'),

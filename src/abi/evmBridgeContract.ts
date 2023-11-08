@@ -8,8 +8,18 @@ const evmBridgeABI = [
             },
             {
                 "internalType": "string",
-                "name": "_chainSymbol",
+                "name": "_chainType",
                 "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "_collectionDeployer",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_storageDeployer",
+                "type": "address"
             }
         ],
         "stateMutability": "nonpayable",
@@ -97,9 +107,9 @@ const evmBridgeABI = [
             },
             {
                 "indexed": false,
-                "internalType": "address",
+                "internalType": "string",
                 "name": "sourceNftContractAddress",
-                "type": "address"
+                "type": "string"
             },
             {
                 "indexed": false,
@@ -121,6 +131,38 @@ const evmBridgeABI = [
             }
         ],
         "name": "Locked",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "hashValue",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes[]",
+                "name": "",
+                "type": "bytes[]"
+            }
+        ],
+        "name": "LogHash",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "_validator",
+                "type": "address"
+            }
+        ],
+        "name": "RewardValidator",
         "type": "event"
     },
     {
@@ -187,9 +229,21 @@ const evmBridgeABI = [
                 "type": "address"
             },
             {
-                "internalType": "bytes[]",
-                "name": "sigs",
-                "type": "bytes[]"
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "signerAddress",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct SignerAndSignature[]",
+                "name": "signatures",
+                "type": "tuple[]"
             }
         ],
         "name": "addValidator",
@@ -222,9 +276,9 @@ const evmBridgeABI = [
                         "type": "address"
                     },
                     {
-                        "internalType": "address",
+                        "internalType": "string",
                         "name": "sourceNftContractAddress",
-                        "type": "address"
+                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -312,9 +366,9 @@ const evmBridgeABI = [
                         "type": "address"
                     },
                     {
-                        "internalType": "address",
+                        "internalType": "string",
                         "name": "sourceNftContractAddress",
-                        "type": "address"
+                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -381,8 +435,39 @@ const evmBridgeABI = [
         "inputs": [
             {
                 "internalType": "address",
+                "name": "_validator",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes[]",
+                "name": "signatures",
+                "type": "bytes[]"
+            }
+        ],
+        "name": "claimValidatorRewards",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "collectionDeployer",
+        "outputs": [
+            {
+                "internalType": "contract INFTCollectionDeployer",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
             },
             {
                 "internalType": "string",
@@ -404,9 +489,9 @@ const evmBridgeABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
+                "internalType": "string",
                 "name": "",
-                "type": "address"
+                "type": "string"
             },
             {
                 "internalType": "string",
@@ -446,9 +531,9 @@ const evmBridgeABI = [
                 "type": "string"
             },
             {
-                "internalType": "address",
+                "internalType": "string",
                 "name": "contractAddress",
-                "type": "address"
+                "type": "string"
             }
         ],
         "stateMutability": "view",
@@ -484,7 +569,7 @@ const evmBridgeABI = [
         ],
         "name": "lock1155",
         "outputs": [],
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -518,9 +603,9 @@ const evmBridgeABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
+                "internalType": "string",
                 "name": "",
-                "type": "address"
+                "type": "string"
             },
             {
                 "internalType": "string",
@@ -542,9 +627,9 @@ const evmBridgeABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
+                "internalType": "string",
                 "name": "",
-                "type": "address"
+                "type": "string"
             },
             {
                 "internalType": "string",
@@ -566,9 +651,9 @@ const evmBridgeABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
+                "internalType": "string",
                 "name": "",
-                "type": "address"
+                "type": "string"
             },
             {
                 "internalType": "string",
@@ -606,6 +691,19 @@ const evmBridgeABI = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "storageDeployer",
+        "outputs": [
+            {
+                "internalType": "contract INFTStorageDeployer",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -636,8 +734,13 @@ const evmBridgeABI = [
         "outputs": [
             {
                 "internalType": "bool",
-                "name": "",
+                "name": "added",
                 "type": "bool"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pendingReward",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -655,6 +758,10 @@ const evmBridgeABI = [
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
     }
 ]
 

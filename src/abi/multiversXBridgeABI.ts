@@ -33,7 +33,7 @@ const multiversXBridgeABI = {
             "inputs": [],
             "outputs": [
                 {
-                    "type": "variadic<multi<TokenInfo,TokenInfo>>",
+                    "type": "variadic<multi<TokenInfo,bytes>>",
                     "multi_result": true
                 }
             ]
@@ -75,26 +75,22 @@ const multiversXBridgeABI = {
             ]
         },
         {
-            "name": "verifySigs",
-            "mutability": "mutable",
+            "name": "fuckingHash",
+            "mutability": "readonly",
             "inputs": [
                 {
-                    "name": "key",
-                    "type": "bytes"
-                },
-                {
-                    "name": "message",
-                    "type": "bytes"
-                },
-                {
-                    "name": "sig",
-                    "type": "bytes"
+                    "name": "data",
+                    "type": "ClaimData"
                 }
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "type": "bytes"
+                }
+            ]
         },
         {
-            "name": "verifySigsAddresses",
+            "name": "fuckingVerify",
             "mutability": "mutable",
             "inputs": [
                 {
@@ -102,8 +98,8 @@ const multiversXBridgeABI = {
                     "type": "Address"
                 },
                 {
-                    "name": "message",
-                    "type": "Address"
+                    "name": "data",
+                    "type": "ClaimData"
                 },
                 {
                     "name": "sig",
@@ -130,6 +126,9 @@ const multiversXBridgeABI = {
         {
             "name": "lock721",
             "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
             "inputs": [
                 {
                     "name": "token_id",
@@ -157,6 +156,9 @@ const multiversXBridgeABI = {
         {
             "name": "lock1155",
             "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
             "inputs": [
                 {
                     "name": "token_id",
@@ -186,7 +188,30 @@ const multiversXBridgeABI = {
             "outputs": []
         },
         {
-            "name": "claimNft",
+            "name": "claimNft721",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [
+                {
+                    "name": "data",
+                    "type": "ClaimData"
+                },
+                {
+                    "name": "signatures",
+                    "type": "List<SignatureInfo>"
+                },
+                {
+                    "name": "uris",
+                    "type": "multi<bytes,bytes>",
+                    "multi_arg": true
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claimNft1155",
             "mutability": "mutable",
             "payableInTokens": [
                 "EGLD"
@@ -240,7 +265,7 @@ const multiversXBridgeABI = {
             "inputs": [
                 {
                     "name": "token_id",
-                    "type": "TokenIdentifier",
+                    "type": "u64",
                     "indexed": true
                 },
                 {
@@ -272,11 +297,6 @@ const multiversXBridgeABI = {
                     "name": "chain",
                     "type": "bytes",
                     "indexed": true
-                },
-                {
-                    "name": "nonce",
-                    "type": "u64",
-                    "indexed": true
                 }
             ]
         },
@@ -289,7 +309,7 @@ const multiversXBridgeABI = {
                     "indexed": true
                 },
                 {
-                    "name": "nonce",
+                    "name": "token_id",
                     "type": "u64",
                     "indexed": true
                 },
@@ -309,7 +329,7 @@ const multiversXBridgeABI = {
                     "indexed": true
                 },
                 {
-                    "name": "nonce",
+                    "name": "token_id",
                     "type": "u64",
                     "indexed": true
                 },
@@ -320,7 +340,17 @@ const multiversXBridgeABI = {
                 },
                 {
                     "name": "amount",
-                    "type": "u64",
+                    "type": "BigUint",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "Lula",
+            "inputs": [
+                {
+                    "name": "gando",
+                    "type": "Option<bytes>",
                     "indexed": true
                 }
             ]
@@ -423,11 +453,7 @@ const multiversXBridgeABI = {
             "fields": [
                 {
                     "name": "token_id",
-                    "type": "bytes"
-                },
-                {
-                    "name": "chain",
-                    "type": "bytes"
+                    "type": "u64"
                 },
                 {
                     "name": "contract_address",
@@ -450,5 +476,6 @@ const multiversXBridgeABI = {
         }
     }
 }
+
 
 export default multiversXBridgeABI

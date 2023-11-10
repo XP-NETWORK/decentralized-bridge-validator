@@ -46,7 +46,7 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         chain: "MULTIVERSX",
         nativeCoinSymbol: "EGLD",
         intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgq6r0wc6lte5flsv3twjm4pc683ehcq3r66n9szfc37d",
+        contractAddress: "erd1qqqqqqqqqqqqqpgq48dutyffez3mynwudjx5uv53089v80ss6n9ss2720j",
         chainType: 'multiversX',
         elasticSearchURL: "https://devnet-index.multiversx.com",
         gatewayURL: "https://devnet-gateway.multiversx.com",

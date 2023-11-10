@@ -138,7 +138,7 @@ describe('stakeTokens', () => {
             callCountStake,
             callIsStaked,
         }) => {
-            it.only(description, async () => {
+            it(description, async () => {
                 const hash = 'some unique hash';
                 const { stakingConfig } = mockBridgeConfig;
 

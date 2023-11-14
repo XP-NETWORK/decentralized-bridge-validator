@@ -14,6 +14,7 @@ import {
     getCurrentMultiversXBalance,
     getMultiversXBridgeContract,
     decodeBase64Array,
+    getCurrentTonBalance
 } from './functions';
 
 export {
@@ -32,4 +33,5 @@ export {
     getCurrentMultiversXBalance,
     getMultiversXBridgeContract,
     decodeBase64Array,
+    getCurrentTonBalance
 };

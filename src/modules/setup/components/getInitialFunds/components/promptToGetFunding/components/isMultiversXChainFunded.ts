@@ -6,7 +6,7 @@ const isMultiversXChainFunded = async ({ multiversXChainConfig, multiversXWallet
     let isFunded = true;
     try {
         const currentBalance = await getCurrentMultiversXBalance({ multiversXChainConfig, multiversXWallet });
-        const remainingRaw = (BigInt(multiversXChainConfig.intialFund) || BigInt("0")) - BigInt(currentBalance);
+        const remainingRaw = BigInt(multiversXChainConfig.intialFund) - BigInt(currentBalance);
 
         const remainingFund = ethers.formatEther(remainingRaw)
         if (currentBalance < BigInt(multiversXChainConfig.intialFund)) {

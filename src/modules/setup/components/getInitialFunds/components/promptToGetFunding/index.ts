@@ -1,4 +1,4 @@
-import { isEvmChainFunded, isMultiversXChainFunded, isStakingCoinFunded } from "./components";
+import { isEvmChainFunded, isMultiversXChainFunded, isStakingCoinFunded, isTonChainFunded } from "./components";
 import { IConfigAndWallets } from "@src/types";
 
 
@@ -19,6 +19,10 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
             }
         } else if (chainConfig.chainType === "multiversX") {
             if (!await isMultiversXChainFunded({ multiversXChainConfig: chainConfig, multiversXWallet: wallets.multiversXWallet })) {
+                isFunded = false
+            }
+        } else if (chainConfig.chainType === "ton") {
+            if (!await isTonChainFunded({ tonChainConfig: chainConfig, tonWallet: wallets.tonWallet })) {
                 isFunded = false
             }
         }

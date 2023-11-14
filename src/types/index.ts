@@ -29,6 +29,11 @@ interface IMultiversXWallet {
     userWallet: ISecretKey
 }
 
+interface ITonWallet {
+    publicKey: string;
+    secretKey: string
+}
+
 
 interface IEvmWallet {
     address: string;
@@ -38,6 +43,7 @@ interface IEvmWallet {
 interface IGeneratedWallets {
     evmWallet: IEvmWallet;
     multiversXWallet: IMultiversXWallet;
+    tonWallet: ITonWallet
 }
 
 interface IConfigAndWallets {
@@ -54,11 +60,16 @@ interface IChainConfig {
     chainType: string
 }
 interface IChainConfigAndWallets {
-    chainConfig: IEvmChainConfig | IMultiversXChainConfig;
+    chainConfig: IEvmChainConfig | IMultiversXChainConfig | ITonChainConfig;
     wallets: IGeneratedWallets;
 }
 interface IEvmChainConfig extends IChainConfig {
     chainType: 'evm';
+    rpcURL: string;
+}
+
+interface ITonChainConfig extends IChainConfig {
+    chainType: 'ton';
     rpcURL: string;
 }
 
@@ -75,6 +86,10 @@ interface IEvmChainConfigAndEvmWallet {
     evmWallet: IEvmWallet;
 }
 
+interface ITonChainConfigAndTonWallet {
+    tonChainConfig: ITonChainConfig;
+    tonWallet: ITonWallet
+}
 
 interface IMultiversXChainConfigAndMultiversXWallet {
     multiversXChainConfig: IMultiversXChainConfig;
@@ -120,7 +135,7 @@ interface IMultiversXContractConfigAndMultiversXWallet {
 
 
 interface IBridgeConfig {
-    bridgeChains: (IMultiversXChainConfig | IEvmChainConfig)[];
+    bridgeChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[];
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }
@@ -162,5 +177,8 @@ export {
     IMultiversXContractConfig,
     IStakingChainConfigAndWallets,
     IMultiversXContractConfigAndMultiversXWallet,
-    INftContract
+    INftContract,
+    ITonWallet,
+    ITonChainConfig,
+    ITonChainConfigAndTonWallet
 }

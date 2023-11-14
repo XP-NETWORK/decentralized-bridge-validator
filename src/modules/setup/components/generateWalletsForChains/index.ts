@@ -4,7 +4,16 @@ import { isGeneratedWallets } from '@src/modules/setup/typesGuardRuntime';
 import { promises as fs } from 'fs';
 import { IGeneratedWallets } from '@src/types';
 import { Mnemonic, UserWallet } from '@multiversx/sdk-wallet/out';
+import TonWeb from 'tonweb';
 
+const generateEvmWallet = () => {
+    const evmWallet = ethers.Wallet.createRandom();
+    return {
+        address: evmWallet.address,
+        privateKey: evmWallet.privateKey
+    }
+
+}
 const generateMultiversXWallet = () => {
     const mnemonic = Mnemonic.generate();
     const secretKey = mnemonic.deriveKey(0);
@@ -13,21 +22,33 @@ const generateMultiversXWallet = () => {
     return { userWallet: userWallet.toJSON(), password };
 };
 
+
+const generateTonWallet = () => {
+
+    const KeyPair = TonWeb.utils.nacl.sign.keyPair();
+    const tonWallet = {
+        publicKey: TonWeb.utils.bytesToHex(KeyPair.publicKey),
+        secretKey: TonWeb.utils.bytesToHex(KeyPair.secretKey)
+    }
+
+    return tonWallet
+}
+
 const generateWalletsForChains_ = (): IGeneratedWallets => {
 
-    const evmWallet = ethers.Wallet.createRandom();
+    const evmWallet = generateEvmWallet();
     const multiversXWallet = generateMultiversXWallet();
+    const tonWallet = generateTonWallet()
 
     const generatedWAllets: IGeneratedWallets = {
-        evmWallet: {
-            address: evmWallet.address,
-            privateKey: evmWallet.privateKey
-        },
-        multiversXWallet: multiversXWallet
+        evmWallet,
+        multiversXWallet,
+        tonWallet
     }
 
     return generatedWAllets
 };
+
 
 
 

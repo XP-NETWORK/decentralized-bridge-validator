@@ -45,6 +45,7 @@
     "sinon": "^17.0.0",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
+    "tonweb": "^0.0.62",
     "tsconfig-paths": "^4.2.0",
     "typeorm": "0.3.17",
     "web3": "^4.1.2",

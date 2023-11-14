@@ -1,4 +1,4 @@
-import { IBridgeConfig, IEvmChainConfig, IMultiversXChainConfig, IStakingConfig } from "@src/types"
+import { IBridgeConfig, IEvmChainConfig, IMultiversXChainConfig, IStakingConfig, ITonChainConfig } from "@src/types"
 
 /*
     Test network for bridge
@@ -14,7 +14,7 @@ const storageTestnetConfig: IEvmChainConfig = {
 }
 
 
-const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
+const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[] = [
     {
         chain: "BSC",
         rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
@@ -52,7 +52,16 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
         gatewayURL: "https://devnet-gateway.multiversx.com",
         lastBlock: 0,
         chainID: "D"
-    }
+    },
+    {
+        chain: "TON",
+        rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+        nativeCoinSymbol: "TON",
+        intialFund: "5000000000",
+        contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
+        chainType: 'ton',
+        lastBlock: 42116275
+    },
 ]
 
 const stakingTestChain: IStakingConfig = {

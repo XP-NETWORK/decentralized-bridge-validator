@@ -13,11 +13,12 @@ import getEvmFungibleContract from "./getEvmFungibleContract"
 import getCurrentMultiversXBalance from "./getCurrentMultiversXBalance"
 import getMultiversXBridgeContract from "./getMultiversXBridgeContract"
 import decodeBase64Array from "./decodeBase64Array"
+import getCurrentTonBalance from "./getCurrentTonBalance"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
     confirmationCountNeeded, getStorageContract, getEvmBridgeContract,
     getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract,
     getRedisConnection, getEvmFungibleContract, getCurrentMultiversXBalance,
-    getMultiversXBridgeContract, decodeBase64Array
+    getMultiversXBridgeContract, decodeBase64Array, getCurrentTonBalance
 }

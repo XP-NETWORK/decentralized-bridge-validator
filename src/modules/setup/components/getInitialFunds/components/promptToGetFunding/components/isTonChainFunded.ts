@@ -11,7 +11,7 @@ const isTonChainFunded = async ({ tonChainConfig, tonWallet }: ITonChainConfigAn
 
         const currentBalance = await getCurrentTonBalance({ tonChainConfig, tonWallet })
 
-        const walletClass = tonweb.wallet.all['v3R2'];
+        const walletClass = tonweb.wallet.all['v4R2'];
 
         const wallet = new walletClass(tonweb.provider, { publicKey: TonWeb.utils.hexToBytes(tonWallet.publicKey) });
         const remainingRaw = BigInt(tonChainConfig.intialFund) - BigInt(currentBalance);

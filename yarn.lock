@@ -1584,6 +1584,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ton/core@npm:^0.53.0":
+  version: 0.53.0
+  resolution: "@ton/core@npm:0.53.0"
+  dependencies:
+    symbol.inspect: 1.0.1
+  peerDependencies:
+    "@ton/crypto": ">=3.2.0"
+  checksum: 6d84040bce46b8167d106ca07183c60a935b3be1934a8049f8296c7a957a7d9ae8f1f1d885df2c388c801813cfa5ac742190dfabd2b34529c338754160040d44
+  languageName: node
+  linkType: hard
+
+"@ton/crypto-primitives@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@ton/crypto-primitives@npm:2.0.0"
+  dependencies:
+    jssha: 3.2.0
+  checksum: 1a686b04dc1430792341339f0ddc1e2f5effd94d31ae118baf2c510e074201495801787b2ca881a6ceb587f89212eb081ec9e3979d374d9c9004c6c4b61fc591
+  languageName: node
+  linkType: hard
+
+"@ton/crypto@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@ton/crypto@npm:3.2.0"
+  dependencies:
+    "@ton/crypto-primitives": 2.0.0
+    jssha: 3.2.0
+    tweetnacl: 1.0.3
+  checksum: 0851fad506796573ec6079c1f36d3d07f4070abb90a4a2f3e621f6b2b2c6725c13096a5afdabb24611aa2a063ba335dcbc742e98a3c1cd0bbf3645ae55c1a8c6
+  languageName: node
+  linkType: hard
+
+"@ton/ton@npm:^13.9.0":
+  version: 13.9.0
+  resolution: "@ton/ton@npm:13.9.0"
+  dependencies:
+    axios: ^0.25.0
+    dataloader: ^2.0.0
+    symbol.inspect: 1.0.1
+    teslabot: ^1.3.0
+    zod: ^3.21.4
+  peerDependencies:
+    "@ton/core": ">=0.53.0"
+    "@ton/crypto": ">=3.2.0"
+  checksum: 341852b884f35e49f5824a76a66f968ca1b9c8373588660cdecd85c7fdaa00bfd8d4e74cdde31a5385a68253eb7ef9d747263dcd180ae17055a0f3e1ec0f5c45
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -2303,6 +2350,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "axios@npm:0.25.0"
+  dependencies:
+    follow-redirects: ^1.14.7
+  checksum: 2a8a3787c05f2a0c9c3878f49782357e2a9f38945b93018fb0c4fd788171c43dceefbb577988628e09fea53952744d1ecebde234b561f1e703aa43e0a598a3ad
+  languageName: node
+  linkType: hard
+
 "axios@npm:^1.6.0":
   version: 1.6.0
   resolution: "axios@npm:1.6.0"
@@ -2520,6 +2576,9 @@ __metadata:
     "@multiversx/sdk-network-providers": ^2.0.0
     "@multiversx/sdk-wallet": ^4.2.0
     "@nomicfoundation/hardhat-ethers": ^3.0.4
+    "@ton/core": ^0.53.0
+    "@ton/crypto": ^3.2.0
+    "@ton/ton": ^13.9.0
     "@types/chai": ^4.3.9
     "@types/jest": ^29.5.6
     "@types/mocha": ^10.0.3
@@ -2542,6 +2601,7 @@ __metadata:
     sinon: ^17.0.0
     sqlite: ^5.0.1
     sqlite3: ^5.1.6
+    ton-crypto: ^3.2.0
     tonweb: ^0.0.62
     ts-node: 10.7.0
     tsconfig-paths: ^4.2.0
@@ -3074,6 +3134,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
+  languageName: node
+  linkType: hard
+
+"dataloader@npm:^2.0.0":
+  version: 2.2.2
+  resolution: "dataloader@npm:2.2.2"
+  checksum: 4dabd247089c29f194e94d5434d504f99156c5c214a03463c20f3f17f40398d7e179edee69a27c16e315519ac8739042a810090087ae26449a0e685156a02c65
   languageName: node
   linkType: hard
 
@@ -3793,7 +3860,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.12.1, follow-redirects@npm:^1.14.4, follow-redirects@npm:^1.15.0":
+"follow-redirects@npm:^1.12.1, follow-redirects@npm:^1.14.4, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.15.0":
   version: 1.15.3
   resolution: "follow-redirects@npm:1.15.3"
   peerDependenciesMeta:
@@ -4842,6 +4909,13 @@ __metadata:
     graceful-fs:
       optional: true
   checksum: 7af3b8e1ac8fe7f1eccc6263c6ca14e1966fcbc74b618d3c78a0a2075579487547b94f72b7a1114e844a1e15bb00d440e5d1720bfc4612d790a6f285d5ea8354
+  languageName: node
+  linkType: hard
+
+"jssha@npm:3.2.0":
+  version: 3.2.0
+  resolution: "jssha@npm:3.2.0"
+  checksum: 2adb8a9a57a79360379e843c0548e240d072c2ef12aef39ef6a784315686bd6f65501e9353fdd2f3a604f64af07e7eab04a0ed92b221cdfea97d671d7b8e14f4
   languageName: node
   linkType: hard
 
@@ -6713,6 +6787,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"symbol.inspect@npm:1.0.1":
+  version: 1.0.1
+  resolution: "symbol.inspect@npm:1.0.1"
+  checksum: 47fa8d38d0bc5d04c06df2f71bba1a723ee0e015ca042c47b29c11f107877dd1a2e2d2154c9ef5eec11e92e4165d126c844f06d05da80e477581c8f284f05fdf
+  languageName: node
+  linkType: hard
+
 "tar@npm:^6.0.2, tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.2.0
   resolution: "tar@npm:6.2.0"
@@ -6724,6 +6805,13 @@ __metadata:
     mkdirp: ^1.0.3
     yallist: ^4.0.0
   checksum: db4d9fe74a2082c3a5016630092c54c8375ff3b280186938cfd104f2e089c4fd9bad58688ef6be9cf186a889671bf355c7cda38f09bbf60604b281715ca57f5c
+  languageName: node
+  linkType: hard
+
+"teslabot@npm:^1.3.0":
+  version: 1.5.0
+  resolution: "teslabot@npm:1.5.0"
+  checksum: 1494f83b9070f3d0882c7ce089a69ea46f0f30ee24c14036880ed5f49882cd80ff47f1c5543c9c973d250596896640130c16b221e84be296474a02f65e7187d0
   languageName: node
   linkType: hard
 
@@ -6774,6 +6862,26 @@ __metadata:
   version: 1.0.1
   resolution: "toidentifier@npm:1.0.1"
   checksum: 952c29e2a85d7123239b5cfdd889a0dde47ab0497f0913d70588f19c53f7e0b5327c95f4651e413c74b785147f9637b17410ac8c846d5d4a20a5a33eb6dc3a45
+  languageName: node
+  linkType: hard
+
+"ton-crypto-primitives@npm:2.0.0":
+  version: 2.0.0
+  resolution: "ton-crypto-primitives@npm:2.0.0"
+  dependencies:
+    jssha: 3.2.0
+  checksum: a81e5e7f1e44a2f32c519d6a9c3512c047b837be2f90a4e5aa226378b330ec6f9d36c1937a21b947eb792ae819c6906cfbd5b5eeab891f9df486d570141fc749
+  languageName: node
+  linkType: hard
+
+"ton-crypto@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "ton-crypto@npm:3.2.0"
+  dependencies:
+    jssha: 3.2.0
+    ton-crypto-primitives: 2.0.0
+    tweetnacl: 1.0.3
+  checksum: 5c4b077ce36f6d6583c6fee91be45ba88024cfb17927d2da8fce355f226dba559ba5dc91ee508b205c537d6dd6a34bfea17a26c2656ef80bd72f64d1a2604c45
   languageName: node
   linkType: hard
 

@@ -110,7 +110,10 @@ interface IStakingChainConfigAndWallets {
     stakingChainConfig: IStakingConfig;
     wallets: IGeneratedWallets;
 }
-
+interface ITonContractConfig {
+    contractAddress: string;
+    rpcURL: string;
+}
 interface IEvmContractConfig {
     contractAddress: string;
     rpcURL: string;
@@ -125,6 +128,7 @@ interface IEvmContractConfigAndEvmWallet {
     contractConfig: IEvmContractConfig;
     evmWallet: IEvmWallet;
 }
+
 
 interface IMultiversXContractConfigAndMultiversXWallet {
     contractConfig: IMultiversXContractConfig;
@@ -180,5 +184,6 @@ export {
     INftContract,
     ITonWallet,
     ITonChainConfig,
-    ITonChainConfigAndTonWallet
+    ITonChainConfigAndTonWallet,
+    ITonContractConfig
 }

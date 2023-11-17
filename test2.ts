@@ -130,17 +130,50 @@
 
 // addValidatorFunc()
 
-import TonWeb from "tonweb"
+// import { BitString, Cell, DictionaryKey } from "@ton/core"
 
-const generateTonWallet = () => {
+// const msg = "te6cckEBAQEACgAAD63sJiI2rPwIVwLnUw=="
 
-    const KeyPair = TonWeb.utils.nacl.sign.keyPair();
-    const tonWallet = {
-        publicKey: TonWeb.utils.bytesToHex(KeyPair.publicKey),
-        secretKey: TonWeb.utils.bytesToHex(KeyPair.secretKey)
-    }
+// const payload = Cell.fromBase64(
+//     msg
+// );
 
-    return tonWallet
-}
+// const data = payload.beginParse().loadDict<DictionaryKey<BitString>, bigint >("amount", "0.007")
 
-console.log(generateTonWallet());
+// console.log(data);
+
+// import getTonBridgeContract from "./src/utils/functions/getTonBridgeContract"
+import tonContractListener from "./src/modules/validator/utils/tonContractListener"
+// const bridge = getTonBridgeContract({
+//     tonChainConfig: {
+//         chain: "TON",
+//         rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+//         nativeCoinSymbol: "TON",
+//         intialFund: "6000000000",
+//         contractAddress: "EQAcIb4P9K-yVuZM2kxZUBtrTisIF-2aE5E3gX3J_SIKQ51q",
+//         chainType: 'ton',
+//         lastBlock: 42116275
+//     },
+
+//     tonWallet: {
+//         "publicKey": "5fe9b0d3fa6680f818a202814954a0940ae6ce13475c4293e01db063aabff7ba",
+//         "secretKey": "a771e96ab9796f417040a83fc959335e46c42b4b706c4f2a8eb91e8dd71b5b655fe9b0d3fa6680f818a202814954a0940ae6ce13475c4293e01db063aabff7ba"
+//     }
+// })
+
+// bridge.validators("5fd9df09c6326a7a6573681260710aa79c9618327e2251f72c5150db8f177ae1").then(r => console.log(r))
+// bridge.validatorsCount().then(r=> console.log(r))
+
+import { loadLockedEvent } from "./src/contractsTypes/contracts/tonBridge"
+tonContractListener({
+    contractAddress: "EQAbIPMHlV7ReSUzXal5TpPAQBgRoH3eygAxzyTl39yEdHcR",
+    rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+    lastBlock_: 16625732000003,
+    chain: "ton",
+    handleLog: async ({ log }) => {
+        if(log.body.asSlice().loadUint(32) !== 2534710387){
+            return
+        }
+        console.log(loadLockedEvent(log.body.asSlice()))
+    },
+})

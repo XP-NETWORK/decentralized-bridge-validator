@@ -66,6 +66,10 @@ const stakeTokens_ = async ({
                 validatorAddress: wallets.multiversXWallet.userWallet.address,
                 chainType: 'multiversX',
             },
+            {
+                validatorAddress: wallets.tonWallet.publicKey,
+                chainType: 'ton',
+            },
         ]);
         await stakeTx.wait();
         console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
@@ -80,7 +84,7 @@ const stakeTokens_ = async ({
                 e &&
                 e.shortMessage &&
                 e.shortMessage ===
-                    `execution reverted: "You can only stake once"`
+                `execution reverted: "You can only stake once"`
             )
         ) {
             throw 'Error staking tokens';
@@ -113,7 +117,8 @@ const stakeTokens = async ({
             retries++;
 
             if (retries >= RetryPriority.HIGH) {
-                break;
+                console.error("Max retries exceeded, exiting...");
+                process.exit(1);
             }
         }
     }

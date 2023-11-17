@@ -9,7 +9,7 @@ const getCurrentTonBalance_ = async ({ tonChainConfig, tonWallet }: ITonChainCon
 
     const tonweb = new TonWeb(new TonWeb.HttpProvider(tonChainConfig.rpcURL));
     try {
-        const walletClass = tonweb.wallet.all['v3R2'];
+        const walletClass = tonweb.wallet.all['v4R2'];
 
         const wallet = new walletClass(tonweb.provider, { publicKey: TonWeb.utils.hexToBytes(tonWallet.publicKey) });
 
@@ -34,11 +34,11 @@ const getCurrentTonBalance = async ({ tonChainConfig, tonWallet }: ITonChainConf
     } catch (e) {
 
         try {
-            const walletClass = tonweb.wallet.all['v3R2'];
+            const walletClass = tonweb.wallet.all['v4R2'];
             const wallet = new walletClass(tonweb.provider, { publicKey: TonWeb.utils.hexToBytes(tonWallet.publicKey) });
             const deployTx = wallet.deploy(TonWeb.utils.hexToBytes(tonWallet.secretKey))
-            
-            const deployTxResult = await deployTx.send()  
+
+            const deployTxResult = await deployTx.send()
             console.log({ deployTxResult })
 
             return getCurrentTonBalance_({ tonChainConfig, tonWallet })

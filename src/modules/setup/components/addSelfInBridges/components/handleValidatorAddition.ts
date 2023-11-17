@@ -2,11 +2,13 @@ import {
     confirmationCountNeeded,
     getMultiversXBridgeContract,
     getStorageContract,
+    getTonBridgeContract,
     waitForMSWithMsg,
 } from '@src/utils';
 import {
     isEvmChainFunded,
     isMultiversXChainFunded,
+    isTonChainFunded,
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
 import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
@@ -49,6 +51,17 @@ const handleValidatorAddition = async ({
             isMultiversXChainFunded({
                 multiversXChainConfig: chainConfig,
                 multiversXWallet: wallets.multiversXWallet,
+            });
+    } else if (chainConfig.chainType === "ton") {
+        bridgeContract = getTonBridgeContract({
+            tonChainConfig: chainConfig,
+            tonWallet: wallets.tonWallet,
+        });
+        publicWalletAddress = wallets.tonWallet.publicKey;
+        isChainFunded = () =>
+            isTonChainFunded({
+                tonChainConfig: chainConfig,
+                tonWallet: wallets.tonWallet,
             });
     }
 

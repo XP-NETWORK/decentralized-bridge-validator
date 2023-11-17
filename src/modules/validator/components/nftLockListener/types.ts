@@ -1,7 +1,11 @@
-import { IConfigAndWallets, IEvmChainConfig } from "@src/types";
+import { IConfigAndWallets, IEvmChainConfig, ITonChainConfig } from "@src/types";
 
 interface IEvmLockListener extends IConfigAndWallets {
     evmChainConfig: IEvmChainConfig
 }
 
-export { IEvmLockListener }
+interface ITonLockListener extends IConfigAndWallets {
+    tonChainConfig: ITonChainConfig
+}
+
+export { IEvmLockListener, ITonLockListener }

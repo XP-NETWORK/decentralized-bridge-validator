@@ -57,8 +57,8 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         chain: "TON",
         rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
         nativeCoinSymbol: "TON",
-        intialFund: "5000000000",
-        contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
+        intialFund: "6000000000",
+        contractAddress: "EQAcIb4P9K-yVuZM2kxZUBtrTisIF-2aE5E3gX3J_SIKQ51q",
         chainType: 'ton',
         lastBlock: 42116275
     },

@@ -3,7 +3,7 @@ import { poolTxHashes, poolTxStatus, processLogs } from "./components"
 import { IPoolTxHashes, IPoolTxStatus, IProcessLogs } from "./components/types";
 import { IMultiversXContractListener } from "./types";
 
-const multiversXContractListener = async ({ elasticSearchURL, contractAddress, lastBlock_, eventIdentifier, handleLog, jobName }: IMultiversXContractListener) => {
+const multiversXContractListener = async ({ elasticSearchURL, contractAddress, lastBlock_, eventIdentifier, multiversXChainConfig, config, wallets, jobName }: IMultiversXContractListener) => {
 
     await createJobWithWorker<IPoolTxHashes>({
         jobData: { elasticSearchURL, contractAddress, lastBlock_ },
@@ -18,13 +18,12 @@ const multiversXContractListener = async ({ elasticSearchURL, contractAddress, l
         jobName: `${jobName}_poolTxStatus`
     });
 
-
     await createJobWithWorker<IProcessLogs>({
-        jobData: { elasticSearchURL, eventIdentifier, handleLog },
+        jobData: { elasticSearchURL, eventIdentifier, multiversXChainConfig, config, wallets },
         jobFunction: processLogs,
         jobName: `${jobName}_processLogs`
     });
-    
+
 }
 
 export default multiversXContractListener

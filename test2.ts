@@ -183,5 +183,6 @@ const elasticSearchURL = "https://devnet-index.multiversx.com";
 const contractAddress = "erd1qqqqqqqqqqqqqpgqghvly0npf6ewpmzh47ud76ssh6nppu4e7hnses7qlz";
 
 getTxHashes({ elasticSearchURL, contractAddress, from: 0 }).then(r => {
+    console.log(r)
     getLogs({ elasticSearchURL, txHashes: r.map(item => item.txHash), eventIdentifier: ["lock721", "lock1155"] }).then(r => console.log(r))
 })

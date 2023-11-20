@@ -24,6 +24,16 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
             sourceChain, // Source chain of NFT
         } = getLockEventDecodedLog({ log });
 
+        console.log({
+            tokenId, // Unique ID for the NFT transfer
+            destinationChain, // Chain to where the NFT is being transferred
+            destinationUserAddress, // User's address in the destination chain
+            sourceNftContractAddress, // Address of the NFT contract in the source chain
+            tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+            nftType, // Sigular or multiple ( 721 / 1155)
+            sourceChain, // Source chain of NFT
+        })
+
         const destinationChainObject: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
@@ -62,7 +72,7 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
                 nftType,
                 fee,
             };
-
+            console.log({ nftTransferDetailsObject })
             await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: multiversXChainConfig.chain, destinationChainObject })
         }
     }

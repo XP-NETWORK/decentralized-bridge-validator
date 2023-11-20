@@ -3,8 +3,11 @@ import { MultiversXTransactions } from "@src/db/entity/MultiversXTransactions";
 import { Repository } from "typeorm";
 import { getLogs } from "../utils";
 import { IProcessLogs } from "./types";
+import { getMultiversXLockListenerHandler } from "@src/modules/validator/components/nftLockListener/components/multiversXLockListener/utils";
 
-const processLogs = async ({ elasticSearchURL, eventIdentifier, handleLog }: IProcessLogs) => {
+const processLogs = async ({ elasticSearchURL, eventIdentifier, config, wallets, multiversXChainConfig }: IProcessLogs) => {
+    const handleLog = getMultiversXLockListenerHandler({ config, wallets, multiversXChainConfig })
+    
     try {
         const txRepository: Repository<MultiversXTransactions> = AppDataSource.getRepository(MultiversXTransactions);
 
@@ -42,7 +45,8 @@ const processLogs = async ({ elasticSearchURL, eventIdentifier, handleLog }: IPr
         });
 
     } catch (error) {
-        throw new Error("Error while pooling transaction status")
+        console.log(error)
+        throw new Error("Error while processing transaction status")
     }
 }
 export default processLogs

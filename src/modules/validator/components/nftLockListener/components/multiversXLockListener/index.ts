@@ -1,12 +1,11 @@
 import { multiversXContractListener } from "@src/modules/validator/utils";
 import { IMultiversXLockListener } from "./types";
-import { getMultiversXLockListenerHandler } from "./utils";
 
 const multiversXLockListener = async ({ config, wallets, multiversXChainConfig }: IMultiversXLockListener) => {
 
     const { elasticSearchURL, contractAddress, lastBlock: lastBlock_ } = multiversXChainConfig;
-    const handleLog = getMultiversXLockListenerHandler({ config, wallets, multiversXChainConfig })
-    await multiversXContractListener({ elasticSearchURL, contractAddress, eventIdentifier: ["lock721", "lock1155"], handleLog, jobName: "multiversXLockedEventListener", lastBlock_ })
+    
+    await multiversXContractListener({ elasticSearchURL, contractAddress, eventIdentifier: ["lock721", "lock1155"], multiversXChainConfig, config, wallets, jobName: "multiversXLockedEventListener", lastBlock_ })
 
 }
 

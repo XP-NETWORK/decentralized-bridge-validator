@@ -1,11 +1,11 @@
-import { IHandleLog } from "./components/types";
+import { IConfigAndWallets, IMultiversXChainConfig } from "@src/types";
 
-interface IMultiversXContractListener {
+interface IMultiversXContractListener extends IConfigAndWallets {
     elasticSearchURL: string;
     contractAddress: string;
     lastBlock_: number;
     eventIdentifier: string[];
-    handleLog: IHandleLog;
+    multiversXChainConfig: IMultiversXChainConfig,
     jobName: string
 }
 

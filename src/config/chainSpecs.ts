@@ -8,7 +8,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x05f625377A7800366fc39b9992F4e58747723FB8",
+    contractAddress: "0x8F1fd3a5DbBd5659579aE7d9b258CC6CbcB3e53d",
     chainType: 'evm',
     lastBlock: 17007099
 }
@@ -20,48 +20,48 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
-        contractAddress: "0x02f9b3cC780D0e82086940ec6cb65dDfAA12666e",
+        contractAddress: "0x3fCA19cd73F774E13433a86C0E7996E3D291d29E",
         chainType: 'evm',
-        lastBlock: 34890455
+        lastBlock: 35266210
     },
-    {
-        chain: "ETH",
-        rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
-        nativeCoinSymbol: "ETH",
-        intialFund: "50000000000000000",
-        contractAddress: "0x3a42753657f0F493082Ae67D980a087c47f5A174",
-        chainType: 'evm',
-        lastBlock: 4652716
-    },
-    {
-        chain: "MATIC",
-        rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
-        nativeCoinSymbol: "MATIC",
-        intialFund: "50000000000000000",
-        contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
-        chainType: 'evm',
-        lastBlock: 42116275
-    },
+    // {
+    //     chain: "ETH",
+    //     rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
+    //     nativeCoinSymbol: "ETH",
+    //     intialFund: "50000000000000000",
+    //     contractAddress: "0x3a42753657f0F493082Ae67D980a087c47f5A174",
+    //     chainType: 'evm',
+    //     lastBlock: 4652716
+    // },
+    // {
+    //     chain: "MATIC",
+    //     rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
+    //     nativeCoinSymbol: "MATIC",
+    //     intialFund: "50000000000000000",
+    //     contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
+    //     chainType: 'evm',
+    //     lastBlock: 42116275
+    // },
     {
         chain: "MULTIVERSX",
         nativeCoinSymbol: "EGLD",
         intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgq48dutyffez3mynwudjx5uv53089v80ss6n9ss2720j",
+        contractAddress: "erd1qqqqqqqqqqqqqpgqthnm9plsj3he2jqky672vty4adg02hg26n9s3g8rdm",
         chainType: 'multiversX',
         elasticSearchURL: "https://devnet-index.multiversx.com",
         gatewayURL: "https://devnet-gateway.multiversx.com",
         lastBlock: 0,
         chainID: "D"
     },
-    {
-        chain: "TON",
-        rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-        nativeCoinSymbol: "TON",
-        intialFund: "6000000000",
-        contractAddress: "EQAcIb4P9K-yVuZM2kxZUBtrTisIF-2aE5E3gX3J_SIKQ51q",
-        chainType: 'ton',
-        lastBlock: 42116275
-    },
+    // {
+    //     chain: "TON",
+    //     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+    //     nativeCoinSymbol: "TON",
+    //     intialFund: "6000000000",
+    //     contractAddress: "6cd53301db0948631ab5cde2b98760884a99a614787163a5fed4eaefd86ab319",
+    //     chainType: 'ton',
+    //     lastBlock: 42116275
+    // },
 ]
 
 const stakingTestChain: IStakingConfig = {

@@ -4,7 +4,7 @@ import { AppDataSource } from "@src/db/data-source";
 import { MultiversXTransactions } from "@src/db/entity/MultiversXTransactions";
 import { IPoolTxStatus } from "./types";
 
-const poolTxStatus = async ({ gatewayURL }: IPoolTxStatus) => {
+const poolTxStatus = async ({ elasticSearchURL }: IPoolTxStatus) => {
     try {
         const txRepository: Repository<MultiversXTransactions> = AppDataSource.getRepository(MultiversXTransactions);
 
@@ -18,7 +18,7 @@ const poolTxStatus = async ({ gatewayURL }: IPoolTxStatus) => {
             return;
         }
 
-        const pooledStatus = await getTxStatus({ gatewayURL, txHashes: pendingTransactions.map(tx => tx.transactionHash) });
+        const pooledStatus = await getTxStatus({ elasticSearchURL, txHashes: pendingTransactions.map(tx => tx.transactionHash) });
 
         // Filter and map transactions to update their status
         const modifiedTxObjects = pooledStatus

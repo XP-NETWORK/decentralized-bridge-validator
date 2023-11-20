@@ -1,13 +1,13 @@
 import { IMultiverseXLogEvent } from "../utils/types";
 
 interface IPoolTxHashes {
-    gatewayURL: string;
+    elasticSearchURL: string;
     contractAddress: string;
     lastBlock_: number
 }
 
 interface IPoolTxStatus {
-    gatewayURL: string;
+    elasticSearchURL: string;
 }
 
 interface IHandleLog {
@@ -15,7 +15,7 @@ interface IHandleLog {
 }
 
 interface IProcessLogs {
-    gatewayURL: string;
+    elasticSearchURL: string;
     eventIdentifier: string;
     handleLog: IHandleLog
 }

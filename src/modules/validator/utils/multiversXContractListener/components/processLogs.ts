@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { getLogs } from "../utils";
 import { IProcessLogs } from "./types";
 
-const processLogs = async ({ gatewayURL, eventIdentifier, handleLog }: IProcessLogs) => {
+const processLogs = async ({ elasticSearchURL, eventIdentifier, handleLog }: IProcessLogs) => {
     try {
         const txRepository: Repository<MultiversXTransactions> = AppDataSource.getRepository(MultiversXTransactions);
 
@@ -18,7 +18,7 @@ const processLogs = async ({ gatewayURL, eventIdentifier, handleLog }: IProcessL
             return;
         }
 
-        const { resultantLogs, incompleteTx } = await getLogs({ gatewayURL, txHashes: successTransactions.map(tx => tx.transactionHash), eventIdentifier });
+        const { resultantLogs, incompleteTx } = await getLogs({ elasticSearchURL, txHashes: successTransactions.map(tx => tx.transactionHash), eventIdentifier });
 
         const handleLogPromises: Promise<void>[] = [];
 

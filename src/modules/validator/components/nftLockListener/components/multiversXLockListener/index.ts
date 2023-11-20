@@ -4,9 +4,9 @@ import { getMultiversXLockListenerHandler } from "./utils";
 
 const multiversXLockListener = async ({ config, wallets, multiversXChainConfig }: IMultiversXLockListener) => {
 
-    const { gatewayURL, contractAddress, lastBlock: lastBlock_ } = multiversXChainConfig;
+    const { elasticSearchURL, contractAddress, lastBlock: lastBlock_ } = multiversXChainConfig;
     const handleLog = getMultiversXLockListenerHandler({ config, wallets, multiversXChainConfig })
-    await multiversXContractListener({ gatewayURL, contractAddress, eventIdentifier: "lock", handleLog, jobName: "multiversXLockedEventListener", lastBlock_ })
+    await multiversXContractListener({ elasticSearchURL, contractAddress, eventIdentifier: "lock", handleLog, jobName: "multiversXLockedEventListener", lastBlock_ })
 
 }
 

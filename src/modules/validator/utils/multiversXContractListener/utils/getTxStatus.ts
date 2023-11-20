@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IMultiverseXTxStatus } from "./types";
 
-const getTxStatus = async ({ gatewayURL, txHashes }) => {
+const getTxStatus = async ({ elasticSearchURL, txHashes }) => {
 
     const data = {
         headers: {
@@ -20,7 +20,7 @@ const getTxStatus = async ({ gatewayURL, txHashes }) => {
     const resultantLogs: { txHash: string, status: string }[] = []
 
     try {
-        const logs: IMultiverseXTxStatus = (await axios.get(`${gatewayURL}/transactions/_search`, data)).data
+        const logs: IMultiverseXTxStatus = (await axios.get(`${elasticSearchURL}/transactions/_search`, data)).data
 
         logs.hits.hits.forEach((log) => {
             resultantLogs.push({ ...log._source, txHash: log._id })

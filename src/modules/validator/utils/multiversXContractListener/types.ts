@@ -1,7 +1,7 @@
 import { IHandleLog } from "./components/types";
 
 interface IMultiversXContractListener {
-    gatewayURL: string;
+    elasticSearchURL: string;
     contractAddress: string;
     lastBlock_: number;
     eventIdentifier: string;

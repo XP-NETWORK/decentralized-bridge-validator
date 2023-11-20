@@ -1,7 +1,7 @@
 import axios from "axios"
 import { IGetMultiverseXLogs, IMultiverseXLogEvent, IMultiverseXLogs } from "./types"
 
-const getLogs = async ({ gatewayURL, txHashes, eventIdentifier }: IGetMultiverseXLogs) => {
+const getLogs = async ({ elasticSearchURL, txHashes, eventIdentifier }: IGetMultiverseXLogs) => {
 
     const data = {
         headers: {
@@ -21,7 +21,7 @@ const getLogs = async ({ gatewayURL, txHashes, eventIdentifier }: IGetMultiverse
     const incompleteTx: { [txHash: string]: boolean } = {};
 
     try {
-        const logs: IMultiverseXLogs = (await axios.get(`${gatewayURL}/logs/_search`, data)).data
+        const logs: IMultiverseXLogs = (await axios.get(`${elasticSearchURL}/logs/_search`, data)).data
         logs.hits.hits.forEach((log) => {
             const eventLog = log._source.events.find(_event => {
                 return _event.identifier === eventIdentifier

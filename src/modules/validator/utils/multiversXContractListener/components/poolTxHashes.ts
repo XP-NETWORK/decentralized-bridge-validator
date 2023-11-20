@@ -5,7 +5,7 @@ import { Block } from "@src/db/entity/Block";
 import { MultiversXTransactions } from "@src/db/entity/MultiversXTransactions";
 import { IPoolTxHashes } from "./types";
 
-const poolTxHashes = async ({ gatewayURL, contractAddress, lastBlock_ }: IPoolTxHashes) => {
+const poolTxHashes = async ({ elasticSearchURL, contractAddress, lastBlock_ }: IPoolTxHashes) => {
 
     let lastBlock = lastBlock_;
     const chain = "multiversX";
@@ -31,7 +31,7 @@ const poolTxHashes = async ({ gatewayURL, contractAddress, lastBlock_ }: IPoolTx
         lastBlock = blockInstance.lastBlock;
     }
 
-    const txHashes = await getTxHashes({ gatewayURL, contractAddress, from: lastBlock });
+    const txHashes = await getTxHashes({ elasticSearchURL, contractAddress, from: lastBlock });
 
 
     if (!txHashes.length) {

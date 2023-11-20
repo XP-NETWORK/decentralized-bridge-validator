@@ -1,3 +1,3 @@
-import handleEvmValidatorAddition from "./handleEvmValidatorAddition";
+import handleValidatorAddition from "./handleValidatorAddition";
 
-export { handleEvmValidatorAddition }
+export { handleValidatorAddition }

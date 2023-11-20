@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import * as utils from "@src/utils/functions";
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
-import { approveEvmDestinationLock } from '@src/modules/validator/components/nftLockListener/components/evmLockListener/components';
+import { approveLock } from '@src/modules/validator/components/nftLockListener/components';
 
-describe('approveEvmDestinationLock', () => {
+describe('approveLock', () => {
 
     const nftTransferDetailsObject = {
         tokenId: "1",
@@ -33,12 +33,12 @@ describe('approveEvmDestinationLock', () => {
                 hash: "some unique hash"
             }),
             expectedToThrow: false,
-            description: "should approveEvmDestinationLock if no errors"
+            description: "should approveLock if no errors"
         },
         {
             approveLockNft: sinon.stub().rejects({ shortMessage: `execution reverted: "Signature already used"` }),
             expectedToThrow: false,
-            description: "should not throw approveEvmDestinationLock if already approved"
+            description: "should not throw approveLock if already approved"
         },
         {
             approveLockNft: sinon.stub().rejects("Some other error"),
@@ -68,13 +68,13 @@ describe('approveEvmDestinationLock', () => {
             const storageContract = getStorageContractStub({ evmChainConfig: storageConfig, evmWallet });
             if (expectedToThrow) {
                 try {
-                    await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract, txChain })
+                    await approveLock({ nftTransferDetailsObject, wallets: mockWallets, destinationChainObject: storageConfig,  storageContract, txChain })
                 } catch (error) {
                     expect(error).to.exist;
                     expect(error.message).to.equal("Error while processing log");
                 }
             } else
-                await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet, storageContract, txChain });
+                await approveLock({ nftTransferDetailsObject, wallets: mockWallets, destinationChainObject: storageConfig, storageContract, txChain });
 
         });
     });

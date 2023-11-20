@@ -1,4 +1,4 @@
-const erc721RoyalityAbi = [
+const erc721RoyalityABI = [
 	{
 		"inputs": [
 			{
@@ -618,4 +618,4 @@ const erc721RoyalityAbi = [
 	}
 ]
 
-export default erc721RoyalityAbi
+export default erc721RoyalityABI

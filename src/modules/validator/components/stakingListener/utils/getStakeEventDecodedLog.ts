@@ -12,7 +12,17 @@ const getStakeEventDecodedLog = ({ log }: { log: LogObject }) => {
         [...log.topics.slice(1)]
     );
 
-    return String(decodedLog.user);
+
+    const chains = decodedLog.validatorAddressAndChainType as { validatorAddress: string, chainType: string }[];
+
+    return {
+        validatorAddressAndChainType: chains.map(item => {
+            return {
+                validatorAddress: item.validatorAddress,
+                chainType: item.chainType
+            }
+        })
+    };
 }
 
 export default getStakeEventDecodedLog

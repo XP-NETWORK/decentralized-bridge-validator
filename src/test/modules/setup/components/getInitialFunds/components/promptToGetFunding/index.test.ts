@@ -4,7 +4,7 @@ import { promptToGetFunding } from '@src/modules/setup/components/getInitialFund
 import * as utils from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 
-describe('isEvmChainFunded', () => {
+describe('promptToGetFunding', () => {
 
     const testCases = [
         {
@@ -55,6 +55,10 @@ describe('isEvmChainFunded', () => {
 
             sinon.stub(utils, 'isEvmChainFunded').callsFake(({ evmChainConfig }) => {
                 return Promise.resolve(fundedChains.includes(evmChainConfig.chain)); // Resolve with true for funded chains
+            });
+
+            sinon.stub(utils, 'isMultiversXChainFunded').callsFake(({ multiversXChainConfig }) => {
+                return Promise.resolve(fundedChains.includes(multiversXChainConfig.chain)); // Resolve with true for funded chains
             });
 
             sinon.stub(utils, 'isStakingCoinFunded').callsFake(({ stakingChainConfig }) => {

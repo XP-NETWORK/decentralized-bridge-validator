@@ -7,7 +7,6 @@ const evmLockListener = async ({ config, evmChainConfig, wallets }: IEvmLockList
 
     const { contractAddress, rpcURL, lastBlock: lastBlock_, chain } = evmChainConfig;
 
-
     const handleLog = getEvmLockListenerHandler({ config, evmChainConfig, wallets })
 
     try {

@@ -3,8 +3,8 @@ import { IGeneratedWallets } from "@src/types";
 
 interface IApproveStake {
     wallets: IGeneratedWallets;
-    stakerAddress: string;
-    storageContract: BridgeStorage
+    validatorAddressAndChainType:{ validatorAddress: string, chainType: string }[];
+    storageContract: BridgeStorage;
 }
 
 export { IApproveStake }

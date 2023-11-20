@@ -1,4 +1,4 @@
-const bridgeStorageAbi = [
+const bridgeStorageABI = [
 	{
 		"inputs": [
 			{
@@ -711,4 +711,4 @@ const bridgeStorageAbi = [
 	}
 ]
 
-export default bridgeStorageAbi
+export default bridgeStorageABI

@@ -35,7 +35,7 @@ const setup = async () => {
   } else {
 
     await getInitialFunds({ wallets, config });
-    await stakeTokens({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })
+    await stakeTokens({ stakingChainConfig: config.stakingConfig, wallets })
   }
 
   await addSelfInBridges({ config, wallets });

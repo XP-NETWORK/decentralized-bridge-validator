@@ -1,11 +1,11 @@
 import Web3 from "web3";
-import { bridgeContractAbi } from "../../../../../../../abi";
+import { evmBridgeABI } from "../../../../../../../abi";
 import { LogObject } from "../../../../../utils/evmContractListener/types";
 
 const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
 
     const web3 = new Web3();  // Not connected to any node
-    const lockEventAbi = bridgeContractAbi.find(abi => abi.name === "Locked" && abi.type === "event");
+    const lockEventAbi = evmBridgeABI.find(abi => abi.name === "Locked" && abi.type === "event");
 
     const decodedLog = web3.eth.abi.decodeLog(
         lockEventAbi.inputs,

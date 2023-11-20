@@ -1,4 +1,4 @@
-const erc1155RoyalityAbi = [
+const erc1155RoyalityABI = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -579,4 +579,4 @@ const erc1155RoyalityAbi = [
     }
 ]
 
-export default erc1155RoyalityAbi
+export default erc1155RoyalityABI

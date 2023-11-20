@@ -1,12 +1,41 @@
 import {
-    readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg, getRedisConnection,
-    confirmationCountNeeded, getStorageContract, getEvmMultiNftContract, getEvmSingleNftContract, getStakingContract,
-    getEvmBridgeContract, getEvmFungibleContract
-} from "./functions"
+    readJsonFile,
+    getCurrentEvmBalance,
+    waitForKeyPress,
+    waitForMSWithMsg,
+    getRedisConnection,
+    confirmationCountNeeded,
+    getStorageContract,
+    getEvmMultiNftContract,
+    getEvmSingleNftContract,
+    getStakingContract,
+    getEvmBridgeContract,
+    getEvmFungibleContract,
+    getCurrentMultiversXBalance,
+    getMultiversXBridgeContract,
+    decodeBase64Array,
+    getTonBridgeContract,
+    getCurrentTonBalance,
+    getTonNftContract
+} from './functions';
 
 export {
-    readJsonFile, getCurrentEvmBalance, waitForKeyPress,
-    waitForMSWithMsg, getRedisConnection, confirmationCountNeeded, getStorageContract, getEvmMultiNftContract,
-    getEvmSingleNftContract, getStakingContract, getEvmBridgeContract, getEvmFungibleContract
-}
-
+    readJsonFile,
+    getCurrentEvmBalance,
+    waitForKeyPress,
+    waitForMSWithMsg,
+    getRedisConnection,
+    confirmationCountNeeded,
+    getStorageContract,
+    getEvmMultiNftContract,
+    getEvmSingleNftContract,
+    getStakingContract,
+    getEvmBridgeContract,
+    getEvmFungibleContract,
+    getCurrentMultiversXBalance,
+    getMultiversXBridgeContract,
+    decodeBase64Array,
+    getCurrentTonBalance,
+    getTonBridgeContract,
+    getTonNftContract
+};

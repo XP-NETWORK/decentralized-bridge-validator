@@ -1,13 +1,12 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import {
-    handleEvmValidatorAddition,
+    handleValidatorAddition,
 } from '@src/modules/setup/components/addSelfInBridges/components'; // Import the function to test
 import * as promts from "@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components";
 import * as utils from "@src/utils/functions"
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
-import { IEvmChainConfig } from '@src/types';
-describe('handleEvmValidatorAddition', () => {
+describe('handleValidatorAddition', () => {
 
 
     beforeEach(() => {
@@ -30,14 +29,14 @@ describe('handleEvmValidatorAddition', () => {
             description: 'should handle adding a validator when not already added; total validator count:11, signature count:11',
             isAlreadyAdded: false,
             totalExistingValidators: 11,
-            signatures: new Array(11).fill({ signature: "signature" }),
+            signatures: new Array(11).fill({ signature: "signature", signerAddress: "test" }),
             addValidatorCalled: true
         },
         {
             description: 'should handle adding a validator when not already added; total validator count:11, signature count:8',
             isAlreadyAdded: false,
             totalExistingValidators: 11,
-            signatures: new Array(8).fill({ signature: "signature" }),
+            signatures: new Array(8).fill({ signature: "signature", signerAddress: "test" }),
             addValidatorCalled: true
         }
     ];
@@ -82,15 +81,15 @@ describe('handleEvmValidatorAddition', () => {
 
 
             // Call the function
-            await handleEvmValidatorAddition({
+            await handleValidatorAddition({
                 storageChainConfig: mockBridgeConfig.storageConfig,
-                evmChainConfig: (mockBridgeConfig.bridgeChains.find(item => item.chainType === 'evm')) as IEvmChainConfig,
-                evmWallet: mockWallets.evmWallet,
+                chainConfig: (mockBridgeConfig.bridgeChains.find(item => item.chainType === 'evm')),
+                wallets: mockWallets,
             });
 
 
 
-            expect(bridgeContractStub.addValidator.calledOnceWith(mockWallets.evmWallet.address, signatures.map(item => item.signature))).equals(addValidatorCalled);
+            expect(bridgeContractStub.addValidator.calledOnceWith(mockWallets.evmWallet.address, signatures.map(item => { return { ...item } }))).equals(addValidatorCalled);
         });
     })
 

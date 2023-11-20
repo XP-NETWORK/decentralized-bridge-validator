@@ -5,7 +5,8 @@ let redisIOConnection: IORedis | null = null;
 
 const getRedisConnection = (): IORedis => {
     if (!redisIOConnection) {
-        redisIOConnection = new IORedis();
+        redisIOConnection = new IORedis({ maxRetriesPerRequest: null });
+        redisIOConnection.setMaxListeners(14); // number of time createJobWithWoker is initiated x2 ( 7x2 = 14 ) 
     }
     return redisIOConnection;
 }

@@ -1,8 +1,4 @@
-
-
-
 import { Repository } from 'typeorm';
-
 import Web3 from 'web3';
 import { Block } from '@src/db/entity/Block';
 import { AppDataSource } from '@src/db/data-source';
@@ -27,7 +23,6 @@ async function evmContractListener(
         where: { chain, contractAddress },
     });
 
-    console.info({ blockInstance })
     if (!blockInstance) {
         const newBlock = new Block();
         newBlock.chain = chain
@@ -59,9 +54,13 @@ async function evmContractListener(
         return;
     }
 
+    const handleLogPromises: Promise<void>[] = [];
+
     for (const log of logs) {
-        await handleLog({ log });
+        handleLogPromises.push(handleLog({ log }));
     }
+    
+    await Promise.all(handleLogPromises);
 
     await blockRepository.save(blockInstance);
 

@@ -59,7 +59,7 @@ describe('isEvmChainFunded', () => {
     }) => {
         it(description, async () => {
             const { evmWallet } = mockWallets;
-            const evmChainConfig = { ...((mockBridgeConfig.bridgeChains.find(item => item.chain === "evm")) as IEvmChainConfig), ...evmChainConfig_ };
+            const evmChainConfig = { ...((mockBridgeConfig.bridgeChains.find(item => item.chain === 'evm')) as IEvmChainConfig), ...evmChainConfig_ };
 
             if (throwError) {
                 // Stub getCurrentEvmBalance to throw an error

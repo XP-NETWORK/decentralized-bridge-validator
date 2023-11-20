@@ -23,13 +23,23 @@ import type {
   TypedContractMethod,
 } from "../common";
 
+export type SignerAndSignatureStruct = {
+  signerAddress: string;
+  signature: BytesLike;
+};
+
+export type SignerAndSignatureStructOutput = [
+  signerAddress: string,
+  signature: string
+] & { signerAddress: string; signature: string };
+
 export declare namespace Bridge {
   export type ClaimDataStruct = {
     tokenId: BigNumberish;
     sourceChain: string;
     destinationChain: string;
     destinationUserAddress: AddressLike;
-    sourceNftContractAddress: AddressLike;
+    sourceNftContractAddress: string;
     name: string;
     symbol: string;
     royalty: BigNumberish;
@@ -110,7 +120,7 @@ export interface BridgeInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addValidator",
-    values: [AddressLike, BytesLike[]]
+    values: [AddressLike, SignerAndSignatureStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "claimNFT1155",
@@ -130,11 +140,11 @@ export interface BridgeInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "duplicateStorageMapping1155",
-    values: [AddressLike, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "duplicateStorageMapping721",
-    values: [AddressLike, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "duplicateToOriginalMapping",
@@ -150,15 +160,15 @@ export interface BridgeInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping1155",
-    values: [AddressLike, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping721",
-    values: [AddressLike, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "originalToDuplicateMapping",
-    values: [AddressLike, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "selfChain", values?: undefined): string;
   encodeFunctionData(
@@ -270,7 +280,7 @@ export namespace LockedEvent {
     tokenId: BigNumberish,
     destinationChain: string,
     destinationUserAddress: string,
-    sourceNftContractAddress: AddressLike,
+    sourceNftContractAddress: string,
     tokenAmount: BigNumberish,
     nftType: string,
     sourceChain: string
@@ -411,7 +421,7 @@ export interface Bridge extends BaseContract {
   ): Promise<this>;
 
   addValidator: TypedContractMethod<
-    [_validator: AddressLike, signatures: BytesLike[]],
+    [_validator: AddressLike, signatures: SignerAndSignatureStruct[]],
     [void],
     "nonpayable"
   >;
@@ -437,13 +447,13 @@ export interface Bridge extends BaseContract {
   collectionDeployer: TypedContractMethod<[], [string], "view">;
 
   duplicateStorageMapping1155: TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [string],
     "view"
   >;
 
   duplicateStorageMapping721: TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [string],
     "view"
   >;
@@ -478,19 +488,19 @@ export interface Bridge extends BaseContract {
   >;
 
   originalStorageMapping1155: TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [string],
     "view"
   >;
 
   originalStorageMapping721: TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [string],
     "view"
   >;
 
   originalToDuplicateMapping: TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [[string, string] & { chain: string; contractAddress: string }],
     "view"
   >;
@@ -516,7 +526,7 @@ export interface Bridge extends BaseContract {
   getFunction(
     nameOrSignature: "addValidator"
   ): TypedContractMethod<
-    [_validator: AddressLike, signatures: BytesLike[]],
+    [_validator: AddressLike, signatures: SignerAndSignatureStruct[]],
     [void],
     "nonpayable"
   >;
@@ -546,10 +556,10 @@ export interface Bridge extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "duplicateStorageMapping1155"
-  ): TypedContractMethod<[arg0: AddressLike, arg1: string], [string], "view">;
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
     nameOrSignature: "duplicateStorageMapping721"
-  ): TypedContractMethod<[arg0: AddressLike, arg1: string], [string], "view">;
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
     nameOrSignature: "duplicateToOriginalMapping"
   ): TypedContractMethod<
@@ -584,14 +594,14 @@ export interface Bridge extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "originalStorageMapping1155"
-  ): TypedContractMethod<[arg0: AddressLike, arg1: string], [string], "view">;
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
     nameOrSignature: "originalStorageMapping721"
-  ): TypedContractMethod<[arg0: AddressLike, arg1: string], [string], "view">;
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
     nameOrSignature: "originalToDuplicateMapping"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: string],
+    [arg0: string, arg1: string],
     [[string, string] & { chain: string; contractAddress: string }],
     "view"
   >;
@@ -688,7 +698,7 @@ export interface Bridge extends BaseContract {
       ClaimedEvent.OutputObject
     >;
 
-    "Locked(uint256,string,string,address,uint256,string,string)": TypedContractEvent<
+    "Locked(uint256,string,string,string,uint256,string,string)": TypedContractEvent<
       LockedEvent.InputTuple,
       LockedEvent.OutputTuple,
       LockedEvent.OutputObject

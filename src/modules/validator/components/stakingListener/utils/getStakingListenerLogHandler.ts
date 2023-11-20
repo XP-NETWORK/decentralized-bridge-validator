@@ -15,11 +15,11 @@ const getStakingListenerLogHandler = ({ config, wallets }: IConfigAndWallets) =>
 
         if (typeof log === "string" || !log.topics.includes(topicHash)) return;
 
-        const stakerAddress = getStakeEventDecodedLog({ log });
+        const { validatorAddressAndChainType } = getStakeEventDecodedLog({ log });
 
 
 
-        await approveStake({ wallets, stakerAddress, storageContract })
+        await approveStake({ wallets, validatorAddressAndChainType , storageContract })
     };
 
     return handleLog

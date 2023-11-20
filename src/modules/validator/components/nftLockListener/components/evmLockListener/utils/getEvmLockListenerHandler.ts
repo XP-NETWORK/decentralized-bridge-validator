@@ -1,10 +1,11 @@
 import { IChainConfig } from "@src/types";
 import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
 import { getEvmBridgeContract, getStorageContract } from "@src/utils";
-import { INftTransferDetailsObject } from "../types";
-import { approveEvmDestinationLock } from "../components";
-import { getNftDetails, getLockEventDecodedLog } from ".";
+import { getLockEventDecodedLog } from ".";
 import { IEvmLockListener } from "../../../types";
+import { getNftDetails } from "../../../utils";
+import { approveLock } from "../..";
+import { INftTransferDetailsObject } from "../../types";
 
 const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
 
@@ -25,40 +26,48 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
             tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nftType, // Sigular or multiple ( 721 / 1155)
             sourceChain, // Source chain of NFT
-        } = getLockEventDecodedLog({ log })
-        const destChain: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
+        } = getLockEventDecodedLog({ log });
+
+        const destinationChainObject: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
-        if (!destChain) return;
+        if (!destinationChainObject) return;
         const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
-        const sourceChainRpcURL = config.bridgeChains.find(item => item.chain === sourceChain).rpcURL;
 
-        const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
+        const sourceChainObject = config.bridgeChains.find(item => item.chain === sourceChain);
 
-        const { royalty, royaltyReceiver, name, symbol, metadata } = await getNftDetails({
-            sourceNftContractAddress, sourceChainRpcURL, evmWallet: wallets.evmWallet, tokenId, nftType
-        })
+        if (sourceChainObject) {
 
-        const nftTransferDetailsObject: INftTransferDetailsObject = {
-            tokenId,
-            sourceChain,
-            destinationChain,
-            destinationUserAddress,
-            sourceNftContractAddress,
-            name,
-            symbol,
-            royalty,
-            royaltyReceiver,
-            metadata,
-            transactionHash,
-            tokenAmount,
-            nftType,
-            fee,
-        };
+            const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
+            const royaltyReceiver = await storageContract.chainRoyalty(destinationChain);
 
+            const { royalty, name, symbol, metadata } = await getNftDetails({
+                sourceNftContractAddress,
+                sourceChain: sourceChainObject,
+                evmWallet: wallets.evmWallet,
+                tokenId,
+                nftType,
+                chainType: sourceChainObject.chainType
+            })
 
-        if (destChain.chainType === "evm") {
-            await approveEvmDestinationLock({ nftTransferDetailsObject, evmWallet: wallets.evmWallet, storageContract, txChain: evmChainConfig.chain })
+            const nftTransferDetailsObject: INftTransferDetailsObject = {
+                tokenId,
+                sourceChain,
+                destinationChain,
+                destinationUserAddress,
+                sourceNftContractAddress,
+                name,
+                symbol,
+                royalty,
+                royaltyReceiver,
+                metadata,
+                transactionHash,
+                tokenAmount,
+                nftType,
+                fee,
+            };
+
+            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: evmChainConfig.chain, destinationChainObject })
         }
     }
 

@@ -1,6 +1,7 @@
 import { IMultiversXContractConfig, INftContract } from "@src/types";
-import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers";
-
+import { ProxyNetworkProvider, } from "@multiversx/sdk-network-providers/";
+import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
+import axios from "axios";
 
 
 const getMultiversXNftContract = ({ gatewayURL, contractAddress }: IMultiversXContractConfig): INftContract => {
@@ -8,6 +9,11 @@ const getMultiversXNftContract = ({ gatewayURL, contractAddress }: IMultiversXCo
 
     const proxyNetworkProvider = new ProxyNetworkProvider(gatewayURL);
 
+    const getNonFungibleToken = async (collection: string, nonce: number): Promise<{ royalties: number, metaData: string }> => {
+        const nonceAsHex = new Nonce(nonce).hex();
+        const response = (await axios.get(`${gatewayURL.replace("gateway", "api")}/nfts/${collection}-${nonceAsHex}`)).data;
+        return { metaData: atob(response.uris[1]), royalties: response.royalties };
+    }
     return {
         name: async () => {
             const nftDetails = await proxyNetworkProvider.getDefinitionOfTokenCollection(contractAddress);
@@ -18,14 +24,14 @@ const getMultiversXNftContract = ({ gatewayURL, contractAddress }: IMultiversXCo
             return nftDetails.ticker
         },
         royaltyInfo: async (tokenId: bigint) => {
-            const nftDetails = await proxyNetworkProvider.getNonFungibleToken(contractAddress, Number(tokenId))
+            const nftDetails = await getNonFungibleToken(contractAddress, Number(tokenId))
             const royalities = nftDetails.royalties;
-            return String(royalities)
+            const royalities_ = royalities * 100
+            return String(royalities_)
         },
         tokenURI: async (tokenId: bigint) => {
-            const nftDetails = await proxyNetworkProvider.getNonFungibleToken(contractAddress, Number(tokenId))
-            const tokenURI = nftDetails.attributes[1];
-            return String(tokenURI)
+            const nftDetails = await getNonFungibleToken(contractAddress, Number(tokenId))
+            return nftDetails.metaData
         }
     }
 }

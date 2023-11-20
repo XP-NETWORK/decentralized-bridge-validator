@@ -7,20 +7,20 @@ const getEvmSignedNftDetails = ({ nftTransferDetailsObject, evmWallet }: { nftTr
     const nftTransferDetailsValues = Object.values(nftTransferDetailsObject);
 
     const nftTransferDetailsTypes = [
-        "uint256",
-        "string",
-        "string",
-        "address",
-        "string",
-        "string",
-        "string",
-        "uint256",
-        "address",
-        "string",
-        "string",
-        "uint256",
-        "string",
-        "uint256",
+        "uint256", // Unique ID for the NFT transfer
+        "string", // Chain from where the NFT is being transferred
+        "string", // Chain to where the NFT is being transferred
+        "address", // User's address in the destination chain
+        "string", // Address of the NFT contract in the source chain
+        "string", // name of NFT collection
+        "string", // symbol of nft collection
+        "uint256", // royalty of nft collection
+        "address", // address of user who is going to receive royalty
+        "string", // Metadata related to the NFT being transferred
+        "string", // Transaction hash of the transfer on the source chain
+        "uint256", // Number of NFTs being transferred
+        "string", // Type of the NFT (could be ERC721 or ERC1155)
+        "uint256", // fee that needs to be paid by the user to the bridge,
     ]
 
     const signedNftTransferDetails = web3.eth.accounts

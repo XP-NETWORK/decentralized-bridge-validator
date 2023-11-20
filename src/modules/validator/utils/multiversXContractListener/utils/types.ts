@@ -1,6 +1,6 @@
 interface IGetMultiverseXLogs {
     elasticSearchURL: string;
-    eventIdentifier: string;
+    eventIdentifier: string[];
     txHashes: string[];
 }
 

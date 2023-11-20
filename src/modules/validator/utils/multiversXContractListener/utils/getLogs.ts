@@ -10,8 +10,14 @@ const getLogs = async ({ elasticSearchURL, txHashes, eventIdentifier }: IGetMult
         data: {
             _source: ["events"],
             query: {
-                ids: {
-                    values: txHashes
+                bool: {
+                    should: [
+                        {
+                            terms: {
+                                "originalTxHash": txHashes
+                            }
+                        }
+                    ]
                 }
             }
         }
@@ -24,8 +30,9 @@ const getLogs = async ({ elasticSearchURL, txHashes, eventIdentifier }: IGetMult
         const logs: IMultiverseXLogs = (await axios.get(`${elasticSearchURL}/logs/_search`, data)).data
         logs.hits.hits.forEach((log) => {
             const eventLog = log._source.events.find(_event => {
-                return _event.identifier === eventIdentifier
+                return eventIdentifier.includes(_event.identifier)
             })
+
             const isCompletedTx = log._source.events.find(_event => _event.identifier === "completedTxEvent")
             if (eventLog && isCompletedTx) {
                 resultantLogs.push({ ...eventLog, txHash: log._id })

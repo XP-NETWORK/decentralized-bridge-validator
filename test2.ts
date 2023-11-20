@@ -164,16 +164,24 @@ import tonContractListener from "./src/modules/validator/utils/tonContractListen
 // bridge.validators("5fd9df09c6326a7a6573681260710aa79c9618327e2251f72c5150db8f177ae1").then(r => console.log(r))
 // bridge.validatorsCount().then(r=> console.log(r))
 
-import { loadLockedEvent } from "./src/contractsTypes/contracts/tonBridge"
-tonContractListener({
-    contractAddress: "EQAbIPMHlV7ReSUzXal5TpPAQBgRoH3eygAxzyTl39yEdHcR",
-    rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-    lastBlock_: 16625732000003,
-    chain: "ton",
-    handleLog: async ({ log }) => {
-        if(log.body.asSlice().loadUint(32) !== 2534710387){
-            return
-        }
-        console.log(loadLockedEvent(log.body.asSlice()))
-    },
+// import { loadLockedEvent } from "./src/contractsTypes/contracts/tonBridge"
+// tonContractListener({
+//     contractAddress: "EQAbIPMHlV7ReSUzXal5TpPAQBgRoH3eygAxzyTl39yEdHcR",
+//     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+//     lastBlock_: 16625732000003,
+//     chain: "ton",
+//     handleLog: async ({ log }) => {
+//         if(log.body.asSlice().loadUint(32) !== 2534710387){
+//             return
+//         }
+//         console.log(loadLockedEvent(log.body.asSlice()))
+//     },
+// })
+
+import { getTxHashes, getLogs, getTxStatus } from "./src/modules/validator/utils/multiversXContractListener/utils"
+const elasticSearchURL = "https://devnet-index.multiversx.com";
+const contractAddress = "erd1qqqqqqqqqqqqqpgqghvly0npf6ewpmzh47ud76ssh6nppu4e7hnses7qlz";
+
+getTxHashes({ elasticSearchURL, contractAddress, from: 0 }).then(r => {
+    getLogs({ elasticSearchURL, txHashes: r.map(item => item.txHash), eventIdentifier: ["lock721", "lock1155"] }).then(r => console.log(r))
 })

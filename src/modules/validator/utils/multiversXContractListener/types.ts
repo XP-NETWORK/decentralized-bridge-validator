@@ -4,7 +4,7 @@ interface IMultiversXContractListener {
     elasticSearchURL: string;
     contractAddress: string;
     lastBlock_: number;
-    eventIdentifier: string;
+    eventIdentifier: string[];
     handleLog: IHandleLog;
     jobName: string
 }

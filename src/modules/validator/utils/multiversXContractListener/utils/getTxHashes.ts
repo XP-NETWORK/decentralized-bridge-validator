@@ -5,10 +5,11 @@ const getTxHashes = async ({ elasticSearchURL, contractAddress, from }) => {
     const data = {
         from,
         _source: ["status"],
-        size: 5,
+        size: 100,
+
         query: {
             term: {
-                receiver: contractAddress
+                receivers: contractAddress
             }
         },
         sort: [
@@ -34,6 +35,7 @@ const getTxHashes = async ({ elasticSearchURL, contractAddress, from }) => {
             resultantLogs.push({ ...log._source, txHash: log._id })
         });
     } catch (error) {
+        console.log(error)
         console.info("No transactions found")
     }
 

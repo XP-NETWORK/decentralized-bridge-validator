@@ -16,7 +16,7 @@ interface IHandleLog {
 
 interface IProcessLogs {
     elasticSearchURL: string;
-    eventIdentifier: string;
+    eventIdentifier: string[];
     handleLog: IHandleLog
 }
 

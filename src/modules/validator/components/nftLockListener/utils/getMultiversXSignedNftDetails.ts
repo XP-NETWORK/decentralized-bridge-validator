@@ -37,14 +37,14 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
     }
 
     const claimDataArgs = new Struct(structClaimData, [
-        new Field(new BytesValue(Buffer.from(Number(nftTransferDetailsObject.tokenId).toString(16), "hex")), 'token_id'),
+        new Field(new BytesValue(Buffer.from(Number(nftTransferDetailsObject.tokenId).toString(16))), 'token_id'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.sourceChain)), 'source_chain'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.destinationChain)), 'destination_chain'),
         new Field(new AddressValue(new Address(destinationAddress)), 'destination_user_address'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.sourceNftContractAddress)), 'source_nft_contract_address'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.name)), 'name'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.symbol)), 'symbol'),
-        new Field(new BigUIntValue(nftTransferDetailsObject.royalty), 'royalty'),
+        new Field(new BigUIntValue(Number(nftTransferDetailsObject.royalty)/100), 'royalty'),
         new Field(new AddressValue(new Address(nftTransferDetailsObject.royaltyReceiver)), 'royalty_receiver'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.metadata)), 'attrs'),
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.transactionHash)), 'transaction_hash'),

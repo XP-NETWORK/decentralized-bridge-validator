@@ -33,7 +33,7 @@ const multiversXBridgeABI = {
             "inputs": [],
             "outputs": [
                 {
-                    "type": "variadic<multi<TokenInfo,bytes>>",
+                    "type": "variadic<multi<TokenInfo,TokenInfo>>",
                     "multi_result": true
                 }
             ]
@@ -49,7 +49,8 @@ const multiversXBridgeABI = {
             ],
             "outputs": [
                 {
-                    "type": "Validator"
+                    "type": "variadic<Validator>",
+                    "multi_result": true
                 }
             ]
         },
@@ -75,38 +76,26 @@ const multiversXBridgeABI = {
             ]
         },
         {
-            "name": "fuckingHash",
+            "name": "originalToDuplicateMapping",
             "mutability": "readonly",
-            "inputs": [
-                {
-                    "name": "data",
-                    "type": "ClaimData"
-                }
-            ],
+            "inputs": [],
             "outputs": [
                 {
-                    "type": "bytes"
+                    "type": "variadic<multi<tuple<bytes,bytes>,ContractInfo>>",
+                    "multi_result": true
                 }
             ]
         },
         {
-            "name": "fuckingVerify",
-            "mutability": "mutable",
-            "inputs": [
+            "name": "duplicateToOriginalMapping",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
                 {
-                    "name": "key",
-                    "type": "Address"
-                },
-                {
-                    "name": "data",
-                    "type": "ClaimData"
-                },
-                {
-                    "name": "sig",
-                    "type": "bytes"
+                    "type": "variadic<multi<tuple<TokenIdentifier,bytes>,ContractInfo>>",
+                    "multi_result": true
                 }
-            ],
-            "outputs": []
+            ]
         },
         {
             "name": "addValidator",
@@ -114,6 +103,21 @@ const multiversXBridgeABI = {
             "inputs": [
                 {
                     "name": "new_validator_public_key",
+                    "type": "Address"
+                },
+                {
+                    "name": "signatures",
+                    "type": "List<SignatureInfo>"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claimValidatorRewards",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "validator",
                     "type": "Address"
                 },
                 {
@@ -346,16 +350,6 @@ const multiversXBridgeABI = {
             ]
         },
         {
-            "identifier": "Lula",
-            "inputs": [
-                {
-                    "name": "gando",
-                    "type": "Option<bytes>",
-                    "indexed": true
-                }
-            ]
-        },
-        {
             "identifier": "Claimed",
             "inputs": [
                 {
@@ -366,6 +360,16 @@ const multiversXBridgeABI = {
                 {
                     "name": "transaction_hash",
                     "type": "bytes",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "RewardValidator",
+            "inputs": [
+                {
+                    "name": "validator",
+                    "type": "Address",
                     "indexed": true
                 }
             ]
@@ -435,6 +439,19 @@ const multiversXBridgeABI = {
                 }
             ]
         },
+        "ContractInfo": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "chain",
+                    "type": "bytes"
+                },
+                {
+                    "name": "address",
+                    "type": "bytes"
+                }
+            ]
+        },
         "SignatureInfo": {
             "type": "struct",
             "fields": [
@@ -454,6 +471,10 @@ const multiversXBridgeABI = {
                 {
                     "name": "token_id",
                     "type": "u64"
+                },
+                {
+                    "name": "chain",
+                    "type": "bytes"
                 },
                 {
                     "name": "contract_address",

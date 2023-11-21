@@ -188,65 +188,71 @@ import tonContractListener from "./src/modules/validator/utils/tonContractListen
 // })
 
 
-import { getMultiversXBridgeContract } from "./src/utils"
+// import { getMultiversXBridgeContract } from "./src/utils"
 
-const bridge = getMultiversXBridgeContract({
-    multiversXChainConfig: {
-        chain: "MULTIVERSX",
-        nativeCoinSymbol: "EGLD",
-        intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgqthnm9plsj3he2jqky672vty4adg02hg26n9s3g8rdm",
-        chainType: 'multiversX',
-        elasticSearchURL: "https://devnet-index.multiversx.com",
-        gatewayURL: "https://devnet-gateway.multiversx.com",
-        lastBlock: 0,
-        chainID: "D"
-    },
-    multiversXWallet: {
-        "userWallet": {
-            "version": 4,
-            "kind": "secretKey",
-            "id": "e0cfdef0-b670-42d2-8dc1-05cf4cea416d",
-            "address": "7f78d7b440eca96e9c288e723b650e1a7d4482e37eae22a5711c3c7ba1ae0900",
-            "bech32": "erd10aud0dzqaj5ka8pg3eerkegwrf75fqhr06hz9ft3rs78hgdwpyqqsjjlf5",
-            "crypto": {
-                "ciphertext": "c050aa968b9cd041c04d17eaef3bfbdd44271dcf4676b8f614900fddc9767707eb26c371e97e133a3767ae2ad5bd871260b7803b877159c8ad24e061a2fa61ce",
-                "cipherparams": { "iv": "bd791faabe8de9a299d7f4654d09a398" },
-                "cipher": "aes-128-ctr",
-                "kdf": "scrypt",
-                "kdfparams": {
-                    "dklen": 32,
-                    "salt": "14d3190da1ab561ab3ec7bb4dba258a75f0354b771770b90055b235de868ff2b",
-                    "n": 4096,
-                    "r": 8,
-                    "p": 1
-                },
-                "mac": "8fc26c25557b2938e274d869f4425a3d65601e99257338ee71e014102166ed85"
-            }
-        },
-        "password": "5f7rylv3qdu"
-    }
-})
+// const bridge = getMultiversXBridgeContract({
+//     multiversXChainConfig: {
+//         chain: "MULTIVERSX",
+//         nativeCoinSymbol: "EGLD",
+//         intialFund: "50000000000000000",
+//         contractAddress: "erd1qqqqqqqqqqqqqpgqthnm9plsj3he2jqky672vty4adg02hg26n9s3g8rdm",
+//         chainType: 'multiversX',
+//         elasticSearchURL: "https://devnet-index.multiversx.com",
+//         gatewayURL: "https://devnet-gateway.multiversx.com",
+//         lastBlock: 0,
+//         chainID: "D"
+//     },
+//     multiversXWallet: {
+//         "userWallet": {
+//             "version": 4,
+//             "kind": "secretKey",
+//             "id": "e0cfdef0-b670-42d2-8dc1-05cf4cea416d",
+//             "address": "7f78d7b440eca96e9c288e723b650e1a7d4482e37eae22a5711c3c7ba1ae0900",
+//             "bech32": "erd10aud0dzqaj5ka8pg3eerkegwrf75fqhr06hz9ft3rs78hgdwpyqqsjjlf5",
+//             "crypto": {
+//                 "ciphertext": "c050aa968b9cd041c04d17eaef3bfbdd44271dcf4676b8f614900fddc9767707eb26c371e97e133a3767ae2ad5bd871260b7803b877159c8ad24e061a2fa61ce",
+//                 "cipherparams": { "iv": "bd791faabe8de9a299d7f4654d09a398" },
+//                 "cipher": "aes-128-ctr",
+//                 "kdf": "scrypt",
+//                 "kdfparams": {
+//                     "dklen": 32,
+//                     "salt": "14d3190da1ab561ab3ec7bb4dba258a75f0354b771770b90055b235de868ff2b",
+//                     "n": 4096,
+//                     "r": 8,
+//                     "p": 1
+//                 },
+//                 "mac": "8fc26c25557b2938e274d869f4425a3d65601e99257338ee71e014102166ed85"
+//             }
+//         },
+//         "password": "5f7rylv3qdu"
+//     }
+// })
 
 
-bridge.tokens().then(r => {
-    console.log(r.secondValue)
-    //@ts-ignore
-    r.firstValue.valueOf().forEach((e: any, index: number) => {
-        // console.log("----------------------------------------------\n")
-        // console.log(parseInt(e[0].token_id.toString()));
-        // console.log(e[0].chain.toString());
-        // console.log(e[0].contract_address.toString());
-        // console.log(e )
-        // console.log(e[1].toString());
-        // console.log("----------------------------------------------\n")
-        console.log("----------------------------------------------\n")
-        console.log(parseInt(e[0].token_id.toString()));
-        console.log(e[0].chain.toString());
-        console.log(e[0].contract_address.toString());
+// bridge.tokens().then(r => {
+//     console.log(r.secondValue)
+//     //@ts-ignore
+//     r.firstValue.valueOf().forEach((e: any, index: number) => {
+//         // console.log("----------------------------------------------\n")
+//         // console.log(parseInt(e[0].token_id.toString()));
+//         // console.log(e[0].chain.toString());
+//         // console.log(e[0].contract_address.toString());
+//         // console.log(e )
+//         // console.log(e[1].toString());
+//         // console.log("----------------------------------------------\n")
+//         console.log("----------------------------------------------\n")
+//         console.log(parseInt(e[0].token_id.toString()));
+//         console.log(e[0].chain.toString());
+//         console.log(e[0].contract_address.toString());
 
-        console.log(e[1].toString());
-        console.log("----------------------------------------------\n")
-    });
-}
-)
+//         console.log(e[1].toString());
+//         console.log("----------------------------------------------\n")
+//     });
+// }
+// )
+
+import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
+
+const nonceAsHex = Buffer.from(new Nonce(1).hex(),"hex");
+
+console.log(nonceAsHex)

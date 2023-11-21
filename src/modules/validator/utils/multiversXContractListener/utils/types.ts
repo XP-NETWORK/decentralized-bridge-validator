@@ -1,6 +1,9 @@
+import { EntityManager } from "typeorm";
+
 interface IGetMultiverseXLogs {
     elasticSearchURL: string;
     eventIdentifier: string[];
+    transactionalEntityManager: EntityManager;
     txHashes: string[];
 }
 

@@ -59,8 +59,6 @@ const poolTxHashes = async ({ elasticSearchURL, contractAddress, lastBlock_ }: I
         await entityManager.save(blockInstance);
     });
 
-    await blockRepository.save(blockInstance);
-
     console.log({ txHashes })
 }
 

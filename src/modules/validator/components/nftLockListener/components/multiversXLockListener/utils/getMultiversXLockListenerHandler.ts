@@ -6,13 +6,15 @@ import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
 import { IHandleLog } from "@src/modules/validator/utils/multiversXContractListener/components/types";
+import { MultiversXTransactions } from "@src/db/entity/MultiversXTransactions";
 
 const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, wallets }: IMultiversXLockListener) => {
 
 
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
 
-    const handleLog: IHandleLog = async ({ log }) => {
+
+    const handleLog: IHandleLog = async ({ log, transactionalEntityManager }) => {
 
         const {
             tokenId, // Unique ID for the NFT transfer
@@ -31,7 +33,7 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
         const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
 
         const sourceChainObject = config.bridgeChains.find(item => item.chain === sourceChain);
-
+        console.log({ sourceChainObject })
         if (sourceChainObject) {
 
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
@@ -62,7 +64,23 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
                 nftType,
                 fee,
             };
-            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: multiversXChainConfig.chain, destinationChainObject })
+
+            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: multiversXChainConfig.chain, destinationChainObject });
+
+            try {
+                const transaction = await transactionalEntityManager.findOne(MultiversXTransactions, {
+                    where: {
+                        transactionHash
+                    }
+                });
+                transaction.status = "processed";
+                await transactionalEntityManager.save(MultiversXTransactions, transaction);
+            } catch (e) {
+                console.log(e)
+                throw new Error("Error while saving processed logs")
+            }
+
+
         }
     }
 

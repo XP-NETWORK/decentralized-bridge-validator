@@ -24,24 +24,24 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         chainType: 'evm',
         lastBlock: 35266210
     },
-    // {
-    //     chain: "ETH",
-    //     rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
-    //     nativeCoinSymbol: "ETH",
-    //     intialFund: "50000000000000000",
-    //     contractAddress: "0x3a42753657f0F493082Ae67D980a087c47f5A174",
-    //     chainType: 'evm',
-    //     lastBlock: 4652716
-    // },
-    // {
-    //     chain: "MATIC",
-    //     rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
-    //     nativeCoinSymbol: "MATIC",
-    //     intialFund: "50000000000000000",
-    //     contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
-    //     chainType: 'evm',
-    //     lastBlock: 42116275
-    // },
+    {
+        chain: "ETH",
+        rpcURL: "https://ultra-light-patina.ethereum-sepolia.discover.quiknode.pro/6f98178f32c668af8ee4bb1cc4b8b9308e29367b/",
+        nativeCoinSymbol: "ETH",
+        intialFund: "50000000000000000",
+        contractAddress: "0x3a42753657f0F493082Ae67D980a087c47f5A174",
+        chainType: 'evm',
+        lastBlock: 4652716
+    },
+    {
+        chain: "MATIC",
+        rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
+        nativeCoinSymbol: "MATIC",
+        intialFund: "50000000000000000",
+        contractAddress: "0xF599C9De353a2381A96DEC02b9e942cDC7aF2eb3",
+        chainType: 'evm',
+        lastBlock: 42116275
+    },
     {
         chain: "MULTIVERSX",
         nativeCoinSymbol: "EGLD",

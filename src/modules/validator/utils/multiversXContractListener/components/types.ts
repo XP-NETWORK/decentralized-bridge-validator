@@ -1,5 +1,7 @@
 import { IConfigAndWallets, IMultiversXChainConfig } from "@src/types";
 import { IMultiverseXLogEvent } from "../utils/types";
+import { EntityManager } from "typeorm";
+
 
 interface IPoolTxHashes {
     elasticSearchURL: string;
@@ -12,7 +14,7 @@ interface IPoolTxStatus {
 }
 
 interface IHandleLog {
-    ({ log }: { log: IMultiverseXLogEvent & { transactionHash: string } }): Promise<void>;
+    ({ log, transactionalEntityManager }: { log: IMultiverseXLogEvent & { transactionHash: string }, transactionalEntityManager: EntityManager }): Promise<void>;
 }
 
 interface IProcessLogs extends IConfigAndWallets {

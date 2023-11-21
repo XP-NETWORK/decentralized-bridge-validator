@@ -26,8 +26,7 @@ const approveLock = async ({ nftTransferDetailsObject, wallets, destinationChain
         console.info(`Lock Approved Transaction Hash: ${tx.hash}`);
 
     } catch (e) {
-        console.error(e)
-        if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {
+        if (!(e?.shortMessage === 'execution reverted: "Signature already used"' || e?.shortMessage === 'replacement fee too low')) {
             throw new Error("Error while processing log")
         } else {
             console.log("Transaction already processed")

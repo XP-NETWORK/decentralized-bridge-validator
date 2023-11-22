@@ -49,7 +49,7 @@ const getMultiversXBridgeContract = ({
                 validatorsDefinition,
             );
             let added = false;
-            if (firstValue) ({ added } = firstValue.valueOf());
+            if (firstValue) ({ added } = firstValue.valueOf()[0]);
             return { added };
         },
         validatorsCount: async () => {

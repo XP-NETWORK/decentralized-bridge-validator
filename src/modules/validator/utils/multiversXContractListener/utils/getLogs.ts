@@ -2,44 +2,34 @@ import axios from "axios"
 import { IGetMultiverseXLogs, IMultiverseXLogEvent, IMultiverseXLogs } from "./types"
 import { MultiversXTransactions } from "@src/db/entity/MultiversXTransactions"
 
-const getLogs = async ({ elasticSearchURL, txHashes, eventIdentifier, transactionalEntityManager }: IGetMultiverseXLogs) => {
+const getLogs = async ({ gatewayURL, txHashes, eventIdentifier, transactionalEntityManager }: IGetMultiverseXLogs) => {
 
-    const data = {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: {
-            _source: ["events"],
-            query: {
-                bool: {
-                    should: [
-                        {
-                            terms: {
-                                "originalTxHash": txHashes
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    }
+
 
     const resultantLogs: (IMultiverseXLogEvent & { txHash: string })[] = []
     const incompleteTx: { [txHash: string]: boolean } = {};
 
-    try {
-        const logs: IMultiverseXLogs = (await axios.get(`${elasticSearchURL}/logs/_search`, data)).data
-        for (const [index, log] of logs.hits.hits.entries()) {
-            const eventLog = log._source.events.find(_event => {
-                return eventIdentifier.includes(_event.identifier)
-            })
+    const getResultantLogs = (logs: IMultiverseXLogs, txHash: string) => {
+        const eventLog = logs.events.find(_event => {
+            return eventIdentifier.includes(_event.identifier)
+        })
+        const isCompletedTx = logs.events.find(_event => _event.identifier === "completedTxEvent");
+        if (eventLog && isCompletedTx) {
+            resultantLogs.push({ ...eventLog, txHash })
+        } else if (eventLog && !isCompletedTx) {
+            incompleteTx[txHash] = true
+        }
+    }
 
-            const isCompletedTx = log._source.events.find(_event => _event.identifier === "completedTxEvent");
-            if (eventLog && isCompletedTx) {
-                resultantLogs.push({ ...eventLog, txHash: txHashes[index] })
-            } else if (eventLog && !isCompletedTx) {
-                incompleteTx[log._id] = true
-            }
+
+    try {
+        for (const txHash of txHashes) {
+
+            const response = (await axios.get(`${gatewayURL.replace("gateway", "api")}/transactions/${txHash}`)).data
+            if (response?.logs)
+                getResultantLogs(response.logs, txHash)
+            if (response?.results?.logs)
+                getResultantLogs(response.results.log, txHash)
 
             try {
                 const successTransactions = await transactionalEntityManager.find(MultiversXTransactions, {
@@ -62,7 +52,9 @@ const getLogs = async ({ elasticSearchURL, txHashes, eventIdentifier, transactio
                 throw Error("Error while saving in database")
             }
         }
+
     } catch (error) {
+        console.log(error)
         throw new Error("Error while getting logs")
     }
 

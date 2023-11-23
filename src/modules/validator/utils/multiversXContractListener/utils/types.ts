@@ -1,7 +1,7 @@
 import { EntityManager } from "typeorm";
 
 interface IGetMultiverseXLogs {
-    elasticSearchURL: string;
+    gatewayURL: string;
     eventIdentifier: string[];
     transactionalEntityManager: EntityManager;
     txHashes: string[];
@@ -9,10 +9,7 @@ interface IGetMultiverseXLogs {
 
 interface IMultiverseXLogEvent {
     identifier: string;
-    address: string;
-    data: null | string;
     topics: string[];
-    order: number;
 }
 
 
@@ -27,14 +24,7 @@ interface IMultiverseXTxHashes {
 
 
 interface IMultiverseXLogs {
-    hits: {
-        hits: {
-            _id: string;
-            _source: {
-                events: IMultiverseXLogEvent[];
-            }
-        }[]
-    };
+    events: IMultiverseXLogEvent[];
 }
 
 interface IMultiverseXTxStatus {

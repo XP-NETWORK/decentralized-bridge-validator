@@ -4,9 +4,8 @@ import { getLogs } from "../utils";
 import { IProcessLogs } from "./types";
 import { getMultiversXLockListenerHandler } from "@src/modules/validator/components/nftLockListener/components/multiversXLockListener/utils";
 
-const processLogs = async ({ elasticSearchURL, eventIdentifier, config, wallets, multiversXChainConfig }: IProcessLogs) => {
+const processLogs = async ({ gatewayURL, eventIdentifier, config, wallets, multiversXChainConfig }: IProcessLogs) => {
     const handleLog = getMultiversXLockListenerHandler({ config, wallets, multiversXChainConfig })
-
     try {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const successTransactions = await transactionalEntityManager.find(MultiversXTransactions,{
@@ -19,7 +18,7 @@ const processLogs = async ({ elasticSearchURL, eventIdentifier, config, wallets,
                 return;
             }
 
-            const { resultantLogs } = await getLogs({ elasticSearchURL, txHashes: successTransactions.map(tx => tx.transactionHash), eventIdentifier, transactionalEntityManager });
+            const { resultantLogs } = await getLogs({ gatewayURL, txHashes: successTransactions.map(tx => tx.transactionHash), eventIdentifier, transactionalEntityManager });
             const handleLogPromises: Promise<void>[] = [];
             for (const log of resultantLogs) {
                 handleLogPromises.push(handleLog({ log: { ...log, transactionHash: log.txHash }, transactionalEntityManager }));

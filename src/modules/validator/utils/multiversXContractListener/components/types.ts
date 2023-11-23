@@ -18,7 +18,7 @@ interface IHandleLog {
 }
 
 interface IProcessLogs extends IConfigAndWallets {
-    elasticSearchURL: string;
+    gatewayURL: string;
     eventIdentifier: string[];
     multiversXChainConfig: IMultiversXChainConfig
 }

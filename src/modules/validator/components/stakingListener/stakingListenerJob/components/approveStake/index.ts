@@ -1,7 +1,7 @@
 import Web3 from "web3";
 import { IApproveStake } from "./types";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
-import { beginCell } from "@ton/core";
+import { beginCell } from "@ton/ton";
 import { sign } from 'ton-crypto';
 import { NewValidator, storeNewValidator } from "@src/contractsTypes/contracts/tonBridge";
 
@@ -37,7 +37,7 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
         $$type: "NewValidator",
         key: newValidatorPublicKeyBigInt
     }
-    const tonSignature = sign(beginCell().store(storeNewValidator(newValidator)).endCell().hash(), secretKey).toString("hex");
+    const tonSignature = "0x" + sign(beginCell().store(storeNewValidator(newValidator)).endCell().hash(), secretKey).toString("hex");
 
 
 
@@ -77,7 +77,8 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
     } catch (e) {
         console.log({
             evmSingerAndSignature,
-            multiversXSingerAndSignature
+            multiversXSingerAndSignature,
+            tonSingerAndSignature
         })
         console.log(e)
         if (!(e && e.shortMessage && e.shortMessage === `execution reverted: "Signature already used"`)) {

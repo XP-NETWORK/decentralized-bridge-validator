@@ -1,4 +1,4 @@
-import { Message } from "@ton/core"
+import { Message } from "@ton/ton"
 
 interface ITonContractListener {
     contractAddress: string,

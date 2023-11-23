@@ -1,26 +1,32 @@
 import { Bridge, NewValidator, SignerAndSignature } from "@src/contractsTypes/contracts/tonBridge";
 import { IBridge, ITonChainConfigAndTonWallet } from "@src/types";
-import { Address, Dictionary, beginCell, toNano } from "@ton/core"
-import { TonClient, WalletContractV4 } from "@ton/ton";
+import { Address, Dictionary, beginCell, toNano } from "@ton/core";
+import { WalletContractV4, TonClient } from "@ton/ton"
 import { ProcessDelayMilliseconds } from "../constants/processDelayMilliseconds";
 import waitForMSWithMsg from "./waitForMSWithMsg";
+import TonWeb from "tonweb";
 
 const getTonBridgeContract = ({ tonChainConfig, tonWallet }: ITonChainConfigAndTonWallet): IBridge => {
 
-    const client = new TonClient({ endpoint: tonChainConfig.rpcURL });
+    const client = new TonClient({ endpoint: tonChainConfig.rpcURL , apiKey: "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292"});
     const wallet = WalletContractV4.create({ publicKey: Buffer.from(tonWallet.publicKey, "hex"), workchain: 0 });
+    
     const walletContract = client.open(wallet);
     const walletSender = walletContract.sender(Buffer.from(tonWallet.secretKey, "hex"));
-    const bridge = client.open(Bridge.fromAddress(Address.parseFriendly(tonChainConfig.contractAddress).address))
+    const bridge = client.open(Bridge.fromAddress(Address.parseFriendly(tonChainConfig.contractAddress).address));
+
+    
+    const tonweb = new TonWeb(new TonWeb.HttpProvider(tonChainConfig.rpcURL))
 
     return {
         validators: async (address: string) => {
             const newValidatorPublicKey = Buffer.from(address, "hex");
             const newValidatorPublicKeyBigInt = beginCell().storeBuffer(newValidatorPublicKey).endCell().beginParse().loadUintBig(256);
-            return await bridge.getGetValidator(newValidatorPublicKeyBigInt)
+            const res = await tonweb.provider.call(tonChainConfig.contractAddress, 'Validator', [['num', newValidatorPublicKeyBigInt.toString()]])
+            return { added: !!res.stack[0][1].elements.length }
         },
         validatorsCount: async () => {
-            return await bridge.getGetValidatorsCount()
+            return await bridge.getValidatorsCount()
         },
         addValidator: async (validatorAddress: string, signatures: {
             signerAddress: string;
@@ -56,6 +62,7 @@ const getTonBridgeContract = ({ tonChainConfig, tonWallet }: ITonChainConfigAndT
                 {
                     $$type: 'AddValidator',
                     newValidatorPublicKey: newValidator,
+                    newValidatorAddress: Address.parseFriendly(validatorAddress).address,
                     sigs,
                     len: beginCell().storeUint(sigs.keys.length, 256).endCell().beginParse().loadUintBig(256),
                 }

@@ -1,8 +1,9 @@
 import { INftTransferDetailsObject } from "../components/types";
 import { ITonWallet } from "@src/types";
 import { ClaimData, storeClaimData } from "@src/contractsTypes/contracts/tonBridge";
-import { Address, beginCell } from "@ton/core";
-import { sign } from "@ton/crypto";
+import { Address, beginCell } from "@ton/ton";
+import { sign } from "ton-crypto";
+import { SalePriceToGetTotalRoyalityPercentage } from "@src/utils/constants/salePriceToGetTotalRoyalityPercentage";
 
 const getTonSignedNftDetails = ({ nftTransferDetailsObject, tonWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, tonWallet: ITonWallet }) => {
     const secretKey = Buffer.from(tonWallet.secretKey, "hex");
@@ -23,24 +24,48 @@ const getTonSignedNftDetails = ({ nftTransferDetailsObject, tonWallet }: { nftTr
         fee
     } = nftTransferDetailsObject;
 
+    let sourceNftContractAddress_ = beginCell().storeSlice(beginCell().storeStringTail(sourceNftContractAddress).endCell().asSlice()).endCell()
+    try {
+        sourceNftContractAddress_ = beginCell().storeSlice(beginCell().storeAddress(Address.parseFriendly(sourceNftContractAddress).address).endCell().asSlice()).endCell()
+    }catch (e) {
+        console.log("Not Native TON Address")
+    }
     const claimData: ClaimData = {
         $$type: "ClaimData",
-        tokenId: BigInt(tokenId),
-        sourceChain,
-        destinationChain,
-        destinationUserAddress: Address.parseFriendly(destinationUserAddress).address,
-        sourceNftContractAddress,
-        name,
-        symbol,
-        royalty: BigInt(royalty) / BigInt(10), // Ton standard royalty 100 percent => 1_000, where as rest of chains have 10_000
-        royaltyReceiver: Address.parseFriendly(royaltyReceiver).address,
-        metadata,
-        transactionHash,
-        tokenAmount: BigInt(tokenAmount),
-        nftType,
-        fee: BigInt(fee),
+        data1: {
+            $$type: "ClaimData1",
+            tokenId: BigInt(tokenId),
+            destinationChain,
+            destinationUserAddress: Address.parseFriendly(destinationUserAddress).address,
+            sourceChain,
+            tokenAmount: BigInt(tokenAmount)
+        },
+        data2: {
+            $$type: "ClaimData2",
+            name,
+            nftType,
+            symbol
+        },
+        data3: {
+            $$type: "ClaimData3",
+            fee: BigInt(fee),
+            metadata,
+            royaltyReceiver: Address.parseFriendly(royaltyReceiver).address,
+            sourceNftContractAddress: sourceNftContractAddress_
+        },
+        data4: {
+            $$type: "ClaimData4",
+            newContent: beginCell().storeInt(0x01, 8).storeStringRefTail(metadata).endCell(),
+            royalty: {
+                $$type: "RoyaltyParams",
+                numerator: BigInt(SalePriceToGetTotalRoyalityPercentage),
+                denominator: BigInt(royalty),
+                destination: Address.parseFriendly(royaltyReceiver).address,
+            },
+            transactionHash
+        }
     }
-    const tonSignature = sign(beginCell().store(storeClaimData(claimData)).endCell().hash(), secretKey).toString("hex");
+    const tonSignature = "0x" + sign(beginCell().store(storeClaimData(claimData)).endCell().hash(), secretKey).toString("hex");
 
 
     return { publicAddress: tonWallet.publicKey, signature: tonSignature }

@@ -26,6 +26,7 @@ export interface IERC1155RoyaltyInterface extends Interface {
     nameOrSignature:
       | "balanceOf"
       | "mint"
+      | "owner"
       | "royaltyInfo"
       | "setTokenURI"
       | "uri"
@@ -46,6 +47,7 @@ export interface IERC1155RoyaltyInterface extends Interface {
       string
     ]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
     values: [BigNumberish, BigNumberish]
@@ -58,6 +60,7 @@ export interface IERC1155RoyaltyInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
@@ -131,6 +134,8 @@ export interface IERC1155Royalty extends BaseContract {
     "nonpayable"
   >;
 
+  owner: TypedContractMethod<[], [string], "view">;
+
   royaltyInfo: TypedContractMethod<
     [tokenId: BigNumberish, salePrice: BigNumberish],
     [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
@@ -170,6 +175,9 @@ export interface IERC1155Royalty extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "royaltyInfo"
   ): TypedContractMethod<

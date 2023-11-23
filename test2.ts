@@ -1,5 +1,9 @@
 // import { getTxHashes, getTxStatus, getLogs } from "./src/modules/validator/utils/multiversXContractListener/utils"
 
+import axios from "axios";
+import { sign } from "@ton/crypto";
+import { Address, TonClient, WalletContractV4 } from "@ton/ton";
+
 
 // getTxHashes({ gatewayURL: "https://devnet-index.multiversx.com", from: 0, contractAddress: "erd1qqqqqqqqqqqqqpgqhv2wpezf4hwtvcy4t7s9wlmjklad0k776n9sj9q9hz" }).then(r => {
 //     console.log(r);
@@ -143,26 +147,25 @@
 // console.log(data);
 
 // import getTonBridgeContract from "./src/utils/functions/getTonBridgeContract"
-import tonContractListener from "./src/modules/validator/utils/tonContractListener"
+// // import tonContractListener from "./src/modules/validator/utils/tonContractListener"
 // const bridge = getTonBridgeContract({
 //     tonChainConfig: {
 //         chain: "TON",
 //         rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
 //         nativeCoinSymbol: "TON",
 //         intialFund: "6000000000",
-//         contractAddress: "EQAcIb4P9K-yVuZM2kxZUBtrTisIF-2aE5E3gX3J_SIKQ51q",
+//         contractAddress: "EQAPNk9mquaFA979GwmLKe4TiKGqlJp2_fnPt0PcNLeiknee",
 //         chainType: 'ton',
 //         lastBlock: 42116275
 //     },
-
 //     tonWallet: {
-//         "publicKey": "5fe9b0d3fa6680f818a202814954a0940ae6ce13475c4293e01db063aabff7ba",
-//         "secretKey": "a771e96ab9796f417040a83fc959335e46c42b4b706c4f2a8eb91e8dd71b5b655fe9b0d3fa6680f818a202814954a0940ae6ce13475c4293e01db063aabff7ba"
+//         "publicKey": "5aba2a59ffcef4fc7894ac0682dd419b18a54c30b55d0db0e244f15b1a7f87b2",
+//         "secretKey": "068e14dc8440a571306c2294c9a18b31fc2f853ecc087412aff42c16f9d6dd2d5aba2a59ffcef4fc7894ac0682dd419b18a54c30b55d0db0e244f15b1a7f87b2"
 //     }
 // })
 
-// bridge.validators("5fd9df09c6326a7a6573681260710aa79c9618327e2251f72c5150db8f177ae1").then(r => console.log(r))
-// bridge.validatorsCount().then(r=> console.log(r))
+// bridge.validators("5aba2a59ffcef4fc7894ac0682dd419b18a54c30b55d0db0e244f15b1a7f87b2").then(r => console.log(r))
+// // bridge.validatorsCount().then(r=> console.log(r))
 
 // import { loadLockedEvent } from "./src/contractsTypes/contracts/tonBridge"
 // tonContractListener({
@@ -188,47 +191,47 @@ import tonContractListener from "./src/modules/validator/utils/tonContractListen
 // })
 
 
-import { getMultiversXBridgeContract } from "./src/utils"
+// import { getMultiversXBridgeContract } from "./src/utils"
 
-const bridge = getMultiversXBridgeContract({
-    multiversXChainConfig: {
-        chain: "MULTIVERSX",
-        nativeCoinSymbol: "EGLD",
-        intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
-        chainType: 'multiversX',
-        elasticSearchURL: "https://devnet-index.multiversx.com",
-        gatewayURL: "https://devnet-gateway.multiversx.com",
-        lastBlock: 0,
-        chainID: "D"
-    },
-    multiversXWallet: {
-        "userWallet": {
-            "version": 4,
-            "kind": "secretKey",
-            "id": "e0cfdef0-b670-42d2-8dc1-05cf4cea416d",
-            "address": "7f78d7b440eca96e9c288e723b650e1a7d4482e37eae22a5711c3c7ba1ae0900",
-            "bech32": "erd10aud0dzqaj5ka8pg3eerkegwrf75fqhr06hz9ft3rs78hgdwpyqqsjjlf5",
-            "crypto": {
-                "ciphertext": "c050aa968b9cd041c04d17eaef3bfbdd44271dcf4676b8f614900fddc9767707eb26c371e97e133a3767ae2ad5bd871260b7803b877159c8ad24e061a2fa61ce",
-                "cipherparams": { "iv": "bd791faabe8de9a299d7f4654d09a398" },
-                "cipher": "aes-128-ctr",
-                "kdf": "scrypt",
-                "kdfparams": {
-                    "dklen": 32,
-                    "salt": "14d3190da1ab561ab3ec7bb4dba258a75f0354b771770b90055b235de868ff2b",
-                    "n": 4096,
-                    "r": 8,
-                    "p": 1
-                },
-                "mac": "8fc26c25557b2938e274d869f4425a3d65601e99257338ee71e014102166ed85"
-            }
-        },
-        "password": "5f7rylv3qdu"
-    }
-})
- bridge.validatorsCount().then(r=> console.log(r.toString()))
- bridge.validators("9fb927c978225cb7a93b8b3cd8d8423e176e009dc284c536d9c4372bbe128487").then(r=> console.log(r))
+// const bridge = getMultiversXBridgeContract({
+//     multiversXChainConfig: {
+//         chain: "MULTIVERSX",
+//         nativeCoinSymbol: "EGLD",
+//         intialFund: "50000000000000000",
+//         contractAddress: "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
+//         chainType: 'multiversX',
+//         elasticSearchURL: "https://devnet-index.multiversx.com",
+//         gatewayURL: "https://devnet-gateway.multiversx.com",
+//         lastBlock: 0,
+//         chainID: "D"
+//     },
+//     multiversXWallet: {
+//         "userWallet": {
+//             "version": 4,
+//             "kind": "secretKey",
+//             "id": "e0cfdef0-b670-42d2-8dc1-05cf4cea416d",
+//             "address": "7f78d7b440eca96e9c288e723b650e1a7d4482e37eae22a5711c3c7ba1ae0900",
+//             "bech32": "erd10aud0dzqaj5ka8pg3eerkegwrf75fqhr06hz9ft3rs78hgdwpyqqsjjlf5",
+//             "crypto": {
+//                 "ciphertext": "c050aa968b9cd041c04d17eaef3bfbdd44271dcf4676b8f614900fddc9767707eb26c371e97e133a3767ae2ad5bd871260b7803b877159c8ad24e061a2fa61ce",
+//                 "cipherparams": { "iv": "bd791faabe8de9a299d7f4654d09a398" },
+//                 "cipher": "aes-128-ctr",
+//                 "kdf": "scrypt",
+//                 "kdfparams": {
+//                     "dklen": 32,
+//                     "salt": "14d3190da1ab561ab3ec7bb4dba258a75f0354b771770b90055b235de868ff2b",
+//                     "n": 4096,
+//                     "r": 8,
+//                     "p": 1
+//                 },
+//                 "mac": "8fc26c25557b2938e274d869f4425a3d65601e99257338ee71e014102166ed85"
+//             }
+//         },
+//         "password": "5f7rylv3qdu"
+//     }
+// })
+//  bridge.validatorsCount().then(r=> console.log(r.toString()))
+//  bridge.validators("9fb927c978225cb7a93b8b3cd8d8423e176e009dc284c536d9c4372bbe128487").then(r=> console.log(r))
 
 // bridge.tokens().then(r => {
 //     console.log(r.secondValue)
@@ -257,3 +260,51 @@ const bridge = getMultiversXBridgeContract({
 // const nonceAsHex = Buffer.from(new Nonce(1).hex(),"hex");
 
 // console.log(nonceAsHex)
+
+const tonChainConfig = {
+    chain: "TON",
+    rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+    nativeCoinSymbol: "TON",
+    intialFund: "500000000",
+    contractAddress: "EQD5H-K1OUdtkrTU6neDdcpRTtfjiDiRD8f6SVyjIq3IWaI_",
+    chainType: 'ton',
+    lastBlock: 16800822000003
+}
+const tonWallet = {
+    "publicKey": "5aba2a59ffcef4fc7894ac0682dd419b18a54c30b55d0db0e244f15b1a7f87b2",
+    "secretKey": "068e14dc8440a571306c2294c9a18b31fc2f853ecc087412aff42c16f9d6dd2d5aba2a59ffcef4fc7894ac0682dd419b18a54c30b55d0db0e244f15b1a7f87b2"
+}
+
+
+async function sendTon() {
+    // Initialize TON Client
+    const client = new TonClient({
+        apiKey: "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292",
+        endpoint: tonChainConfig.rpcURL // Or another endpoint if you're using testnet
+    });
+
+    // Your wallet's keys
+    // Initialize your wallet
+    const wallet = WalletContractV4.create({ publicKey: Buffer.from(tonWallet.publicKey, "hex"), workchain: 0 });
+
+    // Recipient address and amount to send
+    const recipientAddress = Address.parseFriendly("EQAV8tH2WDuWYU7zAmkJmIwP8Ph_uIC4zBqJNIfKgRUUQewh").address; // Replace with recipient's address
+    const amountToSend = BigInt(4000000000); // Amount in nanotons (1 TON = 1e9 nanotons)
+    const walletContract = client.open(wallet);
+    const walletSender = walletContract.sender(Buffer.from(tonWallet.secretKey, "hex"));
+
+    try {
+        // Prepare message for transfer
+        await walletSender.send({
+            value: amountToSend,
+            to: recipientAddress
+        });
+
+        // Send the message
+
+    } catch (error) {
+        console.error('Error sending TON:', error);
+    }
+}
+
+sendTon();

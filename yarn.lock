@@ -2601,6 +2601,8 @@ __metadata:
     sinon: ^17.0.0
     sqlite: ^5.0.1
     sqlite3: ^5.1.6
+    ton: ^13.9.0
+    ton-core: ^0.53.0
     ton-crypto: ^3.2.0
     tonweb: ^0.0.62
     ts-node: 10.7.0
@@ -6865,6 +6867,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ton-core@npm:^0.53.0":
+  version: 0.53.0
+  resolution: "ton-core@npm:0.53.0"
+  dependencies:
+    symbol.inspect: 1.0.1
+  peerDependencies:
+    ton-crypto: ">=3.2.0"
+  checksum: a0f6bc3034fda8521e1c628c1bedd5869166be29e4a1267268dd99e885ba25d5d7b67c88970b23bbb332d936ff1fe0d82f776ddb24649f938c047173b81a8629
+  languageName: node
+  linkType: hard
+
 "ton-crypto-primitives@npm:2.0.0":
   version: 2.0.0
   resolution: "ton-crypto-primitives@npm:2.0.0"
@@ -6882,6 +6895,22 @@ __metadata:
     ton-crypto-primitives: 2.0.0
     tweetnacl: 1.0.3
   checksum: 5c4b077ce36f6d6583c6fee91be45ba88024cfb17927d2da8fce355f226dba559ba5dc91ee508b205c537d6dd6a34bfea17a26c2656ef80bd72f64d1a2604c45
+  languageName: node
+  linkType: hard
+
+"ton@npm:^13.9.0":
+  version: 13.9.0
+  resolution: "ton@npm:13.9.0"
+  dependencies:
+    axios: ^0.25.0
+    dataloader: ^2.0.0
+    symbol.inspect: 1.0.1
+    teslabot: ^1.3.0
+    zod: ^3.21.4
+  peerDependencies:
+    ton-core: ">=0.53.0"
+    ton-crypto: ">=3.2.0"
+  checksum: 41223a54a6acb59f20415b92e2ff287877323c9928cb2efbb745196201d9c8e363653fb55564fa4942f7dde904094feb00f0e6d0d39d5fc9efa658e05e96b9fa
   languageName: node
   linkType: hard
 

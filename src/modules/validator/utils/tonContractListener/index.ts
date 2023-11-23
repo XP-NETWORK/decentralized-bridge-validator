@@ -13,7 +13,7 @@ async function tonContractListener(
         chain,
         handleLog }: ITonContractListener): Promise<void> {
 
-    const client = new TonClient({ endpoint: rpcURL });
+    const client = new TonClient({ endpoint: rpcURL, apiKey: "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292" });
 
     const blockRepository: Repository<Block> = AppDataSource.getRepository(Block);
 
@@ -33,20 +33,22 @@ async function tonContractListener(
 
     const latestTx = await client.getTransactions(Address.parseFriendly(contractAddress).address, { limit: 1 });
 
+
     if (!latestTx.length) {
         console.info('No Transactions found');
         return;
     }
-    await waitForMSWithMsg(1000, "waiting for 1 second for Ton rpc")
+    await waitForMSWithMsg(1000, "waiting for Ton rpc")
 
+   
     const transactions = await client.getTransactions(Address.parseFriendly(contractAddress).address,
         {
             limit: 100,
             hash: latestTx[0].hash().toString("base64"),
             lt: latestTx[0].lt.toString(),
-            to_lt: String(blockInstance.lastBlock)
+            to_lt: String(blockInstance.lastBlock),
+            inclusive: true
         })
-
 
     if (!transactions.length) {
         console.info('No New Transactions found');
@@ -55,13 +57,12 @@ async function tonContractListener(
 
     blockInstance.lastBlock = Number(transactions[0].lt);
 
-    const handleLogPromises: Promise<void>[] = [];
-
     for (const tx of transactions) {
-        handleLogPromises.push(handleLog({ log: tx.outMessages.get(0),  hash: tx.hash().toString("base64") }));
+        console.log(tx.outMessages.size, "-----------------SIZE-----------")
+        for (let i = 0; i < tx.outMessages.size; i++) {
+            await handleLog({ log: tx.outMessages.get(i), hash: tx.hash().toString("base64") });
+        }
     }
-
-    await Promise.all(handleLogPromises);
 
     await blockRepository.save(blockInstance);
 

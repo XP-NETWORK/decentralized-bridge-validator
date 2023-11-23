@@ -53,15 +53,7 @@ import { IBridgeConfig, IEvmChainConfig, IMultiversXChainConfig, IStakingConfig,
 //         lastBlock: 0,
 //         chainID: "D"
 //     },
-//     // {
-//     //     chain: "TON",
-//     //     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-//     //     nativeCoinSymbol: "TON",
-//     //     intialFund: "6000000000",
-//     //     contractAddress: "6cd53301db0948631ab5cde2b98760884a99a614787163a5fed4eaefd86ab319",
-//     //     chainType: 'ton',
-//     //     lastBlock: 42116275
-//     // },
+
 // ]
 
 /*
@@ -72,7 +64,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x54194d68528B72EEb96d0a7ce7ffabaF14bD250D",
+    contractAddress: "0x0263A038014505881E33d4201950fa11c29793F3",
     chainType: 'evm',
     lastBlock: 17608314
 }
@@ -84,9 +76,18 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
-        contractAddress: "0xF468FdB229acA4Df52e1A280b84221F7e1BE99bf",
+        contractAddress: "0xBBF8B4601ebE9d14aDa11220749F71030012A57a",
         chainType: 'evm',
         lastBlock: 35315476
+    },
+    {
+        chain: "ETH",
+        rpcURL: "https://rpc.notadegen.com/eth/sepolia",
+        nativeCoinSymbol: "ETH",
+        intialFund: "50000000000000000",
+        contractAddress: "0xbcA0587e714Ed9B312aec735AbE28C763BfC6442",
+        chainType: 'evm',
+        lastBlock: 4746883
     },
     {
         chain: "MATIC",
@@ -107,7 +108,16 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         gatewayURL: "https://devnet-gateway.multiversx.com",
         lastBlock: 0,
         chainID: "D"
-    }
+    },
+    {
+        chain: "TON",
+        rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+        nativeCoinSymbol: "TON",
+        intialFund: "500000000",
+        contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
+        chainType: 'ton',
+        lastBlock: 16810573000003
+    },
 ]
 
 const stakingTestChain: IStakingConfig = {
@@ -116,8 +126,8 @@ const stakingTestChain: IStakingConfig = {
     coinSymbol: "ERC",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
-    coinAddress: "0x303C8FB57b86F70996E7988Cd3832EA717aD4E7C",
-    contractAddress: "0x65362860149e4DebA10b3341B9F86C53143a7a2C",
+    coinAddress: "0x9739a54004300e74532c1147b82791193d82B093",
+    contractAddress: "0x6e372D7fe53F4B7Baa3543Deffe6B87833846D37",
     intialFund: "100000000000000000000",
     lastBlock: 34890565
 }

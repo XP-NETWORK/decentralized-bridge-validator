@@ -24,10 +24,18 @@ const getMultiversXNftContract = ({ gatewayURL, contractAddress }: IMultiversXCo
             return nftDetails.ticker
         },
         royaltyInfo: async (tokenId: bigint) => {
-            const nftDetails = await getNonFungibleToken(contractAddress, Number(tokenId))
-            const royalities = nftDetails.royalties;
-            const royalities_ = royalities * 100
-            return String(royalities_)
+            try {
+                const nftDetails = await getNonFungibleToken(contractAddress, Number(tokenId))
+                const royalities = nftDetails.royalties;
+                if (royalities) {
+                    const royalities_ = royalities * 100
+                    return String(royalities_)
+                } else {
+                    return String(0)
+                }
+            } catch (_) {
+                return String(0)
+            }
         },
         tokenURI: async (tokenId: bigint) => {
             const nftDetails = await getNonFungibleToken(contractAddress, Number(tokenId))

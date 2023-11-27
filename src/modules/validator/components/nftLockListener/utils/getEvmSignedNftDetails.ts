@@ -1,11 +1,19 @@
 import Web3 from "web3";
 import { INftTransferDetailsObject } from "../components/types";
 import { IEvmWallet } from "@src/types";
+import { isAddress } from 'web3-validator';
 
-const getEvmSignedNftDetails = ({ nftTransferDetailsObject, evmWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, evmWallet: IEvmWallet }) => {
+const getEvmSignedNftDetails = async ({ nftTransferDetailsObject, evmWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, evmWallet: IEvmWallet }) => {
     const web3 = new Web3();
-    const nftTransferDetailsValues = Object.values(nftTransferDetailsObject);
 
+    // Mitigation if destination user address is invalid
+    if (!isAddress(nftTransferDetailsObject.destinationUserAddress)) {
+        nftTransferDetailsObject.destinationUserAddress = nftTransferDetailsObject.royaltyReceiver
+        console.log("Invalid destination address")
+    }
+
+    const nftTransferDetailsValues = Object.values(nftTransferDetailsObject);
+    
     const nftTransferDetailsTypes = [
         "uint256", // Unique ID for the NFT transfer
         "string", // Chain from where the NFT is being transferred

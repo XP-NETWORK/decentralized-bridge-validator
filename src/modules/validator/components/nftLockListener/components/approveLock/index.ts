@@ -6,7 +6,7 @@ const approveLock = async ({ nftTransferDetailsObject, wallets, destinationChain
 
     let publicAddress = "", signature = "";
     if (destinationChainObject.chainType === "evm") {
-        ({ publicAddress, signature } = getEvmSignedNftDetails({ nftTransferDetailsObject, evmWallet: wallets.evmWallet }))
+        ({ publicAddress, signature } = await getEvmSignedNftDetails({ nftTransferDetailsObject, evmWallet: wallets.evmWallet }))
     } else if (destinationChainObject.chainType === "multiversX") {
         ({ publicAddress, signature } = await getMultiversXSignedNftDetails({ nftTransferDetailsObject, multiversXWallet: wallets.multiversXWallet }))
     } else if (destinationChainObject.chainType === "ton") {

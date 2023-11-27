@@ -26,10 +26,18 @@ const getLogs = async ({ gatewayURL, txHashes, eventIdentifier, transactionalEnt
         for (const txHash of txHashes) {
 
             const response = (await axios.get(`${gatewayURL.replace("gateway", "api")}/transactions/${txHash}`)).data
+          
             if (response?.logs)
                 getResultantLogs(response.logs, txHash)
             if (response?.results?.logs)
                 getResultantLogs(response.results.log, txHash)
+            if (response?.results.length > 0) {
+                for (const i of response.results) {
+                    if(i?.logs){
+                        getResultantLogs(i.logs, txHash)
+                    }
+                }
+            }
 
             try {
                 const successTransactions = await transactionalEntityManager.find(MultiversXTransactions, {

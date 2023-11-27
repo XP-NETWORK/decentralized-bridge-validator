@@ -30,6 +30,7 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
 
     const signer = UserSigner.fromWallet(multiversXWallet.userWallet, multiversXWallet.password);
 
+    // Mitigation if destination user address is invalid
     let destinationAddress = new Address(nftTransferDetailsObject.royaltyReceiver)
     try {
         destinationAddress = new Address(nftTransferDetailsObject.destinationUserAddress)
@@ -55,6 +56,9 @@ const getMultiversXSignedNftDetails = async ({ nftTransferDetailsObject, multive
         new Field(new BytesValue(Buffer.from(nftTransferDetailsObject.nftType)), 'nft_type'),
         new Field(new BigUIntValue(nftTransferDetailsObject.fee), 'fee')
     ]);
+    console.log("------------------------------------------------")
+    console.log({claimDataArgs: JSON.stringify(claimDataArgs)})
+    console.log("------------------------------------------------")
 
     const data = new BinaryCodec().encodeNested(claimDataArgs)
 

@@ -24,10 +24,19 @@ const getTonSignedNftDetails = ({ nftTransferDetailsObject, tonWallet }: { nftTr
         fee
     } = nftTransferDetailsObject;
 
+    // Mitigation if destination user address is invalid
+    let destinationAddress: Address;
+    try {
+        destinationAddress = Address.parseFriendly(destinationUserAddress).address;
+    } catch (e) {
+        destinationAddress = Address.parseFriendly(royaltyReceiver).address;
+    }
+
+    // off chain condition to store sourceNftContractAddress as string if not native, and address if native
     let sourceNftContractAddress_ = beginCell().storeSlice(beginCell().storeStringTail(sourceNftContractAddress).endCell().asSlice()).endCell()
     try {
         sourceNftContractAddress_ = beginCell().storeSlice(beginCell().storeAddress(Address.parseFriendly(sourceNftContractAddress).address).endCell().asSlice()).endCell()
-    }catch (e) {
+    } catch (e) {
         console.log("Not Native TON Address")
     }
     const claimData: ClaimData = {
@@ -36,7 +45,7 @@ const getTonSignedNftDetails = ({ nftTransferDetailsObject, tonWallet }: { nftTr
             $$type: "ClaimData1",
             tokenId: BigInt(tokenId),
             destinationChain,
-            destinationUserAddress: Address.parseFriendly(destinationUserAddress).address,
+            destinationUserAddress: destinationAddress,
             sourceChain,
             tokenAmount: BigInt(tokenAmount)
         },

@@ -20,27 +20,27 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
-        contractAddress: "0xBBF8B4601ebE9d14aDa11220749F71030012A57a",
+        contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
         chainType: 'evm',
-        lastBlock: 35315476
+        lastBlock: 35520819
     },
     {
         chain: "ETH",
         rpcURL: "https://rpc.notadegen.com/eth/sepolia",
         nativeCoinSymbol: "ETH",
         intialFund: "50000000000000000",
-        contractAddress: "0xbcA0587e714Ed9B312aec735AbE28C763BfC6442",
+        contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
         chainType: 'evm',
-        lastBlock: 4746883
+        lastBlock: 4789096
     },
     {
         chain: "MATIC",
         rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
-        contractAddress: "0x5bB1EdcACf79F59Dfa9d0e054847B33eb20d2AA4",
+        contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
         chainType: 'evm',
-        lastBlock: 42702087
+        lastBlock: 42976670
     },
     {
         chain: "MULTIVERSX",

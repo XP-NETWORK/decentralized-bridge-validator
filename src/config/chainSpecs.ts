@@ -17,7 +17,7 @@ const storageTestnetConfig: IEvmChainConfig = {
 const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[] = [
     {
         chain: "BSC",
-        rpcURL: "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
+        rpcURL: "https://bsc-testnet.publicnode.com",
         nativeCoinSymbol: "BNB",
         intialFund: "50000000000000000",
         contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",

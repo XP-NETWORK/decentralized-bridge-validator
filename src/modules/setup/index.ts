@@ -33,7 +33,7 @@ const setup = async () => {
   if (await isStaked({ stakingChainConfig: config.stakingConfig, evmWallet: wallets.evmWallet })) {
     console.info("Stake found");
   } else {
-
+    console.info("No Stake found");
     await getInitialFunds({ wallets, config });
     await stakeTokens({ stakingChainConfig: config.stakingConfig, wallets })
   }

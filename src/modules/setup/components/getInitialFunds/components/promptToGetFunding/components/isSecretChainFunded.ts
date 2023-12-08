@@ -1,9 +1,10 @@
 import { ISecretChainConfigAndSecretWallet } from "@src/types";
 import { getCurrentSecretBalance } from "@src/utils";
+import { pubkeyToAddress } from "secretjs";
 
- 
-const formatSecret = (amount : bigint) => {
-    return amount / BigInt(1e6)
+
+const formatSecret = (amount: bigint) => {
+    return Number(amount) / 1e6
 }
 
 
@@ -11,12 +12,11 @@ const isSecretChainFunded = async ({ secretChainConfig, secretWallet }: ISecretC
     let isFunded = true;
     try {
         const currentBalance = await getCurrentSecretBalance({ secretChainConfig, secretWallet });
-        const remainingRaw = BigInt(secretChainConfig.intialFund) - BigInt(currentBalance);
-
+        const remainingRaw = BigInt(secretChainConfig.intialFund) - currentBalance;
         const remainingFund = formatSecret(remainingRaw)
         if (currentBalance < BigInt(secretChainConfig.intialFund)) {
             isFunded = false
-            console.info(`Current balance: ${formatSecret(currentBalance)}; Fund chain your wallet ${secretWallet.publicKey} on ${secretChainConfig.chain} with ${remainingFund} ${secretChainConfig.nativeCoinSymbol}.`);
+            console.info(`Current balance: ${formatSecret(currentBalance)}; Fund chain your wallet ${pubkeyToAddress(Buffer.from(secretWallet.publicKey))} on ${secretChainConfig.chain} with ${remainingFund} ${secretChainConfig.nativeCoinSymbol}.`);
         }
 
         return isFunded

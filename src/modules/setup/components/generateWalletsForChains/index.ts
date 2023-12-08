@@ -39,7 +39,7 @@ const generateSecretWallet = () => {
     const wallet = new Wallet();
 
     return {
-        publicKey: wallet.address,
+        publicKey: wallet.publicKey.toString(),
         memonic: wallet.mnemonic
     }
 }

@@ -64,12 +64,12 @@ const bridgeTestChains: TChain[] = [
     },
     {
         chain: "SECRET",
-        rpcURL: "http://192.168.18.166:26657",
+        rpcURL: "https://pulsar.api.trivium.network:1317",
         nativeCoinSymbol: "USCRT",
         intialFund: "50000",
         contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
         chainType: 'scrt',
-        chainId: 'secretdev-1',
+        chainId: 'pulsar-3',
         lastBlock: 7875
     },
 ]

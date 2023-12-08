@@ -1,5 +1,5 @@
 import { ISecretChainConfigAndSecretWallet } from '@src/types';
-import { SecretNetworkClient } from 'secretjs';
+import { SecretNetworkClient, pubkeyToAddress } from 'secretjs';
 
 
 const getCurrentSecretBalance = async (configs: ISecretChainConfigAndSecretWallet): Promise<bigint> => {
@@ -9,14 +9,15 @@ const getCurrentSecretBalance = async (configs: ISecretChainConfigAndSecretWalle
             url: configs.secretChainConfig.rpcURL,
             chainId: configs.secretChainConfig.chainId,
         });
-
+        const address = pubkeyToAddress(Buffer.from(configs.secretWallet.publicKey))
         const { balance } = await secretjs.query.bank.balance({
-            address: configs.secretWallet.publicKey,
+            address,
             denom: "uscrt",
         });
-        
+
         return BigInt(balance.amount);
     } catch (e) {
+        console.log(e)
         console.error("RPC issue:", { configs })
         throw ("Error while getCurrentSecretBalance")
     }

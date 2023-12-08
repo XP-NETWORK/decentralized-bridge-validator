@@ -40,10 +40,16 @@ interface IEvmWallet {
     privateKey: string;
 }
 
+interface ISecretWallet {
+    publicKey: string;
+    memonic: string;
+}
+
 interface IGeneratedWallets {
     evmWallet: IEvmWallet;
     multiversXWallet: IMultiversXWallet;
-    tonWallet: ITonWallet
+    tonWallet: ITonWallet;
+    secretWallet: ISecretWallet;
 }
 
 interface IConfigAndWallets {
@@ -60,12 +66,18 @@ interface IChainConfig {
     chainType: string
 }
 interface IChainConfigAndWallets {
-    chainConfig: IEvmChainConfig | IMultiversXChainConfig | ITonChainConfig;
+    chainConfig: IEvmChainConfig | IMultiversXChainConfig | ITonChainConfig | ISecretChainConfig;
     wallets: IGeneratedWallets;
 }
 interface IEvmChainConfig extends IChainConfig {
     chainType: 'evm';
     rpcURL: string;
+}
+
+interface ISecretChainConfig extends IChainConfig {
+    chainType: 'scrt';
+    rpcURL: string;
+    chainId: string;
 }
 
 interface ITonChainConfig extends IChainConfig {
@@ -89,6 +101,11 @@ interface IEvmChainConfigAndEvmWallet {
 interface ITonChainConfigAndTonWallet {
     tonChainConfig: ITonChainConfig;
     tonWallet: ITonWallet
+}
+
+interface ISecretChainConfigAndSecretWallet {
+    secretChainConfig: ISecretChainConfig;
+    secretWallet: ISecretWallet
 }
 
 interface IMultiversXChainConfigAndMultiversXWallet {
@@ -124,6 +141,13 @@ interface IMultiversXContractConfig {
     gatewayURL: string;
 }
 
+interface ISecretContractConfig {
+    contractAddress: string;
+    rpcURL: string;
+    chainId: string;
+}
+
+
 interface IEvmContractConfigAndEvmWallet {
     contractConfig: IEvmContractConfig;
     evmWallet: IEvmWallet;
@@ -136,10 +160,10 @@ interface IMultiversXContractConfigAndMultiversXWallet {
 }
 
 
-
+type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig;
 
 interface IBridgeConfig {
-    bridgeChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[];
+    bridgeChains: TChain[];
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
 }
@@ -162,6 +186,7 @@ interface INftContract {
 
 
 export {
+    TChain,
     IBridge,
     IEvmWallet,
     IMultiversXWallet,
@@ -185,5 +210,9 @@ export {
     ITonWallet,
     ITonChainConfig,
     ITonChainConfigAndTonWallet,
-    ITonContractConfig
+    ITonContractConfig,
+    ISecretWallet,
+    ISecretChainConfig,
+    ISecretChainConfigAndSecretWallet,
+    ISecretContractConfig
 }

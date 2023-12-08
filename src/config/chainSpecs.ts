@@ -1,4 +1,4 @@
-import { IBridgeConfig, IEvmChainConfig, IMultiversXChainConfig, IStakingConfig, ITonChainConfig } from "@src/types"
+import { IBridgeConfig, IEvmChainConfig, IStakingConfig, TChain } from "@src/types"
 
 /*
     Test network for bridge
@@ -14,7 +14,7 @@ const storageTestnetConfig: IEvmChainConfig = {
 }
 
 
-const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[] = [
+const bridgeTestChains: TChain[] = [
     {
         chain: "BSC",
         rpcURL: "https://bsc-testnet.publicnode.com",
@@ -62,6 +62,16 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         chainType: 'ton',
         lastBlock: 16810573000003
     },
+    {
+        chain: "SECRET",
+        rpcURL: "http://192.168.18.166:26657",
+        nativeCoinSymbol: "USCRT",
+        intialFund: "50000",
+        contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
+        chainType: 'scrt',
+        chainId: 'secretdev-1',
+        lastBlock: 7875
+    },
 ]
 
 const stakingTestChain: IStakingConfig = {
@@ -96,7 +106,7 @@ const storageProdConfig: IEvmChainConfig = {
     lastBlock: 21321
 }
 
-const bridgeProdChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
+const bridgeProdChains: TChain[] = [
     {
         chain: "BSC",
         rpcURL: "https://bsc-dataseed1.binance.org/",

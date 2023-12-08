@@ -1,4 +1,4 @@
-import { IChainConfig } from "@src/types";
+import { TChain } from "@src/types";
 import { getStorageContract } from "@src/utils";
 import { IMultiversXLockListener } from "../types";
 import { getLockEventDecodedLog } from ".";
@@ -26,7 +26,7 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
             sourceChain, // Source chain of NFT
         } = getLockEventDecodedLog({ log });
 
-        const destinationChainObject: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
+        const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;

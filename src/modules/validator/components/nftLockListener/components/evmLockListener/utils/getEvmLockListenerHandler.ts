@@ -1,4 +1,4 @@
-import { IChainConfig } from "@src/types";
+import { TChain } from "@src/types";
 import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
 import { getEvmBridgeContract, getStorageContract } from "@src/utils";
 import { getLockEventDecodedLog } from ".";
@@ -28,7 +28,7 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
             sourceChain, // Source chain of NFT
         } = getLockEventDecodedLog({ log });
 
-        const destinationChainObject: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
+        const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;

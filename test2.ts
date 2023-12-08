@@ -307,4 +307,19 @@ async function sendTon() {
     }
 }
 
-sendTon();
+// sendTon();
+import { Wallet } from "secretjs";
+
+const generateSecretWallet = () => {
+    const wallet = new Wallet();
+
+    const secretWallet = {
+        publicKey: wallet.address,
+        memonic: wallet.mnemonic
+    }
+
+    return secretWallet
+}
+
+console.log(generateSecretWallet())
+

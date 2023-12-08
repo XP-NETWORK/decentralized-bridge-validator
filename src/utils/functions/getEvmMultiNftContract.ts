@@ -25,6 +25,9 @@ const getEvmMultiNftContract = ({
             try {
                 return await erc1155Contract.name();
             } catch (error) {
+                console.error(
+                    "The contract does not have a 'name' function.",
+                );
                 return '';
             }
         },

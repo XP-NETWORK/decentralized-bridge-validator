@@ -5,9 +5,9 @@ import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
 import { Message } from "@ton/ton";
 import { loadLockedEvent } from "@src/contractsTypes/contracts/tonBridge";
-import { ITonLockListener } from "../../../types";
+import { ISecretLockListener } from "../../../types";
 
-const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLockListener) => {
+const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: ISecretLockListener) => {
 
 
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
@@ -91,7 +91,7 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
                 nftTransferDetailsObject
             })
 
-            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: tonChainConfig.chain, destinationChainObject })
+            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: secretChainConfig.chain, destinationChainObject })
         }
     }
 
@@ -99,4 +99,4 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
 
 };
 
-export default getTonLockListenerHandler
+export default getSecretLockListenerHandler

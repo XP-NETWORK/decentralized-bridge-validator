@@ -1,6 +1,7 @@
 import {
     confirmationCountNeeded,
     getMultiversXBridgeContract,
+    getSecretBridgeContract,
     getStorageContract,
     getTonBridgeContract,
     waitForMSWithMsg,
@@ -8,6 +9,7 @@ import {
 import {
     isEvmChainFunded,
     isMultiversXChainFunded,
+    isSecretChainFunded,
     isTonChainFunded,
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
@@ -62,6 +64,17 @@ const handleValidatorAddition = async ({
             isTonChainFunded({
                 tonChainConfig: chainConfig,
                 tonWallet: wallets.tonWallet,
+            });
+    } else if (chainConfig.chainType === "scrt") {
+        bridgeContract = getSecretBridgeContract({
+            secretChainConfig: chainConfig,
+            secretWallet: wallets.secretWallet,
+        });
+        publicWalletAddress = wallets.secretWallet.publicKey
+        isChainFunded = () =>
+            isSecretChainFunded({
+                secretChainConfig: chainConfig,
+                secretWallet: wallets.secretWallet,
             });
     }
 

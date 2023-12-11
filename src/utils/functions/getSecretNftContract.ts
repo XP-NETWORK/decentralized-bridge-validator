@@ -1,4 +1,4 @@
-import {  INftContract, ISecretContractConfig } from "@src/types";
+import { INftContract, ISecretContractConfig } from "@src/types";
 import { SecretNetworkClient } from "secretjs";
 
 
@@ -10,10 +10,10 @@ const getSecretNftContract = ({ rpcURL, chainId, contractAddress }: ISecretContr
     });
 
     console.log(secretjs, contractAddress)
- 
+
     return {
         name: async () => {
-             
+
             return ""
         },
         symbol: async () => {

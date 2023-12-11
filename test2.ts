@@ -308,18 +308,37 @@ async function sendTon() {
 }
 
 // sendTon();
-import { Wallet } from "secretjs";
+// import { Wallet } from "secretjs";
 
-const generateSecretWallet = () => {
-    const wallet = new Wallet();
+// const generateSecretWallet = () => {
+//     const wallet = new Wallet();
 
-    const secretWallet = {
-        publicKey: wallet.address,
-        memonic: wallet.mnemonic
-    }
+//     const secretWallet = {
+//         publicKey: wallet.address,
+//         memonic: wallet.mnemonic
+//     }
 
-    return secretWallet
+//     return secretWallet
+// }
+
+// console.log(generateSecretWallet())
+
+import { secretContractListener } from "./src/modules/validator/utils"
+
+const main = async () => {
+    await secretContractListener(
+        {
+            contractAddress: "secret1cydv592q639q55tyvm747cv6xrcatwzd5asyhg",
+            rpcURL: "http://192.168.18.166:1317",
+            chainId: 'secretdev-1',
+            lastBlock_: 37000,
+            chain: "SECRET",
+            eventId: "LockedEventInfo",
+            handleLog: (log) => {
+                console.log(log)
+            }
+        }
+    )
 }
 
-console.log(generateSecretWallet())
-
+main()

@@ -3,8 +3,6 @@ import { getStorageContract } from "@src/utils";
 import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
-import { Message } from "@ton/ton";
-import { loadLockedEvent } from "@src/contractsTypes/contracts/tonBridge";
 import { ISecretLockListener } from "../../../types";
 
 const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: ISecretLockListener) => {
@@ -12,12 +10,8 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
 
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
 
-    const handleLog = async ({ log, hash }: { log: Message, hash: string }) => {
-        console.log("------------------", log.body.asSlice().loadUint(32), hash)
-        // if its not the lock nft event we early return
-        if (log.body.asSlice().loadUint(32) !== 3571773646) {
-            return
-        }
+    const handleLog = async ({ log, hash }: { log: string, hash: string }) => {
+
 
         const {
             tokenId, // Unique ID for the NFT transfer
@@ -27,7 +21,7 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
             tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nftType, // Sigular or multiple ( 721 / 1155)
             sourceChain, // Source chain of NFT
-        } = loadLockedEvent(log.body.asSlice());
+        } = JSON.parse(log);
 
         console.log({
             tokenId, // Unique ID for the NFT transfer
@@ -51,20 +45,13 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
 
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
             const royaltyReceiver = await storageContract.chainRoyalty(destinationChain);
-
-            const getSourceNftContractAddress = () => {
-                try {
-                    return sourceNftContractAddress.asSlice().loadAddress().toString()
-                } catch (e) {
-                    return sourceNftContractAddress.asSlice().loadStringTail()
-                }
-            }
+ 
 
             const { royalty, name, symbol, metadata } = await getNftDetails({
-                sourceNftContractAddress: getSourceNftContractAddress(),
+                sourceNftContractAddress,
                 sourceChain: sourceChainObject,
                 evmWallet: wallets.evmWallet,
-                tokenId: tokenId.toString(),
+                tokenId,
                 nftType,
                 chainType: sourceChainObject.chainType
             })
@@ -72,18 +59,18 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
 
 
             const nftTransferDetailsObject: INftTransferDetailsObject = {
-                tokenId: tokenId.toString(),
+                tokenId,
                 sourceChain,
                 destinationChain,
                 destinationUserAddress,
-                sourceNftContractAddress: getSourceNftContractAddress(),
+                sourceNftContractAddress,
                 name,
                 symbol,
                 royalty,
                 royaltyReceiver,
                 metadata,
                 transactionHash,
-                tokenAmount: tokenAmount.toString(),
+                tokenAmount,
                 nftType,
                 fee,
             };

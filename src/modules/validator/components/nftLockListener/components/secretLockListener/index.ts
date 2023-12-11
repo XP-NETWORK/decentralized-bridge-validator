@@ -10,10 +10,10 @@ const secretLockListener = async ({ config, secretChainConfig, wallets }: ISecre
     const handleLog = getSecretLockListenerHandler({ config, secretChainConfig, wallets })
 
     try {
-        await secretContractListener({ contractAddress, rpcURL, lastBlock_, chain, chainId, handleLog });
-    } catch (e) {
-        console.error("Error in secretLockListener", e)
-    }
+        await secretContractListener({ contractAddress, rpcURL, lastBlock_, chain, chainId, eventId : "LockedEventInfo", handleLog });
+} catch (e) {
+    console.error("Error in secretLockListener", e)
+}
 }
 
 

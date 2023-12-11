@@ -1,7 +1,7 @@
 import { IConfigAndWallets } from "@src/types"
 import { createJobWithWorker } from "../../utils"
-import { evmLockListener, multiversXLockListener, tonLockListener } from "./components"
-import { IEvmLockListener, ITonLockListener } from "./types";
+import { evmLockListener, multiversXLockListener, secretLockListener, tonLockListener } from "./components"
+import { IEvmLockListener, ISecretLockListener, ITonLockListener } from "./types";
 
 const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
 
@@ -16,6 +16,10 @@ const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
             const jobData: ITonLockListener = { tonChainConfig: chainConfig, config, wallets };
             const jobName: string = `tonLockedEventListener_${chainConfig.chain}`
             await createJobWithWorker<ITonLockListener>({ jobData, jobName, jobFunction: tonLockListener })
+        } else if (chainConfig.chainType === "scrt") {
+            const jobData: ISecretLockListener = { config, secretChainConfig: chainConfig, wallets };
+            const jobName: string = `secretLockedEventListener_${chainConfig.chain}`
+            await createJobWithWorker<ISecretLockListener>({ jobData, jobName, jobFunction: secretLockListener })
         }
     }
 }

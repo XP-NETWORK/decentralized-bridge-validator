@@ -42,7 +42,7 @@ interface IEvmWallet {
 
 interface ISecretWallet {
     publicKey: string;
-    memonic: string;
+    privateKey: string;
 }
 
 interface IGeneratedWallets {
@@ -178,9 +178,9 @@ interface IBridge {
 }
 
 interface INftContract {
-    name: () => Promise<string>;
-    symbol: () => Promise<string>;
-    royaltyInfo: (tokenId: bigint) => Promise<string>;
+    name: (tokenId?: bigint) => Promise<string>;
+    symbol: (tokenId?: bigint) => Promise<string>;
+    royaltyInfo: (tokenId?: bigint) => Promise<string>;
     tokenURI: (tokenId: bigint) => Promise<string>;
 }
 

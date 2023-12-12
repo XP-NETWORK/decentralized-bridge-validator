@@ -12,15 +12,14 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
 
     const handleLog = async ({ log, hash }: { log: string, hash: string }) => {
 
-
         const {
-            tokenId, // Unique ID for the NFT transfer
-            destinationChain, // Chain to where the NFT is being transferred
-            destinationUserAddress, // User's address in the destination chain
-            sourceNftContractAddress, // Address of the NFT contract in the source chain
-            tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
-            nftType, // Sigular or multiple ( 721 / 1155)
-            sourceChain, // Source chain of NFT
+            token_id: tokenId, // Unique ID for the NFT transfer
+            destination_chain: destinationChain, // Chain to where the NFT is being transferred
+            destination_user_address: destinationUserAddress, // User's address in the destination chain
+            source_nft_contract_address: sourceNftContractAddress, // Address of the NFT contract in the source chain
+            token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+            nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+            source_chain: sourceChain, // Source chain of NFT
         } = JSON.parse(log);
 
         console.log({
@@ -45,7 +44,7 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
 
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
             const royaltyReceiver = await storageContract.chainRoyalty(destinationChain);
- 
+
 
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,

@@ -1,9 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { AddValidatorType } from "@src/contractsTypes/contracts/secretBridge";
 import { IBridge, ISecretChainConfigAndSecretWallet } from "@src/types";
-import { SecretNetworkClient } from "secretjs";
+import { SecretNetworkClient, pubkeyToAddress } from "secretjs";
+import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
 
 const getSecretBridgeContract = ({ secretChainConfig, secretWallet }: ISecretChainConfigAndSecretWallet): IBridge => {
 
+    const bridgeContractCodeHash = "7b5d3d9c6610c9f210cc3c9113efb66dbbcca884cc16b0eb72e64cbbdb1a26b4";
     const secretjs = new SecretNetworkClient({
         url: secretChainConfig.rpcURL,
         chainId: secretChainConfig.chainId,
@@ -12,21 +14,54 @@ const getSecretBridgeContract = ({ secretChainConfig, secretWallet }: ISecretCha
 
     return {
         validators: async (address: string) => {
-            return { added: false }
+            const res = (await secretjs.query.compute.queryContract({
+                contract_address: secretChainConfig.contractAddress,
+                code_hash: bridgeContractCodeHash,
+                query: {
+                    get_validator: { "address": Buffer.from(address, "hex").toString("base64") }
+                }
+            })) as { validator: { data: { added: boolean } } }
+            return { added: res.validator.data.added }
         },
         validatorsCount: async () => {
-            return BigInt(1)
+            const res = await secretjs.query.compute.queryContract({
+                contract_address: secretChainConfig.contractAddress,
+                code_hash: bridgeContractCodeHash,
+                query: {
+                    get_validators_count: {}
+                }
+            }) as { validator_count_response: { count: number } }
+            return BigInt(res.validator_count_response.count)
         },
-        addValidator: async (validatorAddress: string, signatures: {
+        addValidator: async (validatorToAddPublicKey: string, signatures: {
             signerAddress: string;
             signature: string
         }[]) => {
-           
+            const validatorToAddPublicKeyUint8 = Buffer.from(validatorToAddPublicKey, "hex")
+            const msg: AddValidatorType = {
+                add_validator: {
+                    data: {
+                        validator: [encodeSecp256k1Pubkey(validatorToAddPublicKeyUint8).value, pubkeyToAddress(validatorToAddPublicKeyUint8)],
+                        signatures: signatures.map(item => {
+                            return { signature: Buffer.from(item.signature.replace("0x", ""), "hex").toString("base64"), signer_address: item.signerAddress }
+                        })
+                    }
+                }
+            }
+
+            const tx = await secretjs.tx.compute.executeContract({
+                contract_address: secretChainConfig.contractAddress,
+                msg,
+                code_hash: bridgeContractCodeHash,
+                sender: pubkeyToAddress(Buffer.from(secretWallet.publicKey, "hex")),
+            }, {
+                gasLimit: 200_000,
+            });
+
             return {
-                hash: "",
+                hash: tx.transactionHash,
                 wait: async () => {
-                     
-                    
+                    return
                 }
             }
         }

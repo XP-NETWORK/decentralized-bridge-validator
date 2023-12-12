@@ -18,7 +18,8 @@ import getTonBridgeContract from "./getTonBridgeContract"
 import getTonNftContract from "./getTonNftContract"
 import getCurrentSecretBalance from "./getCurrentSecretBalance"
 import getSecretBridgeContract from "./getSecretBridgeContract"
-import getSecretNftContract from "./getSecretNftContract"
+import getSecretMultiNftContract from "./getSecretMultiNftContract"
+import getSecretSingleNftContract from "./getSecretSingleNftContract"
 
 export {
     readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
@@ -27,5 +28,5 @@ export {
     getRedisConnection, getEvmFungibleContract, getCurrentMultiversXBalance,
     getMultiversXBridgeContract, decodeBase64Array, getCurrentTonBalance,
     getTonBridgeContract, getTonNftContract, getCurrentSecretBalance,
-    getSecretBridgeContract, getSecretNftContract
+    getSecretBridgeContract, getSecretMultiNftContract, getSecretSingleNftContract
 }

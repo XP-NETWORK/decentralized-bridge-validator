@@ -19,11 +19,13 @@ import {
     getTonNftContract,
     getCurrentSecretBalance,
     getSecretBridgeContract,
-    getSecretNftContract
+    getSecretMultiNftContract,
+    getSecretSingleNftContract
 } from './functions';
 
 export {
-    getSecretNftContract,
+    getSecretMultiNftContract,
+    getSecretSingleNftContract,
     getSecretBridgeContract,
     readJsonFile,
     getCurrentEvmBalance,

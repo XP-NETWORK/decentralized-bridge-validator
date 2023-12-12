@@ -10,8 +10,8 @@ function isSecretWallet(object: unknown): object is ISecretWallet {
     return typeof secretWallet === 'object' &&
         secretWallet !== null && 'publicKey' in secretWallet &&
         typeof secretWallet.publicKey === 'string' &&
-        'memonic' in secretWallet &&
-        typeof secretWallet.memonic === 'string';
+        'privateKey' in secretWallet &&
+        typeof secretWallet.privateKey === 'string';
 }
 
 export default isSecretWallet

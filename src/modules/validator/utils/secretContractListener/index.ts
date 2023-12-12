@@ -38,6 +38,7 @@ async function secretContractListener(
     const lastBlock = blockInstance.lastBlock;
     const latestBlockNumber = Number((await secretjs.query.tendermint.getLatestBlock({})).block.header.height);
     const latestBlock = lastBlock + BLOCK_CHUNKS < latestBlockNumber ? lastBlock + BLOCK_CHUNKS : latestBlockNumber;
+    blockInstance.lastBlock = latestBlock;
     const query = `message.contract_address = '${contractAddress}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`
 
     const logs = await secretjs.query.txsQuery(query);

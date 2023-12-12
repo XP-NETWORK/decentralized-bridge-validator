@@ -39,8 +39,8 @@ const generateSecretWallet = () => {
     const wallet = new Wallet();
 
     return {
-        publicKey: wallet.publicKey.toString(),
-        memonic: wallet.mnemonic
+        publicKey: Buffer.from(wallet.publicKey).toString("hex"),
+        privateKey: Buffer.from(wallet.privateKey).toString("hex")
     }
 }
 

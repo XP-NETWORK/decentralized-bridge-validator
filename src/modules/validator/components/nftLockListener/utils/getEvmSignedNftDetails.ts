@@ -31,6 +31,7 @@ const getEvmSignedNftDetails = async ({ nftTransferDetailsObject, evmWallet }: {
         "uint256", // fee that needs to be paid by the user to the bridge,
     ]
 
+    console.log("hereeeeeee")
     const signedNftTransferDetails = web3.eth.accounts
         .privateKeyToAccount(evmWallet.privateKey)
         .sign(web3.utils.keccak256(

@@ -16,7 +16,7 @@ const isSecretChainFunded = async ({ secretChainConfig, secretWallet }: ISecretC
         const remainingFund = formatSecret(remainingRaw)
         if (currentBalance < BigInt(secretChainConfig.intialFund)) {
             isFunded = false
-            console.info(`Current balance: ${formatSecret(currentBalance)}; Fund chain your wallet ${pubkeyToAddress(Buffer.from(secretWallet.publicKey))} on ${secretChainConfig.chain} with ${remainingFund} ${secretChainConfig.nativeCoinSymbol}.`);
+            console.info(`Current balance: ${formatSecret(currentBalance)}; Fund chain your wallet ${pubkeyToAddress(Buffer.from(secretWallet.publicKey, "hex"))} on ${secretChainConfig.chain} with ${remainingFund} ${secretChainConfig.nativeCoinSymbol}.`);
         }
 
         return isFunded

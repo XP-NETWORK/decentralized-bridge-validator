@@ -16,7 +16,7 @@ const approveLock = async ({ nftTransferDetailsObject, wallets, destinationChain
     }
 
     try {
-        console.info({ nftTransferDetailsObject, sig: signature });
+        console.info({ nftTransferDetailsObject, sig: signature, signer: publicAddress });
 
         const tx = await storageContract.approveLockNft(
             nftTransferDetailsObject.transactionHash,

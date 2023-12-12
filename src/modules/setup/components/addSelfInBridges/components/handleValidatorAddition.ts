@@ -90,6 +90,17 @@ const handleValidatorAddition = async ({
                 return;
             }
 
+            let isFunded = false;
+
+            while (!isFunded) {
+                // @TODO handle staking + intial fund case
+                isFunded = await isChainFunded();
+                if (!isFunded)
+                    await waitForKeyPress(
+                        'Press [Enter] key after funding your addresses',
+                    );
+            }
+
             let validatorCountInChain = Number(
                 await bridgeContract.validatorsCount(),
             );
@@ -129,16 +140,7 @@ const handleValidatorAddition = async ({
                 };
             });
 
-            let isFunded = false;
-
-            while (!isFunded) {
-                // @TODO handle staking + intial fund case
-                isFunded = await isChainFunded();
-                if (!isFunded)
-                    await waitForKeyPress(
-                        'Press [Enter] key after funding your addresses',
-                    );
-            }
+        
 
             const addValidatorTx = await bridgeContract.addValidator(
                 publicWalletAddress,

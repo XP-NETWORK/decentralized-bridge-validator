@@ -1,6 +1,7 @@
 import {
     confirmationCountNeeded,
     getMultiversXBridgeContract,
+    getSecretBridgeContract,
     getStorageContract,
     getTonBridgeContract,
     waitForMSWithMsg,
@@ -8,6 +9,7 @@ import {
 import {
     isEvmChainFunded,
     isMultiversXChainFunded,
+    isSecretChainFunded,
     isTonChainFunded,
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
@@ -63,6 +65,17 @@ const handleValidatorAddition = async ({
                 tonChainConfig: chainConfig,
                 tonWallet: wallets.tonWallet,
             });
+    } else if (chainConfig.chainType === "scrt") {
+        bridgeContract = getSecretBridgeContract({
+            secretChainConfig: chainConfig,
+            secretWallet: wallets.secretWallet,
+        });
+        publicWalletAddress = wallets.secretWallet.publicKey
+        isChainFunded = () =>
+            isSecretChainFunded({
+                secretChainConfig: chainConfig,
+                secretWallet: wallets.secretWallet,
+            });
     }
 
     while (failiure) {
@@ -75,6 +88,17 @@ const handleValidatorAddition = async ({
             if (isAlreadyAdded) {
                 console.info(`Already added in ${chainConfig.chain}`);
                 return;
+            }
+
+            let isFunded = false;
+
+            while (!isFunded) {
+                // @TODO handle staking + intial fund case
+                isFunded = await isChainFunded();
+                if (!isFunded)
+                    await waitForKeyPress(
+                        'Press [Enter] key after funding your addresses',
+                    );
             }
 
             let validatorCountInChain = Number(
@@ -116,16 +140,7 @@ const handleValidatorAddition = async ({
                 };
             });
 
-            let isFunded = false;
-
-            while (!isFunded) {
-                // @TODO handle staking + intial fund case
-                isFunded = await isChainFunded();
-                if (!isFunded)
-                    await waitForKeyPress(
-                        'Press [Enter] key after funding your addresses',
-                    );
-            }
+        
 
             const addValidatorTx = await bridgeContract.addValidator(
                 publicWalletAddress,

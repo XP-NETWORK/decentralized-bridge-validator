@@ -1,5 +1,5 @@
 import { IGeneratedWallets } from "@src/types";
-import { isEvmWallet, isMultiversXWallet, isTonWallet } from ".";
+import { isEvmWallet, isMultiversXWallet, isSecretWallet, isTonWallet } from ".";
 
 function isGeneratedWallets(object: unknown): object is IGeneratedWallets {
     if (typeof object !== 'object' || object === null) {
@@ -11,9 +11,11 @@ function isGeneratedWallets(object: unknown): object is IGeneratedWallets {
         'evmWallet' in generatedWallets &&
         'multiversXWallet' in generatedWallets &&
         'tonWallet' in generatedWallets &&
+        'secretWallet' in generatedWallets &&
         isEvmWallet(generatedWallets.evmWallet) &&
         isMultiversXWallet(generatedWallets.multiversXWallet) &&
-        isTonWallet(generatedWallets.tonWallet)
+        isTonWallet(generatedWallets.tonWallet) &&
+        isSecretWallet(generatedWallets.secretWallet)
     )
 
     return existingWalletsFound;

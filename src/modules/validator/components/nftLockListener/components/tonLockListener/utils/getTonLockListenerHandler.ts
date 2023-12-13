@@ -1,4 +1,4 @@
-import { IChainConfig } from "@src/types";
+import { TChain } from "@src/types";
 import { getStorageContract } from "@src/utils";
 import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
@@ -39,7 +39,7 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
             sourceChain, // Source chain of NFT
         })
 
-        const destinationChainObject: IChainConfig = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
+        const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;
@@ -66,7 +66,6 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
                 evmWallet: wallets.evmWallet,
                 tokenId: tokenId.toString(),
                 nftType,
-                chainType: sourceChainObject.chainType
             })
 
 

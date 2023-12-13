@@ -16,12 +16,10 @@ const getInitialFunds = async ({
                     'Press [Enter] key after funding your addresses',
                 );
         } catch (e) {
-            console.info(e);
             await waitForMSWithMsg(
                 ProcessDelayMilliseconds,
-                'Something went wrong',
+                'Something went wrong in getInitialFunds',
             );
-            isFunded = true;
         }
     }
 };

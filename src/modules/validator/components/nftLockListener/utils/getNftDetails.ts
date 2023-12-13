@@ -1,4 +1,4 @@
-import { getEvmMultiNftContract, getEvmSingleNftContract, getTonNftContract } from "@src/utils";
+import { getEvmMultiNftContract, getEvmSingleNftContract, getSecretMultiNftContract, getSecretSingleNftContract, getTonNftContract } from "@src/utils";
 import { IGetEvmNftDetails } from "./types";
 import { INftContract } from "@src/types";
 import getMultiversXNftContract from "@src/utils/functions/getMultiversXNftContract";
@@ -21,6 +21,12 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet,
         nftContract = getMultiversXNftContract({ gatewayURL: sourceChain.gatewayURL, contractAddress: sourceNftContractAddress })
     } else if (sourceChain.chainType === "ton") {
         nftContract = getTonNftContract({ rpcURL: sourceChain.rpcURL, contractAddress: sourceNftContractAddress })
+    } else if (sourceChain.chainType === "scrt") {
+        if (nftType === "singular") {
+            nftContract = getSecretSingleNftContract({ rpcURL: sourceChain.rpcURL, contractAddress: sourceNftContractAddress, chainId: sourceChain.chainId })
+        } else if (nftType === "multiple") {
+            nftContract = getSecretMultiNftContract({ rpcURL: sourceChain.rpcURL, contractAddress: sourceNftContractAddress, chainId: sourceChain.chainId })
+        }
     }
 
 

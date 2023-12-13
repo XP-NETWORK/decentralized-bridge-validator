@@ -16,10 +16,17 @@ import {
     decodeBase64Array,
     getTonBridgeContract,
     getCurrentTonBalance,
-    getTonNftContract
+    getTonNftContract,
+    getCurrentSecretBalance,
+    getSecretBridgeContract,
+    getSecretMultiNftContract,
+    getSecretSingleNftContract
 } from './functions';
 
 export {
+    getSecretMultiNftContract,
+    getSecretSingleNftContract,
+    getSecretBridgeContract,
     readJsonFile,
     getCurrentEvmBalance,
     waitForKeyPress,
@@ -37,5 +44,6 @@ export {
     decodeBase64Array,
     getCurrentTonBalance,
     getTonBridgeContract,
-    getTonNftContract
+    getTonNftContract,
+    getCurrentSecretBalance
 };

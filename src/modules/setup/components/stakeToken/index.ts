@@ -70,6 +70,10 @@ const stakeTokens_ = async ({
                 validatorAddress: wallets.tonWallet.publicKey,
                 chainType: 'ton',
             },
+            {
+                validatorAddress: wallets.secretWallet.publicKey,
+                chainType: 'scrt',
+            },
         ]);
         await stakeTx.wait();
         console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);

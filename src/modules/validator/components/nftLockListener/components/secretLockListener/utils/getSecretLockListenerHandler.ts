@@ -1,24 +1,28 @@
 import { TChain } from "@src/types";
-import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
-import { getEvmBridgeContract, getStorageContract } from "@src/utils";
-import { getLockEventDecodedLog } from ".";
-import { IEvmLockListener } from "../../../types";
+import { getStorageContract } from "@src/utils";
 import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
+import { ISecretLockListener } from "../../../types";
 
-const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLockListener) => {
+const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: ISecretLockListener) => {
 
 
-    const bridgeContract = getEvmBridgeContract({ evmChainConfig, evmWallet: wallets.evmWallet });
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
-    const { topicHash } = bridgeContract.interface.getEvent("Locked");
 
-    const handleLog = async ({ log }: { log: LogEntry }) => {
-        // if its not the lock nft event we early return
-        if (typeof log === "string" || !log.topics || !log.topics.includes(topicHash)) return;
+    const handleLog = async ({ log, hash }: { log: string, hash: string }) => {
 
         const {
+            token_id: tokenId, // Unique ID for the NFT transfer
+            destination_chain: destinationChain, // Chain to where the NFT is being transferred
+            destination_user_address: destinationUserAddress, // User's address in the destination chain
+            source_nft_contract_address: sourceNftContractAddress, // Address of the NFT contract in the source chain
+            token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+            nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+            source_chain: sourceChain, // Source chain of NFT
+        } = JSON.parse(log);
+
+        console.log({
             tokenId, // Unique ID for the NFT transfer
             destinationChain, // Chain to where the NFT is being transferred
             destinationUserAddress, // User's address in the destination chain
@@ -26,13 +30,13 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
             tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nftType, // Sigular or multiple ( 721 / 1155)
             sourceChain, // Source chain of NFT
-        } = getLockEventDecodedLog({ log });
+        })
 
         const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;
-        const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
+        const transactionHash = hash; // Transaction hash of the transfer on the source chain
 
         const sourceChainObject = config.bridgeChains.find(item => item.chain === sourceChain);
 
@@ -41,6 +45,7 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
             const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
             const royaltyReceiver = await storageContract.chainRoyalty(destinationChain);
 
+
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
                 sourceChain: sourceChainObject,
@@ -48,6 +53,8 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
                 tokenId,
                 nftType,
             })
+
+
 
             const nftTransferDetailsObject: INftTransferDetailsObject = {
                 tokenId,
@@ -65,8 +72,11 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
                 nftType,
                 fee,
             };
+            console.log({
+                nftTransferDetailsObject
+            })
 
-            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: evmChainConfig.chain, destinationChainObject })
+            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: secretChainConfig.chain, destinationChainObject })
         }
     }
 
@@ -74,4 +84,4 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
 
 };
 
-export default getEvmLockListenerHandler
+export default getSecretLockListenerHandler

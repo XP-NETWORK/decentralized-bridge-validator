@@ -12,7 +12,7 @@ const evmLockListener = async ({ config, evmChainConfig, wallets }: IEvmLockList
     try {
         await evmContractListener({ contractAddress, rpcURL, lastBlock_, chain, handleLog });
     } catch (e) {
-        console.error("Error in evmLockListener", e)
+        console.error("Error in evmLockListener", evmChainConfig.chain, e)
     }
 }
 

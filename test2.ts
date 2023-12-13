@@ -307,4 +307,86 @@ async function sendTon() {
     }
 }
 
-sendTon();
+// sendTon();
+// import { Wallet } from "secretjs";
+
+// const generateSecretWallet = () => {
+//     const wallet = new Wallet();
+
+//     const secretWallet = {
+//         publicKey: wallet.address,
+//         memonic: wallet.mnemonic
+//     }
+
+//     return secretWallet
+// }
+
+// console.log(generateSecretWallet())
+
+import { getSecretBridgeContract, getSecretSingleNftContract } from "./src/utils"
+import { getSecretSignedNftDetails } from "./src/modules/validator/components/nftLockListener/utils"
+const bridge = getSecretBridgeContract(
+    {
+        secretChainConfig: {
+            chain: "SECRET",
+            // rpcURL: "https://pulsar.api.trivium.network:1317",
+            rpcURL: "http://192.168.18.166:1317",
+            nativeCoinSymbol: "USCRT",
+            intialFund: "50000",
+            contractAddress: "secret13vvtr20crrly8j2uhmhaq6a946h2vwsjsds48r",
+            chainType: 'scrt',
+            // chainId: 'pulsar-3',
+            chainId: 'secretdev-1',
+            lastBlock: 7875
+        },
+        secretWallet: {
+            "publicKey": "03aa85dad948edcdc8b9d301a89a2917d1d6e3b841bbcecfc79556e544a6bdadaa",
+            "privateKey": "4d692889de94b8011a84a84e7b613152b534bb6e5b8404da622760ff0eb1793b"
+        }
+    }
+)
+
+const localConfig = {
+    rpcURL: "http://192.168.18.166:1317",
+    chainId: "secretdev-1",
+    contractAddress: "secret1q47cjgv9j2pz4m86ew27erf69pev3pta5fcdyw"
+}
+
+const prodConfig = {
+    rpcURL: "https://secret-4.api.trivium.network:1317",
+    chainId: "secret-4",
+    contractAddress: "secret1857lk96gjk7dcn5539h57n9su57hckan0pq8an"
+}
+
+const nftContract = getSecretSingleNftContract(prodConfig)
+
+const nftTransferDetailsObject = {
+    tokenId: '1',
+    sourceChain: 'SECRET',
+    destinationChain: 'SECRET',
+    destinationUserAddress: 'secret1w5fw0m5cad30lsu8x65m57ad5s80f0fmg3jfal',
+    sourceNftContractAddress: 'secret193cv8j926d62z2f9mg89xmxhd3tp7dgvga97ch',
+    name: 'DD',
+    symbol: 'D',
+    royalty: '1000',
+    royaltyReceiver: 'secret196dcgy98spe3v6pwv0j6sf09lc7cv0ucf267j4',
+    metadata: '',
+    transactionHash: '0x65c8c9c4ec0c79706f18f4416e44fad51b1c4299b404103584c3b21d91dfe882',
+    tokenAmount: '1',
+    nftType: 'singular',
+    fee: '100000000'
+}
+
+const secretWallet = {
+    "publicKey": "03aa85dad948edcdc8b9d301a89a2917d1d6e3b841bbcecfc79556e544a6bdadaa",
+    "privateKey": "4d692889de94b8011a84a84e7b613152b534bb6e5b8404da622760ff0eb1793b"
+}
+
+const main = async () => {
+    // console.log(await nftContract.tokenURI(BigInt("140")))
+    // console.log(await bridge.validatorsCount())
+    console.log(await getSecretSignedNftDetails({ nftTransferDetailsObject, secretWallet }))
+}
+
+
+main()

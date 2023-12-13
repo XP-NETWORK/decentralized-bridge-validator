@@ -1,4 +1,4 @@
-import { IBridgeConfig, IEvmChainConfig, IMultiversXChainConfig, IStakingConfig, ITonChainConfig } from "@src/types"
+import { IBridgeConfig, IEvmChainConfig, IStakingConfig, TChain } from "@src/types"
 
 /*
     Test network for bridge
@@ -8,13 +8,13 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x0263A038014505881E33d4201950fa11c29793F3",
+    contractAddress: "0x78F4f8bd33e65b461F00c693bD7C70f5Bc095C8a",
     chainType: 'evm',
     lastBlock: 17608314
 }
 
 
-const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig)[] = [
+const bridgeTestChains: TChain[] = [
     {
         chain: "BSC",
         rpcURL: "https://bsc-testnet.publicnode.com",
@@ -22,7 +22,7 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         intialFund: "50000000000000000",
         contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
         chainType: 'evm',
-        lastBlock: 35520819
+        lastBlock: 35889818
     },
     {
         chain: "ETH",
@@ -31,16 +31,16 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         intialFund: "50000000000000000",
         contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
         chainType: 'evm',
-        lastBlock: 4789096
+        lastBlock: 4871981
     },
     {
         chain: "MATIC",
-        rpcURL: "https://aged-purple-paper.matic-testnet.quiknode.pro/68392cf29ff997951ee6b071f423791c4132cb66/",
+        rpcURL: "https://polygon-mumbai-bor.publicnode.com",
         nativeCoinSymbol: "MATIC",
         intialFund: "50000000000000000",
         contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
         chainType: 'evm',
-        lastBlock: 42976670
+        lastBlock: 43481151
     },
     {
         chain: "MULTIVERSX",
@@ -62,18 +62,30 @@ const bridgeTestChains: (IMultiversXChainConfig | IEvmChainConfig | ITonChainCon
         chainType: 'ton',
         lastBlock: 16810573000003
     },
+    {
+        chain: "SECRET",
+        // rpcURL: "https://pulsar.api.trivium.network:1317",
+        rpcURL: "http://192.168.18.166:1317",
+        nativeCoinSymbol: "USCRT",
+        intialFund: "50000",
+        contractAddress: "secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp",
+        chainType: 'scrt',
+        // chainId: 'pulsar-3',
+        chainId: 'secretdev-1',
+        lastBlock: 50883
+    },
 ]
 
 const stakingTestChain: IStakingConfig = {
     chain: "BSC",
-    rpcURL: "https://responsive-silent-water.bsc-testnet.quiknode.pro/e374f23ac76c16f69a70b6c99837f0eb2ea112e1/",
+    rpcURL: "https://bsc-testnet.publicnode.com",
     coinSymbol: "ERC",
     nativeCoinSymbol: "BNB",
     chainType: 'evm',
     coinAddress: "0x9739a54004300e74532c1147b82791193d82B093",
     contractAddress: "0x6e372D7fe53F4B7Baa3543Deffe6B87833846D37",
     intialFund: "100000000000000000000",
-    lastBlock: 34890565
+    lastBlock: 35889818
 }
 
 
@@ -96,7 +108,7 @@ const storageProdConfig: IEvmChainConfig = {
     lastBlock: 21321
 }
 
-const bridgeProdChains: (IMultiversXChainConfig | IEvmChainConfig)[] = [
+const bridgeProdChains: TChain[] = [
     {
         chain: "BSC",
         rpcURL: "https://bsc-dataseed1.binance.org/",

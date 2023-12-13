@@ -52,7 +52,6 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
                 evmWallet: wallets.evmWallet,
                 tokenId,
                 nftType,
-                chainType: sourceChainObject.chainType
             })
 
 

@@ -47,7 +47,6 @@ const getEvmLockListenerHandler = ({ config, evmChainConfig, wallets }: IEvmLock
                 evmWallet: wallets.evmWallet,
                 tokenId,
                 nftType,
-                chainType: sourceChainObject.chainType
             })
 
             const nftTransferDetailsObject: INftTransferDetailsObject = {

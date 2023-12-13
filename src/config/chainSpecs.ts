@@ -68,11 +68,11 @@ const bridgeTestChains: TChain[] = [
         rpcURL: "http://192.168.18.166:1317",
         nativeCoinSymbol: "USCRT",
         intialFund: "50000",
-        contractAddress: "secret1a3w30u2qrekrxzc6rl63htkgjvch95pzz2erug",
+        contractAddress: "secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp",
         chainType: 'scrt',
         // chainId: 'pulsar-3',
         chainId: 'secretdev-1',
-        lastBlock: 7875
+        lastBlock: 50883
     },
 ]
 

@@ -45,7 +45,6 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
                 evmWallet: wallets.evmWallet,
                 tokenId,
                 nftType,
-                chainType: sourceChainObject.chainType
             })
 
             const nftTransferDetailsObject: INftTransferDetailsObject = {

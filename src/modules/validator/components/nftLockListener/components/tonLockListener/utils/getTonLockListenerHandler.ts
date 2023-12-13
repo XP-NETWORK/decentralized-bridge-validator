@@ -66,7 +66,6 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
                 evmWallet: wallets.evmWallet,
                 tokenId: tokenId.toString(),
                 nftType,
-                chainType: sourceChainObject.chainType
             })
 
 

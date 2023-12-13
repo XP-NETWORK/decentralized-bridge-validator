@@ -6,7 +6,6 @@ interface IGetEvmNftDetails {
     evmWallet: IEvmWallet;
     tokenId: string;
     nftType: string;
-    chainType: string;
 }
 
 

@@ -5,7 +5,7 @@ import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
 
 const getSecretBridgeContract = ({ secretChainConfig, secretWallet }: ISecretChainConfigAndSecretWallet): IBridge => {
 
-    const bridgeContractCodeHash = "7b5d3d9c6610c9f210cc3c9113efb66dbbcca884cc16b0eb72e64cbbdb1a26b4";
+    const bridgeContractCodeHash = "dbccb5a7abf668d050d720cd01ea39d556492456ceb870dcae80dc4ff8572575";
     const secretjs = new SecretNetworkClient({
         url: secretChainConfig.rpcURL,
         chainId: secretChainConfig.chainId,

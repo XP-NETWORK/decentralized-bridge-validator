@@ -4,7 +4,7 @@ import { isGeneratedWallets } from '@src/modules/setup/typesGuardRuntime';
 import { promises as fs } from 'fs';
 import { IGeneratedWallets } from '@src/types';
 import { Mnemonic, UserWallet } from '@multiversx/sdk-wallet/out';
-import { Wallet } from "secretjs";
+import { Wallet as secretWallet } from "secretjs";
 
 import TonWeb from 'tonweb';
 
@@ -36,7 +36,16 @@ const generateTonWallet = () => {
 }
 
 const generateSecretWallet = () => {
-    const wallet = new Wallet();
+    const wallet = new secretWallet();
+
+    return {
+        publicKey: Buffer.from(wallet.publicKey).toString("hex"),
+        privateKey: Buffer.from(wallet.privateKey).toString("hex")
+    }
+}
+
+const generateTezosWallet = () => {
+    const wallet = new secretWallet();
 
     return {
         publicKey: Buffer.from(wallet.publicKey).toString("hex"),
@@ -50,12 +59,14 @@ const generateWalletsForChains_ = (): IGeneratedWallets => {
     const multiversXWallet = generateMultiversXWallet();
     const tonWallet = generateTonWallet();
     const secretWallet = generateSecretWallet();
+    const tezosWallet = generateTezosWallet();
 
     const generatedWAllets: IGeneratedWallets = {
         evmWallet,
         multiversXWallet,
         tonWallet,
-        secretWallet
+        secretWallet,
+        tezosWallet
     }
 
     return generatedWAllets

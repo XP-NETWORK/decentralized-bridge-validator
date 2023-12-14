@@ -381,11 +381,29 @@ const secretWallet = {
     "publicKey": "03aa85dad948edcdc8b9d301a89a2917d1d6e3b841bbcecfc79556e544a6bdadaa",
     "privateKey": "4d692889de94b8011a84a84e7b613152b534bb6e5b8404da622760ff0eb1793b"
 }
+import { b58cencode, prefix, Prefix } from '@taquito/utils';
+import { InMemorySigner } from '@taquito/signer';
+import { Wallet as secretWalletK } from "secretjs";
+
+const generateTezosWallet = async () => {
+    const b58encodedSecret = b58cencode(
+         "1e9059d60e7554fab0306ff67a54572dc7fabd0f547966afd83fae98ff0f9d5d" ,
+        prefix[Prefix.P2SK]
+      );
+  
+      //We take the encoded secret to configure the signer.
+      const tezosSigner = await InMemorySigner.fromSecretKey(b58encodedSecret);
+      console.log(await tezosSigner.publicKey(), await tezosSigner.publicKeyHash(), b58encodedSecret )
+    return {
+        privateKey: Buffer.from("1e9059d60e7554fab0306ff67a54572dc7fabd0f547966afd83fae98ff0f9d5d").toString("hex")
+    }
+}
+
 
 const main = async () => {
     // console.log(await nftContract.tokenURI(BigInt("140")))
     // console.log(await bridge.validatorsCount())
-    console.log(await getSecretSignedNftDetails({ nftTransferDetailsObject, secretWallet }))
+    await generateTezosWallet()
 }
 
 

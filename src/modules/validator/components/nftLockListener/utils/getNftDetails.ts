@@ -28,7 +28,7 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, tokenId, n
             nftContract = getSecretMultiNftContract({ rpcURL: sourceChain.rpcURL, contractAddress: sourceNftContractAddress, chainId: sourceChain.chainId })
         }
     } else if (sourceChain.chainType === "tezos") {
-        nftContract = getTezosNftContract({ contractAddress: "KT1NLpBYagSKaUH8wK7V2rMo8c13Z6rmFZXA", rpcURL: sourceChain.rpcURL })
+        nftContract = getTezosNftContract({ contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL })
     }
 
 

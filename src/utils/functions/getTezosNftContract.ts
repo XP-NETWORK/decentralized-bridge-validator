@@ -19,12 +19,12 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
     const getNftTokenMetaData = async (tokenId: bigint) => {
         const Tezos = new TezosToolkit(rpcURL);
         const nftContract = await Tezos.contract.at<NFTContractType>(contractAddress);
+        console.log(contractAddress, rpcURL)
         const tokenMetaData = await (
             await nftContract.storage()
         ).token_metadata.get(tas.nat(tokenId.toString()));
-        const metaData = tokenMetaData.token_info.keys().next();
-        return metaData.value;
-
+        const metaDataInHex = tokenMetaData.token_info.get("")
+        return Buffer.from(metaDataInHex, "hex").toString('utf-8');
     }
 
     return {
@@ -37,7 +37,7 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 return (await md.metadataName()) ?? "";
             } catch (e) {
                 console.log("error getting name Tezos", e)
-                return ""
+                return "NTEZOS"
             }
         },
         symbol: async (tokenId: bigint) => {
@@ -51,7 +51,7 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 return JSON.parse(metaDataOrURL)["symbol"];
             } catch (e) {
                 console.log("error getting symbol Tezos", e)
-                return ""
+                return "NTEZOS"
             }
         },
         royaltyInfo: async (tokenId?: bigint) => {
@@ -69,9 +69,12 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
 
                 if (isUrl) {
                     metaData = await fetch(metaDataOrURL).then((res) => res.json());
+                } else {
+                    metaData = JSON.parse(metaDataOrURL)
                 }
-
-                metaData = JSON.parse(metaDataOrURL)
+                console.log('*'.repeat(100));
+                console.log(metaData, "*".repeat(100))
+                console.log('*'.repeat(100));
                 const decimal_places_in_rates = metaData.royalties.decimals
                 const max_percentage = Number('1' + '0'.repeat(decimal_places_in_rates))
                 const rate = Object.values(metaData.royalties.shares)[0]

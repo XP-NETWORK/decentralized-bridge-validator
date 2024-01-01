@@ -7,6 +7,15 @@ import { NewValidator, storeNewValidator } from "@src/contractsTypes/contracts/t
 import { sha256 } from "@noble/hashes/sha256";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
 import * as secp256k1 from "@noble/secp256k1";
+import { MichelCodecPacker, TezosToolkit } from "@taquito/taquito";
+import { InMemorySigner } from "@taquito/signer";
+import { tas } from "@src/contractsTypes/tezosContractTypes/type-aliases";
+import {
+    b58cencode,
+    prefix,
+    b58cdecode
+} from '@taquito/utils';
+import { hash } from '@stablelib/blake2b';
 
 
 const approveStake = async ({ wallets, validatorAddressAndChainType, storageContract }: IApproveStake) => {
@@ -17,6 +26,14 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
     const newMultiversXValidator = validatorAddressAndChainType.find(item => item.chainType === "multiversX");
     const newTonValidator = validatorAddressAndChainType.find(item => item.chainType === "ton");
     const newSecretValidator = validatorAddressAndChainType.find(item => item.chainType === "scrt");
+    const newTezosValidator = validatorAddressAndChainType.find(item => item.chainType === "tezos");
+    const newTezosPublicKeyHash = tas.address(b58cencode(
+        hash(
+            new Uint8Array(b58cdecode(newTezosValidator.validatorAddress, prefix.edpk)),
+            20
+        ),
+        prefix.tz1
+    ));
 
     // Evm Signature
     const evmSignature = web3.eth.accounts
@@ -46,11 +63,28 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
 
     // Secret Signature
     const messageHash = sha256(encodeSecp256k1Pubkey(Buffer.from(newSecretValidator.validatorAddress, "hex")).value);
-    const secretSignature =  "0x" +  Buffer.from(await secp256k1.sign(messageHash, wallets.secretWallet.privateKey, {
+    const secretSignature = "0x" + Buffer.from(await secp256k1.sign(messageHash, wallets.secretWallet.privateKey, {
         extraEntropy: true,
         der: false,
     })).toString("hex")
 
+    // Tezos Signature
+    const Tezos = new TezosToolkit("");
+    const signer = await InMemorySigner.fromSecretKey(wallets.tezosWallet.secretKey);
+    Tezos.setProvider({
+        signer,
+    });
+    const packer = new MichelCodecPacker();
+    const packed = await packer.packData({
+        data: {
+            string: newTezosPublicKeyHash,
+        },
+        type: {
+            prim: "address",
+        },
+    });
+
+    const tezosSignature = "0x" + Buffer.from((await signer.sign(packed.packed)).sig).toString("hex");
 
     const evmSingerAndSignature = {
         validatorAddress: newEvmValidator.validatorAddress,
@@ -84,13 +118,22 @@ const approveStake = async ({ wallets, validatorAddressAndChainType, storageCont
         }
     }
 
+    const tezosSingerAndSignature = {
+        validatorAddress: newTezosPublicKeyHash,
+        signerAndSignature: {
+            signerAddress: wallets.tezosWallet.publicKey,
+            signature: tezosSignature
+        }
+    }
+
 
     try {
         const tx = await storageContract.approveStake(newEvmValidator.validatorAddress, [
             evmSingerAndSignature,
             multiversXSingerAndSignature,
             tonSingerAndSignature,
-            secretSingerAndSignature
+            secretSingerAndSignature,
+            tezosSingerAndSignature
         ]);
         console.info(`Stake Approved Transaction Hash: ${tx.hash}`);
     } catch (e) {

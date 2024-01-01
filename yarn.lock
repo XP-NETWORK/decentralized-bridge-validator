@@ -1903,6 +1903,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@taquito/tzip16@npm:^17.5.0":
+  version: 17.5.0
+  resolution: "@taquito/tzip16@npm:17.5.0"
+  dependencies:
+    "@taquito/core": ^17.5.0
+    "@taquito/http-utils": ^17.5.0
+    "@taquito/michelson-encoder": ^17.5.0
+    "@taquito/rpc": ^17.5.0
+    "@taquito/taquito": ^17.5.0
+    "@taquito/utils": ^17.5.0
+    bignumber.js: ^9.1.2
+    crypto-js: ^4.2.0
+  checksum: 67a7ee2702544845a029c91b4baf9cdbecf004aa3cd40aaae91603f7690a98b536e3fa64ee318eb43510e5ce61b4c2bcb0d7e274c184f99d79c65e65eb38d9b8
+  languageName: node
+  linkType: hard
+
 "@taquito/utils@npm:^17.5.0":
   version: 17.5.0
   resolution: "@taquito/utils@npm:17.5.0"
@@ -3006,6 +3022,7 @@ __metadata:
     "@nomicfoundation/hardhat-ethers": ^3.0.4
     "@taquito/signer": ^17.5.0
     "@taquito/taquito": ^17.5.0
+    "@taquito/tzip16": ^17.5.0
     "@ton/core": ^0.53.0
     "@ton/crypto": ^3.2.0
     "@ton/ton": ^13.9.0
@@ -3027,6 +3044,7 @@ __metadata:
     ethers: ^6.8.0
     hardhat: ^2.18.2
     ioredis: ^5.3.2
+    libsodium-wrappers-sumo: ^0.7.13
     mocha: ^10.2.0
     reflect-metadata: ^0.1.13
     secretjs: ^1.12.3
@@ -3595,6 +3613,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
   languageName: node
   linkType: hard
 
@@ -5505,6 +5530,22 @@ __metadata:
     prelude-ls: ^1.2.1
     type-check: ~0.4.0
   checksum: 12c5021c859bd0f5248561bf139121f0358285ec545ebf48bb3d346820d5c61a4309535c7f387ed7d84361cf821e124ce346c6b7cef8ee09a67c1473b46d0fc4
+  languageName: node
+  linkType: hard
+
+"libsodium-sumo@npm:^0.7.13":
+  version: 0.7.13
+  resolution: "libsodium-sumo@npm:0.7.13"
+  checksum: d0905530c53c27a0c01348eed8abc2ecf3725c0647545cc528ea4bbd0ee63b7a471b56abefec5b293086ee64b5ba7cf911a655cd2c36f400a4bfec6e2d152ebd
+  languageName: node
+  linkType: hard
+
+"libsodium-wrappers-sumo@npm:^0.7.13":
+  version: 0.7.13
+  resolution: "libsodium-wrappers-sumo@npm:0.7.13"
+  dependencies:
+    libsodium-sumo: ^0.7.13
+  checksum: cdaa7ae5d64e71e860b40b5f2fbaec156adc7bc5606f7d32655b6ab84c9878fd90b3a41e99cb96380f0b5727d1ee1c6ad5b440bff35ce8289832e5c8cac99973
   languageName: node
   linkType: hard
 

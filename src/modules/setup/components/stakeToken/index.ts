@@ -74,14 +74,14 @@ const stakeTokens_ = async ({
                 validatorAddress: wallets.secretWallet.publicKey,
                 chainType: 'scrt',
             },
+            {
+                validatorAddress: wallets.tezosWallet.publicKey,
+                chainType: 'tezos',
+            },
         ]);
         await stakeTx.wait();
         console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
     } catch (e) {
-        console.info(
-            '[stakeTokens_ stakeERC20] Failed to stake ERC20 with error',
-            e,
-        );
 
         if (
             !(
@@ -91,6 +91,10 @@ const stakeTokens_ = async ({
                 `execution reverted: "You can only stake once"`
             )
         ) {
+            console.info(
+                '[stakeTokens_ stakeERC20] Failed to stake ERC20 with error',
+                e,
+            );
             throw 'Error staking tokens';
         }
     }

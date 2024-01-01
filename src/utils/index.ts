@@ -20,7 +20,10 @@ import {
     getCurrentSecretBalance,
     getSecretBridgeContract,
     getSecretMultiNftContract,
-    getSecretSingleNftContract
+    getSecretSingleNftContract,
+    getTezosBridgeContract,
+    getCurrentTezosBalance,
+    getTezosNftContract
 } from './functions';
 
 export {
@@ -45,5 +48,8 @@ export {
     getCurrentTonBalance,
     getTonBridgeContract,
     getTonNftContract,
-    getCurrentSecretBalance
+    getCurrentSecretBalance,
+    getTezosBridgeContract,
+    getCurrentTezosBalance,
+    getTezosNftContract
 };

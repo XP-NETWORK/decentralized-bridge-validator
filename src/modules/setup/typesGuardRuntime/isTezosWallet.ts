@@ -10,8 +10,8 @@ function isTezosWallet(object: unknown): object is ITezosWallet {
     return typeof tezosWallet === 'object' &&
         tezosWallet !== null && 'publicKey' in tezosWallet &&
         typeof tezosWallet.publicKey === 'string' &&
-        'privateKey' in tezosWallet &&
-        typeof tezosWallet.privateKey === 'string';
+        'secretKey' in tezosWallet &&
+        typeof tezosWallet.secretKey === 'string';
 }
 
 export default isTezosWallet

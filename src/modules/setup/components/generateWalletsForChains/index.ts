@@ -5,8 +5,11 @@ import { promises as fs } from 'fs';
 import { IGeneratedWallets } from '@src/types';
 import { Mnemonic, UserWallet } from '@multiversx/sdk-wallet/out';
 import { Wallet as secretWallet } from "secretjs";
-
 import TonWeb from 'tonweb';
+import { InMemorySigner } from '@taquito/signer';
+import * as bip39 from "bip39";
+import sodium from "libsodium-wrappers-sumo";
+import base58check from "bs58check";
 
 const generateEvmWallet = () => {
     const evmWallet = ethers.Wallet.createRandom();
@@ -44,22 +47,27 @@ const generateSecretWallet = () => {
     }
 }
 
-const generateTezosWallet = () => {
-    const wallet = new secretWallet();
+const generateTezosWallet = async () => {
+    const mnemonic = bip39.generateMnemonic(256);
+    const seed = await bip39.mnemonicToSeed(mnemonic, "");
+    await sodium.ready;
+    const keys = sodium.crypto_sign_seed_keypair(seed.slice(0, 32), "hex");
+    const b58encodedSecret = base58check.encode(Buffer.from("2bf64e07" + keys.privateKey, "hex"));
+    const tezosSigner = await InMemorySigner.fromSecretKey(b58encodedSecret);
 
     return {
-        publicKey: Buffer.from(wallet.publicKey).toString("hex"),
-        privateKey: Buffer.from(wallet.privateKey).toString("hex")
+        publicKey: await tezosSigner.publicKey(),
+        secretKey: await tezosSigner.secretKey()
     }
 }
 
-const generateWalletsForChains_ = (): IGeneratedWallets => {
+const generateWalletsForChains_ = async (): Promise<IGeneratedWallets> => {
 
     const evmWallet = generateEvmWallet();
     const multiversXWallet = generateMultiversXWallet();
     const tonWallet = generateTonWallet();
     const secretWallet = generateSecretWallet();
-    const tezosWallet = generateTezosWallet();
+    const tezosWallet = await generateTezosWallet();
 
     const generatedWAllets: IGeneratedWallets = {
         evmWallet,
@@ -88,7 +96,7 @@ const generateWalletsForChains = async (): Promise<IGeneratedWallets> => {
         console.info("existing secrets found");
     } catch (error) {
         console.info("generating new secrets");
-        wallets = generateWalletsForChains_();
+        wallets = await generateWalletsForChains_();
         await fs.writeFile(secretsFile, JSON.stringify(wallets));
     }
 

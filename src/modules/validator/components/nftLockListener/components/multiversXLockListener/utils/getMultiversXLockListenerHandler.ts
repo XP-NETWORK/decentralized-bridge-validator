@@ -42,7 +42,6 @@ const getMultiversXLockListenerHandler = ({ config, multiversXChainConfig, walle
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
                 sourceChain: sourceChainObject,
-                evmWallet: wallets.evmWallet,
                 tokenId,
                 nftType,
             })

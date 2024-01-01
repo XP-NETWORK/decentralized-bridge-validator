@@ -1,9 +1,9 @@
-import { getEvmMultiNftContract, getEvmSingleNftContract, getSecretMultiNftContract, getSecretSingleNftContract, getTonNftContract } from "@src/utils";
+import { getEvmMultiNftContract, getEvmSingleNftContract, getSecretMultiNftContract, getSecretSingleNftContract, getTezosNftContract, getTonNftContract } from "@src/utils";
 import { IGetEvmNftDetails } from "./types";
 import { INftContract } from "@src/types";
 import getMultiversXNftContract from "@src/utils/functions/getMultiversXNftContract";
 
-const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet, tokenId, nftType }: IGetEvmNftDetails) => {
+const getNftDetails = async ({ sourceNftContractAddress, sourceChain, tokenId, nftType }: IGetEvmNftDetails) => {
 
     let royalty = String(BigInt("0")); // set default royalty 0
     let metadata = ""; // set default matadata empty
@@ -13,9 +13,9 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet,
 
     if (sourceChain.chainType === "evm") {
         if (nftType === "singular") {
-            nftContract = getEvmSingleNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL }, evmWallet })
+            nftContract = getEvmSingleNftContract({ contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL })
         } else if (nftType === "multiple") {
-            nftContract = getEvmMultiNftContract({ contractConfig: { contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL }, evmWallet })
+            nftContract = getEvmMultiNftContract({ contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL })
         }
     } else if (sourceChain.chainType === "multiversX") {
         nftContract = getMultiversXNftContract({ gatewayURL: sourceChain.gatewayURL, contractAddress: sourceNftContractAddress })
@@ -27,6 +27,8 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, evmWallet,
         } else if (nftType === "multiple") {
             nftContract = getSecretMultiNftContract({ rpcURL: sourceChain.rpcURL, contractAddress: sourceNftContractAddress, chainId: sourceChain.chainId })
         }
+    } else if (sourceChain.chainType === "tezos") {
+        nftContract = getTezosNftContract({ contractAddress: "KT1NLpBYagSKaUH8wK7V2rMo8c13Z6rmFZXA", rpcURL: sourceChain.rpcURL })
     }
 
 

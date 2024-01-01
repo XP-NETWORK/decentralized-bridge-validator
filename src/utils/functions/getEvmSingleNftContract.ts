@@ -1,17 +1,13 @@
-import { ethers } from 'ethers';
 import { ERC721Royalty__factory } from '../../contractsTypes';
-import { IEvmContractConfigAndEvmWallet, INftContract } from '@src/types';
+import { IEvmContractConfig, INftContract } from '@src/types';
 import { SalePriceToGetTotalRoyalityPercentage } from '../constants/salePriceToGetTotalRoyalityPercentage';
+import { JsonRpcProvider } from 'ethers';
 
-const getEvmSingleNftContract = ({
-    contractConfig,
-    evmWallet,
-}: IEvmContractConfigAndEvmWallet): INftContract => {
-    const provider = new ethers.JsonRpcProvider(contractConfig.rpcURL);
-    const wallet = new ethers.Wallet(evmWallet.privateKey, provider);
+const getEvmSingleNftContract = (contractConfig: IEvmContractConfig): INftContract => {
+    const provider = new JsonRpcProvider(contractConfig.rpcURL)
     const erc721Contract = ERC721Royalty__factory.connect(
         contractConfig.contractAddress,
-        wallet,
+        provider
     );
     return {
         name: async () => {

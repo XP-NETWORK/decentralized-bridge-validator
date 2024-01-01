@@ -1,7 +1,7 @@
 import { IConfigAndWallets } from "@src/types"
 import { createJobWithWorker } from "../../utils"
-import { evmLockListener, multiversXLockListener, secretLockListener, tonLockListener } from "./components"
-import { IEvmLockListener, ISecretLockListener, ITonLockListener } from "./types";
+import { evmLockListener, multiversXLockListener, secretLockListener, tonLockListener, tezosLockListener } from "./components"
+import { IEvmLockListener, ISecretLockListener, ITezosLockListener, ITonLockListener } from "./types";
 
 const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
 
@@ -20,6 +20,10 @@ const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
             const jobData: ISecretLockListener = { config, secretChainConfig: chainConfig, wallets };
             const jobName: string = `secretLockedEventListener_${chainConfig.chain}`
             await createJobWithWorker<ISecretLockListener>({ jobData, jobName, jobFunction: secretLockListener })
+        } else if (chainConfig.chainType === "tezos") {
+            const jobData: ITezosLockListener = { config, tezosChainConfig: chainConfig, wallets };
+            const jobName: string = `tezosLockedEventListener_${chainConfig.chain}`;
+            await createJobWithWorker<ITezosLockListener>({ jobData, jobName, jobFunction: tezosLockListener })
         }
     }
 }

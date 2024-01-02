@@ -4,6 +4,7 @@ import { packDataBytes, MichelsonType } from "@taquito/michel-codec";
 import { InMemorySigner } from "@taquito/signer";
 import { Schema } from "@taquito/michelson-encoder";
 import { validateAddress } from '@taquito/utils';
+import { keccak256 } from "ethers";
 
 
 const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, tezosWallet: ITezosWallet }) => {
@@ -70,8 +71,9 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
 
     const packedData = packDataBytes(encoded, nftTransferDetailsTypes);
     const packeyBytes = packedData.bytes;
+    const hashedBytes = keccak256(Buffer.from(packeyBytes, "hex"))
 
-    const signature = "0x" + Buffer.from((await signer.sign(packeyBytes)).sig).toString("hex");
+    const signature = "0x" + Buffer.from((await signer.sign(hashedBytes)).sig).toString("hex");
 
     return { publicAddress: tezosWallet.publicKey, signature }
 }

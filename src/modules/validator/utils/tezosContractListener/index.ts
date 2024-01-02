@@ -25,10 +25,10 @@ async function getContractOperations({
             "level.gt": fromLevel,
             "level.le": toLevel,
         }
-        console.log({ URL, params })
         const response = await axios.get(URL, {
             params
         });
+
         return response.data;
     } catch (error) {
         console.error(error);
@@ -96,7 +96,9 @@ async function tezosContractListener(
 
     await Promise.all(handleLogPromises);
 
+    console.log("before saving")
     await blockRepository.save(blockInstance);
+    console.log("after saving")
 
 }
 

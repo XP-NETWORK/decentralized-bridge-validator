@@ -33,15 +33,15 @@ const bridgeTestChains: TChain[] = [
         chainType: 'evm',
         lastBlock: 4871981
     },
-    // {
-    //     chain: "MATIC",
-    //     rpcURL: "https://polygon-mumbai-bor.publicnode.com",
-    //     nativeCoinSymbol: "MATIC",
-    //     intialFund: "50000000000000000",
-    //     contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
-    //     chainType: 'evm',
-    //     lastBlock: 43481151
-    // },
+    {
+        chain: "MATIC",
+        rpcURL: "https://polygon-mumbai-bor.publicnode.com",
+        nativeCoinSymbol: "MATIC",
+        intialFund: "50000000000000000",
+        contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
+        chainType: 'evm',
+        lastBlock: 43481151
+    },
     // {
     //     chain: "MULTIVERSX",
     //     nativeCoinSymbol: "EGLD",
@@ -76,7 +76,7 @@ const bridgeTestChains: TChain[] = [
         chain: "TEZOS",
         rpcURL: "https://rpc.tzkt.io/ghostnet",
         restApiURL: "https://api.ghostnet.tzkt.io",
-        contractAddress: "KT1N7Juov2gvXX9mstyrs3v46h5UXFvct9cu",
+        contractAddress: "KT1UpxoTLojFCSjzzwxG27dwrWQBmosowJb2",
         intialFund: "50000",
         lastBlock: 5003149,
         nativeCoinSymbol: "XTZ",

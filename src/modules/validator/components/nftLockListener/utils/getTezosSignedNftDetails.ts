@@ -9,11 +9,20 @@ import { validateAddress } from '@taquito/utils';
 const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet }: { nftTransferDetailsObject: INftTransferDetailsObject, tezosWallet: ITezosWallet }) => {
 
     // Mitigation if destination user address is invalid
-    if (validateAddress(nftTransferDetailsObject.destinationUserAddress) !== 0) {
+    if (validateAddress(nftTransferDetailsObject.destinationUserAddress) !== 3) {
         nftTransferDetailsObject.destinationUserAddress = nftTransferDetailsObject.royaltyReceiver
-        console.log("Invalid destination address")
+        console.log("Invalid Tezos destination address", nftTransferDetailsObject.destinationUserAddress)
     }
 
+    if (!nftTransferDetailsObject.sourceNftContractAddress.startsWith("0x"))
+        nftTransferDetailsObject.sourceNftContractAddress = packDataBytes(
+            {
+                string: nftTransferDetailsObject.sourceNftContractAddress,
+            },
+            {
+                prim: "address",
+            }
+        ).bytes
 
     const nftTransferDetailsTypes = {
         prim: "pair",

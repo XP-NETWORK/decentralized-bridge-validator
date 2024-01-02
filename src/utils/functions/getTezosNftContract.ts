@@ -36,7 +36,7 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 const md = nftContract.tzip16()
                 return (await md.metadataName()) ?? "";
             } catch (e) {
-                console.log("error getting name Tezos", e)
+                console.log("error getting name Tezos")
                 return "NTEZOS"
             }
         },
@@ -72,9 +72,6 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 } else {
                     metaData = JSON.parse(metaDataOrURL)
                 }
-                console.log('*'.repeat(100));
-                console.log(metaData, "*".repeat(100))
-                console.log('*'.repeat(100));
                 const decimal_places_in_rates = metaData.royalties.decimals
                 const max_percentage = Number('1' + '0'.repeat(decimal_places_in_rates))
                 const rate = Object.values(metaData.royalties.shares)[0]
@@ -82,17 +79,16 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 return String(royalty)
 
             } catch (e) {
-                console.log("Error getting royalty Tezos", e)
+                console.log("Error getting royalty Tezos")
                 return "0"
             }
         },
         tokenURI: async (tokenId: bigint) => {
             try {
                 const metaDataOrURL = await getNftTokenMetaData(tokenId);
-                console.log({ metaDataOrURL })
                 return URLCanParse(metaDataOrURL) ? metaDataOrURL : JSON.parse(metaDataOrURL)["image"];
             } catch (e) {
-                console.log("Error getting tokenURI Tezos", e)
+                console.log("Error getting tokenURI Tezos")
                 return ""
             }
         },

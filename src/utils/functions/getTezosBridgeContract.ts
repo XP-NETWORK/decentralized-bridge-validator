@@ -60,7 +60,7 @@ const getTezosBridgeContract = ({ tezosChainConfig, tezosWallet }: ITezosChainCo
             return {
                 hash: tx.hash,
                 wait: async () => {
-                    return
+                    await tx.confirmation(1)
                 }
             }
         }

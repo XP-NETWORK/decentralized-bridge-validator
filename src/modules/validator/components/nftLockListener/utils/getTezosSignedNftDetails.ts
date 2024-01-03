@@ -33,7 +33,11 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
             { prim: "string", annots: ["%dest_chain"] },
             { prim: "address", annots: ["%dest_address"] },
             {
-                prim: "bytes",
+                prim: "or",
+                args: [
+                    { prim: "address", annots: ["%addr"] },
+                    { prim: "string", annots: ["%str"] },
+                ],
                 annots: ["%source_nft_contract_address"],
             },
             { prim: "string", annots: ["%name"] },
@@ -49,6 +53,14 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
         annots: ["%data"],
     } as MichelsonType;
 
+    const isTezosAddr = validateAddress(nftTransferDetailsObject.sourceNftContractAddress) === 3;
+
+    const sourceNftContractAddress = isTezosAddr ? {
+        addr: nftTransferDetailsObject.sourceNftContractAddress
+    } : {
+        str: nftTransferDetailsObject.sourceNftContractAddress
+    }
+
 
     const signer = await InMemorySigner.fromSecretKey(tezosWallet.secretKey);
     const schema = new Schema(nftTransferDetailsTypes);
@@ -57,7 +69,7 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
         source_chain: nftTransferDetailsObject.sourceChain,
         dest_chain: nftTransferDetailsObject.destinationChain,
         dest_address: nftTransferDetailsObject.destinationUserAddress,
-        source_nft_contract_address: nftTransferDetailsObject.sourceNftContractAddress,
+        source_nft_contract_address: sourceNftContractAddress,
         name: nftTransferDetailsObject.name,
         symbol: nftTransferDetailsObject.symbol,
         royalty: nftTransferDetailsObject.royalty,
@@ -73,7 +85,7 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
     const packeyBytes = packedData.bytes;
     const hashedBytes = keccak256(Buffer.from(packeyBytes, "hex"))
 
-    const signature = "0x" + Buffer.from((await signer.sign(hashedBytes)).sig).toString("hex");
+    const signature = (await signer.sign(hashedBytes)).sig;
 
     return { publicAddress: tezosWallet.publicKey, signature }
 }

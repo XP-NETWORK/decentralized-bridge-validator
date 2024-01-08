@@ -6,24 +6,32 @@ import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
 
+
+const extractStrOrAddr = (addr: {str: string} | {addr: string}): string => {
+    if("str" in addr) return addr.str;
+    return addr.addr;
+}
+
 const getTezosLockListenerHandler = ({ config, tezosChainConfig, wallets }: ITezosLockListener) => {
 
 
     const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
 
     const handleLog = async (log: ILog & { transaction_hash: string }) => {
+        // Tezos returns the address as { addr: "0x123" } or { str: "0x123" } so we just extract the string value from the obj regardless of the key.
+        const sourceNftContractAddress = extractStrOrAddr(log.source_nft_address);
         // if its not the lock nft event we early return
 
         const {
             token_id: tokenId, // Unique ID for the NFT transfer
             dest_chain: destinationChain, // Chain to where the NFT is being transferred
             dest_address: destinationUserAddress, // User's address in the destination chain
-            source_nft_address: sourceNftContractAddress, // Address of the NFT contract in the source chain
             token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
             transaction_hash: transactionHash
         } = log;
+
 
         const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
 

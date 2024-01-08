@@ -15,16 +15,6 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
         console.log("Invalid Tezos destination address", nftTransferDetailsObject.destinationUserAddress)
     }
 
-    if (!nftTransferDetailsObject.sourceNftContractAddress.startsWith("0x"))
-        nftTransferDetailsObject.sourceNftContractAddress = packDataBytes(
-            {
-                string: nftTransferDetailsObject.sourceNftContractAddress,
-            },
-            {
-                prim: "address",
-            }
-        ).bytes
-
     const nftTransferDetailsTypes = {
         prim: "pair",
         args: [
@@ -52,7 +42,6 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
         ],
         annots: ["%data"],
     } as MichelsonType;
-
     const isTezosAddr = validateAddress(nftTransferDetailsObject.sourceNftContractAddress) === 3;
 
     const sourceNftContractAddress = isTezosAddr ? {
@@ -84,8 +73,7 @@ const getTezosSignedNftDetails = async ({ nftTransferDetailsObject, tezosWallet 
     const packedData = packDataBytes(encoded, nftTransferDetailsTypes);
     const packeyBytes = packedData.bytes;
     const hashedBytes = keccak256(Buffer.from(packeyBytes, "hex"))
-
-    const signature = (await signer.sign(hashedBytes)).sig;
+    const signature = "0x" + Buffer.from((await signer.sign(hashedBytes)).sig).toString("hex");
 
     return { publicAddress: tezosWallet.publicKey, signature }
 }

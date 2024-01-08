@@ -2,7 +2,7 @@ import { NFTContractType } from "@src/contractsTypes/tezosContractTypes/NFT.type
 import { tas } from "@src/contractsTypes/tezosContractTypes/type-aliases";
 import { INftContract } from "@src/types";
 import { TezosToolkit } from "@taquito/taquito";
-import { Tzip16Module, tzip16 } from "@taquito/tzip16";
+import { Tzip16Module, bytes2Char, tzip16 } from "@taquito/tzip16";
 
 
 const URLCanParse = (url: string): boolean => {
@@ -24,7 +24,7 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
             await nftContract.storage()
         ).token_metadata.get(tas.nat(tokenId.toString()));
         const metaDataInHex = tokenMetaData.token_info.get("")
-        return Buffer.from(metaDataInHex, "hex").toString('utf-8');
+        return bytes2Char(metaDataInHex);
     }
 
     return {

@@ -5,7 +5,7 @@ interface ILog {
     dest_address: string,
     source_chain: string,
     token_amount: string,
-    source_nft_address: string
+    source_nft_address: { addr: string } | { str: string }
 }
 
 interface ITezosContractListener {

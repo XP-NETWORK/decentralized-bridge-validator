@@ -22,7 +22,7 @@ const bridgeTestChains: TChain[] = [
         intialFund: "50000000000000000",
         contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
         chainType: 'evm',
-        lastBlock: 35889818
+        lastBlock: 36623578
     },
     {
         chain: "ETH",
@@ -40,7 +40,7 @@ const bridgeTestChains: TChain[] = [
         intialFund: "50000000000000000",
         contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
         chainType: 'evm',
-        lastBlock: 43481151
+        lastBlock: 44422223
     },
     // {
     //     chain: "MULTIVERSX",
@@ -74,11 +74,11 @@ const bridgeTestChains: TChain[] = [
     // },
     {
         chain: "TEZOS",
-        rpcURL: "https://rpc.tzkt.io/ghostnet",
+        rpcURL: "https://ghostnet.ecadinfra.com",
         restApiURL: "https://api.ghostnet.tzkt.io",
-        contractAddress: "KT1UpxoTLojFCSjzzwxG27dwrWQBmosowJb2",
+        contractAddress: "KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4",
         intialFund: "50000",
-        lastBlock: 5003149,
+        lastBlock: 5058309,
         nativeCoinSymbol: "XTZ",
         chainType: "tezos"
     }

@@ -3,6 +3,7 @@ import {
     getMultiversXBridgeContract,
     getSecretBridgeContract,
     getStorageContract,
+    getTezosBridgeContract,
     getTonBridgeContract,
     waitForMSWithMsg,
 } from '@src/utils';
@@ -10,11 +11,19 @@ import {
     isEvmChainFunded,
     isMultiversXChainFunded,
     isSecretChainFunded,
+    isTezosChainFunded,
     isTonChainFunded,
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
 import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
 import { IBridge, IChainConfigAndWallets, IEvmChainConfig } from '@src/types';
+import {
+    b58cencode,
+    prefix,
+    b58cdecode
+} from '@taquito/utils';
+import { hash } from '@stablelib/blake2b';
+import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
 
 const handleValidatorAddition = async ({
     storageChainConfig,
@@ -75,6 +84,24 @@ const handleValidatorAddition = async ({
             isSecretChainFunded({
                 secretChainConfig: chainConfig,
                 secretWallet: wallets.secretWallet,
+            });
+    } else if (chainConfig.chainType === "tezos") {
+        bridgeContract = getTezosBridgeContract({
+            tezosChainConfig: chainConfig,
+            tezosWallet: wallets.tezosWallet
+        })
+        publicWalletAddress = tas.address(b58cencode(
+            hash(
+                new Uint8Array(b58cdecode(wallets.tezosWallet.publicKey, prefix.edpk)),
+                20
+            ),
+            prefix.tz1
+        ));
+        
+        isChainFunded = () =>
+            isTezosChainFunded({
+                tezosChainConfig: chainConfig,
+                tezosWallet: wallets.tezosWallet,
             });
     }
 
@@ -140,7 +167,7 @@ const handleValidatorAddition = async ({
                 };
             });
 
-        
+
 
             const addValidatorTx = await bridgeContract.addValidator(
                 publicWalletAddress,

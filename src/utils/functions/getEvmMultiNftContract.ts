@@ -1,23 +1,23 @@
-import { ethers } from 'ethers';
 import { ERC1155Royalty, ERC1155Royalty__factory } from '../../contractsTypes';
-import { IEvmContractConfigAndEvmWallet, INftContract } from '@src/types';
+import { IEvmContractConfig, INftContract } from '@src/types';
 import { SalePriceToGetTotalRoyalityPercentage } from '../constants/salePriceToGetTotalRoyalityPercentage';
+import { JsonRpcProvider } from 'ethers';
 
 interface IExtendedERC1155Royalty extends ERC1155Royalty {
     name?: () => Promise<string>;
     symbol?: () => Promise<string>;
 }
 
-const getEvmMultiNftContract = ({
-    contractConfig,
-    evmWallet,
-}: IEvmContractConfigAndEvmWallet): INftContract => {
-    const opProvider = new ethers.JsonRpcProvider(contractConfig.rpcURL);
-    const opWallet = new ethers.Wallet(evmWallet.privateKey, opProvider);
+const getEvmMultiNftContract = (
+    contractConfig:
+        IEvmContractConfig): INftContract => {
+
+    const provider = new JsonRpcProvider(contractConfig.rpcURL)
+
     const erc1155Contract: IExtendedERC1155Royalty =
         ERC1155Royalty__factory.connect(
             contractConfig.contractAddress,
-            opWallet,
+            provider
         );
 
     return {

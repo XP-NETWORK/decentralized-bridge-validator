@@ -1,7 +1,7 @@
 // import { getTxHashes, getTxStatus, getLogs } from "./src/modules/validator/utils/multiversXContractListener/utils"
 
 import axios from "axios";
-import { sign } from "@ton/crypto";
+import { sha256, sign } from "@ton/crypto";
 import { Address, TonClient, WalletContractV4 } from "@ton/ton";
 
 
@@ -381,12 +381,119 @@ const secretWallet = {
     "publicKey": "03aa85dad948edcdc8b9d301a89a2917d1d6e3b841bbcecfc79556e544a6bdadaa",
     "privateKey": "4d692889de94b8011a84a84e7b613152b534bb6e5b8404da622760ff0eb1793b"
 }
+import { b58cencode, prefix, b58cdecode } from '@taquito/utils';
+import { InMemorySigner } from '@taquito/signer';
+import { Wallet as secretWalletK } from "secretjs";
+import { hash } from '@stablelib/blake2b';
+
+
+async function getPublicKeyHash(publicKey: string): Promise<string> {
+    const keyPrefix = publicKey.substring(0, 4);
+    let tzPrefix;
+    switch (keyPrefix) {
+        case 'edpk':
+            tzPrefix = prefix.tz1;
+            break;
+        case 'sppk':
+            tzPrefix = prefix.tz2;
+            break;
+        case 'p2pk':
+            tzPrefix = prefix.tz3;
+            break;
+        default:
+            throw new Error('Unsupported public key type');
+    }
+    console.log("-----------", publicKey.replace("p2pk", ""))
+    // Convert public key to byte representation and hash it
+    const publicKeyBytes = Buffer.from(publicKey.replace("p2pk", ""));
+    console.log(publicKeyBytes)
+    const hashed = hash(publicKeyBytes, 20)
+
+    // Encode the hash with the appropriate prefix
+    return b58cencode(hashed, tzPrefix);
+}
+
+import * as bip39 from "bip39";
+import sodium from "libsodium-wrappers-sumo";
+import base58check from "bs58check";
+import { MichelCodecPacker, TezosToolkit } from "@taquito/taquito";
+
+const generateTezosWallet = async () => {
+    const mnemonic = bip39.generateMnemonic(256);
+    const seed = await bip39.mnemonicToSeed(mnemonic, "");
+    await sodium.ready;
+    const keys = sodium.crypto_sign_seed_keypair(seed.slice(0, 32), "hex");
+    const b58encodedSecret = base58check.encode(Buffer.from("2bf64e07" + keys.privateKey, "hex"));
+    const tezosSigner = await InMemorySigner.fromSecretKey(b58encodedSecret);
+
+    const addr = b58cencode(
+        hash(
+            new Uint8Array(b58cdecode(await tezosSigner.publicKey(), prefix.edpk)),
+            20
+        ),
+        prefix.tz1
+    );
+    console.log({ addr, pub: await tezosSigner.publicKeyHash() })
+    return {
+        publicKey: await tezosSigner.publicKey(),
+        secretKey: await tezosSigner.secretKey()
+    }
+}
+
 
 const main = async () => {
     // console.log(await nftContract.tokenURI(BigInt("140")))
     // console.log(await bridge.validatorsCount())
-    console.log(await getSecretSignedNftDetails({ nftTransferDetailsObject, secretWallet }))
+    await generateTezosWallet()
 }
 
 
-main()
+
+async function getContractOperations({ contractAddress, fromLevel, toLevel }: { contractAddress: string, fromLevel: number, toLevel: number }) {
+    try {
+        const response = await axios.get(`https://api.ghostnet.tzkt.io/v1/accounts/${contractAddress}/operations`, {
+            params: {
+                "level.ge": fromLevel,
+                "level.le": toLevel,
+                entrypoint: 'lock_nft',
+                type: "transaction"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+const from = 4837429
+const to = 4837445
+getContractOperations({contractAddress:'KT1WdkSmJSPnAz1Wmoy8a4VUBaaKNcNfWiiW', fromLevel: 5003300, toLevel: 5003457}).then((r) => {
+    console.log(r, r.length, r[0].parameter)
+    r.forEach(r => {
+        if(!(r.level >= from && r.level <= to)){
+            console.log("????", console.log(r.level))
+        }
+    })
+});
+
+const runMe = async () => {
+    const Tezos = new TezosToolkit("");
+    const tezosWallet = await generateTezosWallet();
+    const signer = await InMemorySigner.fromSecretKey(tezosWallet.secretKey);
+    Tezos.setProvider({
+        signer,
+    });
+    const packer = new MichelCodecPacker();
+    const packed = await packer.packData({
+      data: {
+        string: await Tezos.signer.publicKeyHash(),
+      },
+      type: {
+        prim: "address",
+      },
+    });
+    const tezosSignature = (await signer.sign(packed.packed)).sig;
+    console.log({tezosSignature})
+
+}
+
+// runMe()

@@ -49,7 +49,6 @@ const getSecretLockListenerHandler = ({ config, secretChainConfig, wallets }: IS
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
                 sourceChain: sourceChainObject,
-                evmWallet: wallets.evmWallet,
                 tokenId,
                 nftType,
             })

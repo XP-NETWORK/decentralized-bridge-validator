@@ -45,11 +45,17 @@ interface ISecretWallet {
     privateKey: string;
 }
 
+interface ITezosWallet {
+    publicKey: string;
+    secretKey: string;
+}
+
 interface IGeneratedWallets {
     evmWallet: IEvmWallet;
     multiversXWallet: IMultiversXWallet;
     tonWallet: ITonWallet;
     secretWallet: ISecretWallet;
+    tezosWallet: ITezosWallet
 }
 
 interface IConfigAndWallets {
@@ -66,7 +72,7 @@ interface IChainConfig {
     chainType: string
 }
 interface IChainConfigAndWallets {
-    chainConfig: IEvmChainConfig | IMultiversXChainConfig | ITonChainConfig | ISecretChainConfig;
+    chainConfig: TChain;
     wallets: IGeneratedWallets;
 }
 interface IEvmChainConfig extends IChainConfig {
@@ -82,6 +88,12 @@ interface ISecretChainConfig extends IChainConfig {
 
 interface ITonChainConfig extends IChainConfig {
     chainType: 'ton';
+    rpcURL: string;
+}
+
+interface ITezosChainConfig extends IChainConfig {
+    chainType: 'tezos';
+    restApiURL: string;
     rpcURL: string;
 }
 
@@ -106,6 +118,11 @@ interface ITonChainConfigAndTonWallet {
 interface ISecretChainConfigAndSecretWallet {
     secretChainConfig: ISecretChainConfig;
     secretWallet: ISecretWallet
+}
+
+interface ITezosChainConfigAndTezosWallet {
+    tezosChainConfig: ITezosChainConfig;
+    tezosWallet: ITezosWallet
 }
 
 interface IMultiversXChainConfigAndMultiversXWallet {
@@ -160,7 +177,7 @@ interface IMultiversXContractConfigAndMultiversXWallet {
 }
 
 
-type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig;
+type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig | ITezosChainConfig;
 
 interface IBridgeConfig {
     bridgeChains: TChain[];
@@ -214,5 +231,8 @@ export {
     ISecretWallet,
     ISecretChainConfig,
     ISecretChainConfigAndSecretWallet,
-    ISecretContractConfig
+    ISecretContractConfig,
+    ITezosWallet,
+    ITezosChainConfig,
+    ITezosChainConfigAndTezosWallet
 }

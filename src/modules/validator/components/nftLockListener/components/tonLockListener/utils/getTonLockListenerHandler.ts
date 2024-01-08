@@ -63,7 +63,6 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress: getSourceNftContractAddress(),
                 sourceChain: sourceChainObject,
-                evmWallet: wallets.evmWallet,
                 tokenId: tokenId.toString(),
                 nftType,
             })

@@ -8,7 +8,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     rpcURL: "https://optimism-goerli.publicnode.com",
     nativeCoinSymbol: "OP",
     intialFund: "100000000000000000",
-    contractAddress: "0x78F4f8bd33e65b461F00c693bD7C70f5Bc095C8a",
+    contractAddress: "0xaeD15b9AEd9401658A177abaab5854f31973F5C8",
     chainType: 'evm',
     lastBlock: 17608314
 }
@@ -22,7 +22,7 @@ const bridgeTestChains: TChain[] = [
         intialFund: "50000000000000000",
         contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
         chainType: 'evm',
-        lastBlock: 35889818
+        lastBlock: 36623578
     },
     {
         chain: "ETH",
@@ -40,40 +40,48 @@ const bridgeTestChains: TChain[] = [
         intialFund: "50000000000000000",
         contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
         chainType: 'evm',
-        lastBlock: 43481151
+        lastBlock: 44422223
     },
+    // {
+    //     chain: "MULTIVERSX",
+    //     nativeCoinSymbol: "EGLD",
+    //     intialFund: "50000000000000000",
+    //     contractAddress: "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
+    //     chainType: 'multiversX',
+    //     elasticSearchURL: "https://devnet-index.multiversx.com",
+    //     gatewayURL: "https://devnet-gateway.multiversx.com",
+    //     lastBlock: 0,
+    //     chainID: "D"
+    // },
+    // {
+    //     chain: "TON",
+    //     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
+    //     nativeCoinSymbol: "TON",
+    //     intialFund: "500000000",
+    //     contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
+    //     chainType: 'ton',
+    //     lastBlock: 16810573000003
+    // },
+    // {
+    //     chain: "SECRET",
+    //     rpcURL: "https://pulsar.api.trivium.network:1317",
+    //     nativeCoinSymbol: "USCRT",
+    //     intialFund: "50000",
+    //     contractAddress: "secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp",
+    //     chainType: 'scrt',
+    //     chainId: 'pulsar-3',
+    //     lastBlock: 50883
+    // },
     {
-        chain: "MULTIVERSX",
-        nativeCoinSymbol: "EGLD",
-        intialFund: "50000000000000000",
-        contractAddress: "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
-        chainType: 'multiversX',
-        elasticSearchURL: "https://devnet-index.multiversx.com",
-        gatewayURL: "https://devnet-gateway.multiversx.com",
-        lastBlock: 0,
-        chainID: "D"
-    },
-    {
-        chain: "TON",
-        rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-        nativeCoinSymbol: "TON",
-        intialFund: "500000000",
-        contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
-        chainType: 'ton',
-        lastBlock: 16810573000003
-    },
-    {
-        chain: "SECRET",
-        // rpcURL: "https://pulsar.api.trivium.network:1317",
-        rpcURL: "http://192.168.18.166:1317",
-        nativeCoinSymbol: "USCRT",
+        chain: "TEZOS",
+        rpcURL: "https://ghostnet.ecadinfra.com",
+        restApiURL: "https://api.ghostnet.tzkt.io",
+        contractAddress: "KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4",
         intialFund: "50000",
-        contractAddress: "secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp",
-        chainType: 'scrt',
-        // chainId: 'pulsar-3',
-        chainId: 'secretdev-1',
-        lastBlock: 50883
-    },
+        lastBlock: 5058309,
+        nativeCoinSymbol: "XTZ",
+        chainType: "tezos"
+    }
 ]
 
 const stakingTestChain: IStakingConfig = {

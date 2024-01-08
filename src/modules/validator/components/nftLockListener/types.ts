@@ -1,4 +1,4 @@
-import { IConfigAndWallets, IEvmChainConfig, ISecretChainConfig, ITonChainConfig } from "@src/types";
+import { IConfigAndWallets, IEvmChainConfig, ISecretChainConfig, ITezosChainConfig, ITonChainConfig } from "@src/types";
 
 interface IEvmLockListener extends IConfigAndWallets {
     evmChainConfig: IEvmChainConfig
@@ -12,4 +12,8 @@ interface ISecretLockListener extends IConfigAndWallets {
     secretChainConfig: ISecretChainConfig
 }
 
-export { IEvmLockListener, ITonLockListener, ISecretLockListener }
+interface ITezosLockListener extends IConfigAndWallets {
+    tezosChainConfig: ITezosChainConfig
+}
+
+export { IEvmLockListener, ITonLockListener, ISecretLockListener, ITezosLockListener }

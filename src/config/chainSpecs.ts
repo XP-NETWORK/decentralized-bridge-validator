@@ -81,7 +81,16 @@ const bridgeTestChains: TChain[] = [
         lastBlock: 5058309,
         nativeCoinSymbol: "XTZ",
         chainType: "tezos"
-    }
+    },
+    {
+        chain: "MATIC",
+        rpcURL: "https://polygon-mumbai-bor.publicnode.com",
+        nativeCoinSymbol: "MATIC",
+        intialFund: "50000000000000000",
+        contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
+        chainType: 'hedera',
+        lastBlock: 44422223
+    },
 ]
 
 const stakingTestChain: IStakingConfig = {

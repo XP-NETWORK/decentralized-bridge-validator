@@ -80,6 +80,11 @@ interface IEvmChainConfig extends IChainConfig {
     rpcURL: string;
 }
 
+interface IHederaChainConfig extends IChainConfig {
+    chainType: 'hedera';
+    rpcURL: string;
+}
+
 interface ISecretChainConfig extends IChainConfig {
     chainType: 'scrt';
     rpcURL: string;
@@ -109,6 +114,11 @@ interface IEvmChainConfigAndEvmWallet {
     evmChainConfig: IEvmChainConfig;
     evmWallet: IEvmWallet;
 }
+interface IHederaChainConfigAndEvmWallet {
+    hederaChainConfig: IHederaChainConfig;
+    evmWallet: IEvmWallet;
+}
+
 
 interface ITonChainConfigAndTonWallet {
     tonChainConfig: ITonChainConfig;
@@ -177,7 +187,7 @@ interface IMultiversXContractConfigAndMultiversXWallet {
 }
 
 
-type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig | ITezosChainConfig;
+type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig | ITezosChainConfig | IHederaChainConfig;
 
 interface IBridgeConfig {
     bridgeChains: TChain[];
@@ -234,5 +244,7 @@ export {
     ISecretContractConfig,
     ITezosWallet,
     ITezosChainConfig,
-    ITezosChainConfigAndTezosWallet
+    ITezosChainConfigAndTezosWallet,
+    IHederaChainConfig,
+    IHederaChainConfigAndEvmWallet
 }

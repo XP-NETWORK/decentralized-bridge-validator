@@ -24,6 +24,8 @@ import {
 } from '@taquito/utils';
 import { hash } from '@stablelib/blake2b';
 import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
+import getHederaBridgeContract from '@src/utils/functions/getHederaBridgeContract';
+import isHederaChainFunded from '../../getInitialFunds/components/promptToGetFunding/components/isHederaChainFunded';
 
 const handleValidatorAddition = async ({
     storageChainConfig,
@@ -52,7 +54,18 @@ const handleValidatorAddition = async ({
                 evmChainConfig: chainConfig,
                 evmWallet: wallets.evmWallet,
             });
-    } else if (chainConfig.chainType === 'multiversX') {
+    } else if (chainConfig.chainType === 'hedera') {
+        bridgeContract = getHederaBridgeContract({
+            hederaChainConfig: chainConfig,
+            evmWallet: wallets.evmWallet,
+        });
+        publicWalletAddress = wallets.evmWallet.address;
+        isChainFunded = () => isHederaChainFunded({
+            hederaChainConfig: chainConfig,
+            evmWallet: wallets.evmWallet,
+        });
+    }
+    else if (chainConfig.chainType === 'multiversX') {
         bridgeContract = getMultiversXBridgeContract({
             multiversXChainConfig: chainConfig,
             multiversXWallet: wallets.multiversXWallet,
@@ -97,7 +110,7 @@ const handleValidatorAddition = async ({
             ),
             prefix.tz1
         ));
-        
+
         isChainFunded = () =>
             isTezosChainFunded({
                 tezosChainConfig: chainConfig,

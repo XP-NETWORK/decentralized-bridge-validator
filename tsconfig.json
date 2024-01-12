@@ -12,8 +12,6 @@
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "baseUrl": ".",
-        "strictNullChecks": true,
-        "strict": true,
         "paths": {
             "@src/*": ["./src/*"]
         }

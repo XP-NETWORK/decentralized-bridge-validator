@@ -1,16 +1,18 @@
 import { evmContractListener } from "@src/modules/validator/utils";
-import { getEvmLockListenerHandler } from "./utils";
+
 import {  IHederaLockListener } from "../../types";
+import getHederaLockListenerHandler from "./utils/getHederaLockListenerHandler";
+import hederaContractListener from "@src/modules/validator/utils/hederaContractListener";
 
 
 const hederaLockListener = async ({ config, hederaChainConfig, wallets }: IHederaLockListener) => {
 
     const { contractAddress, rpcURL, lastBlock: lastBlock_, chain } = hederaChainConfig;
 
-    const handleLog = getEvmLockListenerHandler({ config, hederaChainConfig, wallets })
+    const handleLog = getHederaLockListenerHandler({ config, hederaChainConfig, wallets })
 
     try {
-        await evmContractListener({ contractAddress, rpcURL, lastBlock_, chain, handleLog });
+        await hederaContractListener({ contractAddress, rpcURL, lastBlock_, chain, handleLog });
     } catch (e) {
         console.error("Error in evmLockListener", hederaChainConfig.chain, e)
     }

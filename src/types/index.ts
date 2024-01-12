@@ -39,6 +39,10 @@ interface IEvmWallet {
     address: string;
     privateKey: string;
 }
+interface IHederaWallet {
+    address: string;
+    privateKey: string;
+}
 
 interface ISecretWallet {
     publicKey: string;
@@ -83,6 +87,7 @@ interface IEvmChainConfig extends IChainConfig {
 interface IHederaChainConfig extends IChainConfig {
     chainType: 'hedera';
     rpcURL: string;
+    royaltyInfoProxyAddress: string;
 }
 
 interface ISecretChainConfig extends IChainConfig {
@@ -161,6 +166,11 @@ interface ITonContractConfig {
 interface IEvmContractConfig {
     contractAddress: string;
     rpcURL: string;
+}
+interface IHederaContractConfig {
+    contractAddress: string;
+    rpcURL: string;
+    royaltyInfoProxyAddress: string;
 }
 
 interface IMultiversXContractConfig {
@@ -246,5 +256,7 @@ export {
     ITezosChainConfig,
     ITezosChainConfigAndTezosWallet,
     IHederaChainConfig,
-    IHederaChainConfigAndEvmWallet
+    IHederaChainConfigAndEvmWallet,
+    IHederaContractConfig,
+    IHederaWallet
 }

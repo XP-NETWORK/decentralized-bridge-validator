@@ -1,38 +1,38 @@
-import { ethers } from 'ethers';
-import { getCurrentMultiversXBalance } from '@src/utils';
-import { IMultiversXChainConfigAndMultiversXWallet } from '@src/types';
+import { ethers } from 'ethers'
+import { getCurrentMultiversXBalance } from '@src/utils'
+import { type IMultiversXChainConfigAndMultiversXWallet } from '@src/types'
 
 const isMultiversXChainFunded = async ({
-    multiversXChainConfig,
-    multiversXWallet,
+  multiversXChainConfig,
+  multiversXWallet
 }: IMultiversXChainConfigAndMultiversXWallet): Promise<boolean> => {
-    let isFunded = true;
-    try {
-        const currentBalance = await getCurrentMultiversXBalance({
-            multiversXChainConfig,
-            multiversXWallet,
-        });
-        const remainingRaw =
-            BigInt(multiversXChainConfig.intialFund) - BigInt(currentBalance);
+  let isFunded = true
+  try {
+    const currentBalance = await getCurrentMultiversXBalance({
+      multiversXChainConfig,
+      multiversXWallet
+    })
+    const remainingRaw =
+            BigInt(multiversXChainConfig.intialFund) - BigInt(currentBalance)
 
-        const remainingFund = ethers.formatEther(remainingRaw);
-        if (currentBalance < BigInt(multiversXChainConfig.intialFund)) {
-            isFunded = false;
-            console.info(
+    const remainingFund = ethers.formatEther(remainingRaw)
+    if (currentBalance < BigInt(multiversXChainConfig.intialFund)) {
+      isFunded = false
+      console.info(
                 `Current balance: ${ethers.formatEther(
-                    currentBalance,
+                    currentBalance
                 )}; Fund chain your wallet ${
                     multiversXWallet.userWallet.bech32
                 } on ${multiversXChainConfig.chain} with ${remainingFund} ${
                     multiversXChainConfig.nativeCoinSymbol
-                }.`,
-            );
-        }
-
-        return isFunded;
-    } catch (e) {
-        throw `Error while isEvmChainFunded, orignal error: ${e}`;
+                }.`
+      )
     }
-};
 
-export default isMultiversXChainFunded;
+    return isFunded
+  } catch (e) {
+    throw `Error while isEvmChainFunded, orignal error: ${e}`
+  }
+}
+
+export default isMultiversXChainFunded

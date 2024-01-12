@@ -1,7 +1,7 @@
-import { IConfigAndWallets, IMultiversXChainConfig } from '@src/types';
+import { type IConfigAndWallets, type IMultiversXChainConfig } from '@src/types'
 
 interface IMultiversXLockListener extends IConfigAndWallets {
-    multiversXChainConfig: IMultiversXChainConfig;
+  multiversXChainConfig: IMultiversXChainConfig
 }
 
-export { IMultiversXLockListener };
+export type { IMultiversXLockListener }

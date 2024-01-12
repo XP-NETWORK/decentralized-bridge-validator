@@ -1,3 +1,3 @@
-import promptToGetFunding from './promptToGetFunding';
+import promptToGetFunding from './promptToGetFunding'
 
-export { promptToGetFunding };
+export { promptToGetFunding }

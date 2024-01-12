@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
 
 @Entity('Block')
 @Unique(['contractAddress', 'chain'])
 export class Block {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+    id: number
 
-    @Column()
-    lastBlock: number;
+  @Column()
+    lastBlock: number
 
-    @Column()
-    contractAddress: string;
+  @Column()
+    contractAddress: string
 
-    @Column()
-    chain: string;
+  @Column()
+    chain: string
 }

@@ -1,3 +1,3 @@
-import approveStake from './approveStake';
+import approveStake from './approveStake'
 
-export { approveStake };
+export { approveStake }

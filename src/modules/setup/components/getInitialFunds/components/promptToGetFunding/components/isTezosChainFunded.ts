@@ -1,50 +1,50 @@
-import { ITezosChainConfigAndTezosWallet } from '@src/types';
-import { b58cencode, prefix, b58cdecode } from '@taquito/utils';
-import { hash } from '@stablelib/blake2b';
-import { address } from '@src/contractsTypes/tezosContractTypes/type-aliases';
-import { getCurrentTezosBalance } from '@src/utils';
+import { type ITezosChainConfigAndTezosWallet } from '@src/types'
+import { b58cencode, prefix, b58cdecode } from '@taquito/utils'
+import { hash } from '@stablelib/blake2b'
+import { type address } from '@src/contractsTypes/tezosContractTypes/type-aliases'
+import { getCurrentTezosBalance } from '@src/utils'
 
 const formatTezos = (amount: bigint) => {
-    return Number(amount) / 1e6;
-};
+  return Number(amount) / 1e6
+}
 
 const isTezosChainFunded = async ({
-    tezosChainConfig,
-    tezosWallet,
+  tezosChainConfig,
+  tezosWallet
 }: ITezosChainConfigAndTezosWallet): Promise<boolean> => {
-    let isFunded = true;
-    try {
-        const currentBalance = await getCurrentTezosBalance({
-            tezosChainConfig,
-            tezosWallet,
-        });
-        const remainingRaw =
-            BigInt(tezosChainConfig.intialFund) - BigInt(currentBalance);
+  let isFunded = true
+  try {
+    const currentBalance = await getCurrentTezosBalance({
+      tezosChainConfig,
+      tezosWallet
+    })
+    const remainingRaw =
+            BigInt(tezosChainConfig.intialFund) - BigInt(currentBalance)
 
-        const remainingFund = formatTezos(remainingRaw);
+    const remainingFund = formatTezos(remainingRaw)
 
-        const addressToFund = b58cencode(
-            hash(
-                new Uint8Array(b58cdecode(tezosWallet.publicKey, prefix.edpk)),
-                20,
-            ),
-            prefix.tz1,
-        ) as address;
-        if (currentBalance < BigInt(tezosChainConfig.intialFund)) {
-            isFunded = false;
-            console.info(
+    const addressToFund = b58cencode(
+      hash(
+        new Uint8Array(b58cdecode(tezosWallet.publicKey, prefix.edpk)),
+        20
+      ),
+      prefix.tz1
+    ) as address
+    if (currentBalance < BigInt(tezosChainConfig.intialFund)) {
+      isFunded = false
+      console.info(
                 `Current balance: ${formatTezos(
-                    currentBalance,
+                    currentBalance
                 )}; Fund chain your wallet ${addressToFund} on ${
                     tezosChainConfig.chain
-                } with ${remainingFund} ${tezosChainConfig.nativeCoinSymbol}.`,
-            );
-        }
-
-        return isFunded;
-    } catch (e) {
-        throw `Error while isTezosChainFunded, orignal error: ${e}`;
+                } with ${remainingFund} ${tezosChainConfig.nativeCoinSymbol}.`
+      )
     }
-};
 
-export default isTezosChainFunded;
+    return isFunded
+  } catch (e) {
+    throw `Error while isTezosChainFunded, orignal error: ${e}`
+  }
+}
+
+export default isTezosChainFunded

@@ -1,13 +1,13 @@
-import { BridgeStorage } from '@src/contractsTypes';
-import { IGeneratedWallets, TChain } from '@src/types';
-import { INftTransferDetailsObject } from '../types';
+import { type BridgeStorage } from '@src/contractsTypes'
+import { type IGeneratedWallets, type TChain } from '@src/types'
+import { type INftTransferDetailsObject } from '../types'
 
 interface IApproveLock {
-    nftTransferDetailsObject: INftTransferDetailsObject;
-    wallets: IGeneratedWallets;
-    storageContract: BridgeStorage;
-    destinationChainObject: TChain;
-    txChain: string;
+  nftTransferDetailsObject: INftTransferDetailsObject
+  wallets: IGeneratedWallets
+  storageContract: BridgeStorage
+  destinationChainObject: TChain
+  txChain: string
 }
 
-export { IApproveLock };
+export type { IApproveLock }

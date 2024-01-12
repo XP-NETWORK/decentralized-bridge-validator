@@ -1,27 +1,28 @@
-import { IConfigAndWallets } from '@src/types';
-import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
-import { waitForKeyPress, waitForMSWithMsg } from '@src/utils';
-import { promptToGetFunding } from './components';
+import { type IConfigAndWallets } from '@src/types'
+import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds'
+import { waitForKeyPress, waitForMSWithMsg } from '@src/utils'
+import { promptToGetFunding } from './components'
 
 const getInitialFunds = async ({
-    config,
-    wallets,
+  config,
+  wallets
 }: IConfigAndWallets): Promise<void> => {
-    let isFunded = false;
-    while (!isFunded) {
-        try {
-            isFunded = await promptToGetFunding({ wallets, config });
-            if (!isFunded)
-                await waitForKeyPress(
-                    'Press [Enter] key after funding your addresses',
-                );
-        } catch (e) {
-            await waitForMSWithMsg(
-                ProcessDelayMilliseconds,
-                'Something went wrong in getInitialFunds',
-            );
-        }
+  let isFunded = false
+  while (!isFunded) {
+    try {
+      isFunded = await promptToGetFunding({ wallets, config })
+      if (!isFunded) {
+        await waitForKeyPress(
+          'Press [Enter] key after funding your addresses'
+        )
+      }
+    } catch (e) {
+      await waitForMSWithMsg(
+        ProcessDelayMilliseconds,
+        'Something went wrong in getInitialFunds'
+      )
     }
-};
+  }
+}
 
-export default getInitialFunds;
+export default getInitialFunds

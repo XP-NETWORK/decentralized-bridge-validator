@@ -1,41 +1,41 @@
-import { ethers } from 'ethers';
-import { getCurrentEvmBalance } from '@src/utils';
-import { IStakingChainConfigAndEvmWallet } from '@src/types';
+import { ethers } from 'ethers'
+import { getCurrentEvmBalance } from '@src/utils'
+import { type IStakingChainConfigAndEvmWallet } from '@src/types'
 
 const isStakingCoinFunded = async ({
-    stakingChainConfig,
-    evmWallet,
+  stakingChainConfig,
+  evmWallet
 }: IStakingChainConfigAndEvmWallet): Promise<boolean> => {
-    try {
-        let isFunded = true;
+  try {
+    let isFunded = true
 
-        const stakingCoinCurrentBalance = await getCurrentEvmBalance({
-            stakingChainConfig,
-            evmWallet,
-        });
-        const remainingStakingCoinRaw =
+    const stakingCoinCurrentBalance = await getCurrentEvmBalance({
+      stakingChainConfig,
+      evmWallet
+    })
+    const remainingStakingCoinRaw =
             BigInt(stakingChainConfig.intialFund) -
-            BigInt(stakingCoinCurrentBalance);
-        const remainingStakingCoinFund = ethers.formatEther(
-            remainingStakingCoinRaw,
-        );
-        if (stakingCoinCurrentBalance < BigInt(stakingChainConfig.intialFund)) {
-            isFunded = false;
-            console.info(
+            BigInt(stakingCoinCurrentBalance)
+    const remainingStakingCoinFund = ethers.formatEther(
+      remainingStakingCoinRaw
+    )
+    if (stakingCoinCurrentBalance < BigInt(stakingChainConfig.intialFund)) {
+      isFunded = false
+      console.info(
                 `Current balance: ${ethers.formatEther(
-                    stakingCoinCurrentBalance,
+                    stakingCoinCurrentBalance
                 )}; Fund chain your wallet ${evmWallet.address} on ${
                     stakingChainConfig.chain
                 } with ${remainingStakingCoinFund} ${
                     stakingChainConfig.coinSymbol
-                } [ Coin address ${stakingChainConfig.coinAddress}].`,
-            );
-        }
-
-        return isFunded;
-    } catch (e) {
-        throw `Error while isStakingCoinFunded, orignal error: ${e}`;
+                } [ Coin address ${stakingChainConfig.coinAddress}].`
+      )
     }
-};
 
-export default isStakingCoinFunded;
+    return isFunded
+  } catch (e) {
+    throw `Error while isStakingCoinFunded, orignal error: ${e}`
+  }
+}
+
+export default isStakingCoinFunded

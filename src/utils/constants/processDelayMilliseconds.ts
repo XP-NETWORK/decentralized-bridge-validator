@@ -1,3 +1,3 @@
-const ProcessDelayMilliseconds = 5000;
+const ProcessDelayMilliseconds = 5000
 
-export { ProcessDelayMilliseconds };
+export { ProcessDelayMilliseconds }

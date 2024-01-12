@@ -1,3 +1,3 @@
-import getTezosLockListenerHandler from './getTezosLockListenerHandler';
+import getTezosLockListenerHandler from './getTezosLockListenerHandler'
 
-export { getTezosLockListenerHandler };
+export { getTezosLockListenerHandler }

@@ -1,53 +1,53 @@
-import { IMultiversXWallet } from '@src/types';
+import { type IMultiversXWallet } from '@src/types'
 
-function isMultiversXWallet(object: unknown): object is IMultiversXWallet {
-    if (typeof object !== 'object' || object === null) {
-        return false;
-    }
+function isMultiversXWallet (object: unknown): object is IMultiversXWallet {
+  if (typeof object !== 'object' || object === null) {
+    return false
+  }
 
-    const multiversXWallet = object as Record<string, unknown>;
+  const multiversXWallet = object as Record<string, unknown>
 
-    const hasPassword =
+  const hasPassword =
         'password' in multiversXWallet &&
-        typeof multiversXWallet.password === 'string';
+        typeof multiversXWallet.password === 'string'
 
-    const hasUserWallet =
+  const hasUserWallet =
         'userWallet' in multiversXWallet &&
         typeof multiversXWallet.userWallet === 'object' &&
-        multiversXWallet.userWallet !== null;
+        multiversXWallet.userWallet !== null
 
-    if (!hasPassword || !hasUserWallet) {
-        return false;
-    }
+  if (!hasPassword || !hasUserWallet) {
+    return false
+  }
 
-    // Check the userWallet object structure
-    const userWallet = multiversXWallet.userWallet as Record<string, unknown>;
+  // Check the userWallet object structure
+  const userWallet = multiversXWallet.userWallet as Record<string, unknown>
 
-    const hasVersion =
-        'version' in userWallet && typeof userWallet.version === 'number';
-    const hasKind = 'kind' in userWallet && typeof userWallet.kind === 'string';
-    const hasId = 'id' in userWallet && typeof userWallet.id === 'string';
-    const hasAddress =
-        'address' in userWallet && typeof userWallet.address === 'string';
-    const hasBech32 =
-        'bech32' in userWallet && typeof userWallet.bech32 === 'string';
-    const hasCrypto =
+  const hasVersion =
+        'version' in userWallet && typeof userWallet.version === 'number'
+  const hasKind = 'kind' in userWallet && typeof userWallet.kind === 'string'
+  const hasId = 'id' in userWallet && typeof userWallet.id === 'string'
+  const hasAddress =
+        'address' in userWallet && typeof userWallet.address === 'string'
+  const hasBech32 =
+        'bech32' in userWallet && typeof userWallet.bech32 === 'string'
+  const hasCrypto =
         'crypto' in userWallet &&
         typeof userWallet.crypto === 'object' &&
-        userWallet.crypto !== null;
+        userWallet.crypto !== null
 
-    if (
-        !hasVersion ||
+  if (
+    !hasVersion ||
         !hasKind ||
         !hasId ||
         !hasAddress ||
         !hasBech32 ||
         !hasCrypto
-    ) {
-        return false;
-    }
+  ) {
+    return false
+  }
 
-    return true;
+  return true
 }
 
-export default isMultiversXWallet;
+export default isMultiversXWallet

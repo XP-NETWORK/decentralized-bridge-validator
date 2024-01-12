@@ -1,3 +1,3 @@
-import getSecretLockListenerHandler from './getSecretLockListenerHandler';
+import getSecretLockListenerHandler from './getSecretLockListenerHandler'
 
-export { getSecretLockListenerHandler };
+export { getSecretLockListenerHandler }

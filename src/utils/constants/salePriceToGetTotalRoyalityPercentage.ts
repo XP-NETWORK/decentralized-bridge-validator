@@ -1,3 +1,3 @@
-const SalePriceToGetTotalRoyalityPercentage = 10000;
+const SalePriceToGetTotalRoyalityPercentage = 10000
 
-export { SalePriceToGetTotalRoyalityPercentage };
+export { SalePriceToGetTotalRoyalityPercentage }

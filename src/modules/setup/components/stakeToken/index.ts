@@ -82,13 +82,12 @@ const stakeTokens_ = async ({
         await stakeTx.wait();
         console.info(`Tokens staked Transaction Hash: ${stakeTx.hash}`);
     } catch (e) {
-
         if (
             !(
                 e &&
                 e.shortMessage &&
                 e.shortMessage ===
-                `execution reverted: "You can only stake once"`
+                    `execution reverted: "You can only stake once"`
             )
         ) {
             console.info(
@@ -125,7 +124,7 @@ const stakeTokens = async ({
             retries++;
 
             if (retries >= RetryPriority.HIGH) {
-                console.error("Max retries exceeded, exiting...");
+                console.error('Max retries exceeded, exiting...');
                 process.exit(1);
             }
         }

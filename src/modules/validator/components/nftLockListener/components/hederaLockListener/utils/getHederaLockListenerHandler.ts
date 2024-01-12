@@ -59,9 +59,8 @@ const getHederaLockListenerHandler = ({
             const fee = String(
                 await storageContract.chainFee(destinationChain),
             ); // Required fee for claming nft on target chain
-            const royaltyReceiver = await storageContract.chainRoyalty(
-                destinationChain,
-            );
+            const royaltyReceiver =
+                await storageContract.chainRoyalty(destinationChain);
 
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,

@@ -3,11 +3,13 @@ import { IEvmContractConfig, INftContract } from '@src/types';
 import { SalePriceToGetTotalRoyalityPercentage } from '../constants/salePriceToGetTotalRoyalityPercentage';
 import { JsonRpcProvider } from 'ethers';
 
-const getEvmSingleNftContract = (contractConfig: IEvmContractConfig): INftContract => {
-    const provider = new JsonRpcProvider(contractConfig.rpcURL)
+const getEvmSingleNftContract = (
+    contractConfig: IEvmContractConfig,
+): INftContract => {
+    const provider = new JsonRpcProvider(contractConfig.rpcURL);
     const erc721Contract = ERC721Royalty__factory.connect(
         contractConfig.contractAddress,
-        provider
+        provider,
     );
     return {
         name: async () => {

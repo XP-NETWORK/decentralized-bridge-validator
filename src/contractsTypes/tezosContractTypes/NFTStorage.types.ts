@@ -1,5 +1,7 @@
-
-import { ContractAbstractionFromContractType, WalletContractAbstractionFromContractType } from './type-utils';
+import {
+    ContractAbstractionFromContractType,
+    WalletContractAbstractionFromContractType,
+} from './type-utils';
 import { address, nat } from './type-aliases';
 
 export type Storage = {
@@ -8,21 +10,22 @@ export type Storage = {
 };
 
 type Methods = {
-    unlock_token: (
-        token_id: nat,
-        to: address,
-    ) => Promise<void>;
+    unlock_token: (token_id: nat, to: address) => Promise<void>;
     deposit_token: (param: nat) => Promise<void>;
 };
 
 type MethodsObject = {
-    unlock_token: (params: {
-        token_id: nat,
-        to: address,
-    }) => Promise<void>;
+    unlock_token: (params: { token_id: nat; to: address }) => Promise<void>;
     deposit_token: (param: nat) => Promise<void>;
 };
 
-type contractTypes = { methods: Methods, methodsObject: MethodsObject, storage: Storage, code: { __type: 'NFTStorageCode', protocol: string, code: object[] } };
-export type NFTStorageContractType = ContractAbstractionFromContractType<contractTypes>;
-export type NFTStorageWalletType = WalletContractAbstractionFromContractType<contractTypes>;
+type contractTypes = {
+    methods: Methods;
+    methodsObject: MethodsObject;
+    storage: Storage;
+    code: { __type: 'NFTStorageCode'; protocol: string; code: object[] };
+};
+export type NFTStorageContractType =
+    ContractAbstractionFromContractType<contractTypes>;
+export type NFTStorageWalletType =
+    WalletContractAbstractionFromContractType<contractTypes>;

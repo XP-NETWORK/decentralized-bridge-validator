@@ -1,9 +1,9 @@
-import evmContractListener from "./evmContractListener";
-import createJobWithWorker from "./createJobWithWorker";
-import multiversXContractListener from "./multiversXContractListener";
-import tonContractListener from "./tonContractListener";
-import secretContractListener from "./secretContractListener";
-import tezosContractListener from "./tezosContractListener";
+import evmContractListener from './evmContractListener';
+import createJobWithWorker from './createJobWithWorker';
+import multiversXContractListener from './multiversXContractListener';
+import tonContractListener from './tonContractListener';
+import secretContractListener from './secretContractListener';
+import tezosContractListener from './tezosContractListener';
 
 export {
     evmContractListener,
@@ -11,5 +11,5 @@ export {
     multiversXContractListener,
     tonContractListener,
     secretContractListener,
-    tezosContractListener
-}
+    tezosContractListener,
+};

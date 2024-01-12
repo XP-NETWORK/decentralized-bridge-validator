@@ -1,768 +1,768 @@
 const evmBridgeABI = [
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "address[]",
-                "name": "_validators",
-                "type": "address[]"
+                internalType: 'address[]',
+                name: '_validators',
+                type: 'address[]',
             },
             {
-                "internalType": "string",
-                "name": "_chainType",
-                "type": "string"
+                internalType: 'string',
+                name: '_chainType',
+                type: 'string',
             },
             {
-                "internalType": "address",
-                "name": "_collectionDeployer",
-                "type": "address"
+                internalType: 'address',
+                name: '_collectionDeployer',
+                type: 'address',
             },
             {
-                "internalType": "address",
-                "name": "_storageDeployer",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '_storageDeployer',
+                type: 'address',
+            },
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        stateMutability: 'nonpayable',
+        type: 'constructor',
     },
     {
-        "inputs": [],
-        "name": "ECDSAInvalidSignature",
-        "type": "error"
+        inputs: [],
+        name: 'ECDSAInvalidSignature',
+        type: 'error',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "uint256",
-                "name": "length",
-                "type": "uint256"
-            }
+                internalType: 'uint256',
+                name: 'length',
+                type: 'uint256',
+            },
         ],
-        "name": "ECDSAInvalidSignatureLength",
-        "type": "error"
+        name: 'ECDSAInvalidSignatureLength',
+        type: 'error',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "bytes32",
-                "name": "s",
-                "type": "bytes32"
-            }
+                internalType: 'bytes32',
+                name: 's',
+                type: 'bytes32',
+            },
         ],
-        "name": "ECDSAInvalidSignatureS",
-        "type": "error"
+        name: 'ECDSAInvalidSignatureS',
+        type: 'error',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_validator",
-                "type": "address"
-            }
+                indexed: false,
+                internalType: 'address',
+                name: '_validator',
+                type: 'address',
+            },
         ],
-        "name": "AddNewValidator",
-        "type": "event"
+        name: 'AddNewValidator',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "sourceChain",
-                "type": "string"
+                indexed: false,
+                internalType: 'string',
+                name: 'sourceChain',
+                type: 'string',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "transactionHash",
-                "type": "string"
-            }
+                indexed: false,
+                internalType: 'string',
+                name: 'transactionHash',
+                type: 'string',
+            },
         ],
-        "name": "Claimed",
-        "type": "event"
+        name: 'Claimed',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
+                indexed: false,
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "destinationChain",
-                "type": "string"
+                indexed: false,
+                internalType: 'string',
+                name: 'destinationChain',
+                type: 'string',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "destinationUserAddress",
-                "type": "string"
+                indexed: false,
+                internalType: 'string',
+                name: 'destinationUserAddress',
+                type: 'string',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "sourceNftContractAddress",
-                "type": "string"
+                indexed: false,
+                internalType: 'string',
+                name: 'sourceNftContractAddress',
+                type: 'string',
             },
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "tokenAmount",
-                "type": "uint256"
+                indexed: false,
+                internalType: 'uint256',
+                name: 'tokenAmount',
+                type: 'uint256',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "nftType",
-                "type": "string"
+                indexed: false,
+                internalType: 'string',
+                name: 'nftType',
+                type: 'string',
             },
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "sourceChain",
-                "type": "string"
-            }
+                indexed: false,
+                internalType: 'string',
+                name: 'sourceChain',
+                type: 'string',
+            },
         ],
-        "name": "Locked",
-        "type": "event"
+        name: 'Locked',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "hashValue",
-                "type": "bytes32"
+                indexed: true,
+                internalType: 'bytes32',
+                name: 'hashValue',
+                type: 'bytes32',
             },
             {
-                "indexed": false,
-                "internalType": "bytes[]",
-                "name": "",
-                "type": "bytes[]"
-            }
+                indexed: false,
+                internalType: 'bytes[]',
+                name: '',
+                type: 'bytes[]',
+            },
         ],
-        "name": "LogHash",
-        "type": "event"
+        name: 'LogHash',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_validator",
-                "type": "address"
-            }
+                indexed: false,
+                internalType: 'address',
+                name: '_validator',
+                type: 'address',
+            },
         ],
-        "name": "RewardValidator",
-        "type": "event"
+        name: 'RewardValidator',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
+                indexed: false,
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
             },
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
+                indexed: false,
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
             },
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "contractAddr",
-                "type": "address"
+                indexed: false,
+                internalType: 'address',
+                name: 'contractAddr',
+                type: 'address',
             },
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
         ],
-        "name": "UnLock1155",
-        "type": "event"
+        name: 'UnLock1155',
+        type: 'event',
     },
     {
-        "anonymous": false,
-        "inputs": [
+        anonymous: false,
+        inputs: [
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
+                indexed: false,
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
             },
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
+                indexed: false,
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
             },
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "contractAddr",
-                "type": "address"
-            }
+                indexed: false,
+                internalType: 'address',
+                name: 'contractAddr',
+                type: 'address',
+            },
         ],
-        "name": "UnLock721",
-        "type": "event"
+        name: 'UnLock721',
+        type: 'event',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "address",
-                "name": "_validator",
-                "type": "address"
+                internalType: 'address',
+                name: '_validator',
+                type: 'address',
             },
             {
-                "components": [
+                components: [
                     {
-                        "internalType": "string",
-                        "name": "signerAddress",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'signerAddress',
+                        type: 'string',
                     },
                     {
-                        "internalType": "bytes",
-                        "name": "signature",
-                        "type": "bytes"
-                    }
+                        internalType: 'bytes',
+                        name: 'signature',
+                        type: 'bytes',
+                    },
                 ],
-                "internalType": "struct SignerAndSignature[]",
-                "name": "signatures",
-                "type": "tuple[]"
-            }
+                internalType: 'struct SignerAndSignature[]',
+                name: 'signatures',
+                type: 'tuple[]',
+            },
         ],
-        "name": "addValidator",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        name: 'addValidator',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "components": [
+                components: [
                     {
-                        "internalType": "uint256",
-                        "name": "tokenId",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'tokenId',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "string",
-                        "name": "sourceChain",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'sourceChain',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "destinationChain",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'destinationChain',
+                        type: 'string',
                     },
                     {
-                        "internalType": "address",
-                        "name": "destinationUserAddress",
-                        "type": "address"
+                        internalType: 'address',
+                        name: 'destinationUserAddress',
+                        type: 'address',
                     },
                     {
-                        "internalType": "string",
-                        "name": "sourceNftContractAddress",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'sourceNftContractAddress',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'name',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "symbol",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'symbol',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "royalty",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'royalty',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "address",
-                        "name": "royaltyReceiver",
-                        "type": "address"
+                        internalType: 'address',
+                        name: 'royaltyReceiver',
+                        type: 'address',
                     },
                     {
-                        "internalType": "string",
-                        "name": "metadata",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'metadata',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "transactionHash",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'transactionHash',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "tokenAmount",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'tokenAmount',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "string",
-                        "name": "nftType",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'nftType',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "fee",
-                        "type": "uint256"
-                    }
+                        internalType: 'uint256',
+                        name: 'fee',
+                        type: 'uint256',
+                    },
                 ],
-                "internalType": "struct Bridge.ClaimData",
-                "name": "data",
-                "type": "tuple"
+                internalType: 'struct Bridge.ClaimData',
+                name: 'data',
+                type: 'tuple',
             },
             {
-                "internalType": "bytes[]",
-                "name": "signatures",
-                "type": "bytes[]"
-            }
+                internalType: 'bytes[]',
+                name: 'signatures',
+                type: 'bytes[]',
+            },
         ],
-        "name": "claimNFT1155",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        name: 'claimNFT1155',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "components": [
+                components: [
                     {
-                        "internalType": "uint256",
-                        "name": "tokenId",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'tokenId',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "string",
-                        "name": "sourceChain",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'sourceChain',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "destinationChain",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'destinationChain',
+                        type: 'string',
                     },
                     {
-                        "internalType": "address",
-                        "name": "destinationUserAddress",
-                        "type": "address"
+                        internalType: 'address',
+                        name: 'destinationUserAddress',
+                        type: 'address',
                     },
                     {
-                        "internalType": "string",
-                        "name": "sourceNftContractAddress",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'sourceNftContractAddress',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'name',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "symbol",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'symbol',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "royalty",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'royalty',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "address",
-                        "name": "royaltyReceiver",
-                        "type": "address"
+                        internalType: 'address',
+                        name: 'royaltyReceiver',
+                        type: 'address',
                     },
                     {
-                        "internalType": "string",
-                        "name": "metadata",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'metadata',
+                        type: 'string',
                     },
                     {
-                        "internalType": "string",
-                        "name": "transactionHash",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'transactionHash',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "tokenAmount",
-                        "type": "uint256"
+                        internalType: 'uint256',
+                        name: 'tokenAmount',
+                        type: 'uint256',
                     },
                     {
-                        "internalType": "string",
-                        "name": "nftType",
-                        "type": "string"
+                        internalType: 'string',
+                        name: 'nftType',
+                        type: 'string',
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "fee",
-                        "type": "uint256"
-                    }
+                        internalType: 'uint256',
+                        name: 'fee',
+                        type: 'uint256',
+                    },
                 ],
-                "internalType": "struct Bridge.ClaimData",
-                "name": "data",
-                "type": "tuple"
+                internalType: 'struct Bridge.ClaimData',
+                name: 'data',
+                type: 'tuple',
             },
             {
-                "internalType": "bytes[]",
-                "name": "signatures",
-                "type": "bytes[]"
-            }
+                internalType: 'bytes[]',
+                name: 'signatures',
+                type: 'bytes[]',
+            },
         ],
-        "name": "claimNFT721",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        name: 'claimNFT721',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "address",
-                "name": "_validator",
-                "type": "address"
+                internalType: 'address',
+                name: '_validator',
+                type: 'address',
             },
             {
-                "internalType": "bytes[]",
-                "name": "signatures",
-                "type": "bytes[]"
-            }
+                internalType: 'bytes[]',
+                name: 'signatures',
+                type: 'bytes[]',
+            },
         ],
-        "name": "claimValidatorRewards",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        name: 'claimValidatorRewards',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
     {
-        "inputs": [],
-        "name": "collectionDeployer",
-        "outputs": [
+        inputs: [],
+        name: 'collectionDeployer',
+        outputs: [
             {
-                "internalType": "contract INFTCollectionDeployer",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'contract INFTCollectionDeployer',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
+                internalType: 'string',
+                name: '',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "duplicateStorageMapping1155",
-        "outputs": [
+        name: 'duplicateStorageMapping1155',
+        outputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
+                internalType: 'string',
+                name: '',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "duplicateStorageMapping721",
-        "outputs": [
+        name: 'duplicateStorageMapping721',
+        outputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                internalType: 'address',
+                name: '',
+                type: 'address',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "duplicateToOriginalMapping",
-        "outputs": [
+        name: 'duplicateToOriginalMapping',
+        outputs: [
             {
-                "internalType": "string",
-                "name": "chain",
-                "type": "string"
+                internalType: 'string',
+                name: 'chain',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "contractAddress",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: 'contractAddress',
+                type: 'string',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
             },
             {
-                "internalType": "string",
-                "name": "destinationChain",
-                "type": "string"
+                internalType: 'string',
+                name: 'destinationChain',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "destinationUserAddress",
-                "type": "string"
+                internalType: 'string',
+                name: 'destinationUserAddress',
+                type: 'string',
             },
             {
-                "internalType": "address",
-                "name": "sourceNftContractAddress",
-                "type": "address"
+                internalType: 'address',
+                name: 'sourceNftContractAddress',
+                type: 'address',
             },
             {
-                "internalType": "uint256",
-                "name": "tokenAmount",
-                "type": "uint256"
-            }
+                internalType: 'uint256',
+                name: 'tokenAmount',
+                type: 'uint256',
+            },
         ],
-        "name": "lock1155",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        name: 'lock1155',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
             },
             {
-                "internalType": "string",
-                "name": "destinationChain",
-                "type": "string"
+                internalType: 'string',
+                name: 'destinationChain',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "destinationUserAddress",
-                "type": "string"
+                internalType: 'string',
+                name: 'destinationUserAddress',
+                type: 'string',
             },
             {
-                "internalType": "address",
-                "name": "sourceNftContractAddress",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: 'sourceNftContractAddress',
+                type: 'address',
+            },
         ],
-        "name": "lock721",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        name: 'lock721',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
+                internalType: 'string',
+                name: '',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "originalStorageMapping1155",
-        "outputs": [
+        name: 'originalStorageMapping1155',
+        outputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
+                internalType: 'string',
+                name: '',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "originalStorageMapping721",
-        "outputs": [
+        name: 'originalStorageMapping721',
+        outputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
+                internalType: 'string',
+                name: '',
+                type: 'string',
             },
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "name": "originalToDuplicateMapping",
-        "outputs": [
+        name: 'originalToDuplicateMapping',
+        outputs: [
             {
-                "internalType": "string",
-                "name": "chain",
-                "type": "string"
+                internalType: 'string',
+                name: 'chain',
+                type: 'string',
             },
             {
-                "internalType": "address",
-                "name": "contractAddress",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: 'contractAddress',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [],
-        "name": "selfChain",
-        "outputs": [
+        inputs: [],
+        name: 'selfChain',
+        outputs: [
             {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [],
-        "name": "storageDeployer",
-        "outputs": [
+        inputs: [],
+        name: 'storageDeployer',
+        outputs: [
             {
-                "internalType": "contract INFTStorageDeployer",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'contract INFTStorageDeployer',
+                name: '',
+                type: 'address',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
+                internalType: 'bytes32',
+                name: '',
+                type: 'bytes32',
+            },
         ],
-        "name": "uniqueIdentifier",
-        "outputs": [
+        name: 'uniqueIdentifier',
+        outputs: [
             {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [
+        inputs: [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
         ],
-        "name": "validators",
-        "outputs": [
+        name: 'validators',
+        outputs: [
             {
-                "internalType": "bool",
-                "name": "added",
-                "type": "bool"
+                internalType: 'bool',
+                name: 'added',
+                type: 'bool',
             },
             {
-                "internalType": "uint256",
-                "name": "pendingReward",
-                "type": "uint256"
-            }
+                internalType: 'uint256',
+                name: 'pendingReward',
+                type: 'uint256',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "inputs": [],
-        "name": "validatorsCount",
-        "outputs": [
+        inputs: [],
+        name: 'validatorsCount',
+        outputs: [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
         ],
-        "stateMutability": "view",
-        "type": "function"
+        stateMutability: 'view',
+        type: 'function',
     },
     {
-        "stateMutability": "payable",
-        "type": "receive"
-    }
-]
+        stateMutability: 'payable',
+        type: 'receive',
+    },
+];
 
-export default evmBridgeABI
+export default evmBridgeABI;

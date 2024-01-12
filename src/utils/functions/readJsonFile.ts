@@ -17,7 +17,6 @@ const readJsonFile = async (filePath: string) => {
             throw error;
         }
     }
-}
+};
 
-
-export default readJsonFile
+export default readJsonFile;

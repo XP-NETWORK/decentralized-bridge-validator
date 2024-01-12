@@ -1,4 +1,4 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
 interface IGetMultiverseXLogs {
     gatewayURL: string;
@@ -12,16 +12,13 @@ interface IMultiverseXLogEvent {
     topics: string[];
 }
 
-
-
 interface IMultiverseXTxHashes {
     hits: {
         hits: {
             _id: string;
-        }[]
+        }[];
     };
 }
-
 
 interface IMultiverseXLogs {
     events: IMultiverseXLogEvent[];
@@ -32,12 +29,16 @@ interface IMultiverseXTxStatus {
         hits: {
             _id: string;
             _source: {
-                status: string
-            }
+                status: string;
+            };
         }[];
-    }
+    };
 }
 
-
-
-export { IGetMultiverseXLogs, IMultiverseXLogs, IMultiverseXLogEvent, IMultiverseXTxHashes, IMultiverseXTxStatus }
+export {
+    IGetMultiverseXLogs,
+    IMultiverseXLogs,
+    IMultiverseXLogEvent,
+    IMultiverseXTxHashes,
+    IMultiverseXTxStatus,
+};

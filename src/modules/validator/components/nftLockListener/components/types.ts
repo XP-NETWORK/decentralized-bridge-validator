@@ -1,4 +1,3 @@
-
 interface INftTransferDetailsObject {
     tokenId: string;
     sourceChain: string;
@@ -16,5 +15,4 @@ interface INftTransferDetailsObject {
     fee: string;
 }
 
-
-export { INftTransferDetailsObject }
+export { INftTransferDetailsObject };

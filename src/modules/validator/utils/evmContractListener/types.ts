@@ -14,12 +14,11 @@ interface LogObject {
 type LogEntry = string | LogObject;
 
 interface IEvmContractListener {
-    contractAddress: string,
-    rpcURL: string,
-    lastBlock_: number,
-    chain: string,
-    handleLog: ({ log }: { log: LogEntry }) => Promise<void>
+    contractAddress: string;
+    rpcURL: string;
+    lastBlock_: number;
+    chain: string;
+    handleLog: ({ log }: { log: LogEntry }) => Promise<void>;
 }
 
-
-export { LogEntry, IEvmContractListener, LogObject }
+export { LogEntry, IEvmContractListener, LogObject };

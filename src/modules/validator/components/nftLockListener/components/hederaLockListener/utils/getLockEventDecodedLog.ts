@@ -1,17 +1,16 @@
-import Web3 from "web3";
-import { evmBridgeABI } from "../../../../../../../abi";
-import { LogObject } from "../../../../../utils/evmContractListener/types";
+import Web3 from 'web3';
+import { evmBridgeABI } from '../../../../../../../abi';
+import { LogObject } from '../../../../../utils/evmContractListener/types';
 
 const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
-
-    const web3 = new Web3();  // Not connected to any node
-    const lockEventAbi = evmBridgeABI.find(abi => abi.name === "Locked" && abi.type === "event");
-
-    const decodedLog = web3.eth.abi.decodeLog(
-        lockEventAbi.inputs,
-        log.data,
-        [...log.topics.slice(1)]
+    const web3 = new Web3(); // Not connected to any node
+    const lockEventAbi = evmBridgeABI.find(
+        (abi) => abi.name === 'Locked' && abi.type === 'event',
     );
+
+    const decodedLog = web3.eth.abi.decodeLog(lockEventAbi.inputs, log.data, [
+        ...log.topics.slice(1),
+    ]);
 
     const [
         tokenId, // Unique ID for the NFT transfer
@@ -28,7 +27,7 @@ const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
         decodedLog.sourceNftContractAddress,
         decodedLog.tokenAmount,
         decodedLog.nftType,
-        decodedLog.sourceChain
+        decodedLog.sourceChain,
     ].map(String);
 
     return {
@@ -39,7 +38,7 @@ const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
         tokenAmount,
         nftType,
         sourceChain,
-    }
-}
+    };
+};
 
-export default getLockEventDecodedLog
+export default getLockEventDecodedLog;

@@ -26,14 +26,13 @@ interface ISecretKey {
 
 interface IMultiversXWallet {
     password: string;
-    userWallet: ISecretKey
+    userWallet: ISecretKey;
 }
 
 interface ITonWallet {
     publicKey: string;
-    secretKey: string
+    secretKey: string;
 }
-
 
 interface IEvmWallet {
     address: string;
@@ -59,7 +58,7 @@ interface IGeneratedWallets {
     multiversXWallet: IMultiversXWallet;
     tonWallet: ITonWallet;
     secretWallet: ISecretWallet;
-    tezosWallet: ITezosWallet
+    tezosWallet: ITezosWallet;
 }
 
 interface IConfigAndWallets {
@@ -73,7 +72,7 @@ interface IChainConfig {
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
-    chainType: string
+    chainType: string;
 }
 interface IChainConfigAndWallets {
     chainConfig: TChain;
@@ -111,9 +110,8 @@ interface IMultiversXChainConfig extends IChainConfig {
     chainType: 'multiversX';
     elasticSearchURL: string;
     gatewayURL: string;
-    chainID: string
+    chainID: string;
 }
-
 
 interface IEvmChainConfigAndEvmWallet {
     evmChainConfig: IEvmChainConfig;
@@ -124,20 +122,19 @@ interface IHederaChainConfigAndEvmWallet {
     evmWallet: IEvmWallet;
 }
 
-
 interface ITonChainConfigAndTonWallet {
     tonChainConfig: ITonChainConfig;
-    tonWallet: ITonWallet
+    tonWallet: ITonWallet;
 }
 
 interface ISecretChainConfigAndSecretWallet {
     secretChainConfig: ISecretChainConfig;
-    secretWallet: ISecretWallet
+    secretWallet: ISecretWallet;
 }
 
 interface ITezosChainConfigAndTezosWallet {
     tezosChainConfig: ITezosChainConfig;
-    tezosWallet: ITezosWallet
+    tezosWallet: ITezosWallet;
 }
 
 interface IMultiversXChainConfigAndMultiversXWallet {
@@ -184,20 +181,23 @@ interface ISecretContractConfig {
     chainId: string;
 }
 
-
 interface IEvmContractConfigAndEvmWallet {
     contractConfig: IEvmContractConfig;
     evmWallet: IEvmWallet;
 }
-
 
 interface IMultiversXContractConfigAndMultiversXWallet {
     contractConfig: IMultiversXContractConfig;
     multiversXWallet: IMultiversXWallet;
 }
 
-
-type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig | ITezosChainConfig | IHederaChainConfig;
+type TChain =
+    | IMultiversXChainConfig
+    | IEvmChainConfig
+    | ITonChainConfig
+    | ISecretChainConfig
+    | ITezosChainConfig
+    | IHederaChainConfig;
 
 interface IBridgeConfig {
     bridgeChains: TChain[];
@@ -208,10 +208,13 @@ interface IBridgeConfig {
 interface IBridge {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
-    addValidator: (validatorAddress: string, signatures: {
-        signerAddress: string;
-        signature: string
-    }[]) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    addValidator: (
+        validatorAddress: string,
+        signatures: {
+            signerAddress: string;
+            signature: string;
+        }[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
 }
 
 interface INftContract {
@@ -220,7 +223,6 @@ interface INftContract {
     royaltyInfo: (tokenId?: bigint) => Promise<string>;
     tokenURI: (tokenId: bigint) => Promise<string>;
 }
-
 
 export {
     TChain,
@@ -258,5 +260,5 @@ export {
     IHederaChainConfig,
     IHederaChainConfigAndEvmWallet,
     IHederaContractConfig,
-    IHederaWallet
-}
+    IHederaWallet,
+};

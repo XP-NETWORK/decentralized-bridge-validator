@@ -23,7 +23,7 @@ import {
     getSecretSingleNftContract,
     getTezosBridgeContract,
     getCurrentTezosBalance,
-    getTezosNftContract
+    getTezosNftContract,
 } from './functions';
 
 export {
@@ -51,5 +51,5 @@ export {
     getCurrentSecretBalance,
     getTezosBridgeContract,
     getCurrentTezosBalance,
-    getTezosNftContract
+    getTezosNftContract,
 };

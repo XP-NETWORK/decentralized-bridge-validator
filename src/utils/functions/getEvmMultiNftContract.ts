@@ -9,15 +9,14 @@ interface IExtendedERC1155Royalty extends ERC1155Royalty {
 }
 
 const getEvmMultiNftContract = (
-    contractConfig:
-        IEvmContractConfig): INftContract => {
-
-    const provider = new JsonRpcProvider(contractConfig.rpcURL)
+    contractConfig: IEvmContractConfig,
+): INftContract => {
+    const provider = new JsonRpcProvider(contractConfig.rpcURL);
 
     const erc1155Contract: IExtendedERC1155Royalty =
         ERC1155Royalty__factory.connect(
             contractConfig.contractAddress,
-            provider
+            provider,
         );
 
     return {
@@ -25,9 +24,7 @@ const getEvmMultiNftContract = (
             try {
                 return await erc1155Contract.name();
             } catch (error) {
-                console.error(
-                    "The contract does not have a 'name' function.",
-                );
+                console.error("The contract does not have a 'name' function.");
                 return '';
             }
         },

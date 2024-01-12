@@ -1,9 +1,9 @@
-import getNftDetails from "./getNftDetails";
-import getEvmSignedNftDetails from "./getEvmSignedNftDetails";
-import getMultiversXSignedNftDetails from "./getMultiversXSignedNftDetails";
-import getTonSignedNftDetails from "./getTonSignedNftDetails";
-import getSecretSignedNftDetails from "./getSecretSignedNftDetails";
-import getTezosSignedNftDetails from "./getTezosSignedNftDetails";
+import getNftDetails from './getNftDetails';
+import getEvmSignedNftDetails from './getEvmSignedNftDetails';
+import getMultiversXSignedNftDetails from './getMultiversXSignedNftDetails';
+import getTonSignedNftDetails from './getTonSignedNftDetails';
+import getSecretSignedNftDetails from './getSecretSignedNftDetails';
+import getTezosSignedNftDetails from './getTezosSignedNftDetails';
 
 export {
     getNftDetails,
@@ -11,5 +11,5 @@ export {
     getTonSignedNftDetails,
     getMultiversXSignedNftDetails,
     getSecretSignedNftDetails,
-    getTezosSignedNftDetails
-}
+    getTezosSignedNftDetails,
+};

@@ -17,11 +17,7 @@ import {
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
 import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
 import { IBridge, IChainConfigAndWallets, IEvmChainConfig } from '@src/types';
-import {
-    b58cencode,
-    prefix,
-    b58cdecode
-} from '@taquito/utils';
+import { b58cencode, prefix, b58cdecode } from '@taquito/utils';
 import { hash } from '@stablelib/blake2b';
 import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
 import getHederaBridgeContract from '@src/utils/functions/getHederaBridgeContract';
@@ -60,12 +56,12 @@ const handleValidatorAddition = async ({
             evmWallet: wallets.evmWallet,
         });
         publicWalletAddress = wallets.evmWallet.address;
-        isChainFunded = () => isHederaChainFunded({
-            hederaChainConfig: chainConfig,
-            evmWallet: wallets.evmWallet,
-        });
-    }
-    else if (chainConfig.chainType === 'multiversX') {
+        isChainFunded = () =>
+            isHederaChainFunded({
+                hederaChainConfig: chainConfig,
+                evmWallet: wallets.evmWallet,
+            });
+    } else if (chainConfig.chainType === 'multiversX') {
         bridgeContract = getMultiversXBridgeContract({
             multiversXChainConfig: chainConfig,
             multiversXWallet: wallets.multiversXWallet,
@@ -76,7 +72,7 @@ const handleValidatorAddition = async ({
                 multiversXChainConfig: chainConfig,
                 multiversXWallet: wallets.multiversXWallet,
             });
-    } else if (chainConfig.chainType === "ton") {
+    } else if (chainConfig.chainType === 'ton') {
         bridgeContract = getTonBridgeContract({
             tonChainConfig: chainConfig,
             tonWallet: wallets.tonWallet,
@@ -87,29 +83,33 @@ const handleValidatorAddition = async ({
                 tonChainConfig: chainConfig,
                 tonWallet: wallets.tonWallet,
             });
-    } else if (chainConfig.chainType === "scrt") {
+    } else if (chainConfig.chainType === 'scrt') {
         bridgeContract = getSecretBridgeContract({
             secretChainConfig: chainConfig,
             secretWallet: wallets.secretWallet,
         });
-        publicWalletAddress = wallets.secretWallet.publicKey
+        publicWalletAddress = wallets.secretWallet.publicKey;
         isChainFunded = () =>
             isSecretChainFunded({
                 secretChainConfig: chainConfig,
                 secretWallet: wallets.secretWallet,
             });
-    } else if (chainConfig.chainType === "tezos") {
+    } else if (chainConfig.chainType === 'tezos') {
         bridgeContract = getTezosBridgeContract({
             tezosChainConfig: chainConfig,
-            tezosWallet: wallets.tezosWallet
-        })
-        publicWalletAddress = tas.address(b58cencode(
-            hash(
-                new Uint8Array(b58cdecode(wallets.tezosWallet.publicKey, prefix.edpk)),
-                20
+            tezosWallet: wallets.tezosWallet,
+        });
+        publicWalletAddress = tas.address(
+            b58cencode(
+                hash(
+                    new Uint8Array(
+                        b58cdecode(wallets.tezosWallet.publicKey, prefix.edpk),
+                    ),
+                    20,
+                ),
+                prefix.tz1,
             ),
-            prefix.tz1
-        ));
+        );
 
         isChainFunded = () =>
             isTezosChainFunded({
@@ -179,8 +179,6 @@ const handleValidatorAddition = async ({
                     signature: item.signature,
                 };
             });
-
-
 
             const addValidatorTx = await bridgeContract.addValidator(
                 publicWalletAddress,

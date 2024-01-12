@@ -6,13 +6,15 @@ import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import sinon from 'sinon';
 
 describe('nftLockListener', () => {
-
-
     it('should create and enqueue jobs for EVM chains', async () => {
+        const createJobWithWorkerStub = sinon
+            .stub(validatorUtils, 'createJobWithWorker')
+            .resolves();
 
-        const createJobWithWorkerStub = sinon.stub(validatorUtils, 'createJobWithWorker').resolves();
-
-        await nftLockListener({ config: mockBridgeConfig, wallets: mockWallets });
+        await nftLockListener({
+            config: mockBridgeConfig,
+            wallets: mockWallets,
+        });
 
         // Assert that createJobWithWorker was called for each EVM chain
         mockBridgeConfig.bridgeChains.forEach((chainConfig) => {
@@ -23,12 +25,14 @@ describe('nftLockListener', () => {
                     wallets: mockWallets,
                 };
                 const expectedJobName = `evmLockedEventListener_${chainConfig.chain}`;
-                const expectedJobFunction = evmLockListener
-                expect(createJobWithWorkerStub.calledWithExactly({
-                    jobData: expectedJobData,
-                    jobName: expectedJobName,
-                    jobFunction: expectedJobFunction,
-                })).to.be.true
+                const expectedJobFunction = evmLockListener;
+                expect(
+                    createJobWithWorkerStub.calledWithExactly({
+                        jobData: expectedJobData,
+                        jobName: expectedJobName,
+                        jobFunction: expectedJobFunction,
+                    }),
+                ).to.be.true;
             }
         });
 

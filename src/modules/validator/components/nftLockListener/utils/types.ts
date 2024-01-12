@@ -1,4 +1,4 @@
-import { TChain } from "@src/types";
+import { TChain } from '@src/types';
 
 interface IGetEvmNftDetails {
     sourceNftContractAddress: string;
@@ -7,5 +7,4 @@ interface IGetEvmNftDetails {
     nftType: string;
 }
 
-
-export { IGetEvmNftDetails }
+export { IGetEvmNftDetails };

@@ -24,8 +24,8 @@ import {
 } from '@taquito/utils';
 import { hash } from '@stablelib/blake2b';
 import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
-import getHederaBridgeContract from '@src/utils/functions/getHederaBridgeContract';
-import isHederaChainFunded from '../../getInitialFunds/components/promptToGetFunding/components/isHederaChainFunded';
+import {getHederaBridgeContract} from '@src/utils/functions/getHederaBridgeContract';
+import {isHederaChainFunded} from '../../getInitialFunds/components/promptToGetFunding/components/isHederaChainFunded';
 
 const handleValidatorAddition = async ({
     storageChainConfig,

@@ -1,12 +1,12 @@
-import { TChain } from '@src/types';
-import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types';
-import { getStorageContract } from '@src/utils';
-import { getLockEventDecodedLog } from '.';
-import { IHederaLockListener } from '../../../types';
-import { getNftDetails } from '../../../utils';
-import { approveLock } from '../..';
-import { INftTransferDetailsObject } from '../../types';
-import getHederaBridgeContract from '@src/utils/functions/getHederaBridgeContract';
+import { TChain } from "@src/types";
+import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
+import {  getStorageContract } from "@src/utils";
+import {  IHederaLockListener } from "../../../types";
+import { getNftDetails } from "../../../utils";
+import { approveLock } from "../..";
+import { INftTransferDetailsObject } from "../../types";
+import {getHederaBridgeContract} from "@src/utils/functions/getHederaBridgeContract";
+import { getLockEventDecodedLog } from "../../evmLockListener/utils";
 
 const getHederaLockListenerHandler = ({
     config,
@@ -100,4 +100,4 @@ const getHederaLockListenerHandler = ({
     return handleLog;
 };
 
-export default getHederaLockListenerHandler;
+export { getHederaLockListenerHandler }

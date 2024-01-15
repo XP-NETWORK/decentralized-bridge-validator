@@ -1,7 +1,6 @@
-import { evmContractListener } from "@src/modules/validator/utils";
 
+import { getHederaLockListenerHandler } from "./utils";
 import {  IHederaLockListener } from "../../types";
-import getHederaLockListenerHandler from "./utils/getHederaLockListenerHandler";
 import hederaContractListener from "@src/modules/validator/utils/hederaContractListener";
 
 
@@ -21,4 +20,4 @@ const hederaLockListener = async ({ config, hederaChainConfig, wallets }: IHeder
 
 
 
-export default hederaLockListener;
+export { hederaLockListener};

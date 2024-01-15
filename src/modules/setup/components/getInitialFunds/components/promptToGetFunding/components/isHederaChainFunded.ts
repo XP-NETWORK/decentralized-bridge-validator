@@ -21,4 +21,4 @@ const isHederaChainFunded = async ({ hederaChainConfig, evmWallet }: IHederaChai
 }
 
 
-export default isHederaChainFunded
+export { isHederaChainFunded}

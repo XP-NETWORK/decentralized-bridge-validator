@@ -2,7 +2,7 @@ import { IConfigAndWallets } from "@src/types"
 import { createJobWithWorker } from "../../utils"
 import { evmLockListener, multiversXLockListener, secretLockListener, tonLockListener, tezosLockListener } from "./components"
 import { IEvmLockListener, IHederaLockListener, ISecretLockListener, ITezosLockListener, ITonLockListener } from "./types";
-import hederaLockListener from "./components/hederaLockListener";
+import {hederaLockListener} from "./components/hederaLockListener";
 
 const nftLockListener = async ({ config, wallets }: IConfigAndWallets) => {
 

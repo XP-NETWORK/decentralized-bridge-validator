@@ -21,4 +21,4 @@ const getCurrentHederaBalance = async (configs: IHederaChainConfigAndEvmWallet |
     }
 }
 
-export {getCurrentHederaBalance};
+export default getCurrentHederaBalance;

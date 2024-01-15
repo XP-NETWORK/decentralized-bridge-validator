@@ -1,6 +1,12 @@
-import { isEvmChainFunded, isMultiversXChainFunded, isSecretChainFunded, isStakingCoinFunded, isTonChainFunded } from "./components";
+import {
+    isEvmChainFunded,
+    isMultiversXChainFunded,
+    isSecretChainFunded,
+    isStakingCoinFunded,
+    isTonChainFunded,
+    isHederaChainFunded,
+} from './components';
 import { IConfigAndWallets } from "@src/types";
-import {isHederaChainFunded} from "./components/isHederaChainFunded";
 
 
 const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promise<boolean> => {

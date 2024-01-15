@@ -5,7 +5,7 @@ import {  IHederaLockListener } from "../../../types";
 import { getNftDetails } from "../../../utils";
 import { approveLock } from "../..";
 import { INftTransferDetailsObject } from "../../types";
-import {getHederaBridgeContract} from "@src/utils/functions/getHederaBridgeContract";
+import {getHederaBridgeContract} from "@src/utils";
 import { getLockEventDecodedLog } from "../../evmLockListener/utils";
 
 const getHederaLockListenerHandler = ({

@@ -20,4 +20,4 @@ const hederaLockListener = async ({ config, hederaChainConfig, wallets }: IHeder
 
 
 
-export { hederaLockListener};
+export default hederaLockListener;

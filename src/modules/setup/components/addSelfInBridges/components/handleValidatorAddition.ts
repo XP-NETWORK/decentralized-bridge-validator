@@ -6,6 +6,7 @@ import {
     getTezosBridgeContract,
     getTonBridgeContract,
     waitForMSWithMsg,
+    getHederaBridgeContract,
 } from '@src/utils';
 import {
     isEvmChainFunded,
@@ -13,6 +14,7 @@ import {
     isSecretChainFunded,
     isTezosChainFunded,
     isTonChainFunded,
+    isHederaChainFunded
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
 import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
@@ -24,8 +26,6 @@ import {
 } from '@taquito/utils';
 import { hash } from '@stablelib/blake2b';
 import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
-import {getHederaBridgeContract} from '@src/utils/functions/getHederaBridgeContract';
-import {isHederaChainFunded} from '../../getInitialFunds/components/promptToGetFunding/components/isHederaChainFunded';
 
 const handleValidatorAddition = async ({
     storageChainConfig,

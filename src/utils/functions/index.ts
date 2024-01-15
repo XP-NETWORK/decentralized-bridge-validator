@@ -23,14 +23,37 @@ import getSecretSingleNftContract from "./getSecretSingleNftContract"
 import getTezosBridgeContract from "./getTezosBridgeContract"
 import getCurrentTezosBalance from "./getCurrentTezosBalance"
 import getTezosNftContract from "./getTezosNftContract"
+import getHederaBridgeContract from "./getHederaBridgeContract"
+import getCurrentHederaBalance from "./getCurrentHederaBalance"
+import getHederaSingleNftContract from "./getHederaNftContract"
 
 export {
-    readJsonFile, getCurrentEvmBalance, waitForKeyPress, waitForMSWithMsg,
-    confirmationCountNeeded, getStorageContract, getEvmBridgeContract,
-    getEvmSingleNftContract, getEvmMultiNftContract, getStakingContract,
-    getRedisConnection, getEvmFungibleContract, getCurrentMultiversXBalance,
-    getMultiversXBridgeContract, decodeBase64Array, getCurrentTonBalance,
-    getTonBridgeContract, getTonNftContract, getCurrentSecretBalance,
-    getSecretBridgeContract, getSecretMultiNftContract, getSecretSingleNftContract,
-    getTezosBridgeContract, getCurrentTezosBalance, getTezosNftContract
-}
+    readJsonFile,
+    getCurrentEvmBalance,
+    waitForKeyPress,
+    waitForMSWithMsg,
+    confirmationCountNeeded,
+    getStorageContract,
+    getEvmBridgeContract,
+    getEvmSingleNftContract,
+    getEvmMultiNftContract,
+    getStakingContract,
+    getRedisConnection,
+    getEvmFungibleContract,
+    getCurrentMultiversXBalance,
+    getMultiversXBridgeContract,
+    decodeBase64Array,
+    getCurrentTonBalance,
+    getTonBridgeContract,
+    getTonNftContract,
+    getCurrentSecretBalance,
+    getSecretBridgeContract,
+    getSecretMultiNftContract,
+    getSecretSingleNftContract,
+    getTezosBridgeContract,
+    getCurrentTezosBalance,
+    getTezosNftContract,
+    getHederaBridgeContract,
+    getCurrentHederaBalance,
+    getHederaSingleNftContract,
+};

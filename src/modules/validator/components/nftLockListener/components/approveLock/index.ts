@@ -1,5 +1,4 @@
-import { getEvmSignedNftDetails, getMultiversXSignedNftDetails, getSecretSignedNftDetails, getTezosSignedNftDetails, getTonSignedNftDetails } from "../../utils";
-import getHederaSignedNftDetails from "../../utils/getHederaSignedNftDetails";
+import { getEvmSignedNftDetails, getMultiversXSignedNftDetails, getSecretSignedNftDetails, getTezosSignedNftDetails, getTonSignedNftDetails, getHederaSignedNftDetails } from "../../utils";
 import { IApproveLock } from "./types";
 
 

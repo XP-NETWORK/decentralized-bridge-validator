@@ -1,8 +1,7 @@
-import { getEvmMultiNftContract, getEvmSingleNftContract, getSecretMultiNftContract, getSecretSingleNftContract, getTezosNftContract, getTonNftContract } from "@src/utils";
+import { getEvmMultiNftContract, getEvmSingleNftContract, getSecretMultiNftContract, getSecretSingleNftContract, getTezosNftContract, getTonNftContract, getHederaSingleNftContract } from "@src/utils";
 import { IGetEvmNftDetails } from "./types";
 import { INftContract } from "@src/types";
 import getMultiversXNftContract from "@src/utils/functions/getMultiversXNftContract";
-import getHederaNftContract from "@src/utils/functions/getHederaNftContract";
 
 const getNftDetails = async ({ sourceNftContractAddress, sourceChain, tokenId, nftType }: IGetEvmNftDetails) => {
 
@@ -19,7 +18,11 @@ const getNftDetails = async ({ sourceNftContractAddress, sourceChain, tokenId, n
             nftContract = getEvmMultiNftContract({ contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL })
         }
     } else if (sourceChain.chainType === 'hedera') {
-        nftContract = getHederaNftContract({ contractAddress: sourceNftContractAddress, rpcURL: sourceChain.rpcURL, royaltyInfoProxyAddress: sourceChain.royaltyInfoProxyAddress })
+        nftContract = getHederaSingleNftContract({
+            contractAddress: sourceNftContractAddress,
+            rpcURL: sourceChain.rpcURL,
+            royaltyInfoProxyAddress: sourceChain.royaltyInfoProxyAddress,
+        });
     }
      else if (sourceChain.chainType === "multiversX") {
         nftContract = getMultiversXNftContract({ gatewayURL: sourceChain.gatewayURL, contractAddress: sourceNftContractAddress })

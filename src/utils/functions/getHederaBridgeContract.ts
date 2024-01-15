@@ -8,4 +8,4 @@ const getHederaBridgeContract = ({ hederaChainConfig, evmWallet }: IHederaChainC
     return Bridge__factory.connect(hederaChainConfig.contractAddress, wallet);
 }
 
-export { getHederaBridgeContract }
+export default getHederaBridgeContract

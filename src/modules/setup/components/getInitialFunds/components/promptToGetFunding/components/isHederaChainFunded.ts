@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import {  IHederaChainConfigAndEvmWallet } from "@src/types";
-import {getCurrentHederaBalance} from "@src/utils/functions/getCurrentHederaBalance";
+import {getCurrentHederaBalance} from "@src/utils";
 
 const isHederaChainFunded = async ({ hederaChainConfig, evmWallet }: IHederaChainConfigAndEvmWallet): Promise<boolean> => {
     let isFunded = true;
@@ -21,4 +21,4 @@ const isHederaChainFunded = async ({ hederaChainConfig, evmWallet }: IHederaChai
 }
 
 
-export { isHederaChainFunded}
+export default isHederaChainFunded

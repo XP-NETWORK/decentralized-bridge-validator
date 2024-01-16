@@ -4,6 +4,7 @@ import getMultiversXSignedNftDetails from "./getMultiversXSignedNftDetails";
 import getTonSignedNftDetails from "./getTonSignedNftDetails";
 import getSecretSignedNftDetails from "./getSecretSignedNftDetails";
 import getTezosSignedNftDetails from "./getTezosSignedNftDetails";
+import getHederaSignedNftDetails from "./getHederaSignedNftDetails";
 
 export {
     getNftDetails,
@@ -11,5 +12,6 @@ export {
     getTonSignedNftDetails,
     getMultiversXSignedNftDetails,
     getSecretSignedNftDetails,
-    getTezosSignedNftDetails
-}
+    getTezosSignedNftDetails,
+    getHederaSignedNftDetails,
+};

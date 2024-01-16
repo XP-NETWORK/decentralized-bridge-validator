@@ -6,6 +6,7 @@ import {
     getTezosBridgeContract,
     getTonBridgeContract,
     waitForMSWithMsg,
+    getHederaBridgeContract,
 } from '@src/utils';
 import {
     isEvmChainFunded,
@@ -13,6 +14,7 @@ import {
     isSecretChainFunded,
     isTezosChainFunded,
     isTonChainFunded,
+    isHederaChainFunded
 } from '@src/modules/setup/components/getInitialFunds/components/promptToGetFunding/components';
 import { getEvmBridgeContract, waitForKeyPress } from '@src/utils';
 import { ProcessDelayMilliseconds } from '@src/utils/constants/processDelayMilliseconds';
@@ -52,7 +54,18 @@ const handleValidatorAddition = async ({
                 evmChainConfig: chainConfig,
                 evmWallet: wallets.evmWallet,
             });
-    } else if (chainConfig.chainType === 'multiversX') {
+    } else if (chainConfig.chainType === 'hedera') {
+        bridgeContract = getHederaBridgeContract({
+            hederaChainConfig: chainConfig,
+            evmWallet: wallets.evmWallet,
+        });
+        publicWalletAddress = wallets.evmWallet.address;
+        isChainFunded = () => isHederaChainFunded({
+            hederaChainConfig: chainConfig,
+            evmWallet: wallets.evmWallet,
+        });
+    }
+    else if (chainConfig.chainType === 'multiversX') {
         bridgeContract = getMultiversXBridgeContract({
             multiversXChainConfig: chainConfig,
             multiversXWallet: wallets.multiversXWallet,
@@ -97,7 +110,7 @@ const handleValidatorAddition = async ({
             ),
             prefix.tz1
         ));
-        
+
         isChainFunded = () =>
             isTezosChainFunded({
                 tezosChainConfig: chainConfig,

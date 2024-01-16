@@ -1,4 +1,11 @@
-import { isEvmChainFunded, isMultiversXChainFunded, isSecretChainFunded, isStakingCoinFunded, isTonChainFunded } from "./components";
+import {
+    isEvmChainFunded,
+    isMultiversXChainFunded,
+    isSecretChainFunded,
+    isStakingCoinFunded,
+    isTonChainFunded,
+    isHederaChainFunded,
+} from './components';
 import { IConfigAndWallets } from "@src/types";
 
 
@@ -17,7 +24,12 @@ const promptToGetFunding = async ({ wallets, config }: IConfigAndWallets): Promi
                 if (!await isEvmChainFunded({ evmChainConfig: chainConfig, evmWallet: wallets.evmWallet })) {
                     isFunded = false
                 }
-            } else if (chainConfig.chainType === "multiversX") {
+            } else if (chainConfig.chainType === 'hedera') {
+                if (!await isHederaChainFunded({ hederaChainConfig: chainConfig, evmWallet: wallets.evmWallet })) {
+                    isFunded = false
+                }
+            }
+             else if (chainConfig.chainType === "multiversX") {
                 if (!await isMultiversXChainFunded({ multiversXChainConfig: chainConfig, multiversXWallet: wallets.multiversXWallet })) {
                     isFunded = false
                 }

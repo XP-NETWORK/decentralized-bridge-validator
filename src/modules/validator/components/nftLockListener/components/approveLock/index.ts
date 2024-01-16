@@ -1,4 +1,4 @@
-import { getEvmSignedNftDetails, getMultiversXSignedNftDetails, getSecretSignedNftDetails, getTezosSignedNftDetails, getTonSignedNftDetails } from "../../utils";
+import { getEvmSignedNftDetails, getMultiversXSignedNftDetails, getSecretSignedNftDetails, getTezosSignedNftDetails, getTonSignedNftDetails, getHederaSignedNftDetails } from "../../utils";
 import { IApproveLock } from "./types";
 
 
@@ -7,7 +7,10 @@ const approveLock = async ({ nftTransferDetailsObject, wallets, destinationChain
     let publicAddress = "", signature = "";
     if (destinationChainObject.chainType === "evm") {
         ({ publicAddress, signature } = await getEvmSignedNftDetails({ nftTransferDetailsObject, evmWallet: wallets.evmWallet }))
-    } else if (destinationChainObject.chainType === "multiversX") {
+    } if (destinationChainObject.chainType === 'hedera') {
+        ({ publicAddress, signature } = await getHederaSignedNftDetails({ nftTransferDetailsObject, evmWallet: wallets.evmWallet }))
+    }
+     else if (destinationChainObject.chainType === "multiversX") {
         ({ publicAddress, signature } = await getMultiversXSignedNftDetails({ nftTransferDetailsObject, multiversXWallet: wallets.multiversXWallet }))
     } else if (destinationChainObject.chainType === "ton") {
         ({ publicAddress, signature } = getTonSignedNftDetails({ nftTransferDetailsObject, tonWallet: wallets.tonWallet }))

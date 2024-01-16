@@ -1,4 +1,3 @@
-
-import {getHederaLockListenerHandler} from "./getHederaLockListenerHandler";
+import { getHederaLockListenerHandler } from './getHederaLockListenerHandler';
 
 export { getHederaLockListenerHandler };

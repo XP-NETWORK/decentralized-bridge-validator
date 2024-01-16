@@ -1,14 +1,14 @@
-interface ILog {
-    nft_type: string,
-    token_id: string,
-    dest_chain: string,
-    dest_address: string,
-    source_chain: string,
-    token_amount: string,
-    source_nft_address: { addr: string } | { str: string }
-}
+type ILog = {
+    nft_type: string;
+    token_id: string;
+    dest_chain: string;
+    dest_address: string;
+    source_chain: string;
+    token_amount: string;
+    source_nft_address: { addr: string } | { str: string };
+};
 
-interface ITezosContractListener {
+type ITezosContractListener = {
     contractAddress: string;
     restApiURL: string;
     rpcURL: string;
@@ -16,14 +16,12 @@ interface ITezosContractListener {
     chain: string;
     eventId: string;
     handleLog: (log: ILog & { transaction_hash: string }) => Promise<void>;
-}
+};
 
-interface ITransactions {
-    tag: string,
-    payload: ILog,
-    transactionId: number
-}
-
-
+type ITransactions = {
+    tag: string;
+    payload: ILog;
+    transactionId: number;
+};
 
 export { ITezosContractListener, ITransactions, ILog };

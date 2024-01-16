@@ -1,4 +1,4 @@
-import getStakeEventDecodedLog from "./getStakeEventDecodedLog";
-import getStakingListenerLogHandler from "./getStakingListenerLogHandler";
+import getStakeEventDecodedLog from './getStakeEventDecodedLog';
+import getStakingListenerLogHandler from './getStakingListenerLogHandler';
 
-export { getStakeEventDecodedLog, getStakingListenerLogHandler }
+export { getStakeEventDecodedLog, getStakingListenerLogHandler };

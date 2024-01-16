@@ -30,29 +30,33 @@ describe('isGeneratedWallets', () => {
             description: 'should return false for empty object input',
         },
         {
-            input: { randomProp: "value" },
+            input: { randomProp: 'value' },
             expected: false,
-            description: 'should return false for objects without evmWallet property',
+            description:
+                'should return false for objects without evmWallet property',
         },
         {
             input: { evmWallet: {} },
             expected: false,
-            description: 'should return false for objects with invalid evmWallet structure',
+            description:
+                'should return false for objects with invalid evmWallet structure',
         },
         {
-            input: { evmWallet: { address: "0x1234" } },
+            input: { evmWallet: { address: '0x1234' } },
             expected: false,
-            description: 'should return false for objects with invalid evmWallet structure',
+            description:
+                'should return false for objects with invalid evmWallet structure',
         },
         {
             input: mockWallets,
             expected: true,
-            description: 'should return true for valid IGeneratedWallets structure',
+            description:
+                'should return true for valid IGeneratedWallets structure',
         },
     ];
 
     beforeEach(() => {
-        console.info = () => { };
+        console.info = () => {};
     });
 
     testCases.forEach(({ input, expected, description }) => {

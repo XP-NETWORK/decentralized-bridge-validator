@@ -4,7 +4,7 @@ function waitForKeyPress(promt: string): Promise<void> {
     return new Promise((resolve) => {
         const rl = readline.createInterface({
             input: process.stdin,
-            output: process.stdout
+            output: process.stdout,
         });
 
         rl.question(promt, () => {
@@ -14,5 +14,4 @@ function waitForKeyPress(promt: string): Promise<void> {
     });
 }
 
-
-export default waitForKeyPress
+export default waitForKeyPress;

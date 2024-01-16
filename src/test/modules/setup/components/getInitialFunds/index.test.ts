@@ -1,23 +1,24 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as utils from '@src/utils/functions';
-import * as prompts from "@src/modules/setup/components/getInitialFunds/components"
+import * as prompts from '@src/modules/setup/components/getInitialFunds/components';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import { getInitialFunds } from '@src/modules/setup/components';
 
 describe('getInitialFunds', () => {
-
     const testCases = [
         {
             description: 'should run the loop until funds are obtained',
             promptResults: [false, false, true], // Simulate promptToGetFunding returning false, false, and then true
         },
         {
-            description: 'should run the loop once if funds are obtained immediately',
+            description:
+                'should run the loop once if funds are obtained immediately',
             promptResults: [true], // Simulate promptToGetFunding returning true immediately
         },
         {
-            description: 'should handle errors and retry if funds are not obtained',
+            description:
+                'should handle errors and retry if funds are not obtained',
             promptResults: [false, false, false, true], // Simulate promptToGetFunding returning false multiple times and then true
         },
     ];
@@ -26,13 +27,13 @@ describe('getInitialFunds', () => {
         sinon.restore();
     });
     beforeEach(() => {
-        console.info = () => { };
+        console.info = () => {};
     });
 
     testCases.forEach(({ description, promptResults }) => {
         it(description, async () => {
-            const config = mockBridgeConfig
-            const wallets = mockWallets
+            const config = mockBridgeConfig;
+            const wallets = mockWallets;
 
             // Stub the functions used in getInitialFunds
             sinon.stub(utils, 'waitForMSWithMsg').resolves(); // Stub waitForMSWithMsg
@@ -43,12 +44,16 @@ describe('getInitialFunds', () => {
                 promptToGetFundingStub.onCall(index).resolves(result);
             });
 
-            sinon.stub(prompts, 'promptToGetFunding').callsFake(promptToGetFundingStub);
+            sinon
+                .stub(prompts, 'promptToGetFunding')
+                .callsFake(promptToGetFundingStub);
 
             await getInitialFunds({ config, wallets });
 
             // Check if promptToGetFunding was called the expected number of times
-            expect(promptToGetFundingStub.callCount).to.equal(promptResults.length);
+            expect(promptToGetFundingStub.callCount).to.equal(
+                promptResults.length,
+            );
         });
     });
 });

@@ -26,7 +26,7 @@ import {
     getTezosNftContract,
     getCurrentHederaBalance,
     getHederaBridgeContract,
-    getHederaSingleNftContract
+    getHederaSingleNftContract,
 } from './functions';
 
 export {
@@ -57,5 +57,5 @@ export {
     getTezosNftContract,
     getCurrentHederaBalance,
     getHederaBridgeContract,
-    getHederaSingleNftContract
+    getHederaSingleNftContract,
 };

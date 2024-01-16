@@ -1,5 +1,10 @@
-import { IGeneratedWallets } from "@src/types";
-import { isEvmWallet, isMultiversXWallet, isSecretWallet, isTonWallet } from ".";
+import { IGeneratedWallets } from '@src/types';
+import {
+    isEvmWallet,
+    isMultiversXWallet,
+    isSecretWallet,
+    isTonWallet,
+} from '.';
 
 function isGeneratedWallets(object: unknown): object is IGeneratedWallets {
     if (typeof object !== 'object' || object === null) {
@@ -7,7 +12,7 @@ function isGeneratedWallets(object: unknown): object is IGeneratedWallets {
     }
     const generatedWallets = object as Record<string, object>;
 
-    const existingWalletsFound = (
+    const existingWalletsFound =
         'evmWallet' in generatedWallets &&
         'multiversXWallet' in generatedWallets &&
         'tonWallet' in generatedWallets &&
@@ -15,10 +20,9 @@ function isGeneratedWallets(object: unknown): object is IGeneratedWallets {
         isEvmWallet(generatedWallets.evmWallet) &&
         isMultiversXWallet(generatedWallets.multiversXWallet) &&
         isTonWallet(generatedWallets.tonWallet) &&
-        isSecretWallet(generatedWallets.secretWallet)
-    )
+        isSecretWallet(generatedWallets.secretWallet);
 
     return existingWalletsFound;
 }
 
-export default isGeneratedWallets
+export default isGeneratedWallets;

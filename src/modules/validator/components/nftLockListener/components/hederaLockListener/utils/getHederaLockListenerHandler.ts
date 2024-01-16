@@ -1,12 +1,12 @@
-import { TChain } from "@src/types";
-import { LogEntry } from "@src/modules/validator/utils/evmContractListener/types";
-import {  getStorageContract } from "@src/utils";
-import {  IHederaLockListener } from "../../../types";
-import { getNftDetails } from "../../../utils";
-import { approveLock } from "../..";
-import { INftTransferDetailsObject } from "../../types";
-import {getHederaBridgeContract} from "@src/utils";
-import { getLockEventDecodedLog } from "../../evmLockListener/utils";
+import { TChain } from '@src/types';
+import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types';
+import { getStorageContract } from '@src/utils';
+import { IHederaLockListener } from '../../../types';
+import { getNftDetails } from '../../../utils';
+import { approveLock } from '../..';
+import { INftTransferDetailsObject } from '../../types';
+import { getHederaBridgeContract } from '@src/utils';
+import { getLockEventDecodedLog } from '../../evmLockListener/utils';
 
 const getHederaLockListenerHandler = ({
     config,
@@ -59,9 +59,8 @@ const getHederaLockListenerHandler = ({
             const fee = String(
                 await storageContract.chainFee(destinationChain),
             ); // Required fee for claming nft on target chain
-            const royaltyReceiver = await storageContract.chainRoyalty(
-                destinationChain,
-            );
+            const royaltyReceiver =
+                await storageContract.chainRoyalty(destinationChain);
 
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress,
@@ -100,4 +99,4 @@ const getHederaLockListenerHandler = ({
     return handleLog;
 };
 
-export { getHederaLockListenerHandler }
+export { getHederaLockListenerHandler };

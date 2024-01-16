@@ -1,22 +1,31 @@
-import { TChain } from "@src/types";
-import { getStorageContract } from "@src/utils";
-import { getNftDetails } from "../../../utils";
-import { approveLock } from "../..";
-import { INftTransferDetailsObject } from "../../types";
-import { Message } from "@ton/ton";
-import { loadLockedEvent } from "@src/contractsTypes/contracts/tonBridge";
-import { ITonLockListener } from "../../../types";
+import { TChain } from '@src/types';
+import { getStorageContract } from '@src/utils';
+import { getNftDetails } from '../../../utils';
+import { approveLock } from '../..';
+import { INftTransferDetailsObject } from '../../types';
+import { Message } from '@ton/ton';
+import { loadLockedEvent } from '@src/contractsTypes/contracts/tonBridge';
+import { ITonLockListener } from '../../../types';
 
-const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLockListener) => {
+const getTonLockListenerHandler = ({
+    config,
+    tonChainConfig,
+    wallets,
+}: ITonLockListener) => {
+    const storageContract = getStorageContract({
+        evmChainConfig: config.storageConfig,
+        evmWallet: wallets.evmWallet,
+    });
 
-
-    const storageContract = getStorageContract({ evmChainConfig: config.storageConfig, evmWallet: wallets.evmWallet });
-
-    const handleLog = async ({ log, hash }: { log: Message, hash: string }) => {
-        console.log("------------------", log.body.asSlice().loadUint(32), hash)
+    const handleLog = async ({ log, hash }: { log: Message; hash: string }) => {
+        console.log(
+            '------------------',
+            log.body.asSlice().loadUint(32),
+            hash,
+        );
         // if its not the lock nft event we early return
         if (log.body.asSlice().loadUint(32) !== 3571773646) {
-            return
+            return;
         }
 
         const {
@@ -37,37 +46,44 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
             tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nftType, // Sigular or multiple ( 721 / 1155)
             sourceChain, // Source chain of NFT
-        })
+        });
 
-        const destinationChainObject: TChain = config.bridgeChains.find(chainConfig => chainConfig.chain === destinationChain);
+        const destinationChainObject: TChain = config.bridgeChains.find(
+            (chainConfig) => chainConfig.chain === destinationChain,
+        );
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;
         const transactionHash = hash; // Transaction hash of the transfer on the source chain
 
-        const sourceChainObject = config.bridgeChains.find(item => item.chain === sourceChain);
+        const sourceChainObject = config.bridgeChains.find(
+            (item) => item.chain === sourceChain,
+        );
 
         if (sourceChainObject) {
-
-            const fee = String(await storageContract.chainFee(destinationChain)) // Required fee for claming nft on target chain
-            const royaltyReceiver = await storageContract.chainRoyalty(destinationChain);
+            const fee = String(
+                await storageContract.chainFee(destinationChain),
+            ); // Required fee for claming nft on target chain
+            const royaltyReceiver =
+                await storageContract.chainRoyalty(destinationChain);
 
             const getSourceNftContractAddress = () => {
                 try {
-                    return sourceNftContractAddress.asSlice().loadAddress().toString()
+                    return sourceNftContractAddress
+                        .asSlice()
+                        .loadAddress()
+                        .toString();
                 } catch (e) {
-                    return sourceNftContractAddress.asSlice().loadStringTail()
+                    return sourceNftContractAddress.asSlice().loadStringTail();
                 }
-            }
+            };
 
             const { royalty, name, symbol, metadata } = await getNftDetails({
                 sourceNftContractAddress: getSourceNftContractAddress(),
                 sourceChain: sourceChainObject,
                 tokenId: tokenId.toString(),
                 nftType,
-            })
-
-
+            });
 
             const nftTransferDetailsObject: INftTransferDetailsObject = {
                 tokenId: tokenId.toString(),
@@ -86,15 +102,20 @@ const getTonLockListenerHandler = ({ config, tonChainConfig, wallets }: ITonLock
                 fee,
             };
             console.log({
-                nftTransferDetailsObject
-            })
+                nftTransferDetailsObject,
+            });
 
-            await approveLock({ nftTransferDetailsObject, wallets, storageContract, txChain: tonChainConfig.chain, destinationChainObject })
+            await approveLock({
+                nftTransferDetailsObject,
+                wallets,
+                storageContract,
+                txChain: tonChainConfig.chain,
+                destinationChainObject,
+            });
         }
-    }
+    };
 
-    return handleLog
-
+    return handleLog;
 };
 
-export default getTonLockListenerHandler
+export default getTonLockListenerHandler;

@@ -1,10 +1,13 @@
-import { BridgeStorage } from "@src/contractsTypes";
-import { IGeneratedWallets } from "@src/types";
+import { BridgeStorage } from '@src/contractsTypes';
+import { IGeneratedWallets } from '@src/types';
 
-interface IApproveStake {
+type IApproveStake = {
     wallets: IGeneratedWallets;
-    validatorAddressAndChainType:{ validatorAddress: string, chainType: string }[];
+    validatorAddressAndChainType: {
+        validatorAddress: string;
+        chainType: string;
+    }[];
     storageContract: BridgeStorage;
-}
+};
 
-export { IApproveStake }
+export { IApproveStake };

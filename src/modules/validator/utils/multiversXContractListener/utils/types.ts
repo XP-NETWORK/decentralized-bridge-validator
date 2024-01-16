@@ -1,43 +1,44 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
-interface IGetMultiverseXLogs {
+type IGetMultiverseXLogs = {
     gatewayURL: string;
     eventIdentifier: string[];
     transactionalEntityManager: EntityManager;
     txHashes: string[];
-}
+};
 
-interface IMultiverseXLogEvent {
+type IMultiverseXLogEvent = {
     identifier: string;
     topics: string[];
-}
+};
 
-
-
-interface IMultiverseXTxHashes {
+type IMultiverseXTxHashes = {
     hits: {
         hits: {
             _id: string;
-        }[]
+        }[];
     };
-}
+};
 
-
-interface IMultiverseXLogs {
+type IMultiverseXLogs = {
     events: IMultiverseXLogEvent[];
-}
+};
 
-interface IMultiverseXTxStatus {
+type IMultiverseXTxStatus = {
     hits: {
         hits: {
             _id: string;
             _source: {
-                status: string
-            }
+                status: string;
+            };
         }[];
-    }
-}
+    };
+};
 
-
-
-export { IGetMultiverseXLogs, IMultiverseXLogs, IMultiverseXLogEvent, IMultiverseXTxHashes, IMultiverseXTxStatus }
+export {
+    IGetMultiverseXLogs,
+    IMultiverseXLogs,
+    IMultiverseXLogEvent,
+    IMultiverseXTxHashes,
+    IMultiverseXTxStatus,
+};

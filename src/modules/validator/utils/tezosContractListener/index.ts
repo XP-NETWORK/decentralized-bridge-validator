@@ -6,27 +6,26 @@ import { BLOCK_CHUNKS } from '@src/config/chainSpecs';
 import { TezosToolkit } from '@taquito/taquito';
 import axios from 'axios';
 
-
 async function getContractOperations({
     contractAddress,
     fromLevel,
     toLevel,
-    restApiURL
+    restApiURL,
 }: {
-    contractAddress: string,
-    fromLevel: number,
-    toLevel: number,
-    restApiURL: string
+    contractAddress: string;
+    fromLevel: number;
+    toLevel: number;
+    restApiURL: string;
 }) {
     try {
         const URL = `${restApiURL}/v1/contracts/events`;
         const params = {
             contract: contractAddress,
-            "level.gt": fromLevel,
-            "level.le": toLevel,
-        }
+            'level.gt': fromLevel,
+            'level.le': toLevel,
+        };
         const response = await axios.get(URL, {
-            params
+            params,
         });
 
         return response.data;
@@ -35,21 +34,21 @@ async function getContractOperations({
     }
 }
 
-async function tezosContractListener(
-    { contractAddress,
-        restApiURL,
-        rpcURL,
-        lastBlock_,
-        chain,
-        eventId,
-        handleLog }: ITezosContractListener): Promise<void> {
-
-
+async function tezosContractListener({
+    contractAddress,
+    restApiURL,
+    rpcURL,
+    lastBlock_,
+    chain,
+    eventId,
+    handleLog,
+}: ITezosContractListener): Promise<void> {
     let lastBlock = lastBlock_;
 
     const Tezos = new TezosToolkit(rpcURL);
 
-    const blockRepository: Repository<Block> = AppDataSource.getRepository(Block);
+    const blockRepository: Repository<Block> =
+        AppDataSource.getRepository(Block);
 
     let blockInstance: Block = await blockRepository.findOne({
         where: { chain, contractAddress },
@@ -57,12 +56,12 @@ async function tezosContractListener(
 
     if (!blockInstance) {
         const newBlock = new Block();
-        newBlock.chain = chain
-        newBlock.contractAddress = contractAddress
-        newBlock.lastBlock = lastBlock
+        newBlock.chain = chain;
+        newBlock.contractAddress = contractAddress;
+        newBlock.lastBlock = lastBlock;
         blockInstance = await blockRepository.save(newBlock);
     }
-    console.info({ blockInstance })
+    console.info({ blockInstance });
 
     if (blockInstance.lastBlock) {
         lastBlock = blockInstance.lastBlock;
@@ -70,11 +69,17 @@ async function tezosContractListener(
 
     const latestBlockNumber = (await Tezos.rpc.getBlockHeader()).level;
 
-    const latestBlock = lastBlock + BLOCK_CHUNKS < latestBlockNumber ? lastBlock + BLOCK_CHUNKS : latestBlockNumber;
+    const latestBlock =
+        lastBlock + BLOCK_CHUNKS < latestBlockNumber
+            ? lastBlock + BLOCK_CHUNKS
+            : latestBlockNumber;
 
     const logs: ITransactions[] = await getContractOperations({
-        contractAddress, fromLevel: lastBlock, toLevel: latestBlock, restApiURL
-    })
+        contractAddress,
+        fromLevel: lastBlock,
+        toLevel: latestBlock,
+        restApiURL,
+    });
 
     blockInstance.lastBlock = latestBlock;
 
@@ -87,19 +92,23 @@ async function tezosContractListener(
     const handleLogPromises: Promise<void>[] = [];
 
     for (const log of logs) {
-        console.log(log.tag, eventId)
+        console.log(log.tag, eventId);
         if (log.tag === eventId) {
-            console.log("Found")
-            handleLogPromises.push(handleLog({ ...log.payload, transaction_hash: String(log.transactionId) }));
+            console.log('Found');
+            handleLogPromises.push(
+                handleLog({
+                    ...log.payload,
+                    transaction_hash: String(log.transactionId),
+                }),
+            );
         }
     }
 
     await Promise.all(handleLogPromises);
 
-    console.log("before saving")
+    console.log('before saving');
     await blockRepository.save(blockInstance);
-    console.log("after saving")
-
+    console.log('after saving');
 }
 
-export default tezosContractListener
+export default tezosContractListener;

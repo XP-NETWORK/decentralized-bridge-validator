@@ -1,27 +1,31 @@
-import { IConfigAndWallets, IMultiversXChainConfig } from "@src/types";
-import { IMultiverseXLogEvent } from "../utils/types";
-import { EntityManager } from "typeorm";
+import { IConfigAndWallets, IMultiversXChainConfig } from '@src/types';
+import { IMultiverseXLogEvent } from '../utils/types';
+import { EntityManager } from 'typeorm';
 
-
-interface IPoolTxHashes {
+type IPoolTxHashes = {
     elasticSearchURL: string;
     contractAddress: string;
-    lastBlock_: number
-}
+    lastBlock_: number;
+};
 
-interface IPoolTxStatus {
+type IPoolTxStatus = {
     elasticSearchURL: string;
-}
+};
 
-interface IHandleLog {
-    ({ log, transactionalEntityManager }: { log: IMultiverseXLogEvent & { transactionHash: string }, transactionalEntityManager: EntityManager }): Promise<void>;
-}
+type IHandleLog = {
+    ({
+        log,
+        transactionalEntityManager,
+    }: {
+        log: IMultiverseXLogEvent & { transactionHash: string };
+        transactionalEntityManager: EntityManager;
+    }): Promise<void>;
+};
 
-interface IProcessLogs extends IConfigAndWallets {
+type IProcessLogs = {
     gatewayURL: string;
     eventIdentifier: string[];
-    multiversXChainConfig: IMultiversXChainConfig
-}
+    multiversXChainConfig: IMultiversXChainConfig;
+} & IConfigAndWallets;
 
-
-export { IPoolTxHashes, IPoolTxStatus, IProcessLogs, IHandleLog }
+export { IPoolTxHashes, IPoolTxStatus, IProcessLogs, IHandleLog };

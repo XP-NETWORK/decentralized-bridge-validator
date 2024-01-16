@@ -1,11 +1,10 @@
-import { TChain } from "@src/types";
+import { TChain } from '@src/types';
 
-interface IGetEvmNftDetails {
+type IGetEvmNftDetails = {
     sourceNftContractAddress: string;
     sourceChain: TChain;
     tokenId: string;
     nftType: string;
-}
+};
 
-
-export { IGetEvmNftDetails }
+export { IGetEvmNftDetails };

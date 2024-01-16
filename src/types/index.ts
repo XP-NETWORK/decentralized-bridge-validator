@@ -1,4 +1,4 @@
-interface ISecretKeyCrypto {
+type ISecretKeyCrypto = {
     ciphertext: string;
     cipherparams: {
         iv: string;
@@ -13,214 +13,216 @@ interface ISecretKeyCrypto {
         p: number;
     };
     mac: string;
-}
+};
 
-interface ISecretKey {
+type ISecretKey = {
     version: number;
     kind: string;
     id: string;
     address: string;
     bech32: string;
     crypto: ISecretKeyCrypto;
-}
+};
 
-interface IMultiversXWallet {
+type IMultiversXWallet = {
     password: string;
-    userWallet: ISecretKey
-}
+    userWallet: ISecretKey;
+};
 
-interface ITonWallet {
-    publicKey: string;
-    secretKey: string
-}
-
-
-interface IEvmWallet {
-    address: string;
-    privateKey: string;
-}
-interface IHederaWallet {
-    address: string;
-    privateKey: string;
-}
-
-interface ISecretWallet {
-    publicKey: string;
-    privateKey: string;
-}
-
-interface ITezosWallet {
+type ITonWallet = {
     publicKey: string;
     secretKey: string;
-}
+};
 
-interface IGeneratedWallets {
+type IEvmWallet = {
+    address: string;
+    privateKey: string;
+};
+type IHederaWallet = {
+    address: string;
+    privateKey: string;
+};
+
+type ISecretWallet = {
+    publicKey: string;
+    privateKey: string;
+};
+
+type ITezosWallet = {
+    publicKey: string;
+    secretKey: string;
+};
+
+type IGeneratedWallets = {
     evmWallet: IEvmWallet;
     multiversXWallet: IMultiversXWallet;
     tonWallet: ITonWallet;
     secretWallet: ISecretWallet;
-    tezosWallet: ITezosWallet
-}
+    tezosWallet: ITezosWallet;
+};
 
-interface IConfigAndWallets {
+type IConfigAndWallets = {
     config: IBridgeConfig;
     wallets: IGeneratedWallets;
-}
+};
 
-interface IChainConfig {
+type IChainConfig = {
     chain: string;
     nativeCoinSymbol: string;
     intialFund: string;
     contractAddress: string;
     lastBlock: number;
-    chainType: string
-}
-interface IChainConfigAndWallets {
+    chainType: string;
+};
+type IChainConfigAndWallets = {
     chainConfig: TChain;
     wallets: IGeneratedWallets;
-}
-interface IEvmChainConfig extends IChainConfig {
+};
+type IEvmChainConfig = {
     chainType: 'evm';
     rpcURL: string;
-}
+} & IChainConfig;
 
-interface IHederaChainConfig extends IChainConfig {
+type IHederaChainConfig = {
     chainType: 'hedera';
     rpcURL: string;
     royaltyInfoProxyAddress: string;
-}
+} & IChainConfig;
 
-interface ISecretChainConfig extends IChainConfig {
+type ISecretChainConfig = {
     chainType: 'scrt';
     rpcURL: string;
     chainId: string;
-}
+} & IChainConfig;
 
-interface ITonChainConfig extends IChainConfig {
+type ITonChainConfig = {
     chainType: 'ton';
     rpcURL: string;
-}
+} & IChainConfig;
 
-interface ITezosChainConfig extends IChainConfig {
+type ITezosChainConfig = {
     chainType: 'tezos';
     restApiURL: string;
     rpcURL: string;
-}
+} & IChainConfig;
 
-interface IMultiversXChainConfig extends IChainConfig {
+type IMultiversXChainConfig = {
     chainType: 'multiversX';
     elasticSearchURL: string;
     gatewayURL: string;
-    chainID: string
-}
+    chainID: string;
+} & IChainConfig;
 
-
-interface IEvmChainConfigAndEvmWallet {
+type IEvmChainConfigAndEvmWallet = {
     evmChainConfig: IEvmChainConfig;
     evmWallet: IEvmWallet;
-}
-interface IHederaChainConfigAndEvmWallet {
+};
+type IHederaChainConfigAndEvmWallet = {
     hederaChainConfig: IHederaChainConfig;
     evmWallet: IEvmWallet;
-}
+};
 
-
-interface ITonChainConfigAndTonWallet {
+type ITonChainConfigAndTonWallet = {
     tonChainConfig: ITonChainConfig;
-    tonWallet: ITonWallet
-}
+    tonWallet: ITonWallet;
+};
 
-interface ISecretChainConfigAndSecretWallet {
+type ISecretChainConfigAndSecretWallet = {
     secretChainConfig: ISecretChainConfig;
-    secretWallet: ISecretWallet
-}
+    secretWallet: ISecretWallet;
+};
 
-interface ITezosChainConfigAndTezosWallet {
+type ITezosChainConfigAndTezosWallet = {
     tezosChainConfig: ITezosChainConfig;
-    tezosWallet: ITezosWallet
-}
+    tezosWallet: ITezosWallet;
+};
 
-interface IMultiversXChainConfigAndMultiversXWallet {
+type IMultiversXChainConfigAndMultiversXWallet = {
     multiversXChainConfig: IMultiversXChainConfig;
     multiversXWallet: IMultiversXWallet;
-}
+};
 
-interface IStakingConfig extends IEvmChainConfig {
+type IStakingConfig = {
     coinSymbol: string;
     coinAddress: string;
     lastBlock: number;
-}
+} & IEvmChainConfig;
 
-interface IStakingChainConfigAndEvmWallet {
+type IStakingChainConfigAndEvmWallet = {
     stakingChainConfig: IStakingConfig;
     evmWallet: IEvmWallet;
-}
-interface IStakingChainConfigAndWallets {
+};
+type IStakingChainConfigAndWallets = {
     stakingChainConfig: IStakingConfig;
     wallets: IGeneratedWallets;
-}
-interface ITonContractConfig {
+};
+type ITonContractConfig = {
     contractAddress: string;
     rpcURL: string;
-}
-interface IEvmContractConfig {
+};
+type IEvmContractConfig = {
     contractAddress: string;
     rpcURL: string;
-}
-interface IHederaContractConfig {
+};
+type IHederaContractConfig = {
     contractAddress: string;
     rpcURL: string;
     royaltyInfoProxyAddress: string;
-}
+};
 
-interface IMultiversXContractConfig {
+type IMultiversXContractConfig = {
     contractAddress: string;
     gatewayURL: string;
-}
+};
 
-interface ISecretContractConfig {
+type ISecretContractConfig = {
     contractAddress: string;
     rpcURL: string;
     chainId: string;
-}
+};
 
-
-interface IEvmContractConfigAndEvmWallet {
+type IEvmContractConfigAndEvmWallet = {
     contractConfig: IEvmContractConfig;
     evmWallet: IEvmWallet;
-}
+};
 
-
-interface IMultiversXContractConfigAndMultiversXWallet {
+type IMultiversXContractConfigAndMultiversXWallet = {
     contractConfig: IMultiversXContractConfig;
     multiversXWallet: IMultiversXWallet;
-}
+};
 
+type TChain =
+    | IMultiversXChainConfig
+    | IEvmChainConfig
+    | ITonChainConfig
+    | ISecretChainConfig
+    | ITezosChainConfig
+    | IHederaChainConfig;
 
-type TChain = IMultiversXChainConfig | IEvmChainConfig | ITonChainConfig | ISecretChainConfig | ITezosChainConfig | IHederaChainConfig;
-
-interface IBridgeConfig {
+type IBridgeConfig = {
     bridgeChains: TChain[];
     storageConfig: IEvmChainConfig;
     stakingConfig: IStakingConfig;
-}
+};
 
-interface IBridge {
+type IBridge = {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
-    addValidator: (validatorAddress: string, signatures: {
-        signerAddress: string;
-        signature: string
-    }[]) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
-}
+    addValidator: (
+        validatorAddress: string,
+        signatures: {
+            signerAddress: string;
+            signature: string;
+        }[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+};
 
-interface INftContract {
+type INftContract = {
     name: (tokenId?: bigint) => Promise<string>;
     symbol: (tokenId?: bigint) => Promise<string>;
     royaltyInfo: (tokenId?: bigint) => Promise<string>;
     tokenURI: (tokenId: bigint) => Promise<string>;
-}
-
+};
 
 export {
     TChain,
@@ -258,5 +260,5 @@ export {
     IHederaChainConfig,
     IHederaChainConfigAndEvmWallet,
     IHederaContractConfig,
-    IHederaWallet
-}
+    IHederaWallet,
+};

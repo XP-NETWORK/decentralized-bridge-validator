@@ -8,18 +8,24 @@ import { IEvmChainConfig } from '@src/types';
 import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types';
 
 describe('evmLockListener', () => {
-
     afterEach(() => {
         sinon.restore();
     });
 
     it('should call evmContractListener with the correct arguments', async () => {
         const config = mockBridgeConfig;
-        const evmChainConfig = mockBridgeConfig.bridgeChains[1] as IEvmChainConfig;
-        const wallets = mockWallets
-        const evmContractListenerStub = sinon.stub(validatorUtils, 'evmContractListener').resolves();
-        const handleLogFunctionMock = async ({ log }: { log: LogEntry; }) => { console.info(log) };
-        sinon.stub(evmLockListenerUtils, 'getEvmLockListenerHandler').returns(handleLogFunctionMock)
+        const evmChainConfig = mockBridgeConfig
+            .bridgeChains[1] as IEvmChainConfig;
+        const wallets = mockWallets;
+        const evmContractListenerStub = sinon
+            .stub(validatorUtils, 'evmContractListener')
+            .resolves();
+        const handleLogFunctionMock = async ({ log }: { log: LogEntry }) => {
+            console.info(log);
+        };
+        sinon
+            .stub(evmLockListenerUtils, 'getEvmLockListenerHandler')
+            .returns(handleLogFunctionMock);
 
         await evmLockListener({ config, evmChainConfig, wallets });
 
@@ -33,5 +39,4 @@ describe('evmLockListener', () => {
             handleLog: handleLogFunctionMock,
         });
     });
-
 });

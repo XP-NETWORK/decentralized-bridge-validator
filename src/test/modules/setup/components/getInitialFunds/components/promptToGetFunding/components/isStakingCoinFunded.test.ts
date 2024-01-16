@@ -5,7 +5,6 @@ import * as utils from '@src/utils/functions';
 import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 
 describe('isStakingCoinFunded', () => {
-
     const testCases = [
         {
             description: 'should return true if the staking coin is funded',
@@ -16,7 +15,8 @@ describe('isStakingCoinFunded', () => {
             expected: true,
         },
         {
-            description: 'should return false if the staking coin is not funded',
+            description:
+                'should return false if the staking coin is not funded',
             stakingChainConfig_: {
                 intialFund: '10',
             },
@@ -37,37 +37,49 @@ describe('isStakingCoinFunded', () => {
         sinon.restore();
     });
     beforeEach(() => {
-        console.info = () => { };
+        console.info = () => {};
     });
 
-    testCases.forEach(({
-        description,
-        stakingChainConfig_,
-        balance,
-        expected,
-        throwError,
-    }) => {
-        it(description, async () => {
-            const { evmWallet } = mockWallets;
-            const stakingChainConfig = { ...mockBridgeConfig.stakingConfig, ...stakingChainConfig_ }
-            if (throwError) {
-                // Stub getCurrentEvmBalance to throw an error
-                sinon.stub(utils, 'getCurrentEvmBalance').rejects(new Error('Balance fetch failed'));
-            } else {
-                // Stub getCurrentEvmBalance to return a balance
-                sinon.stub(utils, 'getCurrentEvmBalance').resolves(balance);
-            }
-
-            try {
-                const result = await isStakingCoinFunded({ stakingChainConfig, evmWallet });
-                expect(result).to.equal(expected);
-            } catch (error) {
-                if (!throwError) {
-                    // Ensure the function doesn't throw an error when not expected
-                    throw error;
+    testCases.forEach(
+        ({
+            description,
+            stakingChainConfig_,
+            balance,
+            expected,
+            throwError,
+        }) => {
+            it(description, async () => {
+                const { evmWallet } = mockWallets;
+                const stakingChainConfig = {
+                    ...mockBridgeConfig.stakingConfig,
+                    ...stakingChainConfig_,
+                };
+                if (throwError) {
+                    // Stub getCurrentEvmBalance to throw an error
+                    sinon
+                        .stub(utils, 'getCurrentEvmBalance')
+                        .rejects(new Error('Balance fetch failed'));
+                } else {
+                    // Stub getCurrentEvmBalance to return a balance
+                    sinon.stub(utils, 'getCurrentEvmBalance').resolves(balance);
                 }
-                expect(error).to.equal('Error while isStakingCoinFunded, orignal error: Error: Balance fetch failed');
-            }
-        });
-    });
+
+                try {
+                    const result = await isStakingCoinFunded({
+                        stakingChainConfig,
+                        evmWallet,
+                    });
+                    expect(result).to.equal(expected);
+                } catch (error) {
+                    if (!throwError) {
+                        // Ensure the function doesn't throw an error when not expected
+                        throw error;
+                    }
+                    expect(error).to.equal(
+                        'Error while isStakingCoinFunded, orignal error: Error: Balance fetch failed',
+                    );
+                }
+            });
+        },
+    );
 });

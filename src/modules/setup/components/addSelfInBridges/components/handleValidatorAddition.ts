@@ -116,6 +116,8 @@ const handleValidatorAddition = async ({
                 tezosChainConfig: chainConfig,
                 tezosWallet: wallets.tezosWallet,
             });
+    } else {
+        throw new Error('Invalid chain type');
     }
 
     while (failiure) {

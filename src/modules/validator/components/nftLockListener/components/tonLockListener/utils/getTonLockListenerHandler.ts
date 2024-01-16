@@ -1,4 +1,3 @@
-import { TChain } from '@src/types';
 import { getStorageContract } from '@src/utils';
 import { getNftDetails } from '../../../utils';
 import { approveLock } from '../..';
@@ -48,7 +47,7 @@ const getTonLockListenerHandler = ({
             sourceChain, // Source chain of NFT
         });
 
-        const destinationChainObject: TChain = config.bridgeChains.find(
+        const destinationChainObject = config.bridgeChains.find(
             (chainConfig) => chainConfig.chain === destinationChain,
         );
 

@@ -1,7 +1,10 @@
 import axios from 'axios';
-import { IMultiverseXTxStatus } from './types';
+import { IMultiverseGetTxStatusParam, IMultiverseXTxStatus } from './types';
 
-const getTxStatus = async ({ elasticSearchURL, txHashes }) => {
+const getTxStatus = async ({
+    elasticSearchURL,
+    txHashes,
+}: IMultiverseGetTxStatusParam) => {
     const data = {
         headers: {
             'Content-Type': 'application/json',

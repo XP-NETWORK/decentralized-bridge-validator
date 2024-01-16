@@ -19,7 +19,7 @@ async function hederaContractListener({
     const blockRepository: Repository<Block> =
         AppDataSource.getRepository(Block);
 
-    let blockInstance: Block = await blockRepository.findOne({
+    let blockInstance = await blockRepository.findOne({
         where: { chain, contractAddress },
     });
 

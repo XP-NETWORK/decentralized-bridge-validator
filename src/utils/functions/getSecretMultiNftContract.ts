@@ -26,23 +26,23 @@ const getSecretMultiNftContract = ({
     };
 
     return {
-        name: async (tokenId: bigint) => {
+        name: async (tokenId) => {
             const name = (
                 (await secretjs.query.compute.queryContract({
                     contract_address: contractAddress,
                     query: {
-                        token_id_public_info: { token_id: tokenId.toString() },
+                        token_id_public_info: { token_id: tokenId!.toString() },
                     },
                 })) as secretResponse
             ).token_id_public_info.token_id_info.name;
             return name;
         },
-        symbol: async (tokenId: bigint) => {
+        symbol: async (tokenId) => {
             const symbol = (
                 (await secretjs.query.compute.queryContract({
                     contract_address: contractAddress,
                     query: {
-                        token_id_public_info: { token_id: tokenId.toString() },
+                        token_id_public_info: { token_id: tokenId!.toString() },
                     },
                 })) as secretResponse
             ).token_id_public_info.token_id_info.symbol;

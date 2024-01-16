@@ -18,10 +18,10 @@ const getEvmSingleNftContract = (
         symbol: async () => {
             return await erc721Contract.symbol();
         },
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async (tokenId) => {
             try {
                 const [, royaltyAmount] = await erc721Contract.royaltyInfo(
-                    tokenId,
+                    tokenId!,
                     SalePriceToGetTotalRoyalityPercentage,
                 );
                 return String(royaltyAmount);
@@ -29,7 +29,7 @@ const getEvmSingleNftContract = (
                 return '0';
             }
         },
-        tokenURI: async (tokenId: bigint) => {
+        tokenURI: async (tokenId) => {
             return await erc721Contract.tokenURI(tokenId);
         },
     };

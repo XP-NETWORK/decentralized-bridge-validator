@@ -20,7 +20,7 @@ async function tonContractListener({
     const blockRepository: Repository<Block> =
         AppDataSource.getRepository(Block);
 
-    let blockInstance: Block = await blockRepository.findOne({
+    let blockInstance = await blockRepository.findOne({
         where: { chain, contractAddress },
     });
 
@@ -67,7 +67,7 @@ async function tonContractListener({
         console.log(tx.outMessages.size, '-----------------SIZE-----------');
         for (let i = 0; i < tx.outMessages.size; i++) {
             await handleLog({
-                log: tx.outMessages.get(i),
+                log: tx.outMessages.get(i)!,
                 hash: tx.hash().toString('base64'),
             });
         }

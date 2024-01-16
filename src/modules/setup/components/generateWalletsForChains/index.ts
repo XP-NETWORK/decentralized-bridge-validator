@@ -8,6 +8,7 @@ import { Wallet as secretWallet } from 'secretjs';
 import TonWeb from 'tonweb';
 import { InMemorySigner } from '@taquito/signer';
 import * as bip39 from 'bip39';
+//@ts-expect-error no types copium
 import sodium from 'libsodium-wrappers-sumo';
 import base58check from 'bs58check';
 

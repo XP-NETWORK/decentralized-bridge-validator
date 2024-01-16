@@ -1,4 +1,3 @@
-import { TChain } from '@src/types';
 import { ILog } from '@src/modules/validator/utils/tezosContractListener/types';
 import { getStorageContract } from '@src/utils';
 import { ITezosLockListener } from '../../../types';
@@ -38,7 +37,7 @@ const getTezosLockListenerHandler = ({
             transaction_hash: transactionHash,
         } = log;
 
-        const destinationChainObject: TChain = config.bridgeChains.find(
+        const destinationChainObject = config.bridgeChains.find(
             (chainConfig) => chainConfig.chain === destinationChain,
         );
 

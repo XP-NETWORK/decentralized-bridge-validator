@@ -51,7 +51,7 @@ const getTonBridgeContract = ({
             return { added: !!res.stack[0][1].elements.length };
         },
         validatorsCount: async () => {
-            return await bridge.getValidatorsCount();
+            return (await bridge.getValidatorsCount()) ?? 0n;
         },
         addValidator: async (
             validatorAddress: string,

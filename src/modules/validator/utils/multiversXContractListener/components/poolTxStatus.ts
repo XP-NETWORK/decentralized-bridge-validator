@@ -36,8 +36,9 @@ const poolTxStatus = async ({ elasticSearchURL }: IPoolTxStatus) => {
                     txObject.status = pooledTx.status;
                     return txObject;
                 }
+                return undefined;
             })
-            .filter(Boolean); // Remove undefined entries
+            .filter(isNotUndefined); // Remove undefined entries
 
         // Perform a bulk update within a transaction
         await AppDataSource.transaction(async (transactionalEntityManager) => {
@@ -49,6 +50,10 @@ const poolTxStatus = async ({ elasticSearchURL }: IPoolTxStatus) => {
     } catch (error) {
         throw new Error('Error while pooling transaction status');
     }
+};
+
+const isNotUndefined = <T>(item: T | undefined): item is T => {
+    return !!item;
 };
 
 export default poolTxStatus;

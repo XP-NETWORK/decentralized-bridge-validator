@@ -174,6 +174,10 @@ type IMultiversXContractConfig = {
     contractAddress: string;
     gatewayURL: string;
 };
+type ITezosContractConfig = {
+    contractAddress: string;
+    rpcURL: string;
+};
 
 type ISecretContractConfig = {
     contractAddress: string;
@@ -261,4 +265,5 @@ export {
     IHederaChainConfigAndEvmWallet,
     IHederaContractConfig,
     IHederaWallet,
+    ITezosContractConfig,
 };

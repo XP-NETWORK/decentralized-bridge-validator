@@ -3,11 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('MultiversXTransactions')
 export class MultiversXTransactions {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column({ unique: true })
-    transactionHash: string;
+    transactionHash!: string;
 
     @Column()
-    status: string;
+    status!: string;
 }

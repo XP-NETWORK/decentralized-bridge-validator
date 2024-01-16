@@ -18,7 +18,7 @@ const getHederaSingleNftContract = (
         symbol: async () => {
             return await erc721Contract.symbol();
         },
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async (tokenId) => {
             try {
                 const contract = RoyaltyInfoProxy__factory.connect(
                     contractConfig.royaltyInfoProxyAddress,
@@ -26,7 +26,7 @@ const getHederaSingleNftContract = (
                 );
                 const [result, nftInfo] = await contract.royaltyInfo.staticCall(
                     contractConfig.contractAddress,
-                    tokenId,
+                    tokenId ?? 1,
                 );
                 console.log(result);
                 const numerator = nftInfo[0][7][0][0];

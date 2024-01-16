@@ -21,7 +21,7 @@ async function secretContractListener({
     const blockRepository: Repository<Block> =
         AppDataSource.getRepository(Block);
 
-    let blockInstance: Block = await blockRepository.findOne({
+    let blockInstance = await blockRepository.findOne({
         where: { chain, contractAddress },
     });
 
@@ -36,8 +36,8 @@ async function secretContractListener({
 
     const lastBlock = blockInstance.lastBlock;
     const latestBlockNumber = Number(
-        (await secretjs.query.tendermint.getLatestBlock({})).block.header
-            .height,
+        (await secretjs.query.tendermint.getLatestBlock({}))?.block?.header
+            ?.height,
     );
     const latestBlock =
         lastBlock + BLOCK_CHUNKS < latestBlockNumber
@@ -57,9 +57,11 @@ async function secretContractListener({
     const handleLogPromises: Promise<void>[] = [];
 
     for (const log of logs) {
-        const logToFind = log.jsonLog[0].events
-            .find((item) => item.type === 'wasm')
-            .attributes.find((item) => item.key === eventId);
+        const logToFind = log?.jsonLog
+            ?.at(0)
+            ?.events.find((item) => item.type === 'wasm')
+            ?.attributes.find((item) => item.key === eventId);
+
         if (logToFind)
             handleLogPromises.push(
                 handleLog({ log: logToFind.value, hash: log.transactionHash }),

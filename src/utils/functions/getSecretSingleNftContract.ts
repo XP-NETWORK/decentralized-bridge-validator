@@ -34,11 +34,11 @@ const getSecretSingleNftContract = ({
             ).contract_info.symbol;
             return symbol;
         },
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async (tokenId) => {
             const royalty_info = (
                 (await secretjs.query.compute.queryContract({
                     contract_address: contractAddress,
-                    query: { royalty_info: { token_id: tokenId.toString() } },
+                    query: { royalty_info: { token_id: tokenId!.toString() } },
                 })) as {
                     royalty_info: {
                         royalty_info: {

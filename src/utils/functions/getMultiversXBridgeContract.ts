@@ -64,7 +64,7 @@ const getMultiversXBridgeContract = ({
                 queryResponse,
                 validatorsCountDefinition,
             );
-            const count = firstValue.valueOf();
+            const count = firstValue!.valueOf();
             return count;
         },
         addValidator: async (

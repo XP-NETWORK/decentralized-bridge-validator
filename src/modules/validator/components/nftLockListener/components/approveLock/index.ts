@@ -67,10 +67,11 @@ const approveLock = async ({
         console.info(`Lock Approved Transaction Hash: ${tx.hash}`);
     } catch (e) {
         if (
+            hasShortMessage(e) &&
             !(
-                e?.shortMessage ===
+                e.shortMessage ===
                     'execution reverted: "Signature already used"' ||
-                e?.shortMessage === 'replacement fee too low'
+                e.shortMessage === 'replacement fee too low'
             )
         ) {
             throw new Error('Error while processing log');
@@ -79,5 +80,8 @@ const approveLock = async ({
         }
     }
 };
+function hasShortMessage(e: unknown): e is { shortMessage: string } {
+    return typeof e === 'object' && e !== null && 'shortMessage' in e;
+}
 
 export default approveLock;

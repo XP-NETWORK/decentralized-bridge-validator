@@ -4,14 +4,14 @@ import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 @Unique(['contractAddress', 'chain'])
 export class Block {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column()
-    lastBlock: number;
+    lastBlock!: number;
 
     @Column()
-    contractAddress: string;
+    contractAddress!: string;
 
     @Column()
-    chain: string;
+    chain!: string;
 }

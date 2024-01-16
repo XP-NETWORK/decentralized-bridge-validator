@@ -1,4 +1,3 @@
-import { TChain } from '@src/types';
 import { getStorageContract } from '@src/utils';
 import { IMultiversXLockListener } from '../types';
 import { getLockEventDecodedLog } from '.';
@@ -32,7 +31,7 @@ const getMultiversXLockListenerHandler = ({
             sourceChain, // Source chain of NFT
         } = getLockEventDecodedLog({ log });
 
-        const destinationChainObject: TChain = config.bridgeChains.find(
+        const destinationChainObject = config.bridgeChains.find(
             (chainConfig) => chainConfig.chain === destinationChain,
         );
 
@@ -93,10 +92,10 @@ const getMultiversXLockListenerHandler = ({
                         },
                     },
                 );
-                transaction.status = 'processed';
+                transaction!.status = 'processed';
                 await transactionalEntityManager.save(
                     MultiversXTransactions,
-                    transaction,
+                    transaction!,
                 );
             } catch (e) {
                 console.log(e);

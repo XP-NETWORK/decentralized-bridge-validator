@@ -39,7 +39,7 @@ const createJobWithWorker = async <T>({
     worker.on('failed', async (job, err) => {
         console.info({ err });
 
-        await bullQueue.add(`${jobName}Job`, job.data, {
+        await bullQueue.add(`${jobName}Job`, job!.data, {
             removeOnComplete: true,
             removeOnFail: true,
             delay: ProcessDelayMilliseconds,

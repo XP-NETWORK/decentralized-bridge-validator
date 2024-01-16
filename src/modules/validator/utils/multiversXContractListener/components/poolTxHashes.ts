@@ -16,7 +16,7 @@ const poolTxHashes = async ({
     const blockRepository: Repository<Block> =
         AppDataSource.getRepository(Block);
 
-    let blockInstance: Block = await blockRepository.findOne({
+    let blockInstance = await blockRepository.findOne({
         where: { chain, contractAddress },
     });
 
@@ -61,7 +61,7 @@ const poolTxHashes = async ({
         await entityManager.save(MultiversXTransactions, transactions);
 
         // Update the block instance
-        blockInstance.lastBlock = latestBlock;
+        blockInstance!.lastBlock = latestBlock;
         await entityManager.save(blockInstance);
     });
 

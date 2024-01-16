@@ -1,4 +1,3 @@
-import { TChain } from '@src/types';
 import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types';
 import { getEvmBridgeContract, getStorageContract } from '@src/utils';
 import { getLockEventDecodedLog } from '.';
@@ -41,13 +40,13 @@ const getEvmLockListenerHandler = ({
             sourceChain, // Source chain of NFT
         } = getLockEventDecodedLog({ log });
 
-        const destinationChainObject: TChain = config.bridgeChains.find(
+        const destinationChainObject = config.bridgeChains.find(
             (chainConfig) => chainConfig.chain === destinationChain,
         );
 
         // if user gives a destination chain which is not registered with us, we early return
         if (!destinationChainObject) return;
-        const transactionHash = log.transactionHash; // Transaction hash of the transfer on the source chain
+        const transactionHash = log.transactionHash!; // Transaction hash of the transfer on the source chain
 
         const sourceChainObject = config.bridgeChains.find(
             (item) => item.chain === sourceChain,

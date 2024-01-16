@@ -34,6 +34,8 @@ const getNftDetails = async ({
                 contractAddress: sourceNftContractAddress,
                 rpcURL: sourceChain.rpcURL,
             });
+        } else {
+            throw new Error('Invalid nft type');
         }
     } else if (sourceChain.chainType === 'hedera') {
         nftContract = getHederaSingleNftContract({
@@ -64,12 +66,16 @@ const getNftDetails = async ({
                 contractAddress: sourceNftContractAddress,
                 chainId: sourceChain.chainId,
             });
+        } else {
+            throw new Error('Invalid nft type');
         }
     } else if (sourceChain.chainType === 'tezos') {
         nftContract = getTezosNftContract({
             contractAddress: sourceNftContractAddress,
             rpcURL: sourceChain.rpcURL,
         });
+    } else {
+        throw new Error('Invalid chain type');
     }
 
     name = await nftContract.name(); // name of NFT collection

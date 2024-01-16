@@ -19,7 +19,7 @@ const getStakingListenerLogHandler = ({
     const { topicHash } = stakingContract.interface.getEvent('Staked');
 
     const handleLog = async ({ log }: { log: LogEntry }) => {
-        if (typeof log === 'string' || !log.topics.includes(topicHash)) return;
+        if (typeof log === 'string' || !log.topics!.includes(topicHash)) return;
 
         const { validatorAddressAndChainType } = getStakeEventDecodedLog({
             log,

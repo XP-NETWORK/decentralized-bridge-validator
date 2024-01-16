@@ -1,7 +1,11 @@
 import axios from 'axios';
-import { IMultiverseXTxStatus } from './types';
+import { IMultiverseGetTxHashesParam, IMultiverseXTxStatus } from './types';
 
-const getTxHashes = async ({ elasticSearchURL, contractAddress, from }) => {
+const getTxHashes = async ({
+    elasticSearchURL,
+    contractAddress,
+    from,
+}: IMultiverseGetTxHashesParam) => {
     const data = {
         from,
         _source: ['status'],

@@ -6,10 +6,10 @@ const getLockEventDecodedLog = ({ log }: { log: LogObject }) => {
     const web3 = new Web3(); // Not connected to any node
     const lockEventAbi = evmBridgeABI.find(
         (abi) => abi.name === 'Locked' && abi.type === 'event',
-    );
+    )!;
 
-    const decodedLog = web3.eth.abi.decodeLog(lockEventAbi.inputs, log.data, [
-        ...log.topics.slice(1),
+    const decodedLog = web3.eth.abi.decodeLog(lockEventAbi.inputs!, log.data!, [
+        ...log.topics!.slice(1),
     ]);
 
     const [

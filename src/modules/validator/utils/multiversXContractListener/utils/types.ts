@@ -35,10 +35,22 @@ type IMultiverseXTxStatus = {
     };
 };
 
+type IMultiverseGetTxHashesParam = {
+    elasticSearchURL: string;
+    contractAddress: string;
+    from: number;
+};
+
+type IMultiverseGetTxStatusParam = {
+    elasticSearchURL: string;
+    txHashes: string[];
+};
 export {
     IGetMultiverseXLogs,
     IMultiverseXLogs,
     IMultiverseXLogEvent,
     IMultiverseXTxHashes,
     IMultiverseXTxStatus,
+    IMultiverseGetTxHashesParam,
+    IMultiverseGetTxStatusParam,
 };

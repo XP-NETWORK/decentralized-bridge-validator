@@ -1,6 +1,6 @@
 import { NFTContractType } from '@src/contractsTypes/tezosContractTypes/NFT.types';
 import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
-import { INftContract } from '@src/types';
+import { INftContract, ITezosContractConfig } from '@src/types';
 import { TezosToolkit } from '@taquito/taquito';
 import { Tzip16Module, bytes2Char, tzip16 } from '@taquito/tzip16';
 
@@ -13,7 +13,10 @@ const URLCanParse = (url: string): boolean => {
     }
 };
 
-const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
+const getTezosNftContract = ({
+    rpcURL,
+    contractAddress,
+}: ITezosContractConfig): INftContract => {
     const getNftTokenMetaData = async (tokenId: bigint) => {
         const Tezos = new TezosToolkit(rpcURL);
         const nftContract =
@@ -42,9 +45,9 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 return 'NTEZOS';
             }
         },
-        symbol: async (tokenId: bigint) => {
+        symbol: async (tokenId) => {
             try {
-                const metaDataOrURL = await getNftTokenMetaData(tokenId);
+                const metaDataOrURL = await getNftTokenMetaData(tokenId!);
                 const isUrl = URLCanParse(metaDataOrURL);
                 if (isUrl) {
                     const metaData: { symbol?: string } = await fetch(
@@ -58,9 +61,9 @@ const getTezosNftContract = ({ rpcURL, contractAddress }): INftContract => {
                 return 'NTEZOS';
             }
         },
-        royaltyInfo: async (tokenId?: bigint) => {
+        royaltyInfo: async (tokenId) => {
             try {
-                const metaDataOrURL = await getNftTokenMetaData(tokenId);
+                const metaDataOrURL = await getNftTokenMetaData(tokenId!);
                 const isUrl = URLCanParse(metaDataOrURL);
                 let metaData: {
                     royalties: {

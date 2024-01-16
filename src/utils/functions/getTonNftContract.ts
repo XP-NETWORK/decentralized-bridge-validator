@@ -51,8 +51,7 @@ const getTonNftContract = ({
         symbol: async () => {
             return '';
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async () => {
             try {
                 const nftData = await nftItem.getGetNftData();
                 if (nftData.collection_address) {
@@ -71,8 +70,7 @@ const getTonNftContract = ({
                 return '0';
             }
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        tokenURI: async (tokenId: bigint) => {
+        tokenURI: async () => {
             try {
                 const nftData = await nftItem.getGetNftData();
                 const individualContentSlice =

@@ -5,8 +5,8 @@ const readJsonFile = async (filePath: string) => {
         const rawData: string = await fs.readFile(filePath, 'utf8');
         const jsonData = JSON.parse(rawData);
         return jsonData;
-    } catch (error) {
-        if (error.code === 'ENOENT') {
+    } catch (error: unknown) {
+        if (hasCodeProperty(error) && error.code === 'ENOENT') {
             console.error('No existing secrets found', filePath);
             throw new Error(`File not found: ${filePath}`);
         } else if (error instanceof SyntaxError) {
@@ -18,5 +18,9 @@ const readJsonFile = async (filePath: string) => {
         }
     }
 };
+
+export function hasCodeProperty(object: unknown): object is { code: string } {
+    return typeof object === 'object' && object !== null && 'code' in object;
+}
 
 export default readJsonFile;

@@ -25,19 +25,19 @@ const approveStake = async ({
 
     const newEvmValidator = validatorAddressAndChainType.find(
         (item) => item.chainType === 'evm',
-    );
+    )!;
     const newMultiversXValidator = validatorAddressAndChainType.find(
         (item) => item.chainType === 'multiversX',
-    );
+    )!;
     const newTonValidator = validatorAddressAndChainType.find(
         (item) => item.chainType === 'ton',
-    );
+    )!;
     const newSecretValidator = validatorAddressAndChainType.find(
         (item) => item.chainType === 'scrt',
-    );
+    )!;
     const newTezosValidator = validatorAddressAndChainType.find(
         (item) => item.chainType === 'tezos',
-    );
+    )!;
     const newTezosPublicKeyHash = tas.address(
         b58cencode(
             hash(
@@ -195,8 +195,7 @@ const approveStake = async ({
         console.log(e);
         if (
             !(
-                e &&
-                e.shortMessage &&
+                hasShortMessage(e) &&
                 e.shortMessage ===
                     `execution reverted: "Signature already used"`
             )
@@ -205,5 +204,8 @@ const approveStake = async ({
         }
     }
 };
+function hasShortMessage(e: unknown): e is { shortMessage: string } {
+    return typeof e === 'object' && e !== null && 'shortMessage' in e;
+}
 
 export default approveStake;

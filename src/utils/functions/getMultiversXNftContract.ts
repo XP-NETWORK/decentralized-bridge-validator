@@ -39,7 +39,7 @@ const getMultiversXNftContract = ({
                 );
             return nftDetails.ticker;
         },
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async (tokenId) => {
             try {
                 const nftDetails = await getNonFungibleToken(
                     contractAddress,

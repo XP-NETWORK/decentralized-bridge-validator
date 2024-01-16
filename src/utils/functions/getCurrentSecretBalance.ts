@@ -17,7 +17,7 @@ const getCurrentSecretBalance = async (
             denom: 'uscrt',
         });
 
-        return BigInt(balance.amount);
+        return BigInt(balance?.amount ?? 0n);
     } catch (e) {
         console.log(e);
         console.error('RPC issue:', { configs });

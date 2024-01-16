@@ -22,7 +22,7 @@ const getEvmMultiNftContract = (
     return {
         name: async () => {
             try {
-                return await erc1155Contract.name();
+                return erc1155Contract.name!();
             } catch (error) {
                 console.error("The contract does not have a 'name' function.");
                 return '';
@@ -30,7 +30,7 @@ const getEvmMultiNftContract = (
         },
         symbol: async () => {
             try {
-                return await erc1155Contract.symbol();
+                return await erc1155Contract.symbol!();
             } catch (error) {
                 console.error(
                     "The contract does not have a 'symbol' function.",
@@ -38,10 +38,10 @@ const getEvmMultiNftContract = (
                 return '';
             }
         },
-        royaltyInfo: async (tokenId: bigint) => {
+        royaltyInfo: async (tokenId) => {
             try {
                 const [, royaltyAmount] = await erc1155Contract.royaltyInfo(
-                    tokenId,
+                    tokenId!,
                     SalePriceToGetTotalRoyalityPercentage,
                 );
                 return String(royaltyAmount);

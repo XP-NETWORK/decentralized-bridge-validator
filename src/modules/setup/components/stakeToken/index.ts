@@ -84,8 +84,7 @@ const stakeTokens_ = async ({
     } catch (e) {
         if (
             !(
-                e &&
-                e.shortMessage &&
+                hasShortMessage(e) &&
                 e.shortMessage ===
                     `execution reverted: "You can only stake once"`
             )
@@ -130,5 +129,8 @@ const stakeTokens = async ({
         }
     }
 };
+function hasShortMessage(e: unknown): e is { shortMessage: string } {
+    return typeof e === 'object' && e !== null && 'shortMessage' in e;
+}
 
 export default stakeTokens;

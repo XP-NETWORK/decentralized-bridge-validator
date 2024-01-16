@@ -1,5 +1,4 @@
-
-interface INftTransferDetailsObject {
+type INftTransferDetailsObject = {
     tokenId: string;
     sourceChain: string;
     destinationChain: string;
@@ -14,7 +13,6 @@ interface INftTransferDetailsObject {
     tokenAmount: string;
     nftType: string;
     fee: string;
-}
+};
 
-
-export { INftTransferDetailsObject }
+export { INftTransferDetailsObject };

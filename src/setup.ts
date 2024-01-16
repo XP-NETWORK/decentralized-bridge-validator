@@ -1,3 +1,3 @@
-import { setup } from "./modules/setup";
+import { setup } from './modules/setup';
 
-setup()
+setup();

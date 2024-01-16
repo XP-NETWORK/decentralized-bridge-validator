@@ -6,7 +6,6 @@ import { mockBridgeConfig, mockWallets } from '@src/test/mockData';
 import { IEvmChainConfig } from '@src/types';
 
 describe('isEvmChainFunded', () => {
-
     const testCases = [
         {
             description: 'should return true if the chain is funded',
@@ -17,7 +16,8 @@ describe('isEvmChainFunded', () => {
             expected: true,
         },
         {
-            description: 'should return true if the chain is funded more then asked intialFund',
+            description:
+                'should return true if the chain is funded more then asked intialFund',
             evmChainConfig_: {
                 intialFund: '10',
             },
@@ -46,40 +46,50 @@ describe('isEvmChainFunded', () => {
         sinon.restore();
     });
     beforeEach(() => {
-        console.info = () => { };
+        console.info = () => {};
     });
 
+    testCases.forEach(
+        ({ description, evmChainConfig_, balance, expected, throwError }) => {
+            it(description, async () => {
+                const { evmWallet } = mockWallets;
+                const evmChainConfig = {
+                    ...(mockBridgeConfig.bridgeChains.find(
+                        (item) => item.chain === 'evm',
+                    ) as IEvmChainConfig),
+                    ...evmChainConfig_,
+                };
 
-    testCases.forEach(({
-        description,
-        evmChainConfig_,
-        balance,
-        expected,
-        throwError,
-    }) => {
-        it(description, async () => {
-            const { evmWallet } = mockWallets;
-            const evmChainConfig = { ...((mockBridgeConfig.bridgeChains.find(item => item.chain === 'evm')) as IEvmChainConfig), ...evmChainConfig_ };
-
-            if (throwError) {
-                // Stub getCurrentEvmBalance to throw an error
-                sinon.stub(utils, 'getCurrentEvmBalance').rejects(new Error('Balance fetch failed'));
-            } else {
-                // Stub getCurrentEvmBalance to return a balance
-                sinon.stub(utils, 'getCurrentEvmBalance').resolves(balance);
-            }
-
-            try {
-                const result = await isEvmChainFunded({ evmChainConfig, evmWallet });
-                expect(result).to.equal(expected);
-            } catch (error) {
-                if (!throwError) {
-                    // Ensure the function doesn't throw an error when not expected
-                    throw error;
+                if (throwError) {
+                    // Stub getCurrentEvmBalance to throw an error
+                    sinon
+                        .stub(utils, 'getCurrentEvmBalance')
+                        .rejects(new Error('Balance fetch failed'));
+                } else {
+                    // Stub getCurrentEvmBalance to return a balance
+                    sinon.stub(utils, 'getCurrentEvmBalance').resolves(balance);
                 }
-                console.info(error, "---------------------------------------")
-                expect(error).to.equal('Error while isEvmChainFunded, orignal error: Error: Balance fetch failed');
-            }
-        });
-    });
+
+                try {
+                    const result = await isEvmChainFunded({
+                        evmChainConfig,
+                        evmWallet,
+                    });
+                    expect(result).to.equal(expected);
+                } catch (error) {
+                    if (!throwError) {
+                        // Ensure the function doesn't throw an error when not expected
+                        throw error;
+                    }
+                    console.info(
+                        error,
+                        '---------------------------------------',
+                    );
+                    expect(error).to.equal(
+                        'Error while isEvmChainFunded, orignal error: Error: Balance fetch failed',
+                    );
+                }
+            });
+        },
+    );
 });

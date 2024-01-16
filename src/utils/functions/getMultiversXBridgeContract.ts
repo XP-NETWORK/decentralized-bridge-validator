@@ -38,9 +38,8 @@ const getMultiversXBridgeContract = ({
                 func: 'validators',
                 args: [new BytesValue(Buffer.from(validatorAddress, 'hex'))],
             });
-            const queryResponse = await proxyNetworkProvider.queryContract(
-                query,
-            );
+            const queryResponse =
+                await proxyNetworkProvider.queryContract(query);
             const validatorsDefinition =
                 multiversXBridgeContract.getEndpoint('validators');
             const resultsParser = new ResultsParser();
@@ -56,9 +55,8 @@ const getMultiversXBridgeContract = ({
             const query = multiversXBridgeContract.createQuery({
                 func: 'validatorsCount',
             });
-            const queryResponse = await proxyNetworkProvider.queryContract(
-                query,
-            );
+            const queryResponse =
+                await proxyNetworkProvider.queryContract(query);
             const validatorsCountDefinition =
                 multiversXBridgeContract.getEndpoint('validatorsCount');
 
@@ -86,9 +84,8 @@ const getMultiversXBridgeContract = ({
                     multiversXWallet.userWallet.bech32,
                 );
                 const userAccount = new Account(userAddress);
-                const userOnNetwork = await proxyNetworkProvider.getAccount(
-                    userAddress,
-                );
+                const userOnNetwork =
+                    await proxyNetworkProvider.getAccount(userAddress);
                 userAccount.update(userOnNetwork);
 
                 const data = [
@@ -122,9 +119,8 @@ const getMultiversXBridgeContract = ({
                 transaction.applySignature(
                     await signer.sign(transaction.serializeForSigning()),
                 );
-                const hash = await proxyNetworkProvider.sendTransaction(
-                    transaction,
-                );
+                const hash =
+                    await proxyNetworkProvider.sendTransaction(transaction);
 
                 return {
                     hash,

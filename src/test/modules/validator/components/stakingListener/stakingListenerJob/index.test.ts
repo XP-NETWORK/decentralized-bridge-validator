@@ -8,27 +8,39 @@ import * as stakingUtils from '@src/modules/validator/components/stakingListener
 
 describe('stakingListenerJob', () => {
     it('should call evmContractListener with the correct arguments', async () => {
+        const evmContractListenerStub = sinon
+            .stub(validatorUtils, 'evmContractListener')
+            .resolves();
 
-        const evmContractListenerStub = sinon.stub(validatorUtils, "evmContractListener").resolves();
+        const handleLogFunctionMock = async ({ log }: { log: LogEntry }) => {
+            console.info(log);
+        };
+        const getStakingListenerLogHandlerStub = sinon
+            .stub(stakingUtils, 'getStakingListenerLogHandler')
+            .returns(handleLogFunctionMock);
 
+        await stakingListenerJob({
+            config: mockBridgeConfig,
+            wallets: mockWallets,
+        });
 
-        const handleLogFunctionMock = async ({ log }: { log: LogEntry; }) => { console.info(log) };
-        const getStakingListenerLogHandlerStub = sinon.stub(stakingUtils, 'getStakingListenerLogHandler').returns(handleLogFunctionMock);
+        const { contractAddress, rpcURL, lastBlock, chain } =
+            mockBridgeConfig.stakingConfig;
+        const handleLog = getStakingListenerLogHandlerStub({
+            config: mockBridgeConfig,
+            wallets: mockWallets,
+        });
 
-        await stakingListenerJob({ config: mockBridgeConfig, wallets: mockWallets });
-        
-        const { contractAddress, rpcURL, lastBlock, chain } = mockBridgeConfig.stakingConfig;
-        const handleLog = getStakingListenerLogHandlerStub({ config: mockBridgeConfig, wallets: mockWallets })
-
-        expect(evmContractListenerStub.calledWithExactly({
-            contractAddress,
-            rpcURL,
-            lastBlock_: lastBlock,
-            chain,
-            handleLog,
-        })).to.be.true
-
+        expect(
+            evmContractListenerStub.calledWithExactly({
+                contractAddress,
+                rpcURL,
+                lastBlock_: lastBlock,
+                chain,
+                handleLog,
+            }),
+        ).to.be.true;
 
         sinon.restore();
     });
-})
+});

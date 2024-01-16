@@ -1,3 +1,3 @@
-import getTonLockListenerHandler from "./getTonLockListenerHandler";
+import getTonLockListenerHandler from './getTonLockListenerHandler';
 
-export { getTonLockListenerHandler }
+export { getTonLockListenerHandler };

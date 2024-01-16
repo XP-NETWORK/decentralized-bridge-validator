@@ -1,9 +1,9 @@
-import { IConfigAndWallets, IMultiversXChainConfig } from "@src/types";
+import { IConfigAndWallets, IMultiversXChainConfig } from '@src/types';
 
-interface IMultiversXContractListener extends IConfigAndWallets {
+type IMultiversXContractListener = {
     eventIdentifier: string[];
-    multiversXChainConfig: IMultiversXChainConfig,
-    jobName: string
-}
+    multiversXChainConfig: IMultiversXChainConfig;
+    jobName: string;
+} & IConfigAndWallets;
 
-export { IMultiversXContractListener }
+export { IMultiversXContractListener };

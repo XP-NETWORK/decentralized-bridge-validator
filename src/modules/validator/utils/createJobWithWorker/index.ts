@@ -38,7 +38,12 @@ const createJobWithWorker = async <T>({
 
     worker.on('failed', async (job, err) => {
         console.info({ err });
-
+        if (
+            err.message === 'Invalid nft type' ||
+            err.message === 'Invalid chain type'
+        ) {
+            return;
+        }
         await bullQueue.add(`${jobName}Job`, job!.data, {
             removeOnComplete: true,
             removeOnFail: true,

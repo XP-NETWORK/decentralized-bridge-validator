@@ -18,7 +18,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     lastBlock: 17608314,
 };
 
-const bridgeTestChains: TChain[] = [
+const bridgeTestChains = [
     {
         chain: 'BSC',
         rpcURL: 'https://bsc-testnet.publicnode.com',
@@ -76,16 +76,16 @@ const bridgeTestChains: TChain[] = [
     //     chainId: 'pulsar-3',
     //     lastBlock: 50883
     // },
-    // {
-    //     chain: "TEZOS",
-    //     rpcURL: "https://ghostnet.ecadinfra.com",
-    //     restApiURL: "https://api.ghostnet.tzkt.io",
-    //     contractAddress: "KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4",
-    //     intialFund: "50000",
-    //     lastBlock: 5058309,
-    //     nativeCoinSymbol: "XTZ",
-    //     chainType: "tezos"
-    // },
+    {
+        chain: 'TEZOS',
+        rpcURL: 'https://ghostnet.ecadinfra.com',
+        restApiURL: 'https://api.ghostnet.tzkt.io',
+        contractAddress: 'KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4',
+        intialFund: '50000',
+        lastBlock: 5058309,
+        nativeCoinSymbol: 'XTZ',
+        chainType: 'tezos',
+    },
     {
         chain: 'HEDERA',
         rpcURL: 'https://testnet.hashio.io/api',
@@ -96,7 +96,7 @@ const bridgeTestChains: TChain[] = [
         lastBlock: 7095475,
         royaltyInfoProxyAddress: '0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF',
     },
-];
+] as const satisfies readonly TChain[];
 
 const stakingTestChain: IStakingConfig = {
     chain: 'BSC',
@@ -111,7 +111,7 @@ const stakingTestChain: IStakingConfig = {
 };
 
 const testnetBridgeConfig: IBridgeConfig = {
-    bridgeChains: bridgeTestChains,
+    bridgeChains: bridgeTestChains as unknown as TChain[],
     storageConfig: storageTestnetConfig,
     stakingConfig: stakingTestChain,
 };
@@ -168,5 +168,7 @@ const prodBridgeConfig: IBridgeConfig = {
 };
 
 const BLOCK_CHUNKS = 1000;
+
+export type SupportedChains = (typeof bridgeTestChains)[number]['chain'];
 
 export { BLOCK_CHUNKS, testnetBridgeConfig, prodBridgeConfig };

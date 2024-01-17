@@ -49,6 +49,7 @@
         "@types/mocha": "^10.0.3",
         "@types/web3": "^1.2.2",
         "axios": "^1.6.0",
+        "bignumber.js": "^9.1.2",
         "bip39": "^3.1.0",
         "borsh": "^1.0.0",
         "bullmq": "^4.12.5",

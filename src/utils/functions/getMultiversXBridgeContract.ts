@@ -2,10 +2,21 @@ import {
     AbiRegistry,
     Account,
     Address,
+    AddressType,
     AddressValue,
+    BigUIntType,
+    BigUIntValue,
+    BytesType,
     BytesValue,
+    Field,
+    FieldDefinition,
     ResultsParser,
     SmartContract,
+    Struct,
+    StructType,
+    Transaction,
+    TransactionPayload,
+    VariadicValue,
 } from '@multiversx/sdk-core';
 import { multiversXBridgeABI } from '@src/abi';
 import { IBridge, IMultiversXChainConfigAndMultiversXWallet } from '@src/types';
@@ -13,11 +24,46 @@ import { ProxyNetworkProvider } from '@multiversx/sdk-network-providers';
 import { UserSigner } from '@multiversx/sdk-wallet/out';
 import { ProcessDelayMilliseconds } from '../constants/processDelayMilliseconds';
 import waitForMSWithMsg from './waitForMSWithMsg';
+import { SupportedChains } from '@src/config/chainSpecs';
+import { Nonce } from '@multiversx/sdk-network-providers/out/primitives';
+import BigNumber from 'bignumber.js';
+
+export type MultiversXLockArgs = [
+    sourceNftContractAddress: string,
+    nonce: string,
+    destinationChain: SupportedChains,
+    address: string,
+    tokenId: string,
+];
+export type ClaimStruct = {
+    tokenId: string;
+    sourceChain: string;
+    destinationChain: string;
+    destinationUserAddress: string;
+    sourceNftContractAddress: string;
+    name: string;
+    symbol: string;
+    royalty: string;
+    royaltyReceiver: string;
+    attrs: string;
+    transactionHash: string;
+    tokenAmount: string;
+    nftType: string;
+    fee: string;
+    metadata: string;
+};
 
 const getMultiversXBridgeContract = ({
     multiversXChainConfig,
     multiversXWallet,
-}: IMultiversXChainConfigAndMultiversXWallet): IBridge => {
+}: IMultiversXChainConfigAndMultiversXWallet): IBridge<
+    MultiversXLockArgs,
+    ClaimStruct,
+    {
+        signerAddress: string;
+        signature: string;
+    }
+> => {
     const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
 
     const proxyNetworkProvider = new ProxyNetworkProvider(
@@ -33,6 +79,300 @@ const getMultiversXBridgeContract = ({
     });
 
     return {
+        lock721: async (srcNftAddr, nonce, destChain, destAddress, tokenId) => {
+            const ba = new Address(multiversXChainConfig.contractAddress);
+            try {
+                const signer = UserSigner.fromWallet(
+                    multiversXWallet.userWallet,
+                    multiversXWallet.password,
+                );
+
+                const userAddress = new Address(
+                    multiversXWallet.userWallet.bech32,
+                );
+                const userAccount = new Account(userAddress);
+                const userOnNetwork =
+                    await proxyNetworkProvider.getAccount(userAddress);
+                userAccount.update(userOnNetwork);
+
+                const collectionIdentifiers =
+                    '@' + Buffer.from(srcNftAddr).toString('hex');
+                const noncec = '@' + nonce;
+                const quantity = '@' + '01';
+                const destination_address = '@' + ba.hex();
+                const method = '@' + Buffer.from('lock721').toString('hex');
+                const token_id = '@' + Buffer.from(tokenId).toString('hex');
+                const destination_chain =
+                    '@' + Buffer.from(destChain).toString('hex');
+                const destination_user_address =
+                    '@' + Buffer.from(destAddress).toString('hex');
+                const source_nft_contract_address = collectionIdentifiers;
+
+                const tx3 = new Transaction({
+                    data: new TransactionPayload(
+                        'ESDTNFTTransfer' +
+                            collectionIdentifiers +
+                            noncec +
+                            quantity +
+                            destination_address +
+                            method +
+                            token_id +
+                            destination_chain +
+                            destination_user_address +
+                            source_nft_contract_address +
+                            noncec,
+                    ),
+                    gasLimit: 600000000,
+                    sender: signer.getAddress(),
+                    receiver: signer.getAddress(),
+                    chainID: 'D',
+                });
+
+                tx3.setNonce(userAccount.getNonceThenIncrement());
+
+                const serializedTransaction = tx3.serializeForSigning();
+                const transactionSignature = await signer.sign(
+                    serializedTransaction,
+                );
+                tx3.applySignature(transactionSignature);
+
+                const txHash = await proxyNetworkProvider.sendTransaction(tx3);
+                return {
+                    hash: txHash,
+                    wait: () => Promise.resolve(txHash),
+                };
+            } catch (e) {
+                console.log(e);
+                throw new Error('Error locking in multiversX bridge');
+            }
+        },
+        claimNFT721: async (nftTransferDetailsObject, sigs) => {
+            const signer = UserSigner.fromWallet(
+                multiversXWallet.userWallet,
+                multiversXWallet.password,
+            );
+
+            const userAddress = new Address(multiversXWallet.userWallet.bech32);
+            const userAccount = new Account(userAddress);
+            const userOnNetwork =
+                await proxyNetworkProvider.getAccount(userAddress);
+            userAccount.update(userOnNetwork);
+
+            const structClaimData = new StructType('ClaimData', [
+                new FieldDefinition(
+                    'token_id',
+                    'name of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'source_chain',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'destination_chain',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'destination_user_address',
+                    'attributes of the nft',
+                    new AddressType(),
+                ),
+                new FieldDefinition(
+                    'source_nft_contract_address',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'name',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'symbol',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'royalty',
+                    'attributes of the nft',
+                    new BigUIntType(),
+                ),
+                new FieldDefinition(
+                    'royalty_receiver',
+                    'attributes of the nft',
+                    new AddressType(),
+                ),
+                new FieldDefinition(
+                    'attrs',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'transaction_hash',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'token_amount',
+                    'attributes of the nft',
+                    new BigUIntType(),
+                ),
+                new FieldDefinition(
+                    'nft_type',
+                    'attributes of the nft',
+                    new BytesType(),
+                ),
+                new FieldDefinition(
+                    'fee',
+                    'attributes of the nft',
+                    new BigUIntType(),
+                ),
+            ]);
+
+            // const structSigInfo = new StructType('SignatureInfo', [
+            //     new FieldDefinition(
+            //         'public_key',
+            //         'attributes of the nft',
+            //         new AddressType(),
+            //     ),
+            //     new FieldDefinition(
+            //         'sig',
+            //         'attributes of the nft',
+            //         new BytesType(),
+            //     ),
+            // ]);
+            const claimDataArgs = new Struct(structClaimData, [
+                new Field(
+                    new BytesValue(
+                        Buffer.from(
+                            new Nonce(
+                                Number(nftTransferDetailsObject.tokenId),
+                            ).hex(),
+                            'hex',
+                        ),
+                    ),
+                    'token_id',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.sourceChain),
+                    ),
+                    'source_chain',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.destinationChain),
+                    ),
+                    'destination_chain',
+                ),
+                new Field(
+                    new AddressValue(
+                        new Address(
+                            nftTransferDetailsObject.destinationUserAddress,
+                        ),
+                    ),
+                    'destination_user_address',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(
+                            nftTransferDetailsObject.sourceNftContractAddress,
+                        ),
+                    ),
+                    'source_nft_contract_address',
+                ),
+                new Field(
+                    new BytesValue(Buffer.from(nftTransferDetailsObject.name)),
+                    'name',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(
+                            'N' +
+                                nftTransferDetailsObject.sourceChain.toUpperCase(),
+                        ),
+                    ),
+                    'symbol',
+                ),
+                new Field(
+                    new BigUIntValue(Number(nftTransferDetailsObject.royalty)),
+                    'royalty',
+                ),
+                new Field(
+                    new AddressValue(
+                        new Address(nftTransferDetailsObject.royaltyReceiver),
+                    ),
+                    'royalty_receiver',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.metadata),
+                    ),
+                    'attrs',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.transactionHash),
+                    ),
+                    'transaction_hash',
+                ),
+                new Field(
+                    new BigUIntValue(nftTransferDetailsObject.tokenAmount),
+                    'token_amount',
+                ),
+                new Field(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.nftType),
+                    ),
+                    'nft_type',
+                ),
+                new Field(
+                    new BigUIntValue(nftTransferDetailsObject.fee),
+                    'fee',
+                ),
+            ]);
+            const data = [
+                claimDataArgs,
+                [
+                    sigs.map((item) => {
+                        return {
+                            public_key: new AddressValue(
+                                new Address(
+                                    Buffer.from(item.signerAddress, 'hex'),
+                                ),
+                            ),
+                            sig: new BytesValue(
+                                Buffer.from(item.signature, 'hex'),
+                            ),
+                        };
+                    }),
+                ],
+                VariadicValue.fromItems(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.metadata, 'utf-8'),
+                    ),
+                ),
+            ];
+            const transaction = multiversXBridgeContract.methods
+                .claimNft721(data)
+                .withSender(signer.getAddress())
+                .withChainID('D')
+                .withGasLimit(6_000_000_00)
+                .withValue(new BigUIntValue(new BigNumber('50000000000000000')))
+                .buildTransaction();
+            transaction.setNonce(userAccount.getNonceThenIncrement());
+            transaction.applySignature(
+                await signer.sign(transaction.serializeForSigning()),
+            );
+            const hash =
+                await proxyNetworkProvider.sendTransaction(transaction);
+            return {
+                hash: hash,
+                wait: () => Promise.resolve(hash as unknown),
+            };
+        },
         validators: async (validatorAddress: string) => {
             const query = multiversXBridgeContract.createQuery({
                 func: 'validators',

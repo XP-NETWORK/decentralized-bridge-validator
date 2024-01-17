@@ -13,7 +13,11 @@ import TonWeb from 'tonweb';
 const getTonBridgeContract = ({
     tonChainConfig,
     tonWallet,
-}: ITonChainConfigAndTonWallet): IBridge => {
+}: ITonChainConfigAndTonWallet): IBridge<
+    unknown[],
+    Record<string, unknown>,
+    unknown
+> => {
     const client = new TonClient({
         endpoint: tonChainConfig.rpcURL,
         apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
@@ -36,6 +40,12 @@ const getTonBridgeContract = ({
     const tonweb = new TonWeb(new TonWeb.HttpProvider(tonChainConfig.rpcURL));
 
     return {
+        lock721: async () => {
+            throw new Error('Not implemented');
+        },
+        claimNFT721: async () => {
+            throw new Error('Not implemented');
+        },
         validators: async (address: string) => {
             const newValidatorPublicKey = Buffer.from(address, 'hex');
             const newValidatorPublicKeyBigInt = beginCell()

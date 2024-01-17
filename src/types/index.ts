@@ -1,3 +1,5 @@
+import { SupportedChains } from '@src/config/chainSpecs';
+
 type ISecretKeyCrypto = {
     ciphertext: string;
     cipherparams: {
@@ -209,7 +211,7 @@ type IBridgeConfig = {
     stakingConfig: IStakingConfig;
 };
 
-type IBridge = {
+type IBridge<TLockArgs extends unknown[], TClaimData, TSig> = {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
     addValidator: (
@@ -218,6 +220,24 @@ type IBridge = {
             signerAddress: string;
             signature: string;
         }[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    lock721: (
+        ...lockArgs: TLockArgs
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    lock1155?: (
+        sourceNftContractAddress: string,
+        tokenId: string,
+        destinationChain: SupportedChains,
+        address: string,
+        amt: bigint,
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    claimNFT721: (
+        nftTransferData: TClaimData,
+        sigs: TSig[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    claimNFT1155?: (
+        nftTransferData: TClaimData,
+        sigs: TSig[],
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
 };
 

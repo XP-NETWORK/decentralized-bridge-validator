@@ -4,23 +4,19 @@ import { IHederaLockListener } from '../../../types';
 import { getNftDetails } from '../../../utils';
 import { approveLock } from '../..';
 import { INftTransferDetailsObject } from '../../types';
-import { getHederaBridgeContract } from '@src/utils';
 import { getLockEventDecodedLog } from '../../evmLockListener/utils';
+import { Bridge__factory } from '@src/contractsTypes';
 
 const getHederaLockListenerHandler = ({
     config,
     hederaChainConfig,
     wallets,
 }: IHederaLockListener) => {
-    const bridgeContract = getHederaBridgeContract({
-        hederaChainConfig,
-        evmWallet: wallets.evmWallet,
-    });
     const storageContract = getStorageContract({
         evmChainConfig: config.storageConfig,
         evmWallet: wallets.evmWallet,
     });
-    const { topicHash } = bridgeContract.interface.getEvent('Locked');
+    const { topicHash } = Bridge__factory.createInterface().getEvent('Locked');
 
     const handleLog = async ({ log }: { log: LogEntry }) => {
         // if its not the lock nft event we early return

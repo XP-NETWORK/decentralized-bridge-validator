@@ -6,7 +6,11 @@ import { encodeSecp256k1Pubkey } from 'secretjs/dist/wallet_amino';
 const getSecretBridgeContract = ({
     secretChainConfig,
     secretWallet,
-}: ISecretChainConfigAndSecretWallet): IBridge => {
+}: ISecretChainConfigAndSecretWallet): IBridge<
+    unknown[],
+    Record<string, unknown>,
+    { signer: string; signature: string }
+> => {
     const bridgeContractCodeHash =
         'dbccb5a7abf668d050d720cd01ea39d556492456ceb870dcae80dc4ff8572575';
     const secretjs = new SecretNetworkClient({
@@ -15,6 +19,12 @@ const getSecretBridgeContract = ({
     });
 
     return {
+        lock721: async () => {
+            throw new Error('Not implemented');
+        },
+        claimNFT721: async () => {
+            throw new Error('Not implemented');
+        },
         validators: async (address: string) => {
             const res = (await secretjs.query.compute.queryContract({
                 contract_address: secretChainConfig.contractAddress,

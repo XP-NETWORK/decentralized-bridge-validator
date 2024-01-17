@@ -1,25 +1,23 @@
 import { LogEntry } from '@src/modules/validator/utils/evmContractListener/types';
-import { getEvmBridgeContract, getStorageContract } from '@src/utils';
+import { getStorageContract } from '@src/utils';
 import { getLockEventDecodedLog } from '.';
 import { IEvmLockListener } from '../../../types';
 import { getNftDetails } from '../../../utils';
 import { approveLock } from '../..';
 import { INftTransferDetailsObject } from '../../types';
+import { Bridge__factory } from '@src/contractsTypes';
 
 const getEvmLockListenerHandler = ({
     config,
     evmChainConfig,
     wallets,
 }: IEvmLockListener) => {
-    const bridgeContract = getEvmBridgeContract({
-        evmChainConfig,
-        evmWallet: wallets.evmWallet,
-    });
     const storageContract = getStorageContract({
         evmChainConfig: config.storageConfig,
         evmWallet: wallets.evmWallet,
     });
-    const { topicHash } = bridgeContract.interface.getEvent('Locked');
+    const BI = Bridge__factory.createInterface();
+    const { topicHash } = BI.getEvent('Locked');
 
     const handleLog = async ({ log }: { log: LogEntry }) => {
         // if its not the lock nft event we early return

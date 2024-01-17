@@ -1,7 +1,10 @@
 import { NFTContractType } from '@src/contractsTypes/tezosContractTypes/NFT.types';
-import { tas } from '@src/contractsTypes/tezosContractTypes/type-aliases';
+import {
+    address,
+    tas,
+} from '@src/contractsTypes/tezosContractTypes/type-aliases';
 import { INftContract, ITezosContractConfig } from '@src/types';
-import { TezosToolkit } from '@taquito/taquito';
+import { Signer, TezosToolkit } from '@taquito/taquito';
 import { Tzip16Module, bytes2Char, tzip16 } from '@taquito/tzip16';
 
 const URLCanParse = (url: string): boolean => {
@@ -13,10 +16,10 @@ const URLCanParse = (url: string): boolean => {
     }
 };
 
-const getTezosNftContract = ({
-    rpcURL,
-    contractAddress,
-}: ITezosContractConfig): INftContract => {
+const getTezosNftContract = (
+    { rpcURL, contractAddress }: ITezosContractConfig,
+    signer?: Signer,
+): INftContract => {
     const getNftTokenMetaData = async (tokenId: bigint) => {
         const Tezos = new TezosToolkit(rpcURL);
         const nftContract =
@@ -30,6 +33,20 @@ const getTezosNftContract = ({
     };
 
     return {
+        async approve(tokenId, to) {
+            if (!signer) throw new Error('Wallet is not connected');
+            const Tezos = new TezosToolkit(rpcURL);
+            const nftContract =
+                await Tezos.contract.at<NFTContractType>(contractAddress);
+            const tx = await nftContract.methods
+                .add_operator(
+                    (await signer.publicKeyHash()) as address,
+                    to as address,
+                    tas.nat(tokenId.toString()),
+                )
+                .send();
+            return tx.hash;
+        },
         name: async () => {
             try {
                 const Tezos = new TezosToolkit(rpcURL);

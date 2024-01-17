@@ -246,6 +246,7 @@ type INftContract = {
     symbol: (tokenId?: bigint) => Promise<string>;
     royaltyInfo: (tokenId?: bigint) => Promise<string>;
     tokenURI: (tokenId: bigint) => Promise<string>;
+    approve: (tokenId: bigint, to: string) => Promise<string>;
 };
 
 export {

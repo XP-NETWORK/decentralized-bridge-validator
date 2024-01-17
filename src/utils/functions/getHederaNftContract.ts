@@ -1,10 +1,11 @@
 import { ERC721Royalty__factory } from '../../contractsTypes';
 import { IHederaContractConfig, INftContract } from '@src/types';
-import { JsonRpcProvider } from 'ethers';
+import { JsonRpcProvider, Signer } from 'ethers';
 import { RoyaltyInfoProxy__factory } from '@src/contractsTypes/Hedera/RoyaltyInfoProxy__factory';
 
 const getHederaSingleNftContract = (
     contractConfig: IHederaContractConfig,
+    wallet?: Signer,
 ): INftContract => {
     const provider = new JsonRpcProvider(contractConfig.rpcURL);
     const erc721Contract = ERC721Royalty__factory.connect(
@@ -38,6 +39,12 @@ const getHederaSingleNftContract = (
                 console.log(e);
                 return '0';
             }
+        },
+        async approve(tokenId, to) {
+            if (!wallet) throw new Error('Wallet is not connected');
+            const contractWithSigner = erc721Contract.connect(wallet);
+            const tx = await contractWithSigner.approve(to, tokenId);
+            return tx.hash;
         },
         tokenURI: async (tokenId: bigint) => {
             return await erc721Contract.tokenURI(tokenId);

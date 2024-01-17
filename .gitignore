@@ -10,3 +10,4 @@ database.sqlite
 test.ts
 test.bash
 test2.ts
+dist/

@@ -1,11 +1,10 @@
 import { INftContract, ISecretContractConfig } from '@src/types';
 import { SecretNetworkClient } from 'secretjs';
 
-const getSecretMultiNftContract = ({
-    rpcURL,
-    chainId,
-    contractAddress,
-}: ISecretContractConfig): INftContract => {
+const getSecretMultiNftContract = (
+    { rpcURL, chainId, contractAddress }: ISecretContractConfig,
+    wallet?: SecretNetworkClient,
+): INftContract => {
     const secretjs = new SecretNetworkClient({
         url: rpcURL,
         chainId: chainId,
@@ -36,6 +35,29 @@ const getSecretMultiNftContract = ({
                 })) as secretResponse
             ).token_id_public_info.token_id_info.name;
             return name;
+        },
+        async approve(tokenId, to) {
+            if (!wallet) throw new Error('Wallet is not connected');
+
+            const res = await wallet.tx.compute.executeContract(
+                {
+                    sender: wallet.address,
+                    contract_address: contractAddress,
+                    msg: {
+                        give_permission: {
+                            allowed_address: to,
+                            token_id: tokenId,
+                            view_balance: true,
+                            transfer: 1,
+                        },
+                    },
+                },
+                {
+                    waitForCommit: true,
+                    gasLimit: 250_000,
+                },
+            );
+            return res.transactionHash;
         },
         symbol: async (tokenId) => {
             const symbol = (

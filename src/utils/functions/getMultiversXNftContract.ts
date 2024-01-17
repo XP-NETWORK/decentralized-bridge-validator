@@ -39,6 +39,9 @@ const getMultiversXNftContract = ({
                 );
             return nftDetails.ticker;
         },
+        approve: async () => {
+            throw new Error('Not implemented');
+        },
         royaltyInfo: async (tokenId) => {
             try {
                 const nftDetails = await getNonFungibleToken(

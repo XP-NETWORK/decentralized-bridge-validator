@@ -26,7 +26,6 @@ import { ProcessDelayMilliseconds } from '../constants/processDelayMilliseconds'
 import waitForMSWithMsg from './waitForMSWithMsg';
 import { SupportedChains } from '@src/config/chainSpecs';
 import { Nonce } from '@multiversx/sdk-network-providers/out/primitives';
-import BigNumber from 'bignumber.js';
 
 export type MultiversXLockArgs = [
     sourceNftContractAddress: string,
@@ -360,7 +359,7 @@ const getMultiversXBridgeContract = ({
                 .withSender(signer.getAddress())
                 .withChainID('D')
                 .withGasLimit(6_000_000_00)
-                .withValue(new BigUIntValue(new BigNumber('50000000000000000')))
+                .withValue(new BigUIntValue('50000000000000000'))
                 .buildTransaction();
             transaction.setNonce(userAccount.getNonceThenIncrement());
             transaction.applySignature(

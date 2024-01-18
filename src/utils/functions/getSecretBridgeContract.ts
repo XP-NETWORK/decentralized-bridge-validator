@@ -1,6 +1,5 @@
 import { AddValidatorType } from '@src/contractsTypes/contracts/secretBridge';
 import { IBridge, ISecretChainConfigAndSecretWallet } from '@src/types';
-import BigNumber from 'bignumber.js';
 import { SecretNetworkClient, pubkeyToAddress } from 'secretjs';
 import { encodeSecp256k1Pubkey } from 'secretjs/dist/wallet_amino';
 
@@ -29,9 +28,9 @@ export type ClaimData = {
     royalty_receiver: string;
     metadata: string;
     transaction_hash: string;
-    token_amount: BigNumber;
+    token_amount: string;
     nft_type: string;
-    fee: BigNumber;
+    fee: string;
 };
 
 const getSecretBridgeContract = ({
@@ -124,7 +123,7 @@ const getSecretBridgeContract = ({
                         source_nft_contract_address: sourceNftContractAddress,
                         collection_code_info: collectionCodeInfo,
                         token_id: tokenId,
-                        token_amount: new BigNumber(amt.toString()),
+                        token_amount: amt.toString(),
                     },
                     code_hash: bridgeContractCodeHash,
                     sender: secretjs.address,

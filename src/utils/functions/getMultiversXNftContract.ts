@@ -40,7 +40,7 @@ const getMultiversXNftContract = ({
             return nftDetails.ticker;
         },
         approve: async () => {
-            throw new Error('Not implemented');
+            return Promise.resolve('No Need to Approve in MultiversX');
         },
         royaltyInfo: async (tokenId) => {
             try {

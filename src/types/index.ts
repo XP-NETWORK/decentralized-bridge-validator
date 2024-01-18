@@ -1,5 +1,3 @@
-import { SupportedChains } from '@src/config/chainSpecs';
-
 type ISecretKeyCrypto = {
     ciphertext: string;
     cipherparams: {
@@ -225,11 +223,8 @@ type IBridge<TLockArgs extends unknown[], TClaimData, TSig> = {
         ...lockArgs: TLockArgs
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
     lock1155?: (
-        sourceNftContractAddress: string,
-        tokenId: string,
-        destinationChain: SupportedChains,
-        address: string,
         amt: bigint,
+        ...lockArgs: TLockArgs
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
     claimNFT721: (
         nftTransferData: TClaimData,

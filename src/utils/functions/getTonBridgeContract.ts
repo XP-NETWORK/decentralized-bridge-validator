@@ -1,5 +1,6 @@
 import {
     Bridge,
+    ClaimData,
     NewValidator,
     SignerAndSignature,
 } from '@src/contractsTypes/contracts/tonBridge';
@@ -10,13 +11,23 @@ import { ProcessDelayMilliseconds } from '../constants/processDelayMilliseconds'
 import waitForMSWithMsg from './waitForMSWithMsg';
 import TonWeb from 'tonweb';
 
+export type TonLockArgs = [
+    destinationChain: string,
+    destinationUserAddress: string,
+    sourceNftContractAddress: string,
+    tokenId: bigint,
+];
+
 const getTonBridgeContract = ({
     tonChainConfig,
     tonWallet,
 }: ITonChainConfigAndTonWallet): IBridge<
-    unknown[],
-    Record<string, unknown>,
-    unknown
+    TonLockArgs,
+    ClaimData,
+    {
+        publicKey: bigint;
+        sig: string;
+    }
 > => {
     const client = new TonClient({
         endpoint: tonChainConfig.rpcURL,
@@ -36,15 +47,59 @@ const getTonBridgeContract = ({
             Address.parseFriendly(tonChainConfig.contractAddress).address,
         ),
     );
+    const provider = new TonWeb.HttpProvider(tonChainConfig.rpcURL);
 
-    const tonweb = new TonWeb(new TonWeb.HttpProvider(tonChainConfig.rpcURL));
+    const tonweb = new TonWeb(provider);
 
     return {
-        lock721: async () => {
-            throw new Error('Not implemented');
+        lock721: async (
+            destinationChain,
+            destinationUserAddress,
+            sourceNftContractAddress,
+            tokenId,
+        ) => {
+            await bridge.send(
+                walletSender,
+                {
+                    value: toNano('2'),
+                },
+                {
+                    $$type: 'Lock721',
+                    destinationChain,
+                    destinationUserAddress,
+                    sourceNftContractAddress: Address.parseFriendly(
+                        sourceNftContractAddress,
+                    ).address,
+                    tokenId: tokenId,
+                },
+            );
+            return { hash: 'No Tx Hash', wait: async () => {} };
         },
-        claimNFT721: async () => {
-            throw new Error('Not implemented');
+        claimNFT721: async (claimData, sigsA) => {
+            const sigs: SignerAndSignature[] = sigsA.map((e) => {
+                return {
+                    $$type: 'SignerAndSignature',
+                    key: e.publicKey,
+                    signature: beginCell()
+                        .storeBuffer(Buffer.from(e.sig, 'hex'))
+                        .endCell(),
+                };
+            });
+            const dictA = Dictionary.empty<bigint, SignerAndSignature>();
+            sigs.forEach((item, index) => dictA.set(BigInt(index), item));
+            await bridge.send(
+                walletSender,
+                {
+                    value: toNano('0.8'),
+                },
+                {
+                    $$type: 'ClaimNFT721',
+                    data: claimData,
+                    len: 1n,
+                    signatures: dictA,
+                },
+            );
+            return { hash: 'No Tx Hash', wait: async () => {} };
         },
         validators: async (address: string) => {
             const newValidatorPublicKey = Buffer.from(address, 'hex');

@@ -1,14 +1,45 @@
 import { AddValidatorType } from '@src/contractsTypes/contracts/secretBridge';
 import { IBridge, ISecretChainConfigAndSecretWallet } from '@src/types';
+import BigNumber from 'bignumber.js';
 import { SecretNetworkClient, pubkeyToAddress } from 'secretjs';
 import { encodeSecp256k1Pubkey } from 'secretjs/dist/wallet_amino';
+
+export type CodeInfo = {
+    code_id: number;
+    code_hash: string;
+};
+
+export type SecretLockType = [
+    destinationChain: string,
+    destinationUserAddress: string,
+    sourceNftContractAddress: string,
+    collectionCodeInfo: CodeInfo,
+    tokenId: string,
+];
+
+export type ClaimData = {
+    token_id: string;
+    source_chain: string;
+    destination_chain: string;
+    destination_user_address: string;
+    source_nft_contract_address: string;
+    name: string;
+    symbol: string;
+    royalty: number;
+    royalty_receiver: string;
+    metadata: string;
+    transaction_hash: string;
+    token_amount: BigNumber;
+    nft_type: string;
+    fee: BigNumber;
+};
 
 const getSecretBridgeContract = ({
     secretChainConfig,
     secretWallet,
 }: ISecretChainConfigAndSecretWallet): IBridge<
-    unknown[],
-    Record<string, unknown>,
+    SecretLockType,
+    ClaimData,
     { signer: string; signature: string }
 > => {
     const bridgeContractCodeHash =
@@ -19,11 +50,114 @@ const getSecretBridgeContract = ({
     });
 
     return {
-        lock721: async () => {
-            throw new Error('Not implemented');
+        lock721: async (
+            destinationChain,
+            destinationUserAddress,
+            sourceNftContractAddress,
+            collectionCodeInfo,
+            tokenId,
+        ) => {
+            const tx = await secretjs.tx.compute.executeContract(
+                {
+                    contract_address: secretChainConfig.contractAddress,
+                    msg: {
+                        lock721: {
+                            data: {
+                                destination_chain: destinationChain,
+                                destination_user_address:
+                                    destinationUserAddress,
+                                source_nft_contract_address:
+                                    sourceNftContractAddress,
+                                collection_code_info: collectionCodeInfo,
+                                token_id: tokenId,
+                            },
+                        },
+                    },
+                    code_hash: bridgeContractCodeHash,
+                    sender: secretjs.address,
+                },
+                {
+                    gasLimit: 200_000,
+                },
+            );
+            return { hash: tx.transactionHash, wait: async () => {} };
         },
-        claimNFT721: async () => {
-            throw new Error('Not implemented');
+        claimNFT721: async (data, sigs) => {
+            const claim721 = {
+                claim721: {
+                    data: {
+                        data,
+                        signatures: sigs,
+                    },
+                },
+            };
+            const tx = await secretjs.tx.compute.executeContract(
+                {
+                    contract_address: secretChainConfig.contractAddress,
+                    msg: claim721,
+                    code_hash: bridgeContractCodeHash,
+                    sender: secretjs.address,
+                    sent_funds: [
+                        { amount: data.fee.toString(), denom: 'uscrt' },
+                    ],
+                },
+                {
+                    gasLimit: 300_000,
+                },
+            );
+            return { hash: tx.transactionHash, wait: async () => {} };
+        },
+        async lock1155(
+            amt,
+            destinationChain,
+            destinationUserAddress,
+            sourceNftContractAddress,
+            collectionCodeInfo,
+            tokenId,
+        ) {
+            const tx = await secretjs.tx.compute.executeContract(
+                {
+                    contract_address: secretChainConfig.contractAddress,
+                    msg: {
+                        destination_chain: destinationChain,
+                        destination_user_address: destinationUserAddress,
+                        source_nft_contract_address: sourceNftContractAddress,
+                        collection_code_info: collectionCodeInfo,
+                        token_id: tokenId,
+                        token_amount: new BigNumber(amt.toString()),
+                    },
+                    code_hash: bridgeContractCodeHash,
+                    sender: secretjs.address,
+                },
+                {
+                    gasLimit: 200_000,
+                },
+            );
+
+            return { hash: tx.transactionHash, wait: async () => {} };
+        },
+        async claimNFT1155(nftTransferData, sigs) {
+            const claim721 = {
+                claim1155: {
+                    data: {
+                        data: nftTransferData,
+                        signatures: sigs,
+                    },
+                },
+            };
+            const tx = await secretjs.tx.compute.executeContract(
+                {
+                    contract_address: secretChainConfig.contractAddress,
+                    msg: claim721,
+                    code_hash: bridgeContractCodeHash,
+                    sender: secretjs.address,
+                    sent_funds: [{ amount: '1', denom: 'uscrt' }],
+                },
+                {
+                    gasLimit: 300_000,
+                },
+            );
+            return { hash: tx.transactionHash, wait: async () => {} };
         },
         validators: async (address: string) => {
             const res = (await secretjs.query.compute.queryContract({

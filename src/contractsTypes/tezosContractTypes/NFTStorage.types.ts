@@ -7,16 +7,17 @@ import { address, nat } from './type-aliases';
 export type Storage = {
     owner: address;
     collection: address;
+    locked: Array<nat>;
 };
 
 type Methods = {
     unlock_token: (token_id: nat, to: address) => Promise<void>;
-    deposit_token: (param: nat) => Promise<void>;
+    add_deposited_token: (param: nat) => Promise<void>;
 };
 
 type MethodsObject = {
     unlock_token: (params: { token_id: nat; to: address }) => Promise<void>;
-    deposit_token: (param: nat) => Promise<void>;
+    add_deposited_token: (param: nat) => Promise<void>;
 };
 
 type contractTypes = {

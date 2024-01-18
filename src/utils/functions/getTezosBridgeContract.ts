@@ -1,10 +1,13 @@
 import { IBridge, ITezosChainConfigAndTezosWallet } from '@src/types';
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from '@taquito/signer';
+import { validateAddress } from '@taquito/utils';
 import { BridgeContractType } from '@src/contractsTypes/tezosContractTypes/Bridge.types';
 import {
     address,
     key,
+    mutez,
+    nat,
     signature,
     tas,
 } from '@src/contractsTypes/tezosContractTypes/type-aliases';
@@ -14,18 +17,34 @@ import { SupportedChains } from '@src/config/chainSpecs';
 
 export type TezosLockArgs = [
     sourceNftContractAddress: string,
-
     destinationChain: SupportedChains,
     address: string,
     tokenId: string,
 ];
+
+export type TezosClaimArgs = {
+    token_id: nat;
+    source_chain: string;
+    dest_chain: string;
+    dest_address: address;
+    source_nft_contract_address: string;
+    name: string;
+    symbol: string;
+    royalty: nat;
+    royalty_receiver: address;
+    metadata: string;
+    transaction_hash: string;
+    token_amount: nat;
+    nft_type: string;
+    fee: mutez;
+};
 
 const getTezosBridgeContract = ({
     tezosChainConfig,
     tezosWallet,
 }: ITezosChainConfigAndTezosWallet): IBridge<
     TezosLockArgs,
-    Record<string, unknown>,
+    TezosClaimArgs,
     {
         signer: key;
         sig: signature;
@@ -45,11 +64,63 @@ const getTezosBridgeContract = ({
     };
 
     return {
-        lock721: async () => {
-            throw new Error('Not implemented');
+        lock721: async (
+            sourceNftContractAddress,
+            destinationChain,
+            destAddress,
+            tokenId,
+        ) => {
+            const bridge = await getBridgeInstance();
+            const tx = await bridge.methods
+                .lock_nft(tas.nat(tokenId), destinationChain, destAddress, {
+                    addr: tas.address(sourceNftContractAddress),
+                })
+                .send();
+
+            return {
+                hash: tx.hash,
+                wait: async () => {
+                    await tx.confirmation(1);
+                },
+            };
         },
-        claimNFT721: async () => {
-            throw new Error('Not implemented');
+        claimNFT721: async (data, sigs) => {
+            const isTezosAddr =
+                validateAddress(data.source_nft_contract_address) === 3;
+
+            const sourceNftContractAddress = isTezosAddr
+                ? {
+                      addr: tas.address(data.source_nft_contract_address),
+                  }
+                : {
+                      str: data.source_nft_contract_address,
+                  };
+            const bridge = await getBridgeInstance();
+            const tx = await bridge.methods
+                .claim_nft(
+                    data.token_id,
+                    data.source_chain,
+                    data.dest_chain,
+                    data.dest_address,
+                    sourceNftContractAddress,
+                    data.name,
+                    data.symbol,
+                    data.royalty,
+                    data.royalty_receiver,
+                    data.metadata,
+                    data.transaction_hash,
+                    data.token_amount,
+                    data.nft_type,
+                    data.fee,
+                    sigs,
+                )
+                .send();
+            return {
+                hash: tx.hash,
+                wait: async () => {
+                    await tx.confirmation(1);
+                },
+            };
         },
         validators: async (address: string) => {
             const bridge = await getBridgeInstance();

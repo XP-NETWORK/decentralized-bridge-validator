@@ -27,8 +27,7 @@ export type nat = BigNumber & { __type: 'nat' };
 export type mutez = BigNumber & { __type: 'mutez' };
 export type tez = BigNumber & { __type: 'tez' };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type MapKey = Array<any> | object | string | boolean | number;
+type MapKey = Array<unknown> | object | string | boolean | number;
 export type MMap<K extends MapKey, V> = Omit<MichelsonMap<K, V>, 'get'> & {
     get: (key: K) => V;
 };
@@ -83,12 +82,12 @@ function createLambdaTypeTas(expr: Expr): MichelsonCode {
 
 /** tas: Tezos 'as' casting for strict types */
 export const tas = {
-    key: createStringTypeTas<key>(),
     address: createStringTypeTas<address>(),
-    signature: createStringTypeTas<signature>(),
     bytes: createStringTypeTas<bytes>(),
     contract: createStringTypeTas<contract>(),
     chest: createStringTypeTas<chest>(),
+    signature: createStringTypeTas<signature>(),
+    key: createStringTypeTas<key>(),
     chest_key: createStringTypeTas<chest_key>(),
     timestamp: (value: string | Date): timestamp =>
         new Date(value).toISOString() as timestamp,

@@ -18,7 +18,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     lastBlock: 17608314,
 };
 
-const bridgeTestChains = [
+export const bridgeTestChains = [
     {
         chain: 'BSC',
         rpcURL: 'https://bsc-testnet.publicnode.com',

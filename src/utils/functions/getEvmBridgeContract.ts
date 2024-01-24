@@ -44,9 +44,15 @@ const getEvmBridgeContract = ({
                 amt,
             );
         },
-        claimNFT1155: contract.claimNFT1155,
+        claimNFT1155: async (cd, sigs) =>
+            contract.claimNFT1155(cd, sigs, {
+                value: cd.fee,
+            }),
 
-        claimNFT721: contract.claimNFT721,
+        claimNFT721: async (cd, sigs) =>
+            contract.claimNFT721(cd, sigs, {
+                value: cd.fee,
+            }),
         lock721({
             address,
             destinationChain,

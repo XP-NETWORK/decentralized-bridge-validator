@@ -209,7 +209,7 @@ type IBridgeConfig = {
     stakingConfig: IStakingConfig;
 };
 
-type IBridge<TLockArgs extends unknown[], TClaimData, TSig> = {
+type IBridge<TLockArgs, TClaimData, TSig> = {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
     addValidator: (
@@ -220,11 +220,10 @@ type IBridge<TLockArgs extends unknown[], TClaimData, TSig> = {
         }[],
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
     lock721: (
-        ...lockArgs: TLockArgs
+        lockArgs: TLockArgs,
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
     lock1155?: (
-        amt: bigint,
-        ...lockArgs: TLockArgs
+        lockArgs: TLockArgs & { amt: bigint },
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
     claimNFT721: (
         nftTransferData: TClaimData,

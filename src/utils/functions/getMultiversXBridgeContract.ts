@@ -27,13 +27,13 @@ import waitForMSWithMsg from './waitForMSWithMsg';
 import { SupportedChains } from '@src/config/chainSpecs';
 import { Nonce } from '@multiversx/sdk-network-providers/out/primitives';
 
-export type MultiversXLockArgs = [
-    sourceNftContractAddress: string,
-    nonce: string,
-    destinationChain: SupportedChains,
-    address: string,
-    tokenId: string,
-];
+export type MultiversXLockArgs = {
+    sourceNftContractAddress: string;
+    nonce: string;
+    destinationChain: SupportedChains;
+    address: string;
+    tokenId: string;
+};
 export type ClaimStruct = {
     tokenId: string;
     sourceChain: string;
@@ -78,7 +78,13 @@ const getMultiversXBridgeContract = ({
     });
 
     return {
-        lock721: async (srcNftAddr, nonce, destChain, destAddress, tokenId) => {
+        lock721: async ({
+            address,
+            destinationChain,
+            nonce,
+            sourceNftContractAddress,
+            tokenId,
+        }) => {
             const ba = new Address(multiversXChainConfig.contractAddress);
             try {
                 const signer = UserSigner.fromWallet(
@@ -95,16 +101,16 @@ const getMultiversXBridgeContract = ({
                 userAccount.update(userOnNetwork);
 
                 const collectionIdentifiers =
-                    '@' + Buffer.from(srcNftAddr).toString('hex');
+                    '@' + Buffer.from(sourceNftContractAddress).toString('hex');
                 const noncec = '@' + nonce;
                 const quantity = '@' + '01';
                 const destination_address = '@' + ba.hex();
                 const method = '@' + Buffer.from('lock721').toString('hex');
                 const token_id = '@' + Buffer.from(tokenId).toString('hex');
                 const destination_chain =
-                    '@' + Buffer.from(destChain).toString('hex');
+                    '@' + Buffer.from(destinationChain).toString('hex');
                 const destination_user_address =
-                    '@' + Buffer.from(destAddress).toString('hex');
+                    '@' + Buffer.from(address).toString('hex');
                 const source_nft_contract_address = collectionIdentifiers;
 
                 const tx3 = new Transaction({

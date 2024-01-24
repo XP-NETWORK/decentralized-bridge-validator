@@ -15,12 +15,12 @@ import { b58cencode, prefix, b58cdecode } from '@taquito/utils';
 import { hash } from '@stablelib/blake2b';
 import { SupportedChains } from '@src/config/chainSpecs';
 
-export type TezosLockArgs = [
-    sourceNftContractAddress: string,
-    destinationChain: SupportedChains,
-    address: string,
-    tokenId: string,
-];
+export type TezosLockArgs = {
+    sourceNftContractAddress: string;
+    destinationChain: SupportedChains;
+    address: string;
+    tokenId: string;
+};
 
 export type TezosClaimArgs = {
     token_id: nat;
@@ -64,15 +64,15 @@ const getTezosBridgeContract = ({
     };
 
     return {
-        lock721: async (
+        lock721: async ({
             sourceNftContractAddress,
             destinationChain,
-            destAddress,
+            address,
             tokenId,
-        ) => {
+        }) => {
             const bridge = await getBridgeInstance();
             const tx = await bridge.methods
-                .lock_nft(tas.nat(tokenId), destinationChain, destAddress, {
+                .lock_nft(tas.nat(tokenId), destinationChain, address, {
                     addr: tas.address(sourceNftContractAddress),
                 })
                 .send();

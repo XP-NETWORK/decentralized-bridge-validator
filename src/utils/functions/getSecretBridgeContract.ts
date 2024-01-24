@@ -1,3 +1,4 @@
+import { SupportedChains } from '@src/config/chainSpecs';
 import { AddValidatorType } from '@src/contractsTypes/contracts/secretBridge';
 import { IBridge, ISecretChainConfigAndSecretWallet } from '@src/types';
 import { SecretNetworkClient, pubkeyToAddress } from 'secretjs';
@@ -8,13 +9,13 @@ export type CodeInfo = {
     code_hash: string;
 };
 
-export type SecretLockType = [
-    destinationChain: string,
-    destinationUserAddress: string,
-    sourceNftContractAddress: string,
-    collectionCodeInfo: CodeInfo,
-    tokenId: string,
-];
+export type SecretLockArgs = {
+    destinationChain: SupportedChains;
+    address: string;
+    sourceNftContractAddress: string;
+    collectionCodeInfo: CodeInfo;
+    tokenId: string;
+};
 
 export type ClaimData = {
     token_id: string;
@@ -37,7 +38,7 @@ const getSecretBridgeContract = ({
     secretChainConfig,
     secretWallet,
 }: ISecretChainConfigAndSecretWallet): IBridge<
-    SecretLockType,
+    SecretLockArgs,
     ClaimData,
     { signer: string; signature: string }
 > => {
@@ -49,13 +50,13 @@ const getSecretBridgeContract = ({
     });
 
     return {
-        lock721: async (
-            destinationChain,
-            destinationUserAddress,
-            sourceNftContractAddress,
+        lock721: async ({
             collectionCodeInfo,
+            destinationChain,
+            address,
+            sourceNftContractAddress,
             tokenId,
-        ) => {
+        }) => {
             const tx = await secretjs.tx.compute.executeContract(
                 {
                     contract_address: secretChainConfig.contractAddress,
@@ -63,8 +64,7 @@ const getSecretBridgeContract = ({
                         lock721: {
                             data: {
                                 destination_chain: destinationChain,
-                                destination_user_address:
-                                    destinationUserAddress,
+                                destination_user_address: address,
                                 source_nft_contract_address:
                                     sourceNftContractAddress,
                                 collection_code_info: collectionCodeInfo,
@@ -106,20 +106,20 @@ const getSecretBridgeContract = ({
             );
             return { hash: tx.transactionHash, wait: async () => {} };
         },
-        async lock1155(
+        async lock1155({
             amt,
-            destinationChain,
-            destinationUserAddress,
-            sourceNftContractAddress,
             collectionCodeInfo,
+            destinationChain,
+            address,
+            sourceNftContractAddress,
             tokenId,
-        ) {
+        }) {
             const tx = await secretjs.tx.compute.executeContract(
                 {
                     contract_address: secretChainConfig.contractAddress,
                     msg: {
                         destination_chain: destinationChain,
-                        destination_user_address: destinationUserAddress,
+                        destination_user_address: address,
                         source_nft_contract_address: sourceNftContractAddress,
                         collection_code_info: collectionCodeInfo,
                         token_id: tokenId,

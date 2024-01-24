@@ -11,12 +11,12 @@ import { ProcessDelayMilliseconds } from '../constants/processDelayMilliseconds'
 import waitForMSWithMsg from './waitForMSWithMsg';
 import TonWeb from 'tonweb';
 
-export type TonLockArgs = [
-    destinationChain: string,
-    destinationUserAddress: string,
-    sourceNftContractAddress: string,
-    tokenId: bigint,
-];
+export type TonLockArgs = {
+    destinationChain: string;
+    address: string;
+    sourceNftContractAddress: string;
+    tokenId: bigint;
+};
 
 const getTonBridgeContract = ({
     tonChainConfig,
@@ -52,12 +52,12 @@ const getTonBridgeContract = ({
     const tonweb = new TonWeb(provider);
 
     return {
-        lock721: async (
+        lock721: async ({
             destinationChain,
-            destinationUserAddress,
+            address,
             sourceNftContractAddress,
             tokenId,
-        ) => {
+        }) => {
             await bridge.send(
                 walletSender,
                 {
@@ -66,7 +66,7 @@ const getTonBridgeContract = ({
                 {
                     $$type: 'Lock721',
                     destinationChain,
-                    destinationUserAddress,
+                    destinationUserAddress: address,
                     sourceNftContractAddress: Address.parseFriendly(
                         sourceNftContractAddress,
                     ).address,

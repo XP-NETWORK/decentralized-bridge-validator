@@ -57,11 +57,7 @@ const getMultiversXBridgeContract = ({
     multiversXWallet,
 }: IMultiversXChainConfigAndMultiversXWallet): IBridge<
     MultiversXLockArgs,
-    ClaimStruct,
-    {
-        signerAddress: string;
-        signature: string;
-    }
+    ClaimStruct
 > => {
     const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
 
@@ -344,9 +340,7 @@ const getMultiversXBridgeContract = ({
                     sigs.map((item) => {
                         return {
                             public_key: new AddressValue(
-                                new Address(
-                                    Buffer.from(item.signerAddress, 'hex'),
-                                ),
+                                new Address(Buffer.from(item.signer, 'hex')),
                             ),
                             sig: new BytesValue(
                                 Buffer.from(item.signature, 'hex'),

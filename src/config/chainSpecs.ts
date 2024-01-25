@@ -26,7 +26,7 @@ export const bridgeTestChains = [
         intialFund: '50000000000000000',
         contractAddress: '0x3EC2839EcEAfa2Ce9e419718364B070563Db516e',
         chainType: 'evm',
-        lastBlock: 36788832,
+        lastBlock: 37159108,
     },
     {
         chain: 'ETH',
@@ -35,7 +35,7 @@ export const bridgeTestChains = [
         intialFund: '50000000000000000',
         contractAddress: '0xA0C15702892491597D369A04d7366Af234cF5F73',
         chainType: 'evm',
-        lastBlock: 5053386,
+        lastBlock: 5150604,
     },
     {
         chain: 'MATIC',
@@ -82,7 +82,7 @@ export const bridgeTestChains = [
         restApiURL: 'https://api.ghostnet.tzkt.io',
         contractAddress: 'KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4',
         intialFund: '50000',
-        lastBlock: 5058309,
+        lastBlock: 5240862,
         nativeCoinSymbol: 'XTZ',
         chainType: 'tezos',
     },

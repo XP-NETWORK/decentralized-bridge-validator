@@ -37,11 +37,7 @@ export type ClaimData = {
 const getSecretBridgeContract = ({
     secretChainConfig,
     secretWallet,
-}: ISecretChainConfigAndSecretWallet): IBridge<
-    SecretLockArgs,
-    ClaimData,
-    { signer: string; signature: string }
-> => {
+}: ISecretChainConfigAndSecretWallet): IBridge<SecretLockArgs, ClaimData> => {
     const bridgeContractCodeHash =
         'dbccb5a7abf668d050d720cd01ea39d556492456ceb870dcae80dc4ff8572575';
     const secretjs = new SecretNetworkClient({

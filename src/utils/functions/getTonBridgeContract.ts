@@ -21,14 +21,7 @@ export type TonLockArgs = {
 const getTonBridgeContract = ({
     tonChainConfig,
     tonWallet,
-}: ITonChainConfigAndTonWallet): IBridge<
-    TonLockArgs,
-    ClaimData,
-    {
-        publicKey: bigint;
-        sig: string;
-    }
-> => {
+}: ITonChainConfigAndTonWallet): IBridge<TonLockArgs, ClaimData> => {
     const client = new TonClient({
         endpoint: tonChainConfig.rpcURL,
         apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
@@ -79,9 +72,9 @@ const getTonBridgeContract = ({
             const sigs: SignerAndSignature[] = sigsA.map((e) => {
                 return {
                     $$type: 'SignerAndSignature',
-                    key: e.publicKey,
+                    key: BigInt(e.signer),
                     signature: beginCell()
-                        .storeBuffer(Buffer.from(e.sig, 'hex'))
+                        .storeBuffer(Buffer.from(e.signature, 'hex'))
                         .endCell(),
                 };
             });

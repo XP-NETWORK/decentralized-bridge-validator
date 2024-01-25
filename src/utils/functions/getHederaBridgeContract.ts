@@ -1,4 +1,4 @@
-import { BytesLike, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { Bridge, Bridge__factory } from '../../contractsTypes';
 import { IBridge, IHederaChainConfigAndEvmWallet } from '@src/types';
 import { SupportedChains } from '@src/config/chainSpecs';
@@ -15,8 +15,7 @@ const getHederaBridgeContract = ({
     evmWallet,
 }: IHederaChainConfigAndEvmWallet): IBridge<
     HederaLockArgs,
-    Bridge.ClaimDataStruct,
-    BytesLike
+    Bridge.ClaimDataStruct
 > => {
     const provider = new ethers.JsonRpcProvider(hederaChainConfig.rpcURL);
     const wallet = new ethers.Wallet(evmWallet.privateKey, provider);
@@ -44,9 +43,23 @@ const getHederaBridgeContract = ({
                 amt,
             );
         },
-        claimNFT1155: contract.claimNFT1155,
+        claimNFT1155: async (cd, sigs) =>
+            contract.claimNFT1155(
+                cd,
+                sigs.map((e) => e.signature),
+                {
+                    value: cd.fee,
+                },
+            ),
 
-        claimNFT721: contract.claimNFT721,
+        claimNFT721: async (cd, sigs) =>
+            contract.claimNFT721(
+                cd,
+                sigs.map((e) => e.signature),
+                {
+                    value: cd.fee,
+                },
+            ),
         lock721({
             address,
             destinationChain,

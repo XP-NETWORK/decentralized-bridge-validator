@@ -1,31 +1,51 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { JsonRpcProvider, Wallet } from 'ethers';
 import { generateWalletsForChains } from './modules/setup/components';
 import { Wallet as SecretWallet } from 'secretjs';
 import { InMemorySigner } from '@taquito/signer';
 import { UserSigner } from '@multiversx/sdk-wallet/out';
 import { keyPairFromSecretKey } from 'ton-crypto';
+
 import {
     SupportedChains,
     bridgeTestChains,
     testnetBridgeConfig,
 } from './config/chainSpecs';
-import { Bridge__factory, ERC721Royalty__factory } from './contractsTypes';
+import {
+    Bridge__factory,
+    ERC721Royalty,
+    ERC721Royalty__factory,
+} from './contractsTypes';
 import {
     getEvmBridgeContract,
     getEvmSingleNftContract,
     getStorageContract,
+    getTezosBridgeContract,
     waitForMSWithMsg,
 } from './utils';
-import { IEvmChainConfig, ITezosChainConfig } from './types';
+import {
+    IEvmChainConfig,
+    ITezosChainConfig,
+    SignerAndSignature,
+} from './types';
 import {
     getEvmSignedNftDetails,
     getNftDetails,
+    getTezosSignedNftDetails,
 } from './modules/validator/components/nftLockListener/utils';
 
 import { CodeInfo } from './utils/functions/getSecretBridgeContract';
 
 import getLockEventDecodedLog from './modules/validator/components/nftLockListener/components/evmLockListener/utils/getLockEventDecodedLog';
 import { LogObject } from '@src/modules/validator/utils/evmContractListener/types';
+import { getContractOperations } from './modules/validator/utils/tezosContractListener';
+import {
+    ILog,
+    ITransactions,
+} from './modules/validator/utils/tezosContractListener/types';
+import { extractStrOrAddr } from './modules/validator/components/nftLockListener/components/tezosLockListener/utils/getTezosLockListenerHandler';
+import { TezosToolkit } from '@taquito/taquito';
+import { INftTransferDetailsObject } from './modules/validator/components/nftLockListener/components/types';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
@@ -81,6 +101,9 @@ import { LogObject } from '@src/modules/validator/utils/evmContractListener/type
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ) ?? [])[0] as unknown as any;
             },
+            cdMapper: (cd: INftTransferDetailsObject) => {
+                return cd;
+            },
         },
         eth: {
             signer: new Wallet(genWallets.evmWallet.privateKey),
@@ -103,52 +126,141 @@ import { LogObject } from '@src/modules/validator/utils/evmContractListener/type
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ) ?? [])[0] as unknown as any;
             },
+            cdMapper: (cd: INftTransferDetailsObject) => {
+                return cd;
+            },
         },
-        // tezos: {
-        //     signer: new InMemorySigner(genWallets.tezosWallet.secretKey),
-        //     bridge: getTezosBridgeContract({
-        //         tezosChainConfig: configs.tezos,
-        //         tezosWallet: genWallets.tezosWallet,
-        //     }),
-        //     config: configs.eth,
-        //     logDecoder: (log: LogObject) => log,
-        //     signedNftDetails: getTezosSignedNftDetails,
-        //     address: genWallets.evmWallet.address,
-        //     extractLogFromTx: async (hash: string): Promise<LogObject> => {
-        //        throw new Error(`Not implemented`)
-        //     },
-        // },
+        tezos: {
+            signer: new InMemorySigner(genWallets.tezosWallet.secretKey),
+            bridge: getTezosBridgeContract({
+                tezosChainConfig: configs.tezos,
+                tezosWallet: genWallets.tezosWallet,
+            }),
+            config: configs.tezos,
+            logDecoder: (log: LogObject) => {
+                const data = log as ILog & { transaction_hash: string };
+                const sourceNftContractAddress = extractStrOrAddr(
+                    data.source_nft_address,
+                );
+                const {
+                    token_id: tokenId, // Unique ID for the NFT transfer
+                    dest_chain: destinationChain, // Chain to where the NFT is being transferred
+                    dest_address: destinationUserAddress, // User's address in the destination chain
+                    token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+                    nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+                    source_chain: sourceChain, // Source chain of NFT
+                    transaction_hash: transactionHash,
+                } = data;
+                return {
+                    tokenId,
+                    destinationChain,
+                    destinationUserAddress,
+                    tokenAmount,
+                    nftType,
+                    sourceChain,
+                    transactionHash,
+                    sourceNftContractAddress,
+                };
+            },
+            signedNftDetails: getTezosSignedNftDetails,
+            address: await new InMemorySigner(
+                genWallets.tezosWallet.secretKey,
+            ).publicKeyHash(),
+            extractLogFromTx: async (block: string): Promise<LogObject> => {
+                const Tezos = new TezosToolkit(configs.tezos.rpcURL);
+                const logs: ITransactions[] = await getContractOperations({
+                    contractAddress: configs.tezos.contractAddress,
+                    fromLevel: parseInt(block) - 1,
+                    toLevel: (await Tezos.rpc.getBlockHeader()).level,
+                    restApiURL: configs.tezos.restApiURL,
+                });
+                let payload = undefined;
+                for (const log of logs) {
+                    payload = log.payload;
+                }
+                return payload! as LogObject;
+            },
+            cdMapper: (nftTransferDetailsObject: INftTransferDetailsObject) => {
+                return {
+                    token_id: nftTransferDetailsObject.tokenId,
+                    source_chain: nftTransferDetailsObject.sourceChain,
+                    dest_chain: nftTransferDetailsObject.destinationChain,
+                    dest_address:
+                        nftTransferDetailsObject.destinationUserAddress,
+                    source_nft_contract_address:
+                        nftTransferDetailsObject.sourceNftContractAddress,
+                    name: nftTransferDetailsObject.name,
+                    symbol: nftTransferDetailsObject.symbol,
+                    royalty: nftTransferDetailsObject.royalty,
+                    royalty_receiver: nftTransferDetailsObject.royaltyReceiver,
+                    metadata: nftTransferDetailsObject.metadata,
+                    transaction_hash: nftTransferDetailsObject.transactionHash,
+                    token_amount: nftTransferDetailsObject.tokenAmount,
+                    nft_type: nftTransferDetailsObject.nftType,
+                    fee: nftTransferDetailsObject.fee,
+                };
+            },
+        },
     };
 
     // Create a NFT Contract
+    console.log(`Deploying NFT Contract on BSC`);
+    let contract: ERC721Royalty;
+    let deployed = false;
 
-    const contract = await createNftOnEvm(
-        data.bsc.signer.connect(new JsonRpcProvider(data.bsc.config.rpcURL)),
-    );
+    while (!deployed) {
+        try {
+            contract = await createNftOnEvm(
+                data.bsc.signer.connect(
+                    new JsonRpcProvider(data.bsc.config.rpcURL),
+                ),
+            );
+            deployed = true;
+        } catch (e) {
+            `Retrying to deploy NFT Contract on BSC`;
+        }
+    }
 
     // Mint 5 NFT on the contract
-    for (let i = 0; i < 5; i++) {
-        await contract.mint(
-            signers.bsc.address,
-            i,
-            10,
-            signers.bsc.address,
-            'https://meta.polkamon.com/meta?id=10001852306',
-        );
+    for (let i = 0; i < 2; i++) {
+        let minted = false;
+        while (!minted) {
+            try {
+                await contract!.mint(
+                    signers.bsc.address,
+                    i,
+                    10,
+                    signers.bsc.address,
+                    'https://meta.polkamon.com/meta?id=10001852306',
+                );
+                minted = true;
+            } catch (e) {
+                console.log(`Retrying to mint NFT on BSC`);
+            }
+        }
     }
-    console.log('Minted 5 NFTs ON BSC');
+    console.log('Minted 2 NFTs ON BSC');
 
     // Approve the contract to spend the NFTs
     const nftC = getEvmSingleNftContract(
         {
-            contractAddress: await contract.getAddress(),
+            contractAddress: await contract!.getAddress(),
             rpcURL: configs.bsc.rpcURL,
         },
         data.bsc.signer.connect(new JsonRpcProvider(data.bsc.config.rpcURL)),
     );
-    for (let i = 0; i < 5; i++) {
-        await nftC.approve(BigInt(i), data.bsc.config.contractAddress);
+    for (let i = 0; i < 2; i++) {
+        let approved = false;
+        while (!approved) {
+            try {
+                await nftC.approve(BigInt(i), data.bsc.config.contractAddress);
+                approved = true;
+            } catch (e) {
+                console.log(`Retrying to approve NFT on BSC`);
+            }
+        }
     }
+    console.log(`Approved NFTs on BSC`);
 
     // Lock the NFTs
     async function transfer(
@@ -170,6 +282,11 @@ import { LogObject } from '@src/modules/validator/utils/evmContractListener/type
                 sourceNftContractAddress: tx.contractAddress,
                 tokenId: tx.tokenId,
             });
+            await from.wait();
+            console.log(`Locked on ${tx.fromChain.config.chain} ${from.hash}`);
+
+            await new Promise((e) => setTimeout(e, 10000));
+
             const log = await tx.fromChain.extractLogFromTx(from.hash);
             const {
                 tokenId, // Unique ID for the NFT transfer
@@ -233,15 +350,18 @@ import { LogObject } from '@src/modules/validator/utils/evmContractListener/type
                 );
             }
 
-            const signatureArray: string[] = [];
+            const signatureArray: SignerAndSignature[] = [];
             signatures.forEach((item) => {
-                signatureArray.push(item[1]);
+                signatureArray.push({
+                    signer: item.signerAddress,
+                    signature: item.signature,
+                });
             });
 
             console.log(signatures);
 
             const claimTx = await tx.toChain.bridge.claimNFT721(
-                nftTransferDetailsObject,
+                tx.toChain.cdMapper(nftTransferDetailsObject) as unknown as any,
                 signatureArray,
             );
             await claimTx.wait();
@@ -254,8 +374,8 @@ import { LogObject } from '@src/modules/validator/utils/evmContractListener/type
     await transfer([
         {
             fromChain: data.bsc,
-            toChain: data.eth,
-            contractAddress: await contract.getAddress(),
+            toChain: data.tezos,
+            contractAddress: await contract!.getAddress(),
             tokenId: '1',
             nftType: 'singular',
         },
@@ -268,5 +388,6 @@ async function createNftOnEvm(signer: Wallet) {
         'TC',
         signer.address,
     );
+    await contract.deploymentTransaction()?.wait();
     return contract;
 }

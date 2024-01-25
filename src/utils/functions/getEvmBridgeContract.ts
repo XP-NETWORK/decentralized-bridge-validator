@@ -1,4 +1,4 @@
-import { BytesLike, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { Bridge, Bridge__factory } from '../../contractsTypes';
 import { IBridge, IEvmChainConfigAndEvmWallet } from '@src/types';
 import { SupportedChains } from '@src/config/chainSpecs';
@@ -15,8 +15,7 @@ const getEvmBridgeContract = ({
     evmWallet,
 }: IEvmChainConfigAndEvmWallet): IBridge<
     EvmLockArgs,
-    Bridge.ClaimDataStruct,
-    BytesLike
+    Bridge.ClaimDataStruct
 > => {
     const provider = new ethers.JsonRpcProvider(evmChainConfig.rpcURL);
     const wallet = new ethers.Wallet(evmWallet.privateKey, provider);
@@ -45,14 +44,22 @@ const getEvmBridgeContract = ({
             );
         },
         claimNFT1155: async (cd, sigs) =>
-            contract.claimNFT1155(cd, sigs, {
-                value: cd.fee,
-            }),
+            contract.claimNFT1155(
+                cd,
+                sigs.map((e) => e.signature),
+                {
+                    value: cd.fee,
+                },
+            ),
 
         claimNFT721: async (cd, sigs) =>
-            contract.claimNFT721(cd, sigs, {
-                value: cd.fee,
-            }),
+            contract.claimNFT721(
+                cd,
+                sigs.map((e) => e.signature),
+                {
+                    value: cd.fee,
+                },
+            ),
         lock721({
             address,
             destinationChain,
@@ -64,6 +71,9 @@ const getEvmBridgeContract = ({
                 destinationChain,
                 address,
                 sourceNftContractAddress,
+                {
+                    gasLimit: 500_000,
+                },
             );
         },
     };

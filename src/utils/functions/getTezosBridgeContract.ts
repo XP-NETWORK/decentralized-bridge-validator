@@ -5,10 +5,8 @@ import { validateAddress } from '@taquito/utils';
 import { BridgeContractType } from '@src/contractsTypes/tezosContractTypes/Bridge.types';
 import {
     address,
-    key,
     mutez,
     nat,
-    signature,
     tas,
 } from '@src/contractsTypes/tezosContractTypes/type-aliases';
 import { b58cencode, prefix, b58cdecode } from '@taquito/utils';
@@ -42,15 +40,7 @@ export type TezosClaimArgs = {
 const getTezosBridgeContract = ({
     tezosChainConfig,
     tezosWallet,
-}: ITezosChainConfigAndTezosWallet): IBridge<
-    TezosLockArgs,
-    TezosClaimArgs,
-    {
-        signer: key;
-        sig: signature;
-        addr: address;
-    }
-> => {
+}: ITezosChainConfigAndTezosWallet): IBridge<TezosLockArgs, TezosClaimArgs> => {
     const getBridgeInstance = async () => {
         const Tezos = new TezosToolkit(tezosChainConfig.rpcURL);
         const tezosSigner = await InMemorySigner.fromSecretKey(
@@ -96,30 +86,96 @@ const getTezosBridgeContract = ({
                       str: data.source_nft_contract_address,
                   };
             const bridge = await getBridgeInstance();
-            const tx = await bridge.methods
-                .claim_nft(
-                    data.token_id,
-                    data.source_chain,
-                    data.dest_chain,
-                    data.dest_address,
-                    sourceNftContractAddress,
-                    data.name,
-                    data.symbol,
-                    data.royalty,
-                    data.royalty_receiver,
-                    data.metadata,
-                    data.transaction_hash,
-                    data.token_amount,
-                    data.nft_type,
-                    data.fee,
-                    sigs,
-                )
+
+            console.log({
+                dest_address: data.dest_address,
+                dest_chain: data.dest_chain,
+                fee: data.fee,
+                metadata: data.metadata,
+                name: data.name,
+                nft_type: data.nft_type,
+                royalty: data.royalty,
+                royalty_receiver: data.royalty_receiver,
+                source_chain: data.source_chain,
+                symbol: data.symbol,
+                token_amount: data.token_amount,
+                token_id: data.token_id,
+                transaction_hash: data.transaction_hash,
+                source_nft_contract_address: sourceNftContractAddress,
+                sigs: sigs.map((e) => {
+                    console.log(e);
+                    const addr = tas.address(
+                        b58cencode(
+                            hash(
+                                new Uint8Array(
+                                    b58cdecode(e.signer, prefix.edpk),
+                                ),
+                                20,
+                            ),
+                            prefix.tz1,
+                        ),
+                    );
+                    return {
+                        addr,
+                        sig: tas.signature(
+                            Buffer.from(
+                                e.signature.replace('0x', ''),
+                                'hex',
+                            ).toString(),
+                        ),
+                        signer: tas.key(e.signer),
+                    };
+                }),
+            });
+
+            const tx = await bridge.methodsObject
+                .claim_nft({
+                    dest_address: data.dest_address,
+                    dest_chain: data.dest_chain,
+                    fee: data.fee,
+                    metadata: data.metadata,
+                    name: data.name,
+                    nft_type: data.nft_type,
+                    royalty: data.royalty,
+                    royalty_receiver: data.royalty_receiver,
+                    source_chain: data.source_chain,
+                    symbol: data.symbol,
+                    token_amount: data.token_amount,
+                    token_id: data.token_id,
+                    transaction_hash: data.transaction_hash,
+                    source_nft_contract_address: sourceNftContractAddress,
+                    sigs: sigs.map((e) => {
+                        console.log(e);
+                        const addr = tas.address(
+                            b58cencode(
+                                hash(
+                                    new Uint8Array(
+                                        b58cdecode(e.signer, prefix.edpk),
+                                    ),
+                                    20,
+                                ),
+                                prefix.tz1,
+                            ),
+                        );
+                        return {
+                            addr,
+                            sig: tas.signature(
+                                Buffer.from(
+                                    e.signature.replace('0x', ''),
+                                    'hex',
+                                ).toString(),
+                            ),
+                            signer: tas.key(e.signer),
+                        };
+                    }),
+                })
                 .send();
             return {
                 hash: tx.hash,
                 wait: async () => {
                     await tx.confirmation(1);
                 },
+                block: tx.includedInBlock,
             };
         },
         validators: async (address: string) => {

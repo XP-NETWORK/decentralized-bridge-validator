@@ -15,7 +15,7 @@ export type TonLockArgs = {
     destinationChain: string;
     address: string;
     sourceNftContractAddress: string;
-    tokenId: bigint;
+    tokenId: string;
 };
 
 const getTonBridgeContract = ({
@@ -63,7 +63,7 @@ const getTonBridgeContract = ({
                     sourceNftContractAddress: Address.parseFriendly(
                         sourceNftContractAddress,
                     ).address,
-                    tokenId: tokenId,
+                    tokenId: BigInt(tokenId),
                 },
             );
             return { hash: 'No Tx Hash', wait: async () => {} };

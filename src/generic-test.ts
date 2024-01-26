@@ -225,7 +225,6 @@ import {
                 }
             },
         },
-
         eth: {
             signer: new Wallet(genWallets.evmWallet.privateKey),
             bridge: getEvmBridgeContract({
@@ -413,6 +412,52 @@ import {
                 };
             },
         },
+        // ton: {
+        //     signer: WalletContractV4.create({
+        //         publicKey: Buffer.from(genWallets.tonWallet.publicKey, 'hex'),
+        //         workchain: 0,
+        //     }),
+
+        //     bridge: getTonBridgeContract({
+        //         tonChainConfig: configs.ton,
+        //         tonWallet: genWallets.tonWallet,
+        //     }),
+        //     config: configs.ton,
+        //     logDecoder: (_log: LogObject) => {},
+        //     signedNftDetails: getTonSignedNftDetails,
+        //     address: genWallets.tonWallet.publicKey,
+        //     extractLogFromTx: async (_hash: string): Promise<LogObject> => {
+        //         const client = new TonClient({
+        //             endpoint: configs.ton.rpcURL,
+        //             apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
+        //         });
+        //         const latestTx = await client.getTransactions(
+        //             Address.parseFriendly(configs.ton.contractAddress).address,
+        //             { limit: 1 },
+        //         );
+        //         if (!latestTx.length) {
+        //             throw new Error('No Transactions found');
+        //         }
+        //         const tx = latestTx[0];
+
+        //         const handleLog = getTonLockListenerHandler({
+        //             config: testnetBridgeConfig,
+        //             tonChainConfig: configs.ton,
+        //             wallets: genWallets,
+        //         });
+        //         for (let i = 0; i < tx.outMessages.size; i++) {
+        //             await handleLog({
+        //                 log: tx.outMessages.get(i)!,
+        //                 hash: tx.hash().toString('base64'),
+        //             });
+        //         }
+        //     },
+        //     cdMapper: (
+        //         _nftTransferDetailsObject: INftTransferDetailsObject,
+        //     ): ClaimData => {
+        //         throw new Error('Not Implemented');
+        //     },
+        // },
     };
 
     // Create a NFT Contract

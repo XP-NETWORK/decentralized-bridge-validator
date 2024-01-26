@@ -6,7 +6,7 @@ import {
 } from './types';
 import { MultiversXTransactions } from '@src/db/entity/MultiversXTransactions';
 
-const getLogs = async ({
+export const getLogs = async ({
     gatewayURL,
     txHashes,
     eventIdentifier,

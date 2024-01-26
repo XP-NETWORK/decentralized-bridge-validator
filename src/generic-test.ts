@@ -19,23 +19,30 @@ import {
 import {
     getEvmBridgeContract,
     getEvmSingleNftContract,
+    getHederaBridgeContract,
+    getMultiversXBridgeContract,
     getStorageContract,
     getTezosBridgeContract,
     waitForMSWithMsg,
 } from './utils';
 import {
     IEvmChainConfig,
+    IHederaChainConfig,
+    IMultiversXChainConfig,
+    ISecretChainConfig,
     ITezosChainConfig,
+    ITonChainConfig,
     SignerAndSignature,
 } from './types';
 import {
     getEvmSignedNftDetails,
+    getMultiversXSignedNftDetails,
     getNftDetails,
     getTezosSignedNftDetails,
 } from './modules/validator/components/nftLockListener/utils';
 
 import { CodeInfo } from './utils/functions/getSecretBridgeContract';
-
+import { getLockEventDecodedLog as getMxLockEventDecodedLog } from './modules/validator/components/nftLockListener/components/multiversXLockListener/utils';
 import getLockEventDecodedLog from './modules/validator/components/nftLockListener/components/evmLockListener/utils/getLockEventDecodedLog';
 import { LogObject } from '@src/modules/validator/utils/evmContractListener/types';
 import { getContractOperations } from './modules/validator/utils/tezosContractListener';
@@ -46,6 +53,12 @@ import {
 import { extractStrOrAddr } from './modules/validator/components/nftLockListener/components/tezosLockListener/utils/getTezosLockListenerHandler';
 import { TezosToolkit } from '@taquito/taquito';
 import { INftTransferDetailsObject } from './modules/validator/components/nftLockListener/components/types';
+import { ClaimStruct } from './utils/functions/getMultiversXBridgeContract';
+import axios from 'axios';
+import {
+    IMultiverseXLogEvent,
+    IMultiverseXLogs,
+} from './modules/validator/utils/multiversXContractListener/utils/types';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
@@ -70,9 +83,21 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
         eth: bridgeTestChains.find(
             (e) => e.chain === 'ETH',
         )! as IEvmChainConfig,
+        hedera: bridgeTestChains.find(
+            (e) => e.chain === 'HEDERA',
+        )! as IHederaChainConfig,
         tezos: bridgeTestChains.find(
             (e) => e.chain === 'TEZOS',
         )! as ITezosChainConfig,
+        multiversx: bridgeTestChains.find(
+            (e) => e.chain === 'MULTIVERSX',
+        )! as IMultiversXChainConfig,
+        secret: bridgeTestChains.find(
+            (e) => e.chain === 'SECRET',
+        )! as ISecretChainConfig,
+        ton: bridgeTestChains.find(
+            (e) => e.chain === 'TON',
+        )! as ITonChainConfig,
     };
     const storage = getStorageContract({
         evmChainConfig: testnetBridgeConfig.storageConfig,
@@ -105,6 +130,98 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
                 return cd;
             },
         },
+        hedera: {
+            signer: new Wallet(genWallets.evmWallet.privateKey),
+            bridge: getHederaBridgeContract({
+                hederaChainConfig: configs.hedera,
+                evmWallet: genWallets.evmWallet,
+            }),
+            config: configs.hedera,
+            logDecoder: getLockEventDecodedLog,
+            signedNftDetails: getEvmSignedNftDetails,
+            address: genWallets.evmWallet.address,
+            extractLogFromTx: async (hash: string): Promise<LogObject> => {
+                const { topicHash } =
+                    Bridge__factory.createInterface().getEvent('Locked');
+                const provider = new JsonRpcProvider(configs.bsc.rpcURL);
+                const receipt = await provider.getTransactionReceipt(hash)!;
+
+                return (receipt?.logs.filter(
+                    (e) => e.topics.includes(topicHash),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ) ?? [])[0] as unknown as any;
+            },
+            cdMapper: (cd: INftTransferDetailsObject) => {
+                return cd;
+            },
+        },
+        multiversx: {
+            signer: UserSigner.fromWallet(
+                genWallets.multiversXWallet,
+                genWallets.multiversXWallet.password,
+            ),
+            config: configs.multiversx,
+            address: genWallets.multiversXWallet.userWallet.address,
+            bridge: getMultiversXBridgeContract({
+                multiversXChainConfig: configs.multiversx,
+                multiversXWallet: genWallets.multiversXWallet,
+            }),
+            signedNftDetails: getMultiversXSignedNftDetails,
+            cdMapper: (cd: INftTransferDetailsObject): ClaimStruct => {
+                return { ...cd, attrs: cd.metadata };
+            },
+            extractLogFromTx: async (hash: string): Promise<LogObject> => {
+                const eventIdentifier = ['lock721', 'lock1155'];
+                const resultantLogs: (IMultiverseXLogEvent & {
+                    txHash: string;
+                })[] = [];
+                const incompleteTx: { [txHash: string]: boolean } = {};
+
+                const getResultantLogs = (
+                    logs: IMultiverseXLogs,
+                    txHash: string,
+                ) => {
+                    const eventLog = logs.events.find((_event) => {
+                        return eventIdentifier.includes(_event.identifier);
+                    });
+                    const isCompletedTx = logs.events.find(
+                        (_event) => _event.identifier === 'completedTxEvent',
+                    );
+                    if (eventLog && isCompletedTx) {
+                        resultantLogs.push({ ...eventLog, txHash });
+                    } else if (eventLog && !isCompletedTx) {
+                        incompleteTx[txHash] = true;
+                    }
+                };
+                const response = (
+                    await axios.get(
+                        `${configs.multiversx.gatewayURL.replace('gateway', 'api')}/transactions/${hash}`,
+                    )
+                ).data;
+
+                if (response?.logs) getResultantLogs(response.logs, hash);
+                if (response?.results?.logs)
+                    getResultantLogs(response.results.log, hash);
+                if (response?.results.length > 0) {
+                    for (const i of response.results) {
+                        if (i?.logs) {
+                            getResultantLogs(i.logs, hash);
+                        }
+                    }
+                }
+                return resultantLogs as any;
+            },
+            logDecoder: (log: LogObject) => {
+                const data = log as (IMultiverseXLogEvent & {
+                    txHash: string;
+                })[];
+                for (const log of data) {
+                    const decodedLog = getMxLockEventDecodedLog({ log: log });
+                    return decodedLog;
+                }
+            },
+        },
+
         eth: {
             signer: new Wallet(genWallets.evmWallet.privateKey),
             bridge: getEvmBridgeContract({
@@ -271,6 +388,7 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
                 tokenId: string;
                 contractAddress: string;
                 codeInfo?: CodeInfo;
+                nonce?: string;
                 nftType: 'singular' | 'multiple';
             },
         ],
@@ -281,6 +399,7 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
                 destinationChain: tx.toChain.config.chain as SupportedChains,
                 sourceNftContractAddress: tx.contractAddress,
                 tokenId: tx.tokenId,
+                nonce: tx.nonce!,
             });
             await from.wait();
             console.log(`Locked on ${tx.fromChain.config.chain} ${from.hash}`);
@@ -298,7 +417,7 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
                 sourceChain, // Source chain of NFT
             } = tx.fromChain.logDecoder({
                 log: log,
-            });
+            })!;
 
             // if user gives a destination chain which is not registered with us, we early return
             const sourceChain_ = tx.fromChain.config;

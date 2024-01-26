@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JsonRpcProvider, Wallet } from 'ethers';
 import { generateWalletsForChains } from './modules/setup/components';
-import { Wallet as SecretWallet } from 'secretjs';
+import { SecretNetworkClient, Wallet as SecretWallet } from 'secretjs';
 import { InMemorySigner } from '@taquito/signer';
 import { UserSigner } from '@multiversx/sdk-wallet/out';
 import { keyPairFromSecretKey } from 'ton-crypto';
@@ -38,10 +38,14 @@ import {
     getEvmSignedNftDetails,
     getMultiversXSignedNftDetails,
     getNftDetails,
+    getSecretSignedNftDetails,
     getTezosSignedNftDetails,
 } from './modules/validator/components/nftLockListener/utils';
 
-import { CodeInfo } from './utils/functions/getSecretBridgeContract';
+import getSecretBridgeContract, {
+    ClaimData,
+    CodeInfo,
+} from './utils/functions/getSecretBridgeContract';
 import { getLockEventDecodedLog as getMxLockEventDecodedLog } from './modules/validator/components/nftLockListener/components/multiversXLockListener/utils';
 import getLockEventDecodedLog from './modules/validator/components/nftLockListener/components/evmLockListener/utils/getLockEventDecodedLog';
 import { LogObject } from '@src/modules/validator/utils/evmContractListener/types';
@@ -318,6 +322,97 @@ import {
                 };
             },
         },
+        secret: {
+            signer: new SecretWallet(genWallets.secretWallet.privateKey),
+            bridge: getSecretBridgeContract({
+                secretChainConfig: configs.secret,
+                secretWallet: genWallets.secretWallet,
+            }),
+            config: configs.secret,
+            logDecoder: (log: LogObject) => {
+                const data = log as ILog & { transaction_hash: string };
+                const sourceNftContractAddress = extractStrOrAddr(
+                    data.source_nft_address,
+                );
+                const {
+                    token_id: tokenId, // Unique ID for the NFT transfer
+                    dest_chain: destinationChain, // Chain to where the NFT is being transferred
+                    dest_address: destinationUserAddress, // User's address in the destination chain
+                    token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+                    nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+                    source_chain: sourceChain, // Source chain of NFT
+                    transaction_hash: transactionHash,
+                } = data;
+                return {
+                    tokenId,
+                    destinationChain,
+                    destinationUserAddress,
+                    tokenAmount,
+                    nftType,
+                    sourceChain,
+                    transactionHash,
+                    sourceNftContractAddress,
+                };
+            },
+            signedNftDetails: getSecretSignedNftDetails,
+            address: genWallets.secretWallet.publicKey,
+            extractLogFromTx: async (hash: string): Promise<LogObject> => {
+                const eventId = 'LockedEventInfo';
+                const secretjs = new SecretNetworkClient({
+                    url: configs.secret.rpcURL,
+                    chainId: configs.secret.chainId,
+                });
+                const tx = await secretjs.query.getTx(hash)!;
+                if (!tx) {
+                    throw new Error('Tx not found');
+                }
+                const log = tx.jsonLog
+                    ?.at(0)
+                    ?.events.find((item) => item.type === 'wasm')
+                    ?.attributes.find((item) => item.key === eventId);
+                const {
+                    token_id: tokenId, // Unique ID for the NFT transfer
+                    destination_chain: destinationChain, // Chain to where the NFT is being transferred
+                    destination_user_address: destinationUserAddress, // User's address in the destination chain
+                    source_nft_contract_address: sourceNftContractAddress, // Address of the NFT contract in the source chain
+                    token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+                    nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+                    source_chain: sourceChain, // Source chain of NFT
+                } = JSON.parse(log!.value);
+                return {
+                    tokenId,
+                    destinationChain,
+                    destinationUserAddress,
+                    sourceNftContractAddress,
+                    tokenAmount,
+                    nftType,
+                    sourceChain,
+                } as LogObject;
+            },
+            cdMapper: (
+                nftTransferDetailsObject: INftTransferDetailsObject,
+            ): ClaimData => {
+                return {
+                    token_id: nftTransferDetailsObject.tokenId,
+                    source_chain: nftTransferDetailsObject.sourceChain,
+                    destination_chain:
+                        nftTransferDetailsObject.destinationChain,
+                    destination_user_address:
+                        nftTransferDetailsObject.destinationUserAddress,
+                    source_nft_contract_address:
+                        nftTransferDetailsObject.sourceNftContractAddress,
+                    name: nftTransferDetailsObject.name,
+                    symbol: nftTransferDetailsObject.symbol,
+                    royalty: parseInt(nftTransferDetailsObject.royalty),
+                    royalty_receiver: nftTransferDetailsObject.royaltyReceiver,
+                    metadata: nftTransferDetailsObject.metadata,
+                    transaction_hash: nftTransferDetailsObject.transactionHash,
+                    token_amount: nftTransferDetailsObject.tokenAmount,
+                    nft_type: nftTransferDetailsObject.nftType,
+                    fee: nftTransferDetailsObject.fee,
+                };
+            },
+        },
     };
 
     // Create a NFT Contract
@@ -400,6 +495,7 @@ import {
                 sourceNftContractAddress: tx.contractAddress,
                 tokenId: tx.tokenId,
                 nonce: tx.nonce!,
+                collectionCodeInfo: tx.codeInfo!,
             });
             await from.wait();
             console.log(`Locked on ${tx.fromChain.config.chain} ${from.hash}`);

@@ -87,63 +87,26 @@ const getTezosBridgeContract = ({
                   };
             const bridge = await getBridgeInstance();
 
-            console.log({
-                dest_address: data.dest_address,
-                dest_chain: data.dest_chain,
-                fee: data.fee,
-                metadata: data.metadata,
-                name: data.name,
-                nft_type: data.nft_type,
-                royalty: data.royalty,
-                royalty_receiver: data.royalty_receiver,
-                source_chain: data.source_chain,
-                symbol: data.symbol,
-                token_amount: data.token_amount,
-                token_id: data.token_id,
-                transaction_hash: data.transaction_hash,
-                source_nft_contract_address: sourceNftContractAddress,
-                sigs: sigs.map((e) => {
-                    console.log(e);
-                    const addr = tas.address(
-                        b58cencode(
-                            hash(
-                                new Uint8Array(
-                                    b58cdecode(e.signer, prefix.edpk),
-                                ),
-                                20,
-                            ),
-                            prefix.tz1,
-                        ),
-                    );
-                    return {
-                        addr,
-                        sig: tas.signature(
-                            Buffer.from(
-                                e.signature.replace('0x', ''),
-                                'hex',
-                            ).toString(),
-                        ),
-                        signer: tas.key(e.signer),
-                    };
-                }),
-            });
-
             const tx = await bridge.methodsObject
                 .claim_nft({
-                    dest_address: data.dest_address,
-                    dest_chain: data.dest_chain,
-                    fee: data.fee,
-                    metadata: data.metadata,
-                    name: data.name,
-                    nft_type: data.nft_type,
-                    royalty: data.royalty,
-                    royalty_receiver: data.royalty_receiver,
-                    source_chain: data.source_chain,
-                    symbol: data.symbol,
-                    token_amount: data.token_amount,
-                    token_id: data.token_id,
-                    transaction_hash: data.transaction_hash,
-                    source_nft_contract_address: sourceNftContractAddress,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    //@ts-ignore
+                    data: {
+                        dest_address: data.dest_address,
+                        dest_chain: data.dest_chain,
+                        fee: data.fee,
+                        metadata: data.metadata,
+                        name: data.name,
+                        nft_type: data.nft_type,
+                        royalty: data.royalty,
+                        royalty_receiver: data.royalty_receiver,
+                        source_chain: data.source_chain,
+                        symbol: data.symbol,
+                        token_amount: data.token_amount,
+                        token_id: tas.nat(data.token_id),
+                        transaction_hash: data.transaction_hash,
+                        source_nft_contract_address: sourceNftContractAddress,
+                    },
                     sigs: sigs.map((e) => {
                         console.log(e);
                         const addr = tas.address(
@@ -169,7 +132,11 @@ const getTezosBridgeContract = ({
                         };
                     }),
                 })
-                .send();
+                .send({
+                    amount: data.fee.toNumber(),
+                    mutez: true,
+                    fee: data.fee.toNumber(),
+                });
             return {
                 hash: tx.hash,
                 wait: async () => {

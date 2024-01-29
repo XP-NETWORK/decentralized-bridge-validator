@@ -336,19 +336,25 @@ const getMultiversXBridgeContract = ({
             ]);
             const data = [
                 claimDataArgs,
-                [
-                    sigs.map((item) => {
-                        return {
-                            public_key: new AddressValue(
-                                new Address(Buffer.from(item.signer, 'hex')),
+
+                sigs.map((item) => {
+                    return {
+                        public_key: new AddressValue(
+                            new Address(Buffer.from(item.signer, 'hex')),
+                        ),
+                        sig: new BytesValue(
+                            Buffer.from(
+                                item.signature.replace('0x', ''),
+                                'hex',
                             ),
-                            sig: new BytesValue(
-                                Buffer.from(item.signature, 'hex'),
-                            ),
-                        };
-                    }),
-                ],
+                        ),
+                    };
+                }),
+
                 VariadicValue.fromItems(
+                    new BytesValue(
+                        Buffer.from(nftTransferDetailsObject.metadata, 'utf-8'),
+                    ),
                     new BytesValue(
                         Buffer.from(nftTransferDetailsObject.metadata, 'utf-8'),
                     ),

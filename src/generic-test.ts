@@ -23,6 +23,7 @@ import {
     getMultiversXBridgeContract,
     getStorageContract,
     getTezosBridgeContract,
+    getTonBridgeContract,
     waitForMSWithMsg,
 } from './utils';
 import {
@@ -40,6 +41,7 @@ import {
     getNftDetails,
     getSecretSignedNftDetails,
     getTezosSignedNftDetails,
+    getTonSignedNftDetails,
 } from './modules/validator/components/nftLockListener/utils';
 
 import getSecretBridgeContract, {
@@ -63,6 +65,10 @@ import {
     IMultiverseXLogEvent,
     IMultiverseXLogs,
 } from './modules/validator/utils/multiversXContractListener/utils/types';
+import { TezosClaimArgs } from './utils/functions/getTezosBridgeContract';
+import { tas } from './contractsTypes/tezosContractTypes/type-aliases';
+
+import { WalletContractV4 } from 'ton';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
@@ -161,7 +167,7 @@ import {
         },
         multiversx: {
             signer: UserSigner.fromWallet(
-                genWallets.multiversXWallet,
+                genWallets.multiversXWallet.userWallet,
                 genWallets.multiversXWallet.password,
             ),
             config: configs.multiversx,
@@ -223,6 +229,7 @@ import {
                     const decodedLog = getMxLockEventDecodedLog({ log: log });
                     return decodedLog;
                 }
+                throw new Error(`No Log Found`);
             },
         },
         eth: {
@@ -300,24 +307,29 @@ import {
                 }
                 return payload! as LogObject;
             },
-            cdMapper: (nftTransferDetailsObject: INftTransferDetailsObject) => {
+            cdMapper: (
+                nftTransferDetailsObject: INftTransferDetailsObject,
+            ): TezosClaimArgs => {
                 return {
-                    token_id: nftTransferDetailsObject.tokenId,
+                    token_id: tas.nat(nftTransferDetailsObject.tokenId),
                     source_chain: nftTransferDetailsObject.sourceChain,
                     dest_chain: nftTransferDetailsObject.destinationChain,
-                    dest_address:
+                    dest_address: tas.address(
                         nftTransferDetailsObject.destinationUserAddress,
+                    ),
                     source_nft_contract_address:
                         nftTransferDetailsObject.sourceNftContractAddress,
                     name: nftTransferDetailsObject.name,
                     symbol: nftTransferDetailsObject.symbol,
-                    royalty: nftTransferDetailsObject.royalty,
-                    royalty_receiver: nftTransferDetailsObject.royaltyReceiver,
+                    royalty: tas.nat(nftTransferDetailsObject.royalty),
+                    royalty_receiver: tas.address(
+                        nftTransferDetailsObject.royaltyReceiver,
+                    ),
                     metadata: nftTransferDetailsObject.metadata,
                     transaction_hash: nftTransferDetailsObject.transactionHash,
-                    token_amount: nftTransferDetailsObject.tokenAmount,
+                    token_amount: tas.nat(nftTransferDetailsObject.tokenAmount),
                     nft_type: nftTransferDetailsObject.nftType,
-                    fee: nftTransferDetailsObject.fee,
+                    fee: tas.mutez(nftTransferDetailsObject.fee),
                 };
             },
         },
@@ -412,52 +424,29 @@ import {
                 };
             },
         },
-        // ton: {
-        //     signer: WalletContractV4.create({
-        //         publicKey: Buffer.from(genWallets.tonWallet.publicKey, 'hex'),
-        //         workchain: 0,
-        //     }),
+        ton: {
+            signer: WalletContractV4.create({
+                publicKey: Buffer.from(genWallets.tonWallet.publicKey, 'hex'),
+                workchain: 0,
+            }),
 
-        //     bridge: getTonBridgeContract({
-        //         tonChainConfig: configs.ton,
-        //         tonWallet: genWallets.tonWallet,
-        //     }),
-        //     config: configs.ton,
-        //     logDecoder: (_log: LogObject) => {},
-        //     signedNftDetails: getTonSignedNftDetails,
-        //     address: genWallets.tonWallet.publicKey,
-        //     extractLogFromTx: async (_hash: string): Promise<LogObject> => {
-        //         const client = new TonClient({
-        //             endpoint: configs.ton.rpcURL,
-        //             apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
-        //         });
-        //         const latestTx = await client.getTransactions(
-        //             Address.parseFriendly(configs.ton.contractAddress).address,
-        //             { limit: 1 },
-        //         );
-        //         if (!latestTx.length) {
-        //             throw new Error('No Transactions found');
-        //         }
-        //         const tx = latestTx[0];
-
-        //         const handleLog = getTonLockListenerHandler({
-        //             config: testnetBridgeConfig,
-        //             tonChainConfig: configs.ton,
-        //             wallets: genWallets,
-        //         });
-        //         for (let i = 0; i < tx.outMessages.size; i++) {
-        //             await handleLog({
-        //                 log: tx.outMessages.get(i)!,
-        //                 hash: tx.hash().toString('base64'),
-        //             });
-        //         }
-        //     },
-        //     cdMapper: (
-        //         _nftTransferDetailsObject: INftTransferDetailsObject,
-        //     ): ClaimData => {
-        //         throw new Error('Not Implemented');
-        //     },
-        // },
+            bridge: getTonBridgeContract({
+                tonChainConfig: configs.ton,
+                tonWallet: genWallets.tonWallet,
+            }),
+            config: configs.ton,
+            logDecoder: () => {
+                throw new Error('Not Implemented');
+            },
+            signedNftDetails: getTonSignedNftDetails,
+            address: genWallets.tonWallet.publicKey,
+            extractLogFromTx: async () => {
+                throw new Error('Not Implemented');
+            },
+            cdMapper: (): ClaimData => {
+                throw new Error('Not Implemented');
+            },
+        },
     };
 
     // Create a NFT Contract
@@ -620,13 +609,25 @@ import {
 
             console.log(signatures);
 
-            const claimTx = await tx.toChain.bridge.claimNFT721(
-                tx.toChain.cdMapper(nftTransferDetailsObject) as unknown as any,
-                signatureArray,
-            );
-            await claimTx.wait();
-
-            return claimTx.hash;
+            let claimed = false;
+            while (!claimed)
+                try {
+                    const claimTx = await tx.toChain.bridge.claimNFT721(
+                        tx.toChain.cdMapper(
+                            nftTransferDetailsObject,
+                        ) as unknown as any,
+                        signatureArray,
+                    );
+                    await claimTx.wait();
+                    console.log(
+                        `Claimed on ${tx.toChain.config.chain} at ${claimTx.hash}`,
+                    );
+                    claimed = true;
+                    return claimTx.hash;
+                } catch (e) {
+                    console.log(e);
+                    console.log(`Retrying Claiming`);
+                }
         }
         return '';
     }
@@ -640,7 +641,9 @@ import {
             nftType: 'singular',
         },
     ]);
-})();
+})().catch((e) => {
+    console.error(e);
+});
 
 async function createNftOnEvm(signer: Wallet) {
     const contract = await new ERC721Royalty__factory(signer).deploy(

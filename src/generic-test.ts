@@ -73,9 +73,20 @@ import { Address, TonClient, beginCell } from '@ton/ton';
 import { loadLockedEvent } from './contractsTypes/contracts/tonBridge';
 import TonWeb from 'tonweb';
 import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePriceToGetTotalRoyalityPercentage';
+import { promptToGetFunding } from './modules/setup/components/getInitialFunds/components';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
+
+    let result = false;
+
+    while (!result) {
+        result = await promptToGetFunding({
+            wallets: genWallets,
+            config: testnetBridgeConfig,
+        });
+    }
+
     // Assuming we have enough funds on the validator accounts itself.
 
     const signers = {
@@ -107,6 +118,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
         multiversx: bridgeTestChains.find(
             (e) => e.chain === 'MULTIVERSX',
         )! as IMultiversXChainConfig,
+
         secret: bridgeTestChains.find(
             (e) => e.chain === 'SECRET',
         )! as ISecretChainConfig,

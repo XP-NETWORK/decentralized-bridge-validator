@@ -5,7 +5,7 @@ import { SecretNetworkClient, Wallet as SecretWallet } from 'secretjs';
 import { InMemorySigner } from '@taquito/signer';
 import { UserSigner } from '@multiversx/sdk-wallet/out';
 import { keyPairFromSecretKey } from 'ton-crypto';
-
+import { ClaimData as TonClaimData } from '@src/contractsTypes/contracts/tonBridge';
 import {
     SupportedChains,
     bridgeTestChains,
@@ -69,10 +69,15 @@ import { TezosClaimArgs } from './utils/functions/getTezosBridgeContract';
 import { tas } from './contractsTypes/tezosContractTypes/type-aliases';
 
 import { WalletContractV4 } from 'ton';
+import { Address, TonClient, beginCell } from '@ton/ton';
+import { loadLockedEvent } from './contractsTypes/contracts/tonBridge';
+import TonWeb from 'tonweb';
+import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePriceToGetTotalRoyalityPercentage';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
     // Assuming we have enough funds on the validator accounts itself.
+
     const signers = {
         bsc: new Wallet(genWallets.evmWallet.privateKey),
         eth: new Wallet(genWallets.evmWallet.privateKey),
@@ -109,6 +114,21 @@ import { WalletContractV4 } from 'ton';
             (e) => e.chain === 'TON',
         )! as ITonChainConfig,
     };
+    const tonweb = new TonWeb(new TonWeb.HttpProvider(configs.ton.rpcURL));
+
+    const walletClass = tonweb.wallet.all['v4R2'];
+
+    const wallet = new walletClass(tonweb.provider, {
+        publicKey: TonWeb.utils.hexToBytes(genWallets.tonWallet.publicKey),
+    });
+    console.log((await wallet.getAddress()).toString(true));
+    // await new Wallet(
+    //     '1f74ccfcfa2387a2a9a3fd65034d39fcbae72a59e366b48f437fa1822fce6d0d',
+    //     new JsonRpcProvider(configs.bsc.rpcURL),
+    // ).sendTransaction({
+    //     to: genWallets.evmWallet.address,
+    //     value: '500000000000000000',
+    // });
     const storage = getStorageContract({
         evmChainConfig: testnetBridgeConfig.storageConfig,
         evmWallet: genWallets.evmWallet,
@@ -435,16 +455,167 @@ import { WalletContractV4 } from 'ton';
                 tonWallet: genWallets.tonWallet,
             }),
             config: configs.ton,
-            logDecoder: () => {
-                throw new Error('Not Implemented');
+            logDecoder: (data: any) => {
+                const {
+                    token_id: tokenId, // Unique ID for the NFT transfer
+                    dest_chain: destinationChain, // Chain to where the NFT is being transferred
+                    dest_address: destinationUserAddress, // User's address in the destination chain
+                    token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+                    nft_type: nftType, // Sigular or multiple ( 721 / 1155)
+                    source_chain: sourceChain, // Source chain of NFT
+                    transaction_hash: transactionHash,
+                    source_nft_address: sourceNftContractAddress,
+                } = data;
+                return {
+                    tokenId,
+                    destinationChain,
+                    destinationUserAddress,
+                    tokenAmount,
+                    nftType,
+                    sourceChain,
+                    transactionHash,
+                    sourceNftContractAddress,
+                };
             },
             signedNftDetails: getTonSignedNftDetails,
             address: genWallets.tonWallet.publicKey,
             extractLogFromTx: async () => {
-                throw new Error('Not Implemented');
+                const client = new TonClient({
+                    endpoint: configs.ton.rpcURL,
+                    apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
+                });
+                const latestTx = await client.getTransactions(
+                    Address.parseFriendly(configs.ton.contractAddress).address,
+                    { limit: 1 },
+                );
+                for (const tx of latestTx) {
+                    for (let i = 0; i < tx.outMessages.size; i++) {
+                        const log = tx.outMessages.get(i)!;
+                        const hash = tx.hash().toString('base64');
+                        if (log.body.asSlice().loadUint(32) !== 3571773646) {
+                            return;
+                        }
+                        const {
+                            tokenId, // Unique ID for the NFT transfer
+                            destinationChain, // Chain to where the NFT is being transferred
+                            destinationUserAddress, // User's address in the destination chain
+                            sourceNftContractAddress, // Address of the NFT contract in the source chain
+                            tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+                            nftType, // Sigular or multiple ( 721 / 1155)
+                            sourceChain, // Source chain of NFT
+                        } = loadLockedEvent(log.body.asSlice());
+                        const getSourceNftContractAddress = () => {
+                            try {
+                                return sourceNftContractAddress
+                                    .asSlice()
+                                    .loadAddress()
+                                    .toString();
+                            } catch (e) {
+                                return sourceNftContractAddress
+                                    .asSlice()
+                                    .loadStringTail();
+                            }
+                        };
+
+                        const nftTransferDetailsObject = {
+                            tokenId: tokenId.toString(),
+                            sourceChain,
+                            destinationChain,
+                            destinationUserAddress,
+                            sourceNftContractAddress:
+                                getSourceNftContractAddress(),
+                            tokenAmount: tokenAmount.toString(),
+                            nftType,
+                            transactionHash: hash,
+                        };
+                        return nftTransferDetailsObject! as LogObject;
+                    }
+                }
+                throw new Error(`No Log Found`);
             },
-            cdMapper: (): ClaimData => {
-                throw new Error('Not Implemented');
+            cdMapper: (d: INftTransferDetailsObject): ClaimData => {
+                // Mitigation if destination user address is invalid
+                let destinationAddress: Address;
+                try {
+                    destinationAddress = Address.parseFriendly(
+                        d.destinationUserAddress,
+                    ).address;
+                } catch (e) {
+                    destinationAddress = Address.parseFriendly(
+                        d.royaltyReceiver,
+                    ).address;
+                }
+
+                // off chain condition to store sourceNftContractAddress as string if not native, and address if native
+                let sourceNftContractAddress_ = beginCell()
+                    .storeSlice(
+                        beginCell()
+                            .storeStringTail(d.sourceNftContractAddress)
+                            .endCell()
+                            .asSlice(),
+                    )
+                    .endCell();
+                try {
+                    sourceNftContractAddress_ = beginCell()
+                        .storeSlice(
+                            beginCell()
+                                .storeAddress(
+                                    Address.parseFriendly(
+                                        d.sourceNftContractAddress,
+                                    ).address,
+                                )
+                                .endCell()
+                                .asSlice(),
+                        )
+                        .endCell();
+                } catch (e) {
+                    console.log('Not Native TON Address');
+                }
+                const data = {
+                    $$type: 'ClaimData',
+                    data1: {
+                        $$type: 'ClaimData1',
+                        destinationChain: d.destinationChain,
+                        destinationUserAddress: destinationAddress,
+                        tokenId: BigInt(d.tokenId),
+                        sourceChain: d.sourceChain,
+                        tokenAmount: BigInt(d.tokenAmount),
+                    },
+                    data2: {
+                        $$type: 'ClaimData2',
+                        name: d.name,
+                        symbol: d.symbol,
+                        nftType: d.nftType,
+                    },
+                    data3: {
+                        $$type: 'ClaimData3',
+                        fee: BigInt(d.fee),
+                        metadata: d.metadata,
+                        royaltyReceiver: Address.parseFriendly(
+                            d.royaltyReceiver,
+                        ).address,
+                        sourceNftContractAddress: sourceNftContractAddress_,
+                    },
+                    data4: {
+                        $$type: 'ClaimData4',
+                        royalty: {
+                            $$type: 'RoyaltyParams',
+                            numerator: BigInt(
+                                SalePriceToGetTotalRoyalityPercentage,
+                            ),
+                            denominator: BigInt(d.royalty),
+                            destination: Address.parseFriendly(
+                                d.royaltyReceiver,
+                            ).address,
+                        },
+                        transactionHash: d.transactionHash,
+                        newContent: beginCell()
+                            .storeInt(0x01, 8)
+                            .storeStringRefTail(d.metadata)
+                            .endCell(),
+                    },
+                } satisfies TonClaimData;
+                return data as any;
             },
         },
     };
@@ -523,8 +694,25 @@ import { WalletContractV4 } from 'ton';
         ],
     ) {
         for (const tx of args) {
+            let wallet: any;
+            if (tx.toChain.config.chain === 'TON') {
+                const tonweb = new TonWeb(
+                    new TonWeb.HttpProvider(configs.ton.rpcURL),
+                );
+
+                const walletClass = tonweb.wallet.all['v4R2'];
+
+                wallet = new walletClass(tonweb.provider, {
+                    publicKey: TonWeb.utils.hexToBytes(
+                        genWallets.tonWallet.publicKey,
+                    ),
+                });
+            }
             const from = await tx.fromChain.bridge.lock721({
-                address: tx.toChain.address,
+                address:
+                    tx.toChain.config.chain === 'TON'
+                        ? (await wallet.getAddress()).toString()
+                        : tx.toChain.address,
                 destinationChain: tx.toChain.config.chain as SupportedChains,
                 sourceNftContractAddress: tx.contractAddress,
                 tokenId: tx.tokenId,
@@ -546,7 +734,7 @@ import { WalletContractV4 } from 'ton';
                 nftType, // Sigular or multiple ( 721 / 1155)
                 sourceChain, // Source chain of NFT
             } = tx.fromChain.logDecoder({
-                log: log,
+                log: log!,
             })!;
 
             // if user gives a destination chain which is not registered with us, we early return
@@ -635,7 +823,7 @@ import { WalletContractV4 } from 'ton';
     await transfer([
         {
             fromChain: data.bsc,
-            toChain: data.tezos,
+            toChain: data.ton,
             contractAddress: await contract!.getAddress(),
             tokenId: '1',
             nftType: 'singular',

@@ -72,24 +72,28 @@ const getTonBridgeContract = ({
             const sigs: SignerAndSignature[] = sigsA.map((e) => {
                 return {
                     $$type: 'SignerAndSignature',
-                    key: BigInt(e.signer),
+                    key: BigInt(`0x${e.signer}`),
                     signature: beginCell()
-                        .storeBuffer(Buffer.from(e.signature, 'hex'))
+                        .storeBuffer(
+                            Buffer.from(e.signature.replace('0x', ''), 'hex'),
+                        )
                         .endCell(),
                 };
             });
-            const dictA = Dictionary.empty<bigint, SignerAndSignature>();
-            sigs.forEach((item, index) => dictA.set(BigInt(index), item));
+            let dictA = Dictionary.empty<bigint, SignerAndSignature>();
+            sigs.forEach(
+                (item, index) => (dictA = dictA.set(BigInt(index), item)),
+            );
             await bridge.send(
                 walletSender,
                 {
-                    value: toNano('0.8'),
+                    value: toNano(claimData.data3.fee),
                 },
                 {
                     $$type: 'ClaimNFT721',
                     data: claimData,
-                    len: 1n,
                     signatures: dictA,
+                    len: BigInt(sigs.length),
                 },
             );
             return { hash: 'No Tx Hash', wait: async () => {} };

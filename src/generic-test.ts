@@ -45,7 +45,7 @@ import {
 } from './modules/validator/components/nftLockListener/utils';
 
 import getSecretBridgeContract, {
-    ClaimData,
+    SecretClaimData,
     CodeInfo,
 } from './utils/functions/getSecretBridgeContract';
 import { getLockEventDecodedLog as getMxLockEventDecodedLog } from './modules/validator/components/nftLockListener/components/multiversXLockListener/utils';
@@ -73,19 +73,19 @@ import { Address, TonClient, beginCell } from '@ton/ton';
 import { loadLockedEvent } from './contractsTypes/contracts/tonBridge';
 import TonWeb from 'tonweb';
 import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePriceToGetTotalRoyalityPercentage';
-import { promptToGetFunding } from './modules/setup/components/getInitialFunds/components';
+// import { promptToGetFunding } from './modules/setup/components/getInitialFunds/components';
 
 (async () => {
     const genWallets = await generateWalletsForChains();
 
-    let result = false;
+    // let result = false;
 
-    while (!result) {
-        result = await promptToGetFunding({
-            wallets: genWallets,
-            config: testnetBridgeConfig,
-        });
-    }
+    // while (!result) {
+    //     result = await promptToGetFunding({
+    //         wallets: genWallets,
+    //         config: testnetBridgeConfig,
+    //     });
+    // }
 
     // Assuming we have enough funds on the validator accounts itself.
 
@@ -134,13 +134,6 @@ import { promptToGetFunding } from './modules/setup/components/getInitialFunds/c
         publicKey: TonWeb.utils.hexToBytes(genWallets.tonWallet.publicKey),
     });
     console.log((await wallet.getAddress()).toString(true));
-    // await new Wallet(
-    //     '1f74ccfcfa2387a2a9a3fd65034d39fcbae72a59e366b48f437fa1822fce6d0d',
-    //     new JsonRpcProvider(configs.bsc.rpcURL),
-    // ).sendTransaction({
-    //     to: genWallets.evmWallet.address,
-    //     value: '500000000000000000',
-    // });
     const storage = getStorageContract({
         evmChainConfig: testnetBridgeConfig.storageConfig,
         evmWallet: genWallets.evmWallet,
@@ -434,7 +427,7 @@ import { promptToGetFunding } from './modules/setup/components/getInitialFunds/c
             },
             cdMapper: (
                 nftTransferDetailsObject: INftTransferDetailsObject,
-            ): ClaimData => {
+            ): SecretClaimData => {
                 return {
                     token_id: nftTransferDetailsObject.tokenId,
                     source_chain: nftTransferDetailsObject.sourceChain,
@@ -545,7 +538,7 @@ import { promptToGetFunding } from './modules/setup/components/getInitialFunds/c
                 }
                 throw new Error(`No Log Found`);
             },
-            cdMapper: (d: INftTransferDetailsObject): ClaimData => {
+            cdMapper: (d: INftTransferDetailsObject): TonClaimData => {
                 // Mitigation if destination user address is invalid
                 let destinationAddress: Address;
                 try {
@@ -835,7 +828,7 @@ import { promptToGetFunding } from './modules/setup/components/getInitialFunds/c
     await transfer([
         {
             fromChain: data.bsc,
-            toChain: data.ton,
+            toChain: data.secret,
             contractAddress: await contract!.getAddress(),
             tokenId: '1',
             nftType: 'singular',

@@ -5834,10 +5834,10 @@ secp256k1@^4.0.1:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
 
-secretjs@^1.12.3:
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-1.12.4.tgz#0bc1930137a936246e976481808b129d12d7af9d"
-  integrity sha512-DH16hYTPa4NNxo1T/tY2GyJRte7rgp5kRy8k1pwaPK59WtbQdTBdPQQsEI2L5T7NDVEUXbdbTqyQkt5usN4KcQ==
+secretjs@=1.12.3:
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-1.12.3.tgz#45bdbfe7c37f59e02aba4d9c88b9bcb5a212d34d"
+  integrity sha512-zvvllDGU4f/nrgYCqDFahZHlzPqwaNW1GWkvSaedidWDvOI9TB4/WEbz6ODLIM/OQnqD4K8sp5HVgDxP7Cl+nQ==
   dependencies:
     "@cosmjs/encoding" "0.27.1"
     "@cosmjs/math" "0.27.1"
@@ -6324,6 +6324,13 @@ toidentifier@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
+
+ton-core@^0.53.0:
+  version "0.53.0"
+  resolved "https://registry.yarnpkg.com/ton-core/-/ton-core-0.53.0.tgz#88ce0c0dbdbb548cd46f1984639c4738b06f38dd"
+  integrity sha512-uO/U1oVLdEliWWbwfNQQK+61C+KM0ehcTdHQ6cN0WSEH2UzGfdVFpC4Wb0ph+wUYe/5njl7TA0uL9nif9Q6qwA==
+  dependencies:
+    symbol.inspect "1.0.1"
 
 ton-crypto-primitives@2.0.0:
   version "2.0.0"

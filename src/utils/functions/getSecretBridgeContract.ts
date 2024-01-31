@@ -1,8 +1,11 @@
 import { SupportedChains } from '@src/config/chainSpecs';
 import { AddValidatorType } from '@src/contractsTypes/contracts/secretBridge';
 import { IBridge, ISecretChainConfigAndSecretWallet } from '@src/types';
-import { SecretNetworkClient, pubkeyToAddress } from 'secretjs';
-import { encodeSecp256k1Pubkey } from 'secretjs/dist/wallet_amino';
+import { SecretNetworkClient, Wallet, pubkeyToAddress } from 'secretjs';
+import {
+    encodeSecp256k1Pubkey,
+    encodeSecp256k1Signature,
+} from 'secretjs/dist/wallet_amino';
 
 export type CodeInfo = {
     code_id: number;
@@ -17,7 +20,7 @@ export type SecretLockArgs = {
     tokenId: string;
 };
 
-export type ClaimData = {
+export type SecretClaimData = {
     token_id: string;
     source_chain: string;
     destination_chain: string;
@@ -37,13 +40,22 @@ export type ClaimData = {
 const getSecretBridgeContract = ({
     secretChainConfig,
     secretWallet,
-}: ISecretChainConfigAndSecretWallet): IBridge<SecretLockArgs, ClaimData> => {
-    const bridgeContractCodeHash =
-        'dbccb5a7abf668d050d720cd01ea39d556492456ceb870dcae80dc4ff8572575';
+}: ISecretChainConfigAndSecretWallet): IBridge<
+    SecretLockArgs,
+    SecretClaimData
+> => {
+    const wallet = new Wallet(secretWallet.privateKey);
     const secretjs = new SecretNetworkClient({
         url: secretChainConfig.rpcURL,
         chainId: secretChainConfig.chainId,
+        wallet: wallet,
+        walletAddress: wallet.address,
     });
+    console.log(wallet.address);
+    const bridgeContractCodeHash =
+        secretjs.query.compute.codeHashByContractAddress({
+            contract_address: secretChainConfig.contractAddress,
+        });
 
     return {
         lock721: async ({
@@ -68,7 +80,7 @@ const getSecretBridgeContract = ({
                             },
                         },
                     },
-                    code_hash: bridgeContractCodeHash,
+                    code_hash: (await bridgeContractCodeHash).code_hash,
                     sender: secretjs.address,
                 },
                 {
@@ -77,20 +89,34 @@ const getSecretBridgeContract = ({
             );
             return { hash: tx.transactionHash, wait: async () => {} };
         },
-        claimNFT721: async (data, sigs) => {
+        claimNFT721: async (data, signatures) => {
             const claim721 = {
                 claim721: {
                     data: {
                         data,
-                        signatures: sigs,
+                        signatures: signatures.map((e) => {
+                            return {
+                                signature: encodeSecp256k1Signature(
+                                    Buffer.from(secretWallet.publicKey, 'hex'),
+                                    Buffer.from(
+                                        e.signature.replace('0x', ''),
+                                        'hex',
+                                    ),
+                                ).signature,
+                                signer_address: encodeSecp256k1Pubkey(
+                                    Buffer.from(secretWallet.publicKey, 'hex'),
+                                ).value,
+                            };
+                        }),
                     },
                 },
             };
+            console.log(JSON.stringify(claim721));
             const tx = await secretjs.tx.compute.executeContract(
                 {
                     contract_address: secretChainConfig.contractAddress,
                     msg: claim721,
-                    code_hash: bridgeContractCodeHash,
+                    code_hash: (await bridgeContractCodeHash).code_hash,
                     sender: secretjs.address,
                     sent_funds: [
                         { amount: data.fee.toString(), denom: 'uscrt' },
@@ -100,6 +126,7 @@ const getSecretBridgeContract = ({
                     gasLimit: 300_000,
                 },
             );
+            console.log(tx);
             return { hash: tx.transactionHash, wait: async () => {} };
         },
         async lock1155({
@@ -121,7 +148,7 @@ const getSecretBridgeContract = ({
                         token_id: tokenId,
                         token_amount: amt.toString(),
                     },
-                    code_hash: bridgeContractCodeHash,
+                    code_hash: (await bridgeContractCodeHash).code_hash,
                     sender: secretjs.address,
                 },
                 {
@@ -144,7 +171,7 @@ const getSecretBridgeContract = ({
                 {
                     contract_address: secretChainConfig.contractAddress,
                     msg: claim721,
-                    code_hash: bridgeContractCodeHash,
+                    code_hash: (await bridgeContractCodeHash).code_hash,
                     sender: secretjs.address,
                     sent_funds: [{ amount: '1', denom: 'uscrt' }],
                 },
@@ -157,7 +184,7 @@ const getSecretBridgeContract = ({
         validators: async (address: string) => {
             const res = (await secretjs.query.compute.queryContract({
                 contract_address: secretChainConfig.contractAddress,
-                code_hash: bridgeContractCodeHash,
+                code_hash: (await bridgeContractCodeHash).code_hash,
                 query: {
                     get_validator: {
                         address: Buffer.from(address, 'hex').toString('base64'),
@@ -169,7 +196,7 @@ const getSecretBridgeContract = ({
         validatorsCount: async () => {
             const res = (await secretjs.query.compute.queryContract({
                 contract_address: secretChainConfig.contractAddress,
-                code_hash: bridgeContractCodeHash,
+                code_hash: (await bridgeContractCodeHash).code_hash,
                 query: {
                     get_validators_count: {},
                 },
@@ -212,7 +239,7 @@ const getSecretBridgeContract = ({
                 {
                     contract_address: secretChainConfig.contractAddress,
                     msg,
-                    code_hash: bridgeContractCodeHash,
+                    code_hash: (await bridgeContractCodeHash).code_hash,
                     sender: pubkeyToAddress(
                         Buffer.from(secretWallet.publicKey, 'hex'),
                     ),

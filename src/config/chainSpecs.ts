@@ -26,7 +26,7 @@ export const bridgeTestChains = [
         intialFund: '50000000000000000',
         contractAddress: '0x3EC2839EcEAfa2Ce9e419718364B070563Db516e',
         chainType: 'evm',
-        lastBlock: 37302441,
+        lastBlock: 37330160,
     },
     {
         chain: 'ETH',
@@ -69,13 +69,13 @@ export const bridgeTestChains = [
     },
     {
         chain: 'SECRET',
-        rpcURL: 'https://pulsar.api.trivium.network:1317',
+        rpcURL: 'https://lcd.pulsar-3.secretsaturn.net',
         nativeCoinSymbol: 'USCRT',
         intialFund: '50000',
-        contractAddress: 'secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp',
+        contractAddress: 'secret1uxthnjt74cny9wnwx8czmgrc8taz0r8yfas565',
         chainType: 'scrt',
         chainId: 'pulsar-3',
-        lastBlock: 50883,
+        lastBlock: 3223704,
     },
     {
         chain: 'TEZOS',

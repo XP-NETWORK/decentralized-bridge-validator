@@ -1,0 +1,21 @@
+{
+  "name": "validator",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "imsk17",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "format": "npx @biomejs/biome format src/ --write",
+    "lint": "npx @biomejs/biome lint src/  ",
+    "postinstall": "lefthook install",
+    "dev": "tsc && node dist/index.js"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
+    "@types/node": "^20.11.17",
+    "lefthook": "^1.6.1",
+    "typescript": "^5.3.3"
+  }
+}

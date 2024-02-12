@@ -6,11 +6,7 @@ import { InMemorySigner } from '@taquito/signer';
 import { UserSigner } from '@multiversx/sdk-wallet/out';
 import { keyPairFromSecretKey } from 'ton-crypto';
 import { ClaimData as TonClaimData } from '@src/contractsTypes/contracts/tonBridge';
-import {
-    SupportedChains,
-    bridgeTestChains,
-    testnetBridgeConfig,
-} from './config/chainSpecs';
+import { bridgeTestChains, testnetBridgeConfig } from './config/chainSpecs';
 import {
     Bridge__factory,
     ERC721Royalty,
@@ -19,7 +15,7 @@ import {
 import {
     getEvmBridgeContract,
     getEvmSingleNftContract,
-    getHederaBridgeContract,
+    // getHederaBridgeContract,
     getMultiversXBridgeContract,
     getStorageContract,
     getTezosBridgeContract,
@@ -28,7 +24,7 @@ import {
 } from './utils';
 import {
     IEvmChainConfig,
-    IHederaChainConfig,
+    // IHederaChainConfig,
     IMultiversXChainConfig,
     ISecretChainConfig,
     ITezosChainConfig,
@@ -38,7 +34,6 @@ import {
 import {
     getEvmSignedNftDetails,
     getMultiversXSignedNftDetails,
-    getNftDetails,
     getSecretSignedNftDetails,
     getTezosSignedNftDetails,
     getTonSignedNftDetails,
@@ -62,6 +57,11 @@ import { INftTransferDetailsObject } from './modules/validator/components/nftLoc
 import { ClaimStruct } from './utils/functions/getMultiversXBridgeContract';
 import axios from 'axios';
 import {
+    ChainFactory,
+    ChainFactoryConfigs,
+    MetaMap,
+} from 'xp-decentralized-sdk';
+import {
     IMultiverseXLogEvent,
     IMultiverseXLogs,
 } from './modules/validator/utils/multiversXContractListener/utils/types';
@@ -77,6 +77,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
 
 (async () => {
     const genWallets = await generateWalletsForChains();
+    const factory = ChainFactory(ChainFactoryConfigs.TestNet());
 
     // let result = false;
 
@@ -109,9 +110,9 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
         eth: bridgeTestChains.find(
             (e) => e.chain === 'ETH',
         )! as IEvmChainConfig,
-        hedera: bridgeTestChains.find(
-            (e) => e.chain === 'HEDERA',
-        )! as IHederaChainConfig,
+        // hedera: bridgeTestChains.find(
+        //     (e) => e.chain === 'HEDERA',
+        // )! as IHederaChainConfig,
         tezos: bridgeTestChains.find(
             (e) => e.chain === 'TEZOS',
         )! as ITezosChainConfig,
@@ -141,7 +142,10 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
 
     const data = {
         bsc: {
-            signer: new Wallet(genWallets.evmWallet.privateKey),
+            signer: new Wallet(
+                genWallets.evmWallet.privateKey,
+                new JsonRpcProvider(configs.bsc.rpcURL),
+            ),
             bridge: getEvmBridgeContract({
                 evmChainConfig: configs.bsc,
                 evmWallet: genWallets.evmWallet,
@@ -165,31 +169,31 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
                 return cd;
             },
         },
-        hedera: {
-            signer: new Wallet(genWallets.evmWallet.privateKey),
-            bridge: getHederaBridgeContract({
-                hederaChainConfig: configs.hedera,
-                evmWallet: genWallets.evmWallet,
-            }),
-            config: configs.hedera,
-            logDecoder: getLockEventDecodedLog,
-            signedNftDetails: getEvmSignedNftDetails,
-            address: genWallets.evmWallet.address,
-            extractLogFromTx: async (hash: string): Promise<LogObject> => {
-                const { topicHash } =
-                    Bridge__factory.createInterface().getEvent('Locked');
-                const provider = new JsonRpcProvider(configs.bsc.rpcURL);
-                const receipt = await provider.getTransactionReceipt(hash)!;
+        // hedera: {
+        //     signer: new Wallet(genWallets.evmWallet.privateKey),
+        //     bridge: getHederaBridgeContract({
+        //         hederaChainConfig: configs.hedera,
+        //         evmWallet: genWallets.evmWallet,
+        //     }),
+        //     config: configs.hedera,
+        //     logDecoder: getLockEventDecodedLog,
+        //     signedNftDetails: getEvmSignedNftDetails,
+        //     address: genWallets.evmWallet.address,
+        //     extractLogFromTx: async (hash: string): Promise<LogObject> => {
+        //         const { topicHash } =
+        //             Bridge__factory.createInterface().getEvent('Locked');
+        //         const provider = new JsonRpcProvider(configs.bsc.rpcURL);
+        //         const receipt = await provider.getTransactionReceipt(hash)!;
 
-                return (receipt?.logs.filter(
-                    (e) => e.topics.includes(topicHash),
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ) ?? [])[0] as unknown as any;
-            },
-            cdMapper: (cd: INftTransferDetailsObject) => {
-                return cd;
-            },
-        },
+        //         return (receipt?.logs.filter(
+        //             (e) => e.topics.includes(topicHash),
+        //             // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        //         ) ?? [])[0] as unknown as any;
+        //     },
+        //     cdMapper: (cd: INftTransferDetailsObject) => {
+        //         return cd;
+        //     },
+        // },
         multiversx: {
             signer: UserSigner.fromWallet(
                 genWallets.multiversXWallet.userWallet,
@@ -258,7 +262,10 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
             },
         },
         eth: {
-            signer: new Wallet(genWallets.evmWallet.privateKey),
+            signer: new Wallet(
+                genWallets.evmWallet.privateKey,
+                new JsonRpcProvider(configs.eth.rpcURL),
+            ),
             bridge: getEvmBridgeContract({
                 evmChainConfig: configs.eth,
                 evmWallet: genWallets.evmWallet,
@@ -644,7 +651,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
     }
 
     // Mint 5 NFT on the contract
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
         let minted = false;
         while (!minted) {
             try {
@@ -661,7 +668,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
             }
         }
     }
-    console.log('Minted 2 NFTs ON BSC');
+    console.log('Minted 1 NFTs ON BSC');
 
     // Approve the contract to spend the NFTs
     const nftC = getEvmSingleNftContract(
@@ -671,14 +678,17 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
         },
         data.bsc.signer.connect(new JsonRpcProvider(data.bsc.config.rpcURL)),
     );
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
         let approved = false;
         while (!approved) {
             try {
                 await nftC.approve(BigInt(i), data.bsc.config.contractAddress);
                 approved = true;
-            } catch (e) {
-                console.log(`Retrying to approve NFT on BSC`);
+            } catch (e: any) {
+                console.log(
+                    `Retrying to approve NFT on BSC`,
+                    console.log(e.shortMessage),
+                );
             }
         }
     }
@@ -713,68 +723,94 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
                     ),
                 });
             }
-            const from = await tx.fromChain.bridge.lock721({
-                address:
-                    tx.toChain.config.chain === 'TON'
-                        ? (await wallet.getAddress()).toString()
-                        : tx.toChain.address,
-                destinationChain: tx.toChain.config.chain as SupportedChains,
-                sourceNftContractAddress: tx.contractAddress,
-                tokenId: tx.tokenId,
-                nonce: tx.nonce!,
-                collectionCodeInfo: tx.codeInfo!,
-            });
-            await from.wait();
-            console.log(`Locked on ${tx.fromChain.config.chain} ${from.hash}`);
 
-            await new Promise((e) => setTimeout(e, 10000));
-
-            const log = await tx.fromChain.extractLogFromTx(from.hash);
-            const {
-                tokenId, // Unique ID for the NFT transfer
-                destinationChain, // Chain to where the NFT is being transferred
-                destinationUserAddress, // User's address in the destination chain
-                sourceNftContractAddress, // Address of the NFT contract in the source chain
-                tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
-                nftType, // Sigular or multiple ( 721 / 1155)
-                sourceChain, // Source chain of NFT
-            } = tx.fromChain.logDecoder({
-                log: log!,
-            })!;
-
-            // if user gives a destination chain which is not registered with us, we early return
-            const sourceChain_ = tx.fromChain.config;
-
-            const fee = String(await storage.chainFee(tx.toChain.config.chain)); // Required fee for claming nft on target chain
-            const royaltyReceiver = String(
-                await storage.chainRoyalty(tx.toChain.config.chain),
+            const chain = await factory.inner(
+                tx.fromChain.config.chain as keyof MetaMap,
             );
+            let locked = false;
+            let lockHash: string = '';
+            while (!locked) {
+                try {
+                    const lock = await chain.lockNft(
+                        tx.fromChain.signer as any,
+                        tx.contractAddress,
+                        tx.toChain.config.chain as keyof MetaMap,
+                        tx.toChain.config.chain === 'TON'
+                            ? (await wallet.getAddress()).toString()
+                            : tx.toChain.address,
+                        BigInt(tx.tokenId),
+                        { gasLimit: 1000000 },
+                    );
+                    console.log(`Lock Hash:`, lock.hash());
+                    await (lock.tx as any).wait();
+                    locked = true;
+                    lockHash = lock.hash();
+                } catch (e: any) {
+                    console.log(
+                        `Retrying to lock NFT on ${tx.fromChain.config.chain}`,
+                        e.shortMessage,
+                    );
+                }
+            }
 
-            const { royalty, name, symbol, metadata } = await getNftDetails({
-                sourceNftContractAddress,
-                sourceChain: sourceChain_,
-                tokenId,
-                nftType,
-            });
+            // console.log(`Locked on ${tx.fromChain.config.chain} ${lock.hash()}`);
 
-            const nftTransferDetailsObject = {
-                tokenId,
-                sourceChain,
-                destinationChain,
-                destinationUserAddress,
-                sourceNftContractAddress,
-                name,
-                symbol,
-                royalty,
-                royaltyReceiver,
-                metadata,
-                transactionHash: from.hash,
-                tokenAmount,
-                nftType,
-                fee,
-            };
+            // await new Promise((e) => setTimeout(e, 10000));
+
+            // const log = await tx.fromChain.extractLogFromTx(lock.hash());
+            // const {
+            //     tokenId, // Unique ID for the NFT transfer
+            //     destinationChain, // Chain to where the NFT is being transferred
+            //     destinationUserAddress, // User's address in the destination chain
+            //     sourceNftContractAddress, // Address of the NFT contract in the source chain
+            //     tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
+            //     nftType, // Sigular or multiple ( 721 / 1155)
+            //     sourceChain, // Source chain of NFT
+            // } = tx.fromChain.logDecoder({
+            //     log: log!,
+            // })!;
+
+            // // if user gives a destination chain which is not registered with us, we early return
+            // const sourceChain_ = tx.fromChain.config;
+
+            // const fee = String(await storage.chainFee(tx.toChain.config.chain)); // Required fee for claming nft on target chain
+            // const royaltyReceiver = String(
+            //     await storage.chainRoyalty(tx.toChain.config.chain),
+            // );
+
+            // const { royalty, name, symbol, metadata } = await getNftDetails({
+            //     sourceNftContractAddress,
+            //     sourceChain: sourceChain_,
+            //     tokenId,
+            //     nftType,
+            // });
+
+            // const nftTransferDetailsObject = {
+            //     tokenId,
+            //     sourceChain,
+            //     destinationChain,
+            //     destinationUserAddress,
+            //     sourceNftContractAddress,
+            //     name,
+            //     symbol,
+            //     royalty,
+            //     royaltyReceiver,
+            //     metadata,
+            //     transactionHash: lock.hash(),
+            //     tokenAmount,
+            //     nftType,
+            //     fee,
+            // };
+            console.log(`Finding Claim Data for Lock Hash: ${lockHash}`);
+
+            const nftDetails = await factory.getClaimData(chain, lockHash);
+            console.log(nftDetails);
+            console.log(`Got Claim Data`);
+
+            console.log(`Fetching Signatures`);
+
             let signatures = await storage.getLockNftSignatures(
-                from.hash,
+                lockHash,
                 tx.fromChain.config.chain,
             );
             const neededSignatures =
@@ -787,7 +823,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
                     `waiting for signatures, ${signatures.length}`,
                 );
                 signatures = await storage.getLockNftSignatures(
-                    from.hash,
+                    lockHash,
                     tx.fromChain.config.chain,
                 );
             }
@@ -805,18 +841,20 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
             let claimed = false;
             while (!claimed)
                 try {
-                    const claimTx = await tx.toChain.bridge.claimNFT721(
-                        tx.toChain.cdMapper(
-                            nftTransferDetailsObject,
-                        ) as unknown as any,
+                    const tc = await factory.inner(
+                        tx.toChain.config.chain as keyof MetaMap,
+                    );
+                    const claim = await tc.claimNft(
+                        tx.toChain.signer as any,
+                        tc.transform(nftDetails) as any,
+                        {},
                         signatureArray,
                     );
-                    await claimTx.wait();
                     console.log(
-                        `Claimed on ${tx.toChain.config.chain} at ${claimTx.hash}`,
+                        `Claimed on ${tx.toChain.config.chain} at ${claim}`,
                     );
                     claimed = true;
-                    return claimTx.hash;
+                    return '';
                 } catch (e) {
                     console.log(e);
                     console.log(`Retrying Claiming`);
@@ -828,9 +866,9 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
     await transfer([
         {
             fromChain: data.bsc,
-            toChain: data.secret,
+            toChain: data.eth,
             contractAddress: await contract!.getAddress(),
-            tokenId: '1',
+            tokenId: '0',
             nftType: 'singular',
         },
     ]);
@@ -838,7 +876,7 @@ import { SalePriceToGetTotalRoyalityPercentage } from './utils/constants/salePri
     console.error(e);
 });
 
-async function createNftOnEvm(signer: Wallet) {
+export async function createNftOnEvm(signer: Wallet) {
     const contract = await new ERC721Royalty__factory(signer).deploy(
         'TestContract',
         'TC',

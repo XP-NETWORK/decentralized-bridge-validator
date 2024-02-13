@@ -87,16 +87,16 @@ export const bridgeTestChains = [
         nativeCoinSymbol: 'XTZ',
         chainType: 'tezos',
     },
-    // {
-    //     chain: 'HEDERA',
-    //     rpcURL: 'https://testnet.hashio.io/api',
-    //     nativeCoinSymbol: 'HBAR',
-    //     intialFund: '50000000000000000',
-    //     contractAddress: '0x742f68F53583Be22a62338e916eB8DE90D07daB1',
-    //     chainType: 'hedera',
-    //     lastBlock: 7095475,
-    //     royaltyInfoProxyAddress: '0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF',
-    // },
+    {
+        chain: 'HEDERA',
+        rpcURL: 'https://testnet.hashio.io/api',
+        nativeCoinSymbol: 'HBAR',
+        intialFund: '50000000000000000',
+        contractAddress: '0x742f68F53583Be22a62338e916eB8DE90D07daB1',
+        chainType: 'hedera',
+        lastBlock: 7095475,
+        royaltyInfoProxyAddress: '0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF',
+    },
 ] as const satisfies readonly TChain[];
 
 const stakingTestChain: IStakingConfig = {

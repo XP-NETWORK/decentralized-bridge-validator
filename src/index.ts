@@ -17,7 +17,7 @@ async function main() {
   }
   console.log(config);
 
-  const deps = await configDeps();
+  const deps = await configDeps(config);
 
   emitEvents([...deps.chains.evm]);
 }

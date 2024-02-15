@@ -19,6 +19,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@taquito/michel-codec": "^19.0.2",
+    "@taquito/taquito": "^19.0.2",
+    "@ton/core": "^0.55.0",
     "ethers": "^6.11.1"
   }
 }

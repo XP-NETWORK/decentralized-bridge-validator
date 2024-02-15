@@ -54,7 +54,7 @@ export type LockEvent = {
 
 export function eventBuilder() {
   return {
-    async nftLocked(
+    nftLocked(
       tokenId: string,
       destinationChain: string,
       destinationUserAddress: string,

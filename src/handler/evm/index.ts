@@ -70,12 +70,11 @@ export function evmHandler(
       return "success";
     },
     chainIdent: chainIdent,
-    async listenForLockEvents(_builder, cb) {
+    async listenForLockEvents(builder, cb) {
+      let lastBlock = Number(lastBlock_);
       while (true) {
-        let lastBlock = Number(lastBlock_);
-        const latestBlockNumber = Number(
-          (await provider.getBlockNumber()).toString(),
-        );
+        console.log(lastBlock);
+        const latestBlockNumber = await provider.getBlockNumber();
 
         const latestBlock =
           lastBlock + BLOCK_CHUNKS < latestBlockNumber
@@ -90,27 +89,34 @@ export function evmHandler(
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
+        const startBlock = lastBlock;
+        lastBlock = latestBlockNumber;
         if (!logs.length) {
           console.info(
-            `No Transactions found in chain ${chainIdent} from block: ${lastBlock} to: ${latestBlock}`,
+            `No Transactions found in chain ${chainIdent} from block: ${startBlock} to: ${latestBlockNumber}`,
           );
-          return;
+          console.log(
+            "Waiting for 10 Seconds before looking for new transactions",
+          );
+          await new Promise<undefined>((e) => setTimeout(e, 10000));
+          continue;
         }
         for (const log of logs) {
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
-          cb({
-            destinationChain: decoded.args.destinationChain,
-            destinationUserAddress: decoded.args.destinationUserAddress,
-            nftType: decoded.args.nftType,
-            sourceChain: decoded.args.sourceChain,
-            sourceNftContractAddress: decoded.args.sourceNftContractAddress,
-            tokenAmount: decoded.args.tokenAmount,
-            tokenId: decoded.args.tokenId,
-            transactionHash: log.transactionHash,
-          });
+          return cb(
+            builder.nftLocked(
+              decoded.args.tokenId,
+              decoded.args.destinationChain,
+              decoded.args.destinationUserAddress,
+              decoded.args.sourceNftContractAddress,
+              decoded.args.tokenAmount,
+              decoded.args.nftType,
+              decoded.args.sourceChain,
+              log.transactionHash,
+            ),
+          );
         }
-        lastBlock = latestBlockNumber;
       }
     },
     async nftData(tokenId, contract) {
@@ -127,7 +133,22 @@ export function evmHandler(
         data.destinationUserAddress = data.royaltyReceiver;
         console.log("Invalid destination address");
       }
-      const nftTransferDetailsValues = Object.values(data);
+      const nftTransferDetailsValues = [
+        data.tokenId,
+        data.sourceChain,
+        data.destinationChain,
+        data.destinationUserAddress.toString(),
+        data.sourceNftContractAddress,
+        data.name,
+        data.symbol,
+        data.royalty,
+        data.royaltyReceiver,
+        data.metadata,
+        data.transactionHash,
+        data.tokenAmount,
+        data.nftType,
+        data.fee,
+      ];
       const nftTransferDetailsTypes = [
         "uint256", // Unique ID for the NFT transfer
         "string", // Chain from where the NFT is being transferred
@@ -144,6 +165,7 @@ export function evmHandler(
         "string", // Type of the NFT (could be ERC721 or ERC1155)
         "uint256", // fee that needs to be paid by the user to the bridge,
       ];
+
       const signature = await signer.signMessage(
         ethers.keccak256(
           ethers.AbiCoder.defaultAbiCoder().encode(

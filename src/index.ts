@@ -19,7 +19,7 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  emitEvents([...deps.chains.evm]);
+  emitEvents([...deps.chains.evm], deps.storage);
 }
 
 export const help = `

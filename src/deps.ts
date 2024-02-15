@@ -28,9 +28,10 @@ export async function configDeps(config: IBridgeConfig) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,
-    storageProvider,
+    new Wallet(secrets.evmWallet.pk, storageProvider),
   );
   return {
+    storage,
     chains: {
       evm: config.bridgeChains
         .filter((e) => e.chainType === "evm")

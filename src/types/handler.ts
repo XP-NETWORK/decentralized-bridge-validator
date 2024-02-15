@@ -1,18 +1,21 @@
 import { TSupportedChains } from "../config";
+import { BridgeStorage } from "../contractsTypes/evm";
 import {
   THandler,
   TNftTransferDetailsObject,
   eventBuilder,
 } from "../handler/types";
 
-export async function emitEvents(chains: Array<THandler>) {
+export async function emitEvents(
+  chains: Array<THandler>,
+  storage: BridgeStorage,
+) {
   const map = new Map<TSupportedChains, THandler>();
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const deps: { storage: any } = { storage: "" as any };
+  const deps = { storage };
 
   const builder = eventBuilder();
 
-  function listenEvents(chain: THandler) {
+  async function listenEvents(chain: THandler) {
     chain.listenForLockEvents(builder, async (ev) => {
       const sourceChain = map.get(ev.sourceChain as TSupportedChains);
       if (!sourceChain)
@@ -22,8 +25,8 @@ export async function emitEvents(chains: Array<THandler>) {
         ev.tokenId,
         ev.sourceNftContractAddress,
       );
-      const fee = await deps.storage.getFee(ev.destinationChain);
-      const royaltyReceiver = await deps.storage.getRoyaltyReceiver(
+      const fee = await deps.storage.chainFee(ev.destinationChain);
+      const royaltyReceiver = await deps.storage.chainRoyalty(
         ev.destinationChain,
       );
 
@@ -46,14 +49,17 @@ export async function emitEvents(chains: Array<THandler>) {
 
       const signature = await sourceChain.signClaimData(inft);
 
-      const approved = deps.storage.approveLockNft(
+      const approved = await deps.storage.approveLockNft(
         inft.transactionHash,
         sourceChain.chainIdent,
         signature.signature,
         signature.signer,
+        {
+          gasPrice: 1000000,
+        },
       );
       console.log(
-        `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.txhash}`,
+        `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
       );
     });
   }

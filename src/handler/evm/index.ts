@@ -6,26 +6,11 @@ import {
   ERC721Royalty__factory,
 } from "../../contractsTypes/evm";
 import { THandler, TWallet } from "../types";
-
-const confirmationCountNeeded = (validatorCount: number) => {
-  const twoByThree = 0.666666667;
-  const paddedValidatorCount = 1;
-  return Math.floor(twoByThree * validatorCount) + paddedValidatorCount;
-};
-
-const ProcessDelayMilliseconds = 5000;
-const BLOCK_CHUNKS = 1000;
-
-function waitForMSWithMsg(ms: number, msg: string): Promise<void> {
-  const secondsInMilliSeconds = 1000;
-  const numberOfDecimals = 2;
-  console.info(
-    `${msg}, retrying in ${(ms / secondsInMilliSeconds).toFixed(
-      numberOfDecimals,
-    )} seconds`,
-  );
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import {
+  ProcessDelayMilliseconds,
+  confirmationCountNeeded,
+  waitForMSWithMsg,
+} from "../utils";
 
 export function evmHandler(
   chainIdent: TSupportedChains,
@@ -34,6 +19,7 @@ export function evmHandler(
   bridge: string,
   storage: BridgeStorage,
   lastBlock_: bigint,
+  blockChunks: number,
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -77,8 +63,8 @@ export function evmHandler(
         const latestBlockNumber = await provider.getBlockNumber();
 
         const latestBlock =
-          lastBlock + BLOCK_CHUNKS < latestBlockNumber
-            ? lastBlock + BLOCK_CHUNKS
+          lastBlock + blockChunks < latestBlockNumber
+            ? lastBlock + blockChunks
             : latestBlockNumber;
 
         const logs = await provider.getLogs({

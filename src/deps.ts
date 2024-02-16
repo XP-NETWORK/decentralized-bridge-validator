@@ -21,6 +21,7 @@ export function configEvmHandler(
     bridge,
     storage,
     lastBlock,
+    1000,
   );
 }
 

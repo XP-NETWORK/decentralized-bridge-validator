@@ -19,6 +19,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@multiversx/sdk-core": "^12.18.0",
+    "@multiversx/sdk-network-providers": "^2.2.1",
+    "@multiversx/sdk-wallet": "^4.3.0",
     "@noble/secp256k1": "^1.7.0",
     "@taquito/michel-codec": "^19.0.2",
     "@taquito/signer": "^19.0.2",
@@ -28,6 +31,7 @@
     "@ton/ton": "^13.10.0",
     "axios": "^1.6.7",
     "ethers": "^6.11.1",
+    "openapi-client-axios": "^7.5.4",
     "secretjs": "=1.12.3",
     "ton-crypto": "^3.2.0",
     "tonweb": "^0.0.62"

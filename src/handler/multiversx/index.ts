@@ -96,6 +96,24 @@ export function multiversxHandler(
         pk: secretKey.hex(),
       };
     },
+    async selfIsValidator() {
+      const query = bc.createQuery({
+        func: "validators",
+        args: [
+          new BytesValue(Buffer.from(signer.getAddress().bech32(), "hex")),
+        ],
+      });
+      const queryResponse = await provider.queryContract(query);
+      const validatorsDefinition = bc.getEndpoint("validators");
+      const resultsParser = new ResultsParser();
+      const { firstValue } = resultsParser.parseQueryResponse(
+        queryResponse,
+        validatorsDefinition,
+      );
+      let added = false;
+      if (firstValue) ({ added } = firstValue.valueOf()[0]);
+      return added;
+    },
     async listenForLockEvents(builder, cb) {
       let lastBlock_ = lastBlock;
       while (true) {

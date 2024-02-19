@@ -45,6 +45,18 @@ export function secretsHandler(
         signature: `0x${Buffer.from(signature).toString("hex")}`,
       };
     },
+    async selfIsValidator() {
+      const res = (await client.query.compute.queryContract({
+        contract_address: bridge,
+        code_hash: bridgeCodeHash,
+        query: {
+          get_validator: {
+            address: Buffer.from(wallet.publicKey).toString("base64"),
+          },
+        },
+      })) as { validator: { data: { added: boolean } } };
+      return res.validator.data.added;
+    },
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);
       while (true) {

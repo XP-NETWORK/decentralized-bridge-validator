@@ -13,7 +13,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
     chainType: "evm",
-    lastBlock: 37764283,
+    lastBlock: 37881203,
   },
   {
     chain: "ETH",
@@ -22,7 +22,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
     chainType: "evm",
-    lastBlock: 5150604,
+    lastBlock: 5321096,
   },
   {
     chain: "MATIC",
@@ -31,7 +31,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
     chainType: "evm",
-    lastBlock: 52122800,
+    lastBlock: 46101677,
   },
   {
     chain: "MULTIVERSX",

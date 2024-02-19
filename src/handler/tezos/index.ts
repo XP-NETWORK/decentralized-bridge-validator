@@ -53,6 +53,11 @@ export async function tezosHandler(
     return bytes2Char(metaDataInHex);
   };
   return {
+    async selfIsValidator() {
+      return (await bc.storage()).validators.has(
+        tas.address(await signer.publicKeyHash()),
+      );
+    },
     async addSelfAsValidator() {
       let validatorsCount = (await bc.storage()).validators_count.toNumber();
       let signatureCount = Number(

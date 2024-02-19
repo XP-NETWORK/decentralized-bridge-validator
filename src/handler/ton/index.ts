@@ -118,6 +118,14 @@ export function tonHandler(
       );
       return "success";
     },
+    async selfIsValidator() {
+      const thisValidatorPk = beginCell()
+        .storeBuffer(signer.publicKey)
+        .endCell()
+        .beginParse()
+        .loadUintBig(256);
+      return (await bc.getValidator(thisValidatorPk))?.added ?? false;
+    },
     chainIdent: "TON",
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);

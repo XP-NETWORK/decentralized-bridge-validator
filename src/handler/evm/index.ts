@@ -114,6 +114,10 @@ export function evmHandler(
         metadata: await nft.tokenURI(tokenId),
       };
     },
+    async selfIsValidator() {
+      const validator = await bc.validators(signer.address);
+      return validator[0];
+    },
     async signClaimData(data) {
       if (!isAddress(data.destinationUserAddress)) {
         data.destinationUserAddress = data.royaltyReceiver;

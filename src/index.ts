@@ -19,6 +19,21 @@ async function main() {
 
   const deps = await configDeps(config);
 
+  const chains = [...deps.chains.evm];
+
+  for (const chain of chains) {
+    const selfIsValidator = await chain.selfIsValidator();
+    console.log(`Validator is already added to ${chain.chainIdent}`);
+    if (!selfIsValidator) {
+      const added = await chain.addSelfAsValidator();
+      if (added === "failure") {
+        throw new Error(
+          `Failed to add self as validator for chain ${chain.chainIdent}`,
+        );
+      }
+    }
+  }
+
   emitEvents([...deps.chains.evm], deps.storage);
 }
 

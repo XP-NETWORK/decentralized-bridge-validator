@@ -39,6 +39,7 @@ export interface THandler {
   ): Promise<{ signer: string; signature: string }>;
   nftData(tokenId: string, contract: string): Promise<TNftData>;
   chainIdent: TSupportedChains;
+  selfIsValidator(): Promise<boolean>;
 }
 
 export type LockEvent = {

@@ -25,8 +25,11 @@
     "@taquito/taquito": "^19.0.2",
     "@taquito/tzip16": "^19.0.2",
     "@ton/core": "^0.55.0",
+    "@ton/ton": "^13.10.0",
     "axios": "^1.6.7",
     "ethers": "^6.11.1",
-    "secretjs": "=1.12.3"
+    "secretjs": "=1.12.3",
+    "ton-crypto": "^3.2.0",
+    "tonweb": "^0.0.62"
   }
 }

@@ -14,7 +14,6 @@ import base58check from "bs58check";
 import { keccak256 } from "ethers";
 //@ts-expect-error no types copium
 import sodium from "libsodium-wrappers-sumo";
-import { TSupportedChains } from "../../config";
 import { BridgeStorage } from "../../contractsTypes/evm";
 import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
 import { NFTContractType } from "../../contractsTypes/tezos/NFT.types";
@@ -32,7 +31,6 @@ import {
 } from "./schema";
 
 export async function tezosHandler(
-  chainIdent: TSupportedChains,
   provider: TezosToolkit,
   signer: Signer,
   bridge: string,
@@ -41,6 +39,7 @@ export async function tezosHandler(
   blockChunks: number,
   restApiUrl: string,
 ): Promise<THandler> {
+  const chainIdent = "TEZOS";
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   const getNftTokenMetaData = async (contract: string, tokenId: bigint) => {

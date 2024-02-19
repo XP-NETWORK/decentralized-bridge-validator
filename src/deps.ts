@@ -1,10 +1,14 @@
+import { InMemorySigner } from "@taquito/signer";
+import { TezosToolkit } from "@taquito/taquito";
 import { JsonRpcProvider, Wallet } from "ethers";
 import secrets from "../secrets.json";
 import { TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
 import { evmHandler } from "./handler/evm";
+import { tezosHandler } from "./handler/tezos";
+import { raise } from "./handler/ton";
 import { TWallet } from "./handler/types";
-import { IBridgeConfig, IEvmChainConfig } from "./types";
+import { IBridgeConfig, IEvmChainConfig, ITezosChainConfig } from "./types";
 
 export function configEvmHandler(
   chainIdent: TSupportedChains,
@@ -22,6 +26,23 @@ export function configEvmHandler(
     storage,
     lastBlock,
     1000,
+  );
+}
+
+export async function configTezosHandler(
+  conf: ITezosChainConfig,
+  storage: BridgeStorage,
+) {
+  const Tezos = new TezosToolkit(conf.rpcURL);
+  const im = new InMemorySigner(secrets.tezosWallet.secretKey);
+  return tezosHandler(
+    Tezos,
+    im,
+    conf.contractAddress,
+    storage,
+    BigInt(conf.lastBlock),
+    1000,
+    conf.restApiURL,
   );
 }
 
@@ -47,6 +68,12 @@ export async function configDeps(config: IBridgeConfig) {
             BigInt(config.lastBlock),
           );
         }),
+      tezos: await configTezosHandler(
+        (config.bridgeChains.find(
+          (e) => e.chainType === "tezos",
+        ) as ITezosChainConfig) ?? raise("No Tezos Config Found"),
+        storage,
+      ),
     },
   };
 }

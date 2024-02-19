@@ -19,7 +19,7 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  const chains = [...deps.chains.evm];
+  const chains = [...deps.chains.evm, deps.chains.tezos];
 
   for (const chain of chains) {
     const selfIsValidator = await chain.selfIsValidator();
@@ -34,7 +34,7 @@ async function main() {
     }
   }
 
-  emitEvents([...deps.chains.evm], deps.storage);
+  emitEvents(chains, deps.storage);
 }
 
 export const help = `

@@ -19,7 +19,13 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  const chains = [...deps.chains.evm, deps.chains.tezos];
+  const chains = [
+    ...deps.chains.evm,
+    deps.chains.tezos,
+    deps.chains.secret,
+    deps.chains.ton,
+    deps.chains.multiversx,
+  ];
 
   for (const chain of chains) {
     const selfIsValidator = await chain.selfIsValidator();

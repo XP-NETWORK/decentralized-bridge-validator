@@ -1,5 +1,7 @@
+import { MikroORM } from "@mikro-orm/sqlite";
 import { testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
+import MikroOrmConfig from "./mikro-orm.config";
 import { IBridgeConfig } from "./types";
 import { emitEvents } from "./types/handler";
 

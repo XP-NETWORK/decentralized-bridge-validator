@@ -1,3 +1,4 @@
+import { MikroORM } from "@mikro-orm/core";
 import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
@@ -15,6 +16,7 @@ import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 import { TWallet } from "./handler/types";
+import MikroOrmConfig from "./mikro-orm.config";
 import {
   IBridgeConfig,
   IEvmChainConfig,
@@ -133,8 +135,12 @@ export async function configDeps(config: IBridgeConfig) {
     config.storageConfig.contractAddress,
     new Wallet(secrets.evmWallet.pk, storageProvider),
   );
+  const orm = await MikroORM.init(MikroOrmConfig);
+  await orm.schema.updateSchema();
+  const em = orm.em;
   return {
     storage,
+    em,
     chains: {
       evm: config.bridgeChains
         .filter((e) => e.chainType === "evm")

@@ -1,4 +1,5 @@
 import * as secp256k1 from "@noble/secp256k1";
+import chalk from "chalk";
 import { sha256 } from "ethers";
 import { SecretNetworkClient, Wallet, pubkeyToAddress } from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
@@ -10,6 +11,10 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../utils";
+
+function SecretLog(msg: string) {
+  console.log(chalk.red("SECRET:\t\t"), msg);
+}
 
 export function secretsHandler(
   client: SecretNetworkClient,
@@ -40,7 +45,6 @@ export function secretsHandler(
         extraEntropy: true,
         der: false,
       });
-      console.log({ messageHash });
       return {
         signer: wallet.address,
         signature: `0x${Buffer.from(signature).toString("hex")}`,
@@ -61,7 +65,6 @@ export function secretsHandler(
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);
       while (true) {
-        console.log(lastBlock);
         const latestBlockNumberResponse =
           await client.query.tendermint.getLatestBlock({});
         const latestBlockNumber = Number(
@@ -79,11 +82,8 @@ export function secretsHandler(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          console.info(
-            `No Transactions found in chain ${this.chainIdent} from block: ${startBlock} to: ${latestBlockNumber}`,
-          );
-          console.log(
-            "Waiting for 10 Seconds before looking for new transactions",
+          SecretLog(
+            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. "Waiting for 10 Seconds before looking for new transactions"`,
           );
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;

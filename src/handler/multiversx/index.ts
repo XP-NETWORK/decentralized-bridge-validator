@@ -27,8 +27,13 @@ import {
   waitForMSWithMsg,
 } from "../utils";
 
+import chalk from "chalk";
 import { Root } from "./gateway";
 import { MXClaimDataSchema } from "./schema";
+
+function MxLog(msg: string) {
+  console.log(chalk.blueBright("MULTIVERSX:\t"), msg);
+}
 
 export function multiversxHandler(
   provider: INetworkProvider,
@@ -116,7 +121,9 @@ export function multiversxHandler(
       let lastBlock_ = lastBlock;
       while (true) {
         const txs = (
-          await gateway.get<Root>(`hyperblock/by-nonce/${lastBlock_}`)
+          await gateway.get<Root>(
+            `hyperblock/by-nonce/${lastBlock_.toString()}`,
+          )
         ).data;
 
         const txsForBridge = txs.data.hyperblock.transactions.filter(
@@ -127,11 +134,8 @@ export function multiversxHandler(
         );
 
         if (!txsForBridge.length) {
-          console.info(
-            `No Transactions found in chain ${this.chainIdent} from block: ${lastBlock}`,
-          );
-          console.log(
-            "Waiting for 10 Seconds before looking for new transactions",
+          MxLog(
+            `No Transactions found in chain from block: ${lastBlock_}. Waiting for 10 Seconds before looking for new transactions`,
           );
           const lastestStatus = await provider.getNetworkStatus();
           const lastNonce = lastestStatus.HighestFinalNonce;

@@ -11,6 +11,7 @@ import {
 } from "@taquito/utils";
 import * as bip39 from "bip39";
 import base58check from "bs58check";
+import chalk from "chalk";
 import { keccak256 } from "ethers";
 //@ts-expect-error no types copium
 import sodium from "libsodium-wrappers-sumo";
@@ -29,6 +30,10 @@ import {
   TezosNftTransferDetailsSchema,
   TezosNftTransferDetailsTypes,
 } from "./schema";
+
+function TezosLog(...msg: unknown[]) {
+  console.log(chalk.yellow("TEZOS:\t\t"), ...msg);
+}
 
 export async function tezosHandler(
   provider: TezosToolkit,
@@ -116,8 +121,6 @@ export async function tezosHandler(
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);
       while (true) {
-        console.log(lastBlock);
-
         const latestBlockNumber = (await provider.rpc.getBlockHeader()).level;
 
         const latestBlock =
@@ -134,11 +137,8 @@ export async function tezosHandler(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          console.info(
-            `No Transactions found in chain ${chainIdent} from block: ${startBlock} to: ${latestBlockNumber}`,
-          );
-          console.log(
-            "Waiting for 10 Seconds before looking for new transactions",
+          TezosLog(
+            `No Transactions found in chain ${chainIdent} from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
           );
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;
@@ -183,7 +183,7 @@ export async function tezosHandler(
         const md = nftContract.tzip16();
         name = (await md.metadataName()) ?? name;
       } catch (e) {
-        console.log("error getting name Tezos");
+        TezosLog("error getting name Tezos");
       }
       let symbol = "NTEZOS";
       try {
@@ -196,7 +196,7 @@ export async function tezosHandler(
         }
         symbol = JSON.parse(tokenMd).symbol ?? symbol;
       } catch (e) {
-        console.log("error getting symbol Tezos", e);
+        TezosLog("error getting symbol Tezos", e);
       }
       let royalty = 0n;
       try {
@@ -226,7 +226,7 @@ export async function tezosHandler(
         const rate = Object.values(metaData.royalties.shares)[0];
         royalty = BigInt((rate / max_percentage) * 10000);
       } catch (e) {
-        console.log("Error getting royalty Tezos");
+        TezosLog("Error getting royalty Tezos");
       }
       return {
         metadata: tokenMd,

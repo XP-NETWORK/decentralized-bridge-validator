@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { JsonRpcProvider, Wallet, ethers, isAddress } from "ethers";
 import { TSupportedChains } from "../../config";
 import {
@@ -22,6 +23,9 @@ export function evmHandler(
   blockChunks: number,
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
+  function EvmLog(msg: string) {
+    console.log(chalk.green(`EVM: ${chainIdent}\t`), msg);
+  }
   return {
     async addSelfAsValidator() {
       let validatorsCount = Number(await bc.validatorsCount());
@@ -59,7 +63,6 @@ export function evmHandler(
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);
       while (true) {
-        console.log(lastBlock);
         const latestBlockNumber = await provider.getBlockNumber();
 
         const latestBlock =
@@ -78,11 +81,8 @@ export function evmHandler(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          console.info(
-            `No Transactions found in chain ${chainIdent} from block: ${startBlock} to: ${latestBlockNumber}`,
-          );
-          console.log(
-            "Waiting for 10 Seconds before looking for new transactions",
+          EvmLog(
+            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
           );
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;
@@ -121,7 +121,7 @@ export function evmHandler(
     async signClaimData(data) {
       if (!isAddress(data.destinationUserAddress)) {
         data.destinationUserAddress = data.royaltyReceiver;
-        console.log("Invalid destination address");
+        EvmLog("Invalid destination address");
       }
       const nftTransferDetailsValues = [
         data.tokenId,

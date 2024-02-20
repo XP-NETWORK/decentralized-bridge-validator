@@ -7,6 +7,7 @@ import {
   beginCell,
   toNano,
 } from "@ton/ton";
+import chalk from "chalk";
 import { sign } from "ton-crypto";
 import TonWeb from "tonweb";
 import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
@@ -27,6 +28,10 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../utils";
+
+function TonLog(msg: string) {
+  console.log(chalk.blue("TON:\t\t"), msg);
+}
 
 export function tonHandler(
   client: TonClient,
@@ -157,10 +162,10 @@ export function tonHandler(
           const startBlock = lastBlock;
           lastBlock = Number(transactions[0].lt);
           if (!transactions.length) {
-            console.info(
-              `No Transactions found in chain ${this.chainIdent} from block: ${startBlock} to: ${lastBlock}`,
+            TonLog(
+              `No Transactions found in chain from block: ${startBlock} to: ${lastBlock}`,
             );
-            console.log(
+            TonLog(
               "Waiting for 10 Seconds before looking for new transactions",
             );
             await new Promise<undefined>((e) => setTimeout(e, 10000));
@@ -209,7 +214,9 @@ export function tonHandler(
             }
           }
         } catch (e) {
-          console.log(`Received error ${e} while listening for ton events`);
+          TonLog(`TON: ${e} while listening for ton events`);
+          TonLog("Sleeping for 10 seconds");
+          await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
         }
       }
     },
@@ -229,7 +236,6 @@ export function tonHandler(
           const collectionContentSlice = collection_content.asSlice();
           collectionContentSlice.loadUint(8);
           const metaDataURL = collectionContentSlice.loadStringTail();
-          console.log({ metaDataURL });
           return metaDataURL;
         }
         const individualContentSlice = nftData.individual_content.asSlice();
@@ -313,7 +319,7 @@ export function tonHandler(
           )
           .endCell();
       } catch (e) {
-        console.log("Not Native TON Address");
+        TonLog("Not Native TON Address");
       }
       const claimData: ClaimData = {
         $$type: "ClaimData",

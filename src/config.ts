@@ -17,7 +17,7 @@ export const bridgeTestChains = [
   },
   {
     chain: "ETH",
-    rpcURL: "https://rpc.notadegen.com/eth/sepolia",
+    rpcURL: "https://ethereum-sepolia.publicnode.com",
     nativeCoinSymbol: "ETH",
     intialFund: "50000000000000000",
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
@@ -42,7 +42,7 @@ export const bridgeTestChains = [
     chainType: "multiversX",
     elasticSearchURL: "https://devnet-index.multiversx.com",
     gatewayURL: "https://devnet-gateway.multiversx.com",
-    lastBlock: 0,
+    lastBlock: 2343441,
     chainID: "D",
   },
   {

@@ -9,6 +9,7 @@ import {
 } from "@ton/ton";
 import { sign } from "ton-crypto";
 import TonWeb from "tonweb";
+import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
 import { BridgeStorage } from "../../contractsTypes/evm";
 import {
   Bridge,
@@ -28,7 +29,8 @@ import {
 } from "../utils";
 
 export function tonHandler(
-  provider: TonClient,
+  client: TonClient,
+  provider: HttpProvider,
   signer: WalletContractV4,
   bridge: string,
   storage: BridgeStorage,
@@ -36,9 +38,11 @@ export function tonHandler(
   walletSender: Sender,
   secretKey: string,
 ): THandler {
-  const bc = provider.open(
+  const bc = client.open(
     Bridge.fromAddress(Address.parseFriendly(bridge).address),
   );
+
+  const tonweb = new TonWeb(provider);
 
   return {
     async addSelfAsValidator() {
@@ -124,7 +128,10 @@ export function tonHandler(
         .endCell()
         .beginParse()
         .loadUintBig(256);
-      return (await bc.getValidator(thisValidatorPk))?.added ?? false;
+      const res = await tonweb.provider.call(bridge, "Validator", [
+        ["num", thisValidatorPk.toString()],
+      ]);
+      return !!res.stack[0][1].elements.length;
     },
     chainIdent: "TON",
     async listenForLockEvents(builder, cb) {
@@ -132,12 +139,12 @@ export function tonHandler(
       while (true) {
         console.log(lastBlock);
 
-        const latestTx = await provider.getTransactions(
+        const latestTx = await client.getTransactions(
           Address.parseFriendly(bridge).address,
           { limit: 1 },
         );
 
-        const transactions = await provider.getTransactions(
+        const transactions = await client.getTransactions(
           Address.parseFriendly(bridge).address,
           {
             limit: 100,
@@ -205,14 +212,14 @@ export function tonHandler(
       }
     },
     async nftData(_tokenId, contract) {
-      const nftItem = provider.open(
+      const nftItem = client.open(
         NftItem.fromAddress(Address.parseFriendly(contract).address),
       );
 
       const getCollectionMetaData = async () => {
         const nftData = await nftItem.getGetNftData();
         if (nftData.collection_address) {
-          const nftCollection = provider.open(
+          const nftCollection = client.open(
             NftCollection.fromAddress(nftData.collection_address),
           );
           const { collection_content } =
@@ -241,7 +248,7 @@ export function tonHandler(
       let royalty = 0n;
 
       if (nftData.collection_address) {
-        const nftCollection = provider.open(
+        const nftCollection = client.open(
           NftCollection.fromAddress(nftData.collection_address),
         );
         const royaltyParams = await nftCollection.getRoyaltyParams();

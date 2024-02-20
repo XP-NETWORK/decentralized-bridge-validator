@@ -14,6 +14,7 @@ import {
 export function secretsHandler(
   client: SecretNetworkClient,
   wallet: Wallet,
+  publicKey: string,
   bridge: string,
   bridgeCodeHash: string,
   storage: BridgeStorage,
@@ -51,11 +52,11 @@ export function secretsHandler(
         code_hash: bridgeCodeHash,
         query: {
           get_validator: {
-            address: Buffer.from(wallet.publicKey).toString("base64"),
+            address: Buffer.from(publicKey, "hex").toString("base64"),
           },
         },
       })) as { validator: { data: { added: boolean } } };
-      return res.validator.data.added;
+      return res.validator.data.added && res.validator.data.added;
     },
     async listenForLockEvents(builder, cb) {
       let lastBlock = Number(lastBlock_);
@@ -121,9 +122,10 @@ export function secretsHandler(
       }
     },
     async addSelfAsValidator() {
+      const newV = Buffer.from(publicKey).toString("base64");
       let validatorsCount = await getStakingSignatureCount();
       let signatureCount = Number(
-        await storage.getStakingSignaturesCount(wallet.address),
+        await storage.getStakingSignaturesCount(newV),
       );
 
       while (signatureCount < confirmationCountNeeded(validatorsCount)) {
@@ -133,19 +135,17 @@ export function secretsHandler(
             validatorsCount,
           )}`,
         );
-        signatureCount = Number(
-          await storage.getStakingSignaturesCount(wallet.address),
-        );
+        signatureCount = Number(await storage.getStakingSignaturesCount(newV));
         validatorsCount = await getStakingSignatureCount();
       }
-      const signatures = [
-        ...(await storage.getStakingSignatures(wallet.address)),
-      ].map((item) => {
-        return {
-          signerAddress: item.signerAddress,
-          signature: item.signature,
-        };
-      });
+      const signatures = [...(await storage.getStakingSignatures(newV))].map(
+        (item) => {
+          return {
+            signerAddress: item.signerAddress,
+            signature: item.signature,
+          };
+        },
+      );
 
       const validatorToAddPublicKeyUint8 = Buffer.from(wallet.address, "hex");
       const msg: AddValidatorType = {

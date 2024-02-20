@@ -99,9 +99,7 @@ export function multiversxHandler(
     async selfIsValidator() {
       const query = bc.createQuery({
         func: "validators",
-        args: [
-          new BytesValue(Buffer.from(signer.getAddress().bech32(), "hex")),
-        ],
+        args: [new BytesValue(Buffer.from(signer.getAddress().hex(), "hex"))],
       });
       const queryResponse = await provider.queryContract(query);
       const validatorsDefinition = bc.getEndpoint("validators");

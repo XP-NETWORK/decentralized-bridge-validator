@@ -53,9 +53,10 @@ export async function tezosHandler(
   };
   return {
     async selfIsValidator() {
-      return (await bc.storage()).validators.has(
+      const mutez = (await bc.storage()).validators.get(
         tas.address(await signer.publicKeyHash()),
       );
+      return mutez !== undefined;
     },
     async addSelfAsValidator() {
       let validatorsCount = (await bc.storage()).validators_count.toNumber();

@@ -15,7 +15,6 @@ async function main() {
     config = testnetBridgeConfig;
     console.log("Setting up for testnet environment");
   }
-  console.log(config);
 
   const deps = await configDeps(config);
 

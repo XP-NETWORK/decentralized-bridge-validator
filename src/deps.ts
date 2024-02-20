@@ -5,6 +5,7 @@ import { TezosToolkit } from "@taquito/taquito";
 import { TonClient, WalletContractV4 } from "@ton/ton";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
+import TonWeb from "tonweb";
 import secrets from "../secrets.json";
 import { TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
@@ -63,13 +64,17 @@ export async function configSecretHandler(
   conf: ISecretChainConfig,
   storage: BridgeStorage,
 ) {
+  const wallet = new SecretWallet(secrets.secretWallet.privateKey);
   const client = new SecretNetworkClient({
     chainId: conf.chainId,
     url: conf.rpcURL,
+    wallet: wallet,
+    walletAddress: wallet.address,
   });
   return secretsHandler(
     client,
-    new SecretWallet(secrets.secretWallet.privateKey),
+    wallet,
+    secrets.secretWallet.publicKey,
     conf.contractAddress,
     (
       await client.query.compute.codeHashByContractAddress({
@@ -112,6 +117,7 @@ export async function configTonHandler(
   });
   return tonHandler(
     TC,
+    new TonWeb.HttpProvider(conf.rpcURL),
     wallet,
     conf.contractAddress,
     storage,

@@ -12,7 +12,7 @@ import { TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
 import { evmHandler } from "./handler/evm";
 import { multiversxHandler } from "./handler/multiversx";
-import { secretsHandler } from "./handler/secrets";
+import { secretsHandler } from "./handler/secrets/secretsHandler";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 import { TWallet } from "./handler/types";

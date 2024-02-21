@@ -141,7 +141,7 @@ export async function configDeps(config: IBridgeConfig) {
   return {
     storage,
     em,
-    chains: {
+    chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...config.bridgeChains
         .filter((e) => e.chainType === "evm")
@@ -156,30 +156,30 @@ export async function configDeps(config: IBridgeConfig) {
             BigInt(config.lastBlock),
           );
         }),
-      tezos: await configTezosHandler(
+      await configTezosHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "tezos",
         ) as ITezosChainConfig) ?? raise("No Tezos Config Found"),
         storage,
       ),
-      secret: await configSecretHandler(
+      await configSecretHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "scrt",
         ) as ISecretChainConfig) ?? raise("No Secret Config Found"),
         storage,
       ),
-      multiversx: await configMultiversXHandler(
+      await configMultiversXHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "multiversX",
         ) as IMultiversXChainConfig) ?? raise("No Secret Config Found"),
         storage,
       ),
-      ton: await configTonHandler(
+      await configTonHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "ton",
         ) as ITonChainConfig) ?? raise("No Secret Config Found"),
         storage,
       ),
-    },
+    ],
   };
 }

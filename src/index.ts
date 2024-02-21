@@ -1,7 +1,7 @@
 import { testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
+import { listenEvents } from "./handler";
 import { IBridgeConfig } from "./types";
-import { emitEvents } from "./types/handler";
 
 async function main() {
   if (process.argv.includes("--help")) {
@@ -31,7 +31,7 @@ async function main() {
     }
   }
 
-  emitEvents(deps.chains, deps.storage);
+  listenEvents(deps.chains, deps.storage);
 }
 
 export const help = `

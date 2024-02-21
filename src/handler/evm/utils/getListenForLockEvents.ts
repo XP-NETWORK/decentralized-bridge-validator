@@ -1,8 +1,9 @@
 import { JsonRpcProvider } from "ethers";
 import { log } from ".";
+import { EventBuilder } from "../..";
 import { TSupportedChains } from "../../../config";
 import { Bridge, Bridge__factory } from "../../../contractsTypes/evm";
-import { EventBuilder, EventIter } from "../../types";
+import { EventIter } from "../../types";
 
 const getListenForLockEvents = (
   provider: JsonRpcProvider,

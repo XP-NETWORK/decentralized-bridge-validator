@@ -28,8 +28,8 @@ import {
 } from "../utils";
 
 import chalk from "chalk";
-import { Root } from "./gateway";
-import { MXClaimDataSchema } from "./schema";
+import { MXClaimDataSchema } from "../../contractsTypes/multiversx/schema";
+import { Root } from "./types/gateway";
 
 function MxLog(msg: string) {
   console.log(chalk.blueBright("MULTIVERSX:\t"), msg);

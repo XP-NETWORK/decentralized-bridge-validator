@@ -1,4 +1,5 @@
 import { TSupportedChains } from "../config";
+import { EventBuilder } from "../handler";
 
 export type TNftData = {
   name: string;
@@ -52,31 +53,3 @@ export type LockEvent = {
   sourceChain: string;
   transactionHash: string;
 };
-
-export function eventBuilder() {
-  return {
-    nftLocked(
-      tokenId: string,
-      destinationChain: string,
-      destinationUserAddress: string,
-      sourceNftContractAddress: string,
-      tokenAmount: string,
-      nftType: string,
-      sourceChain: string,
-      transactionHash: string,
-    ) {
-      return {
-        tokenAmount,
-        tokenId,
-        destinationChain,
-        destinationUserAddress,
-        sourceNftContractAddress,
-        nftType,
-        sourceChain,
-        transactionHash,
-      };
-    },
-  };
-}
-
-export type EventBuilder = ReturnType<typeof eventBuilder>;

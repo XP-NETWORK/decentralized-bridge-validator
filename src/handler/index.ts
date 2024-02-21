@@ -1,12 +1,8 @@
 import { TSupportedChains } from "../config";
 import { BridgeStorage } from "../contractsTypes/evm";
-import {
-  THandler,
-  TNftTransferDetailsObject,
-  eventBuilder,
-} from "../handler/types";
+import { THandler, TNftTransferDetailsObject } from "./types";
 
-export async function emitEvents(
+export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
 ) {
@@ -15,7 +11,7 @@ export async function emitEvents(
 
   const builder = eventBuilder();
 
-  async function listenEvents(chain: THandler) {
+  async function poolEvents(chain: THandler) {
     chain.listenForLockEvents(builder, async (ev) => {
       const sourceChain = map.get(ev.sourceChain as TSupportedChains);
       if (!sourceChain)
@@ -69,10 +65,34 @@ export async function emitEvents(
       throw Error("Duplicate chain nonce!");
     }
     map.set(chain.chainIdent, chain);
-    listenEvents(chain);
+    poolEvents(chain);
   }
 }
 
-export function configureDeps() {
-  return {};
+export function eventBuilder() {
+  return {
+    nftLocked(
+      tokenId: string,
+      destinationChain: string,
+      destinationUserAddress: string,
+      sourceNftContractAddress: string,
+      tokenAmount: string,
+      nftType: string,
+      sourceChain: string,
+      transactionHash: string,
+    ) {
+      return {
+        tokenAmount,
+        tokenId,
+        destinationChain,
+        destinationUserAddress,
+        sourceNftContractAddress,
+        nftType,
+        sourceChain,
+        transactionHash,
+      };
+    },
+  };
 }
+
+export type EventBuilder = ReturnType<typeof eventBuilder>;

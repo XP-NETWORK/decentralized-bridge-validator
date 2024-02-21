@@ -1,7 +1,5 @@
-import { MikroORM } from "@mikro-orm/sqlite";
 import { testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
-import MikroOrmConfig from "./mikro-orm.config";
 import { IBridgeConfig } from "./types";
 import { emitEvents } from "./types/handler";
 
@@ -20,15 +18,7 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  const chains = [
-    ...deps.chains.evm,
-    deps.chains.tezos,
-    deps.chains.secret,
-    deps.chains.ton,
-    deps.chains.multiversx,
-  ];
-
-  for (const chain of chains) {
+  for (const chain of deps.chains) {
     const selfIsValidator = await chain.selfIsValidator();
     console.log(`Validator is already added to ${chain.chainIdent}`);
     if (!selfIsValidator) {
@@ -41,7 +31,7 @@ async function main() {
     }
   }
 
-  emitEvents(chains, deps.storage);
+  emitEvents(deps.chains, deps.storage);
 }
 
 export const help = `

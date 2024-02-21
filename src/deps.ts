@@ -142,7 +142,8 @@ export async function configDeps(config: IBridgeConfig) {
     storage,
     em,
     chains: {
-      evm: config.bridgeChains
+      // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
+      ...config.bridgeChains
         .filter((e) => e.chainType === "evm")
         .map((c) => {
           const config = c as IEvmChainConfig;

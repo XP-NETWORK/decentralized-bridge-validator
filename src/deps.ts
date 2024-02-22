@@ -4,7 +4,7 @@ import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
 import { TezosToolkit } from "@taquito/taquito";
 import { TonClient, WalletContractV4 } from "@ton/ton";
-import { JsonRpcProvider, Wallet } from "ethers";
+import { HDNodeWallet, JsonRpcProvider, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import secrets from "../secrets.json";
@@ -150,7 +150,11 @@ export async function configDeps(config: IBridgeConfig) {
           return configEvmHandler(
             config.chain as TSupportedChains,
             config.rpcURL,
-            secrets.evmWallet,
+            {
+              ...secrets.evmWallet,
+              pubK: HDNodeWallet.fromExtendedKey(secrets.evmWallet.pk)
+                .publicKey,
+            },
             config.contractAddress,
             storage,
             BigInt(config.lastBlock),

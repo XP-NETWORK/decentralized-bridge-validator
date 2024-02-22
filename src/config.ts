@@ -104,5 +104,29 @@ export const testnetBridgeConfig: IBridgeConfig = {
   stakingConfig: stakingTestChain,
 };
 
+export const prodBridgeConfig: IBridgeConfig = {
+  bridgeChains: [],
+  storageConfig: {
+    chain: "OP",
+    rpcURL: "https://mainnet.optimism.io",
+    nativeCoinSymbol: "OP",
+    intialFund: "500000000000000000",
+    contractAddress: "0xBridgeStorageAddress",
+    chainType: "evm",
+    lastBlock: 21321,
+  },
+  stakingConfig: {
+    chain: "BSC",
+    rpcURL: "https://bsc-testnet.publicnode.com",
+    coinSymbol: "XPNET",
+    nativeCoinSymbol: "BNB",
+    chainType: "evm",
+    coinAddress: "0x61f00f09bA58F1613b05aE4f9AF9039fd8F959d0",
+    contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
+    intialFund: "100000000000000000000",
+    lastBlock: 34255418,
+  },
+};
+
 export type TSupportedChainsConfig = (typeof bridgeTestChains)[number];
 export type TSupportedChains = TSupportedChainsConfig["chain"];

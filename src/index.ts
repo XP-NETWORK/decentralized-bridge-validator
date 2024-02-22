@@ -1,4 +1,4 @@
-import { testnetBridgeConfig } from "./config";
+import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import { listenEvents } from "./handler";
 import { checkOrAddSelfAsVal } from "./handler/addSelf";
@@ -10,7 +10,7 @@ async function main() {
     process.exit(0);
   }
 
-  let config: IBridgeConfig = testnetBridgeConfig;
+  let config: IBridgeConfig = prodBridgeConfig;
 
   if (process.argv.includes("--testnet")) {
     config = testnetBridgeConfig;

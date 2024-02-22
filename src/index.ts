@@ -1,6 +1,7 @@
 import { testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import { listenEvents } from "./handler";
+import { checkOrAddSelfAsVal } from "./handler/addSelf";
 import { IBridgeConfig } from "./types";
 
 async function main() {
@@ -18,18 +19,7 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  for (const chain of deps.chains) {
-    const selfIsValidator = await chain.selfIsValidator();
-    console.log(`Validator is already added to ${chain.chainIdent}`);
-    if (!selfIsValidator) {
-      const added = await chain.addSelfAsValidator();
-      if (added === "failure") {
-        throw new Error(
-          `Failed to add self as validator for chain ${chain.chainIdent}`,
-        );
-      }
-    }
-  }
+  checkOrAddSelfAsVal(deps.chains);
 
   listenEvents(deps.chains, deps.storage);
 }

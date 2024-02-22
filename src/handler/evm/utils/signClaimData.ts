@@ -3,7 +3,7 @@ import { log } from ".";
 import { TSupportedChains } from "../../../config";
 import { TNftTransferDetailsObject } from "../../types";
 
-const getSignClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
+const signClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
   return async (data: TNftTransferDetailsObject) => {
     if (!isAddress(data.destinationUserAddress)) {
       data.destinationUserAddress = data.royaltyReceiver;
@@ -58,4 +58,4 @@ const getSignClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
   };
 };
 
-export default getSignClaimData;
+export default signClaimData;

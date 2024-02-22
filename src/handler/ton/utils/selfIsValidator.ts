@@ -2,7 +2,7 @@ import { beginCell } from "@ton/core";
 import { WalletContractV4 } from "@ton/ton";
 import TonWeb from "tonweb";
 
-export async function selfIsValidator(
+export default async function selfIsValidator(
   signer: WalletContractV4,
   tonweb: TonWeb,
   bridge: string,

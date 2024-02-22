@@ -3,12 +3,12 @@ import { TSupportedChains } from "../../config";
 import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
 import { THandler } from "../types";
 import {
-  getAddSelfAsValidator,
-  getGenerateWallet,
-  getListenForLockEvents,
-  getNftData,
-  getSelfIsValidator,
-  getSignClaimData,
+  addSelfAsValidator,
+  generateWallet,
+  listenForLockEvents,
+  nftData,
+  selfIsValidator,
+  signClaimData,
 } from "./utils";
 
 export function evmHandler(
@@ -23,9 +23,9 @@ export function evmHandler(
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
     chainIdent,
-    addSelfAsValidator: getAddSelfAsValidator(bc, storage, signer),
-    generateWallet: getGenerateWallet(),
-    listenForLockEvents: getListenForLockEvents(
+    addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
+    generateWallet: generateWallet(),
+    listenForLockEvents: listenForLockEvents(
       provider,
       lastBlock_,
       blockChunks,
@@ -33,8 +33,8 @@ export function evmHandler(
       bc,
       chainIdent,
     ),
-    nftData: getNftData(provider),
-    selfIsValidator: getSelfIsValidator(bc, signer),
-    signClaimData: getSignClaimData(chainIdent, signer),
+    nftData: nftData(provider),
+    selfIsValidator: selfIsValidator(bc, signer),
+    signClaimData: signClaimData(chainIdent, signer),
   };
 }

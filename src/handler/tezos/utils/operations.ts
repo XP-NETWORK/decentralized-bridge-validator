@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function TezosGetContractOperations({
+export default async function TezosGetContractOperations({
   contractAddress,
   fromLevel,
   toLevel,

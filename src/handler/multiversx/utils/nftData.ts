@@ -1,7 +1,7 @@
 import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
 
-export async function nftData(
+export default async function nftData(
   tokenId: string,
   contract: string,
   provider: INetworkProvider,

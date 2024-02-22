@@ -10,7 +10,7 @@ import {
   waitForMSWithMsg,
 } from "../../utils";
 
-export async function addSelfAsValidator(
+export default async function addSelfAsValidator(
   storage: BridgeStorage,
   bc: BridgeContractType,
   signer: Signer,

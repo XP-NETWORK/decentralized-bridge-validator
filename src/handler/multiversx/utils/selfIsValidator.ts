@@ -6,7 +6,7 @@ import {
 import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
 
-export async function selfIsValidator(
+export default async function selfIsValidator(
   bc: SmartContract,
   signer: UserSigner,
   provider: INetworkProvider,

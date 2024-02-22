@@ -2,7 +2,7 @@ import { Address, TonClient } from "@ton/ton";
 import { NftCollection } from "../../../contractsTypes/ton/tonNftCollection";
 import { NftItem } from "../../../contractsTypes/ton/tonNftContract";
 
-export async function nftData(
+export default async function nftData(
   _tokenId: string,
   contract: string,
   client: TonClient,

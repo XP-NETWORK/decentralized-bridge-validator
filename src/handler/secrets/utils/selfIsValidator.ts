@@ -1,6 +1,6 @@
 import { SecretNetworkClient } from "secretjs";
 
-export async function selfIsValidator(
+export default async function selfIsValidator(
   client: SecretNetworkClient,
   bridge: string,
   bridgeCodeHash: string,

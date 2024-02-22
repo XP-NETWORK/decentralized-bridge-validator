@@ -1,10 +1,11 @@
 import { TezosToolkit } from "@taquito/taquito";
 import { Tzip16Module, bytes2Char, tzip16 } from "@taquito/tzip16";
-import chalk from "chalk";
+
 import { NFTContractType } from "../../../contractsTypes/tezos/NFT.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
+import TezosLog from "./log";
 
-export async function nftData(
+export default async function nftData(
   tokenId: string,
   contract: string,
   provider: TezosToolkit,
@@ -82,6 +83,3 @@ const URLCanParse = (url: string): boolean => {
     return false;
   }
 };
-export function TezosLog(...msg: unknown[]) {
-  console.log(chalk.yellow("TEZOS:\t\t"), ...msg);
-}

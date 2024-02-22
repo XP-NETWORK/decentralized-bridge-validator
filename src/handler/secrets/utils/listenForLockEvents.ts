@@ -1,9 +1,9 @@
-import chalk from "chalk";
 import { SecretNetworkClient } from "secretjs";
 import { EventBuilder } from "../..";
 import { EventIter } from "../../types";
+import SecretLog from "./log";
 
-export async function listenForLockEvents(
+export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: EventIter,
   lastBlock_: bigint,
@@ -68,8 +68,4 @@ export async function listenForLockEvents(
       );
     }
   }
-}
-
-function SecretLog(msg: string) {
-  console.log(chalk.red("SECRET:\t\t"), msg);
 }

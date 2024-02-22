@@ -8,12 +8,14 @@ import { BridgeStorage } from "../../contractsTypes/evm";
 import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
 import { THandler } from "../types";
 
-import { addSelfAsValidator } from "./utils/addSelfAsValidator";
-import { generateWallet } from "./utils/generateWallet";
-import { listenForLockEvents } from "./utils/listenForLockEvents";
-import { nftData } from "./utils/nftData";
-import { selfIsValidator } from "./utils/selfIsValidator";
-import { signClaimData } from "./utils/signClaimData";
+import {
+  addSelfAsValidator,
+  generateWallet,
+  listenForLockEvents,
+  nftData,
+  selfIsValidator,
+  signClaimData,
+} from "./utils";
 
 export function multiversxHandler(
   provider: INetworkProvider,

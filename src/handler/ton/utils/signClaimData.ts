@@ -1,6 +1,6 @@
 import { Address, beginCell } from "@ton/core";
 import { WalletContractV4 } from "@ton/ton";
-import chalk from "chalk";
+
 import { sign } from "ton-crypto";
 import TonWeb from "tonweb";
 import {
@@ -8,8 +8,9 @@ import {
   storeClaimData,
 } from "../../../contractsTypes/ton/tonBridge";
 import { TNftTransferDetailsObject } from "../../types";
+import TonLog from "./log";
 
-export async function signClaimData(
+export default async function signClaimData(
   data: TNftTransferDetailsObject,
   secretKey: string,
   signer: WalletContractV4,
@@ -102,7 +103,4 @@ export async function signClaimData(
     signature: signature,
     signer: TonWeb.utils.bytesToHex(signer.publicKey),
   };
-}
-function TonLog(msg: string) {
-  console.log(chalk.blue("TON:\t\t"), msg);
 }

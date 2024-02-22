@@ -4,7 +4,7 @@ import base58check from "bs58check";
 //@ts-expect-error no types copium
 import sodium from "libsodium-wrappers-sumo";
 
-export async function generateWallet() {
+export default async function generateWallet() {
   const mnemonic = bip39.generateMnemonic(256);
   const seed = await bip39.mnemonicToSeed(mnemonic, "");
   await sodium.ready;

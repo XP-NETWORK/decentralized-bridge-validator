@@ -1,7 +1,7 @@
 import { Wallet } from "ethers";
 import { TWallet } from "../../types";
 
-const getGenerateWallet = () => {
+const generateWallet = () => {
   return () => {
     const signer = Wallet.createRandom();
     const response: Promise<TWallet> = Promise.resolve({
@@ -12,4 +12,4 @@ const getGenerateWallet = () => {
   };
 };
 
-export default getGenerateWallet;
+export default generateWallet;

@@ -2,7 +2,10 @@ import { Signer } from "@taquito/taquito";
 import { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
 
-export async function selfIsValidator(bc: BridgeContractType, signer: Signer) {
+export default async function selfIsValidator(
+  bc: BridgeContractType,
+  signer: Signer,
+) {
   const mutez = (await bc.storage()).validators.get(
     tas.address(await signer.publicKeyHash()),
   );

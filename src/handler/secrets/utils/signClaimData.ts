@@ -3,7 +3,7 @@ import { sha256 } from "ethers";
 import { Wallet } from "secretjs";
 import { TNftTransferDetailsObject } from "../../types";
 
-export async function signClaimData(
+export default async function signClaimData(
   data: TNftTransferDetailsObject,
   wallet: Wallet,
 ) {

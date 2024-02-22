@@ -13,7 +13,7 @@ import { keccak256 } from "ethers";
 import { MXClaimDataSchema } from "../../../contractsTypes/multiversx/schema";
 import { TNftTransferDetailsObject } from "../../types";
 
-export async function signClaimData(
+export default async function signClaimData(
   buf: TNftTransferDetailsObject,
   signer: UserSigner,
 ) {

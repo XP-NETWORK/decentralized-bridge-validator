@@ -1,6 +1,6 @@
 import { Mnemonic } from "@multiversx/sdk-wallet/out";
 
-export function generateWallet() {
+export default function generateWallet() {
   const mnemonic = Mnemonic.generate();
   const secretKey = mnemonic.deriveKey(0);
 

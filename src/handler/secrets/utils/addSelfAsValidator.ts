@@ -8,7 +8,7 @@ import {
   waitForMSWithMsg,
 } from "../../utils";
 
-export async function addSelfAsValidator(
+export default async function addSelfAsValidator(
   publicKey: string,
   storage: BridgeStorage,
   client: SecretNetworkClient,

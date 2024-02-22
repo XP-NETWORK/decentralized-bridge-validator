@@ -6,7 +6,7 @@ import {
   waitForMSWithMsg,
 } from "../../utils";
 
-const getAddSelfAsValidator = (
+const addSelfAsValidator = (
   bc: Bridge,
   storage: BridgeStorage,
   signer: Wallet,
@@ -49,4 +49,4 @@ const getAddSelfAsValidator = (
   };
 };
 
-export default getAddSelfAsValidator;
+export default addSelfAsValidator;

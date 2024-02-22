@@ -1,6 +1,6 @@
 import { SecretNetworkClient } from "secretjs";
 
-export async function nftData(
+export default async function nftData(
   tokenId: string,
   contract: string,
   client: SecretNetworkClient,

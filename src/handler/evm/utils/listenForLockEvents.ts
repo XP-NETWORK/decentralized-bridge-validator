@@ -5,7 +5,7 @@ import { TSupportedChains } from "../../../config";
 import { Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { EventIter } from "../../types";
 
-const getListenForLockEvents = (
+const listenForLockEvents = (
   provider: JsonRpcProvider,
   lastBlock_: bigint,
   blockChunks: number,
@@ -61,4 +61,4 @@ const getListenForLockEvents = (
   };
 };
 
-export default getListenForLockEvents;
+export default listenForLockEvents;

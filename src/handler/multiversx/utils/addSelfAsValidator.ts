@@ -14,7 +14,7 @@ import {
   waitForMSWithMsg,
 } from "../../utils";
 
-export async function addSelfAsValidator(
+export default async function addSelfAsValidator(
   bc: SmartContract,
   chainID: string,
   storage: BridgeStorage,

@@ -1,15 +1,11 @@
 import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import axios, { Axios } from "axios";
-import chalk from "chalk";
 import { EventBuilder } from "../..";
 import { EventIter } from "../../types";
 import { Root } from "../types/gateway";
+import MxLog from "./log";
 
-function MxLog(msg: string) {
-  console.log(chalk.blueBright("MULTIVERSX:\t"), msg);
-}
-
-export async function listenForLockEvents(
+export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: EventIter,
   lastBlock: bigint,

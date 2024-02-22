@@ -1,11 +1,11 @@
 import { Address, TonClient } from "@ton/ton";
-import chalk from "chalk";
 import { raise } from "..";
 import { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { EventIter } from "../../types";
+import TonLog from "./log";
 
-export async function listenForLockEvents(
+export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: EventIter,
   lastBlock_: bigint,
@@ -89,8 +89,4 @@ export async function listenForLockEvents(
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }
-}
-
-function TonLog(msg: string) {
-  console.log(chalk.blue("TON:\t\t"), msg);
 }

@@ -2,12 +2,14 @@ import { SecretNetworkClient, Wallet } from "secretjs";
 import { BridgeStorage } from "../../contractsTypes/evm";
 import { THandler } from "../types";
 
-import { addSelfAsValidator } from "./utils/addSelfAsValidator";
-import { generateWallet } from "./utils/generateWallet";
-import { listenForLockEvents } from "./utils/listenForLockEvents";
-import { nftData } from "./utils/nftData";
-import { selfIsValidator } from "./utils/selfIsValidator";
-import { signClaimData } from "./utils/signClaimData";
+import {
+  addSelfAsValidator,
+  generateWallet,
+  listenForLockEvents,
+  nftData,
+  selfIsValidator,
+  signClaimData,
+} from "./utils";
 
 export function secretsHandler(
   client: SecretNetworkClient,

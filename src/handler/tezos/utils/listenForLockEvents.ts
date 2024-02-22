@@ -2,10 +2,9 @@ import { TezosToolkit } from "@taquito/taquito";
 
 import { EventBuilder } from "../..";
 import { EventIter } from "../../types";
-import { TezosGetContractOperations } from "../operations";
-import { TezosLog } from "./nftData";
+import { TezosGetContractOperations, log } from "./index";
 
-export async function listenForLockEvents(
+export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: EventIter,
   lastBlock_: bigint,
@@ -32,7 +31,7 @@ export async function listenForLockEvents(
     const startBlock = lastBlock;
     lastBlock = latestBlockNumber;
     if (!logs.length) {
-      TezosLog(
+      log(
         `No Transactions found in chain TEZOS from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
       );
       await new Promise<undefined>((e) => setTimeout(e, 10000));

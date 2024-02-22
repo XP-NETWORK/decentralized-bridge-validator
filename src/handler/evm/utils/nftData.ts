@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "ethers";
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 
-const getNftData = (provider: JsonRpcProvider) => {
+const nftData = (provider: JsonRpcProvider) => {
   return async (tokenId: string, contract: string) => {
     const nft = ERC721Royalty__factory.connect(contract, provider);
     return {
@@ -13,4 +13,4 @@ const getNftData = (provider: JsonRpcProvider) => {
   };
 };
 
-export default getNftData;
+export default nftData;

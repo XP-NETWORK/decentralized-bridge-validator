@@ -7,5 +7,6 @@ export default function generateWallet() {
   return Promise.resolve({
     address: secretKey.generatePublicKey().toAddress().bech32(),
     pk: secretKey.hex(),
+    pubK: secretKey.generatePublicKey().hex(),
   });
 }

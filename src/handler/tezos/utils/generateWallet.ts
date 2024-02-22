@@ -16,5 +16,6 @@ export default async function generateWallet() {
   return {
     address: await newWallet.publicKeyHash(),
     pk: await newWallet.secretKey(),
+    pubK: await newWallet.publicKey(),
   };
 }

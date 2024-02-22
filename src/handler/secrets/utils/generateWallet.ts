@@ -7,5 +7,6 @@ export default function generateWallet() {
   return Promise.resolve({
     address,
     pk,
+    pubK: Buffer.from(wallet.publicKey).toString("hex"),
   });
 }

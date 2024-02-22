@@ -37,7 +37,7 @@ export function tonHandler(
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(builder, cb, lastBlock_, client, bridge),
-    generateWallet: generateWallet,
+    generateWallet: () => generateWallet(provider),
   };
 }
 

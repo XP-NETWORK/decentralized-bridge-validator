@@ -29,6 +29,7 @@ export type EventIter = (event: LockEvent) => void;
 export type TWallet = {
   address: string;
   pk: string;
+  pubK: string;
 };
 
 export interface THandler {

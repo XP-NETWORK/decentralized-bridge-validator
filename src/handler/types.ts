@@ -26,14 +26,8 @@ export type TNftTransferDetailsObject = {
 };
 
 export type EventIter = (event: LockEvent) => void;
-export type TWallet = {
-  address: string;
-  pk: string;
-  pubK: string;
-};
 
 export interface THandler {
-  generateWallet(): Promise<TWallet>;
   addSelfAsValidator(): Promise<"success" | "failure">;
   listenForLockEvents(builder: EventBuilder, cb: EventIter): Promise<void>;
   signClaimData(

@@ -6,7 +6,6 @@ import { Bridge } from "../../contractsTypes/ton/tonBridge";
 import { THandler } from "../types";
 import {
   addSelfAsValidator,
-  generateWallet,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -37,7 +36,6 @@ export function tonHandler(
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(builder, cb, lastBlock_, client, bridge),
-    generateWallet: () => generateWallet(provider),
   };
 }
 

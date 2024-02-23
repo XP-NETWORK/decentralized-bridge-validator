@@ -4,7 +4,6 @@ import { THandler } from "../types";
 
 import {
   addSelfAsValidator,
-  generateWallet,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -37,7 +36,7 @@ export function secretsHandler(
         bridgeCodeHash,
         wallet,
       ),
-    generateWallet: generateWallet,
+
     nftData: (tid, ctr) => nftData(tid, ctr, client),
   };
 }

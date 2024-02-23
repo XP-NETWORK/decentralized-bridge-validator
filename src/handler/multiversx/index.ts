@@ -10,7 +10,6 @@ import { THandler } from "../types";
 
 import {
   addSelfAsValidator,
-  generateWallet,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -39,7 +38,6 @@ export function multiversxHandler(
 
   return {
     chainIdent: "MULTIVERSX",
-    generateWallet: generateWallet,
     selfIsValidator: () => selfIsValidator(bc, signer, provider),
     addSelfAsValidator: () =>
       addSelfAsValidator(bc, chainID, storage, signer, provider),

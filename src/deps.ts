@@ -4,7 +4,7 @@ import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
 import { TezosToolkit } from "@taquito/taquito";
 import { TonClient, WalletContractV4 } from "@ton/ton";
-import { HDNodeWallet, JsonRpcProvider, Wallet } from "ethers";
+import { JsonRpcProvider, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import secrets from "../secrets.json";
@@ -15,7 +15,7 @@ import { multiversxHandler } from "./handler/multiversx";
 import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
-import { TWallet } from "./handler/types";
+
 import MikroOrmConfig from "./mikro-orm.config";
 import {
   IBridgeConfig,
@@ -29,7 +29,7 @@ import {
 export function configEvmHandler(
   chainIdent: TSupportedChains,
   rpc: string,
-  wallet: TWallet,
+  pk: string,
   bridge: string,
   storage: BridgeStorage,
   lastBlock: bigint,
@@ -37,7 +37,7 @@ export function configEvmHandler(
   return evmHandler(
     chainIdent,
     new JsonRpcProvider(rpc),
-    new Wallet(wallet.pk),
+    new Wallet(pk),
     bridge,
     storage,
     lastBlock,
@@ -97,7 +97,10 @@ export async function configMultiversXHandler(
   return multiversxHandler(
     provider,
     conf.gatewayURL,
-    UserSigner.fromPem(secrets.multiversXWallet.privateKey),
+    UserSigner.fromWallet(
+      secrets.multiversXWallet.userWallet,
+      secrets.multiversXWallet.password,
+    ),
     conf.chainID,
     conf.contractAddress,
     storage,
@@ -133,7 +136,7 @@ export async function configDeps(config: IBridgeConfig) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,
-    new Wallet(secrets.evmWallet.pk, storageProvider),
+    new Wallet(secrets.evmWallet.privateKey, storageProvider),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();
@@ -150,11 +153,7 @@ export async function configDeps(config: IBridgeConfig) {
           return configEvmHandler(
             config.chain as TSupportedChains,
             config.rpcURL,
-            {
-              ...secrets.evmWallet,
-              pubK: HDNodeWallet.fromExtendedKey(secrets.evmWallet.pk)
-                .publicKey,
-            },
+            secrets.evmWallet.privateKey,
             config.contractAddress,
             storage,
             BigInt(config.lastBlock),

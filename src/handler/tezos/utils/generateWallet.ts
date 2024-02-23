@@ -12,10 +12,10 @@ export default async function generateWallet() {
   const b58encodedSecret = base58check.encode(
     Buffer.from(`2bf64e07${keys.privateKey}`, "hex"),
   );
-  const newWallet = await InMemorySigner.fromSecretKey(b58encodedSecret);
+  const tezosSigner = await InMemorySigner.fromSecretKey(b58encodedSecret);
+
   return {
-    address: await newWallet.publicKeyHash(),
-    pk: await newWallet.secretKey(),
-    pubK: await newWallet.publicKey(),
+    publicKey: await tezosSigner.publicKey(),
+    secretKey: await tezosSigner.secretKey(),
   };
 }

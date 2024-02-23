@@ -7,7 +7,6 @@ import { THandler } from "../types";
 
 import {
   addSelfAsValidator,
-  generateWallet,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -42,6 +41,5 @@ export async function tezosHandler(
     selfIsValidator: () => selfIsValidator(bc, signer),
     addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer),
     chainIdent: chainIdent,
-    generateWallet: generateWallet,
   };
 }

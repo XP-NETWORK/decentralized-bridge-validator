@@ -4,7 +4,6 @@ import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
 import { THandler } from "../types";
 import {
   addSelfAsValidator,
-  generateWallet,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -24,7 +23,6 @@ export function evmHandler(
   return {
     chainIdent,
     addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
-    generateWallet: generateWallet(),
     listenForLockEvents: listenForLockEvents(
       provider,
       lastBlock_,

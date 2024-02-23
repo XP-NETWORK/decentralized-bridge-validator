@@ -1,12 +1,9 @@
-import { Mnemonic } from "@multiversx/sdk-wallet/out";
+import { Mnemonic, UserWallet } from "@multiversx/sdk-wallet/out";
 
 export default function generateWallet() {
   const mnemonic = Mnemonic.generate();
   const secretKey = mnemonic.deriveKey(0);
-
-  return Promise.resolve({
-    address: secretKey.generatePublicKey().toAddress().bech32(),
-    pk: secretKey.hex(),
-    pubK: secretKey.generatePublicKey().hex(),
-  });
+  const password = Math.random().toString(36).slice(2);
+  const userWallet = UserWallet.fromSecretKey({ secretKey, password });
+  return Promise.resolve({ userWallet: userWallet.toJSON(), password });
 }

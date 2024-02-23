@@ -7,11 +7,11 @@ import { generateWallet as tonGw } from "./handler/ton/utils";
 
 export async function generateWallets() {
   const wallets = {
-    evm: await evmGw()(),
-    secret: await secretGw(),
-    tezos: await tzGw(),
-    multiversx: await mxGw(),
-    ton: await tonGw(),
+    evmWallet: await evmGw()(),
+    secretWallet: await secretGw(),
+    tezosWallet: await tzGw(),
+    multiversXWallet: await mxGw(),
+    tonWallet: await tonGw(),
   };
   return fs.writeFile("secrets.json", JSON.stringify(wallets));
 }

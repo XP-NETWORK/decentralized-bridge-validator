@@ -57,7 +57,7 @@ export async function requireEnoughBalance(
 
   // Check for Staking Funds
   let stakingCoinFunded = false;
-  while (!storageFunded) {
+  while (!stakingCoinFunded) {
     const balance = await getBalance(
       new VoidSigner(secrets.evmWallet.address),
       new JsonRpcProvider(stakingConfig.rpcURL),

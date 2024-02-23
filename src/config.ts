@@ -94,7 +94,7 @@ export const stakingTestChain: IStakingConfig = {
   chainType: "evm",
   coinAddress: "0x9739a54004300e74532c1147b82791193d82B093",
   contractAddress: "0x6e372D7fe53F4B7Baa3543Deffe6B87833846D37",
-  intialFund: "100000000000000000000",
+  intialFund: "100000000000000000",
   lastBlock: 36698700,
 };
 

@@ -1,6 +1,7 @@
 import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
 import secrets from "../secrets.json";
+import { ValidatorLog } from "./handler/addSelf";
 import { getBalance } from "./handler/evm/utils";
 import { THandler } from "./handler/types";
 import { IEvmChainConfig, IStakingConfig } from "./types";
@@ -18,7 +19,7 @@ export async function requireEnoughBalance(
       new JsonRpcProvider(storageConfig.rpcURL),
     );
     if (balance < BigInt(storageConfig.intialFund)) {
-      console.info(
+      console.log(
         `Current balance: ${ethers.formatEther(
           balance,
         )}; Fund chain your wallet ${secrets.evmWallet.address} on ${
@@ -28,11 +29,12 @@ export async function requireEnoughBalance(
         )} ${storageConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
-      await new Promise((resolve) => setTimeout(resolve, 10000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       continue;
     }
-    storageFunded = false;
+    storageFunded = true;
   }
+  ValidatorLog("Storage Has Enough Funds: ✅");
 
   for (const chain of chains) {
     let funded = false;
@@ -40,7 +42,7 @@ export async function requireEnoughBalance(
       const balance = await chain.getBalance();
       const remainingRaw = chain.initialFunds - BigInt(balance);
       if (balance < BigInt(chain.initialFunds)) {
-        console.info(
+        console.log(
           `Current balance: ${ethers.formatEther(
             balance,
           )}; Fund chain your wallet ${chain.address} on ${
@@ -48,11 +50,12 @@ export async function requireEnoughBalance(
           } with ${ethers.formatEther(remainingRaw)} ${chain.currency}.`,
         );
         // Sleep for 10 Seconds
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         continue;
       }
       funded = true;
     }
+    ValidatorLog(`${chain.chainIdent} Has Enough Funds: ✅`);
   }
 
   // Check for Staking Funds
@@ -63,19 +66,20 @@ export async function requireEnoughBalance(
       new JsonRpcProvider(stakingConfig.rpcURL),
     );
     if (balance < BigInt(stakingConfig.intialFund)) {
-      console.info(
+      console.log(
         `Current balance: ${ethers.formatEther(
           balance,
-        )}; Fund chain your wallet ${secrets.evmWallet.address} on ${
+        )}; Fund chain storage your wallet ${secrets.evmWallet.address} on ${
           stakingConfig.chain
         } with ${ethers.formatEther(
           balance - BigInt(stakingConfig.intialFund),
         )} ${stakingConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
-      await new Promise((resolve) => setTimeout(resolve, 10000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       continue;
     }
     stakingCoinFunded = true;
   }
+  ValidatorLog("Staking Has Enough Funds: ✅");
 }

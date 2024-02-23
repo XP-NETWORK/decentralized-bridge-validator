@@ -1,5 +1,6 @@
 import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
+import { createInterface } from "readline/promises";
 import secrets from "../secrets.json";
 import { ValidatorLog } from "./handler/addSelf";
 import { getBalance } from "./handler/evm/utils";
@@ -11,6 +12,10 @@ export async function requireEnoughBalance(
   storageConfig: IEvmChainConfig,
   stakingConfig: IStakingConfig,
 ) {
+  const stdio = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
   // Check for Storage Funds
   let storageFunded = false;
   while (!storageFunded) {
@@ -29,7 +34,7 @@ export async function requireEnoughBalance(
         )} ${storageConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await stdio.question("Press Enter to continue...");
       continue;
     }
     storageFunded = true;
@@ -50,7 +55,7 @@ export async function requireEnoughBalance(
           } with ${ethers.formatEther(remainingRaw)} ${chain.currency}.`,
         );
         // Sleep for 10 Seconds
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await stdio.question("Press Enter to continue...");
         continue;
       }
       funded = true;
@@ -76,7 +81,7 @@ export async function requireEnoughBalance(
         )} ${stakingConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await stdio.question("Press Enter to continue...");
       continue;
     }
     stakingCoinFunded = true;

@@ -1,5 +1,6 @@
 import addSelfAsValidator from "./addSelfAsValidator";
 import generateWallet from "./generateWallet";
+import getBalance from "./getBalance";
 import listenForLockEvents from "./listenForLockEvents";
 import log from "./log";
 import nftData from "./nftData";
@@ -11,6 +12,7 @@ export {
   TezosGetContractOperations,
   addSelfAsValidator,
   generateWallet,
+  getBalance,
   listenForLockEvents,
   log,
   nftData,

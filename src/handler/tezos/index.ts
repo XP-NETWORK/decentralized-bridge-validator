@@ -7,6 +7,7 @@ import { THandler } from "../types";
 
 import {
   addSelfAsValidator,
+  getBalance,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -26,6 +27,7 @@ export async function tezosHandler(
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    getBalance: async () => getBalance(provider, await signer.publicKeyHash()),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(
         builder,

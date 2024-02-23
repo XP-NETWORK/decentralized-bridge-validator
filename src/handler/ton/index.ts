@@ -6,6 +6,7 @@ import { Bridge } from "../../contractsTypes/ton/tonBridge";
 import { THandler } from "../types";
 import {
   addSelfAsValidator,
+  getBalance,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -28,6 +29,7 @@ export function tonHandler(
   );
   const tonweb = new TonWeb(provider);
   return {
+    getBalance: () => getBalance(client, signer.address),
     signClaimData: (d) => signClaimData(d, secretKey, signer),
     addSelfAsValidator: () =>
       addSelfAsValidator(storage, bc, signer, walletSender),

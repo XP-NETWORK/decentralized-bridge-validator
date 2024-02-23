@@ -33,6 +33,8 @@ export function configEvmHandler(
   bridge: string,
   storage: BridgeStorage,
   lastBlock: bigint,
+  intialFund: string,
+  currency: string,
 ) {
   return evmHandler(
     chainIdent,
@@ -42,6 +44,8 @@ export function configEvmHandler(
     storage,
     lastBlock,
     1000,
+    BigInt(intialFund),
+    currency,
   );
 }
 
@@ -59,6 +63,7 @@ export async function configTezosHandler(
     BigInt(conf.lastBlock),
     1000,
     conf.restApiURL,
+    BigInt(conf.intialFund),
   );
 }
 
@@ -86,6 +91,7 @@ export async function configSecretHandler(
     storage,
     BigInt(conf.lastBlock),
     1000,
+    BigInt(conf.intialFund),
   );
 }
 
@@ -105,6 +111,7 @@ export async function configMultiversXHandler(
     conf.contractAddress,
     storage,
     BigInt(conf.lastBlock),
+    BigInt(conf.intialFund),
   );
 }
 
@@ -129,6 +136,7 @@ export async function configTonHandler(
     BigInt(conf.lastBlock),
     TC.open(wallet).sender(Buffer.from(secrets.tonWallet.secretKey, "hex")),
     secrets.tonWallet.secretKey,
+    BigInt(conf.intialFund),
   );
 }
 
@@ -157,6 +165,8 @@ export async function configDeps(config: IBridgeConfig) {
             config.contractAddress,
             storage,
             BigInt(config.lastBlock),
+            config.intialFund,
+            config.nativeCoinSymbol,
           );
         }),
       await configTezosHandler(

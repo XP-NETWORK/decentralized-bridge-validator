@@ -19,11 +19,16 @@ export function evmHandler(
   storage: BridgeStorage,
   lastBlock_: bigint,
   blockChunks: number,
+  initialFunds: bigint,
+  currency: string,
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
     getBalance: () => getBalance(signer, provider),
     chainIdent,
+    initialFunds: initialFunds,
+    currency: currency,
+    address: signer.address,
     addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
     listenForLockEvents: listenForLockEvents(
       provider,

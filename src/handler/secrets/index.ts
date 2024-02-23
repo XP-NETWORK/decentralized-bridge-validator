@@ -4,6 +4,7 @@ import { THandler } from "../types";
 
 import {
   addSelfAsValidator,
+  getBalance,
   listenForLockEvents,
   nftData,
   selfIsValidator,
@@ -19,9 +20,13 @@ export function secretsHandler(
   storage: BridgeStorage,
   lastBlock_: bigint,
   blockChunks: number,
+  initialFunds: bigint,
 ): THandler {
   return {
+    initialFunds: initialFunds,
     chainIdent: "SECRET",
+    currency: "USCRT",
+    address: client.address,
     signClaimData: (data) => signClaimData(data, wallet),
     selfIsValidator: () =>
       selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
@@ -36,7 +41,7 @@ export function secretsHandler(
         bridgeCodeHash,
         wallet,
       ),
-
+    getBalance: () => getBalance(client),
     nftData: (tid, ctr) => nftData(tid, ctr, client),
   };
 }

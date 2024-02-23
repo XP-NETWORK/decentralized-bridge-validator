@@ -37,6 +37,9 @@ export interface THandler {
   chainIdent: TSupportedChains;
   selfIsValidator(): Promise<boolean>;
   getBalance(): Promise<bigint>;
+  initialFunds: bigint;
+  currency: string;
+  address: string;
 }
 
 export type LockEvent = {

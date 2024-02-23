@@ -4,6 +4,7 @@ import { configDeps } from "./deps";
 import { generateWallets } from "./generate-wallets";
 import { listenEvents } from "./handler";
 import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/addSelf";
+import { requireEnoughBalance } from "./requireEnoughBalance";
 import { IBridgeConfig } from "./types";
 
 async function main() {
@@ -25,7 +26,13 @@ async function main() {
 
   const deps = await configDeps(config);
 
-  checkOrAddSelfAsVal(deps.chains);
+  await requireEnoughBalance(
+    deps.chains,
+    config.storageConfig,
+    config.stakingConfig,
+  );
+
+  await checkOrAddSelfAsVal(deps.chains);
 
   listenEvents(deps.chains, deps.storage);
 }

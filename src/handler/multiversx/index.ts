@@ -25,6 +25,7 @@ export function multiversxHandler(
   bridge: string,
   storage: BridgeStorage,
   lastBlock: bigint,
+  initialFunds: bigint,
 ): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -38,6 +39,9 @@ export function multiversxHandler(
   });
 
   return {
+    initialFunds: initialFunds,
+    currency: "EGLD",
+    address: signer.getAddress().bech32(),
     getBalance: () => getBalance(provider, signer.getAddress()),
     chainIdent: "MULTIVERSX",
     selfIsValidator: () => selfIsValidator(bc, signer, provider),

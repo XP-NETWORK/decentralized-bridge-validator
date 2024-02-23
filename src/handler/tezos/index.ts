@@ -22,11 +22,15 @@ export async function tezosHandler(
   lastBlock_: bigint,
   blockChunks: number,
   restApiUrl: string,
+  initialFunds: bigint,
 ): Promise<THandler> {
   const chainIdent = "TEZOS";
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    initialFunds: initialFunds,
+    address: await signer.publicKeyHash(),
+    currency: "XTZ",
     getBalance: async () => getBalance(provider, await signer.publicKeyHash()),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(

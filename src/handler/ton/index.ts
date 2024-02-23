@@ -22,6 +22,7 @@ export function tonHandler(
   lastBlock_: bigint,
   walletSender: Sender,
   secretKey: string,
+  initialFunds: bigint,
 ): THandler {
   const chainIdent = "TON";
   const bc = client.open(
@@ -29,6 +30,9 @@ export function tonHandler(
   );
   const tonweb = new TonWeb(provider);
   return {
+    initialFunds: initialFunds,
+    currency: "TON",
+    address: signer.address.toString(),
     getBalance: () => getBalance(client, signer.address),
     signClaimData: (d) => signClaimData(d, secretKey, signer),
     addSelfAsValidator: () =>

@@ -25,14 +25,6 @@ export type Storage = {
 };
 
 type Methods = {
-    mint: (
-        param: Array<{
-            token_id: nat;
-            token_uri: string;
-            to: address;
-            amt: nat;
-        }>,
-    ) => Promise<void>;
     add_operator: (
         owner: address,
         operator: address,
@@ -42,6 +34,14 @@ type Methods = {
         owner: address,
         operator: address,
         token_id: nat,
+    ) => Promise<void>;
+    mint: (
+        param: Array<{
+            token_id: nat;
+            token_uri: string;
+            to: address;
+            amt: nat;
+        }>,
     ) => Promise<void>;
     balance_of: (
         requests: Array<{
@@ -63,14 +63,6 @@ type Methods = {
 };
 
 type MethodsObject = {
-    mint: (
-        param: Array<{
-            token_id: nat;
-            token_uri: string;
-            to: address;
-            amt: nat;
-        }>,
-    ) => Promise<void>;
     add_operator: (params: {
         owner: address;
         operator: address;
@@ -81,6 +73,14 @@ type MethodsObject = {
         operator: address;
         token_id: nat;
     }) => Promise<void>;
+    mint: (
+        param: Array<{
+            token_id: nat;
+            token_uri: string;
+            to: address;
+            amt: nat;
+        }>,
+    ) => Promise<void>;
     balance_of: (params: {
         requests: Array<{
             owner: address;

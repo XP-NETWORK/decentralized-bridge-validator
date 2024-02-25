@@ -1,5 +1,6 @@
 import {
     Bridge,
+    ClaimData,
     NewValidator,
     SignerAndSignature,
 } from '@src/contractsTypes/contracts/tonBridge';
@@ -10,10 +11,17 @@ import { ProcessDelayMilliseconds } from '../constants/processDelayMilliseconds'
 import waitForMSWithMsg from './waitForMSWithMsg';
 import TonWeb from 'tonweb';
 
+export type TonLockArgs = {
+    destinationChain: string;
+    address: string;
+    sourceNftContractAddress: string;
+    tokenId: string;
+};
+
 const getTonBridgeContract = ({
     tonChainConfig,
     tonWallet,
-}: ITonChainConfigAndTonWallet): IBridge => {
+}: ITonChainConfigAndTonWallet): IBridge<TonLockArgs, ClaimData> => {
     const client = new TonClient({
         endpoint: tonChainConfig.rpcURL,
         apiKey: 'f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292',
@@ -32,10 +40,64 @@ const getTonBridgeContract = ({
             Address.parseFriendly(tonChainConfig.contractAddress).address,
         ),
     );
+    const provider = new TonWeb.HttpProvider(tonChainConfig.rpcURL);
 
-    const tonweb = new TonWeb(new TonWeb.HttpProvider(tonChainConfig.rpcURL));
+    const tonweb = new TonWeb(provider);
 
     return {
+        lock721: async ({
+            destinationChain,
+            address,
+            sourceNftContractAddress,
+            tokenId,
+        }) => {
+            await bridge.send(
+                walletSender,
+                {
+                    value: toNano('2'),
+                },
+                {
+                    $$type: 'Lock721',
+                    destinationChain,
+                    destinationUserAddress: address,
+                    sourceNftContractAddress: Address.parseFriendly(
+                        sourceNftContractAddress,
+                    ).address,
+                    tokenId: BigInt(tokenId),
+                },
+            );
+            return { hash: 'No Tx Hash', wait: async () => {} };
+        },
+        claimNFT721: async (claimData, sigsA) => {
+            const sigs: SignerAndSignature[] = sigsA.map((e) => {
+                return {
+                    $$type: 'SignerAndSignature',
+                    key: BigInt(`0x${e.signer}`),
+                    signature: beginCell()
+                        .storeBuffer(
+                            Buffer.from(e.signature.replace('0x', ''), 'hex'),
+                        )
+                        .endCell(),
+                };
+            });
+            let dictA = Dictionary.empty<bigint, SignerAndSignature>();
+            sigs.forEach(
+                (item, index) => (dictA = dictA.set(BigInt(index), item)),
+            );
+            await bridge.send(
+                walletSender,
+                {
+                    value: toNano(claimData.data3.fee),
+                },
+                {
+                    $$type: 'ClaimNFT721',
+                    data: claimData,
+                    signatures: dictA,
+                    len: BigInt(sigs.length),
+                },
+            );
+            return { hash: 'No Tx Hash', wait: async () => {} };
+        },
         validators: async (address: string) => {
             const newValidatorPublicKey = Buffer.from(address, 'hex');
             const newValidatorPublicKeyBigInt = beginCell()

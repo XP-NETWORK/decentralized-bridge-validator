@@ -48,6 +48,9 @@ const getTonNftContract = ({
                 return '';
             }
         },
+        async approve() {
+            return '';
+        },
         symbol: async () => {
             return '';
         },

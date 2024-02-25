@@ -209,7 +209,12 @@ type IBridgeConfig = {
     stakingConfig: IStakingConfig;
 };
 
-type IBridge = {
+export type SignerAndSignature = {
+    signer: string;
+    signature: string;
+};
+
+type IBridge<TLockArgs, TClaimData> = {
     validators: (address: string) => Promise<{ added: boolean }>;
     validatorsCount: () => Promise<bigint>;
     addValidator: (
@@ -219,6 +224,20 @@ type IBridge = {
             signature: string;
         }[],
     ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    lock721: (
+        lockArgs: TLockArgs,
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    lock1155?: (
+        lockArgs: TLockArgs & { amt: bigint },
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    claimNFT721: (
+        nftTransferData: TClaimData,
+        sigs: SignerAndSignature[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
+    claimNFT1155?: (
+        nftTransferData: TClaimData,
+        sigs: SignerAndSignature[],
+    ) => Promise<{ hash: string; wait: () => Promise<unknown> }>;
 };
 
 type INftContract = {
@@ -226,6 +245,7 @@ type INftContract = {
     symbol: (tokenId?: bigint) => Promise<string>;
     royaltyInfo: (tokenId?: bigint) => Promise<string>;
     tokenURI: (tokenId: bigint) => Promise<string>;
+    approve: (tokenId: bigint, to: string) => Promise<string>;
 };
 
 export {

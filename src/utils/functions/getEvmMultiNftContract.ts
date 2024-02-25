@@ -1,7 +1,7 @@
 import { ERC1155Royalty, ERC1155Royalty__factory } from '../../contractsTypes';
 import { IEvmContractConfig, INftContract } from '@src/types';
 import { SalePriceToGetTotalRoyalityPercentage } from '../constants/salePriceToGetTotalRoyalityPercentage';
-import { JsonRpcProvider } from 'ethers';
+import { JsonRpcProvider, Signer } from 'ethers';
 
 type IExtendedERC1155Royalty = {
     name?: () => Promise<string>;
@@ -10,6 +10,7 @@ type IExtendedERC1155Royalty = {
 
 const getEvmMultiNftContract = (
     contractConfig: IEvmContractConfig,
+    wallet?: Signer,
 ): INftContract => {
     const provider = new JsonRpcProvider(contractConfig.rpcURL);
 
@@ -48,6 +49,12 @@ const getEvmMultiNftContract = (
             } catch (error) {
                 return '0';
             }
+        },
+        approve: async (_tokenId, to) => {
+            if (!wallet) throw new Error('Wallet is not connected');
+            const contractWithSigner = erc1155Contract.connect(wallet);
+            const tx = await contractWithSigner.setApprovalForAll(to, true);
+            return tx.hash;
         },
         tokenURI: async (tokenId: bigint) => {
             return await erc1155Contract.uri(tokenId);

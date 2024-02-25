@@ -5,7 +5,9 @@ import { getNftDetails } from '../../../utils';
 import { approveLock } from '../..';
 import { INftTransferDetailsObject } from '../../types';
 
-const extractStrOrAddr = (addr: { str: string } | { addr: string }): string => {
+export const extractStrOrAddr = (
+    addr: { str: string } | { addr: string },
+): string => {
     if ('str' in addr) return addr.str;
     return addr.addr;
 };

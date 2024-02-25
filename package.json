@@ -59,16 +59,18 @@
         "libsodium-wrappers-sumo": "^0.7.13",
         "mocha": "^10.2.0",
         "reflect-metadata": "^0.1.13",
-        "secretjs": "^1.12.3",
+        "secretjs": "=1.12.3",
         "sinon": "^17.0.0",
         "sqlite": "^5.0.1",
         "sqlite3": "^5.1.6",
         "ton": "^13.9.0",
+        "ton-core": "^0.53.0",
         "ton-crypto": "^3.2.0",
         "tonweb": "^0.0.62",
         "tsconfig-paths": "^4.2.0",
         "typeorm": "0.3.17",
         "web3": "^4.1.2",
-        "web3-core": "^4.2.0"
+        "web3-core": "^4.2.0",
+        "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge"
     }
 }

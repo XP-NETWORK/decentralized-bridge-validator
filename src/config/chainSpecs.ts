@@ -18,7 +18,7 @@ const storageTestnetConfig: IEvmChainConfig = {
     lastBlock: 17608314,
 };
 
-const bridgeTestChains: TChain[] = [
+export const bridgeTestChains = [
     {
         chain: 'BSC',
         rpcURL: 'https://bsc-testnet.publicnode.com',
@@ -26,7 +26,7 @@ const bridgeTestChains: TChain[] = [
         intialFund: '50000000000000000',
         contractAddress: '0x3EC2839EcEAfa2Ce9e419718364B070563Db516e',
         chainType: 'evm',
-        lastBlock: 36788832,
+        lastBlock: 37679066,
     },
     {
         chain: 'ETH',
@@ -35,7 +35,7 @@ const bridgeTestChains: TChain[] = [
         intialFund: '50000000000000000',
         contractAddress: '0xA0C15702892491597D369A04d7366Af234cF5F73',
         chainType: 'evm',
-        lastBlock: 5053386,
+        lastBlock: 5150604,
     },
     {
         chain: 'MATIC',
@@ -46,46 +46,47 @@ const bridgeTestChains: TChain[] = [
         chainType: 'evm',
         lastBlock: 52122800,
     },
-    // {
-    //     chain: "MULTIVERSX",
-    //     nativeCoinSymbol: "EGLD",
-    //     intialFund: "50000000000000000",
-    //     contractAddress: "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
-    //     chainType: 'multiversX',
-    //     elasticSearchURL: "https://devnet-index.multiversx.com",
-    //     gatewayURL: "https://devnet-gateway.multiversx.com",
-    //     lastBlock: 0,
-    //     chainID: "D"
-    // },
-    // {
-    //     chain: "TON",
-    //     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-    //     nativeCoinSymbol: "TON",
-    //     intialFund: "500000000",
-    //     contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
-    //     chainType: 'ton',
-    //     lastBlock: 16810573000003
-    // },
-    // {
-    //     chain: "SECRET",
-    //     rpcURL: "https://pulsar.api.trivium.network:1317",
-    //     nativeCoinSymbol: "USCRT",
-    //     intialFund: "50000",
-    //     contractAddress: "secret1jcfm9ct9jdy9uugcnfnjzpv4eydaj620kuvulp",
-    //     chainType: 'scrt',
-    //     chainId: 'pulsar-3',
-    //     lastBlock: 50883
-    // },
-    // {
-    //     chain: "TEZOS",
-    //     rpcURL: "https://ghostnet.ecadinfra.com",
-    //     restApiURL: "https://api.ghostnet.tzkt.io",
-    //     contractAddress: "KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4",
-    //     intialFund: "50000",
-    //     lastBlock: 5058309,
-    //     nativeCoinSymbol: "XTZ",
-    //     chainType: "tezos"
-    // },
+    {
+        chain: 'MULTIVERSX',
+        nativeCoinSymbol: 'EGLD',
+        intialFund: '50000000000000000',
+        contractAddress:
+            'erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9',
+        chainType: 'multiversX',
+        elasticSearchURL: 'https://devnet-index.multiversx.com',
+        gatewayURL: 'https://devnet-gateway.multiversx.com',
+        lastBlock: 0,
+        chainID: 'D',
+    },
+    {
+        chain: 'TON',
+        rpcURL: 'https://testnet.toncenter.com/api/v2/jsonRPC',
+        nativeCoinSymbol: 'TON',
+        intialFund: '500000000',
+        contractAddress: 'EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL',
+        chainType: 'ton',
+        lastBlock: 16810573000003,
+    },
+    {
+        chain: 'SECRET',
+        rpcURL: 'https://lcd.pulsar-3.secretsaturn.net',
+        nativeCoinSymbol: 'USCRT',
+        intialFund: '50000',
+        contractAddress: 'secret1uxthnjt74cny9wnwx8czmgrc8taz0r8yfas565',
+        chainType: 'scrt',
+        chainId: 'pulsar-3',
+        lastBlock: 3223704,
+    },
+    {
+        chain: 'TEZOS',
+        rpcURL: 'https://ghostnet.ecadinfra.com',
+        restApiURL: 'https://api.ghostnet.tzkt.io',
+        contractAddress: 'KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4',
+        intialFund: '50000',
+        lastBlock: 5240862,
+        nativeCoinSymbol: 'XTZ',
+        chainType: 'tezos',
+    },
     {
         chain: 'HEDERA',
         rpcURL: 'https://testnet.hashio.io/api',
@@ -96,7 +97,7 @@ const bridgeTestChains: TChain[] = [
         lastBlock: 7095475,
         royaltyInfoProxyAddress: '0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF',
     },
-];
+] as const satisfies readonly TChain[];
 
 const stakingTestChain: IStakingConfig = {
     chain: 'BSC',
@@ -111,7 +112,7 @@ const stakingTestChain: IStakingConfig = {
 };
 
 const testnetBridgeConfig: IBridgeConfig = {
-    bridgeChains: bridgeTestChains,
+    bridgeChains: bridgeTestChains as unknown as TChain[],
     storageConfig: storageTestnetConfig,
     stakingConfig: stakingTestChain,
 };
@@ -168,5 +169,7 @@ const prodBridgeConfig: IBridgeConfig = {
 };
 
 const BLOCK_CHUNKS = 1000;
+
+export type SupportedChains = (typeof bridgeTestChains)[number]['chain'];
 
 export { BLOCK_CHUNKS, testnetBridgeConfig, prodBridgeConfig };

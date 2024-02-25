@@ -6,7 +6,7 @@ import { BLOCK_CHUNKS } from '@src/config/chainSpecs';
 import { TezosToolkit } from '@taquito/taquito';
 import axios from 'axios';
 
-async function getContractOperations({
+export async function getContractOperations({
     contractAddress,
     fromLevel,
     toLevel,

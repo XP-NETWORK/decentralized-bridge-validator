@@ -39,6 +39,9 @@ const getMultiversXNftContract = ({
                 );
             return nftDetails.ticker;
         },
+        approve: async () => {
+            return Promise.resolve('No Need to Approve in MultiversX');
+        },
         royaltyInfo: async (tokenId) => {
             try {
                 const nftDetails = await getNonFungibleToken(

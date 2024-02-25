@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js';
-
 export type CodeInfo = {
     code_id: number;
     code_hash: string;
@@ -48,7 +46,7 @@ export type Lock721 = {
             destination_user_address: string;
             source_nft_contract_address: string;
             collection_code_info: CodeInfo;
-            token_id: BigNumber;
+            token_id: string;
         };
     };
 };
@@ -60,14 +58,14 @@ export type Lock1155 = {
             destination_user_address: string;
             source_nft_contract_address: string;
             collection_code_info: CodeInfo;
-            token_id: BigNumber;
-            token_amount: BigNumber;
+            token_id: string;
+            token_amount: string;
         };
     };
 };
 
 export type ClaimData = {
-    token_id: BigNumber;
+    token_id: string;
     source_chain: string;
     destination_chain: string;
     destination_user_address: string;
@@ -79,9 +77,9 @@ export type ClaimData = {
     royalty_receiver: string;
     metadata: string;
     transaction_hash: string;
-    token_amount: BigNumber;
+    token_amount: string;
     nft_type: string;
-    fee: BigNumber;
+    fee: string;
 };
 
 export type ClaimMsg = {

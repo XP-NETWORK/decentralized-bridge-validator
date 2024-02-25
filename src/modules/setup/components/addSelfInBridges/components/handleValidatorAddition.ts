@@ -35,7 +35,8 @@ const handleValidatorAddition = async ({
 
     let failiure = true;
 
-    let bridgeContract: IBridge;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let bridgeContract: IBridge<any, any>;
     let publicWalletAddress: string;
     let isChainFunded: () => Promise<boolean>;
 

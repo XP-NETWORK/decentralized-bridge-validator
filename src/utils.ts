@@ -1,11 +1,29 @@
+import fs from "fs/promises";
+import { generateWallet as evmGw } from "./handler/evm/utils";
+import { generateWallet as mxGw } from "./handler/multiversx/utils";
+import { generateWallet as secretGw } from "./handler/secrets/utils";
+import { generateWallet as tzGw } from "./handler/tezos/utils";
+import { generateWallet as tonGw } from "./handler/ton/utils";
+
 import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
-import { createInterface } from "readline/promises";
+import { Interface, createInterface } from "readline/promises";
 import secrets from "../secrets.json";
 import { ValidatorLog } from "./handler/addSelf";
 import { getBalance } from "./handler/evm/utils";
 import { THandler } from "./handler/types";
 import { IEvmChainConfig, IStakingConfig } from "./types";
+
+export async function generateWallets() {
+  const wallets = {
+    evmWallet: await evmGw()(),
+    secretWallet: await secretGw(),
+    tezosWallet: await tzGw(),
+    multiversXWallet: await mxGw(),
+    tonWallet: await tonGw(),
+  };
+  return fs.writeFile("secrets.json", JSON.stringify(wallets));
+}
 
 export async function requireEnoughBalance(
   chains: THandler[],
@@ -16,6 +34,17 @@ export async function requireEnoughBalance(
     input: process.stdin,
     output: process.stdout,
   });
+  await requireEnoughStorageChainBalance(storageConfig, stdio);
+
+  await requireEnoughBalanceInChains(chains, stdio);
+
+  await requireEnoughStakingBalance(stakingConfig, stdio);
+}
+
+async function requireEnoughStorageChainBalance(
+  storageConfig: IEvmChainConfig,
+  stdio: Interface,
+) {
   // Check for Storage Funds
   let storageFunded = false;
   while (!storageFunded) {
@@ -40,7 +69,12 @@ export async function requireEnoughBalance(
     storageFunded = true;
   }
   ValidatorLog("Storage Has Enough Funds: ✅");
+}
 
+async function requireEnoughBalanceInChains(
+  chains: THandler[],
+  stdio: Interface,
+) {
   for (const chain of chains) {
     let funded = false;
     while (!funded) {
@@ -62,7 +96,12 @@ export async function requireEnoughBalance(
     }
     ValidatorLog(`${chain.chainIdent} Has Enough Funds: ✅`);
   }
+}
 
+async function requireEnoughStakingBalance(
+  stakingConfig: IStakingConfig,
+  stdio: Interface,
+): Promise<void> {
   // Check for Staking Funds
   let stakingCoinFunded = false;
   while (!stakingCoinFunded) {

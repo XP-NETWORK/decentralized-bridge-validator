@@ -1,11 +1,11 @@
 import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
-import { generateWallets } from "./generate-wallets";
 import { listenEvents } from "./handler";
 import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/addSelf";
-import { requireEnoughBalance } from "./requireEnoughBalance";
+
 import { IBridgeConfig } from "./types";
+import { generateWallets, requireEnoughBalance } from "./utils";
 
 async function main() {
   if (!fs.existsSync("secrets.json")) {

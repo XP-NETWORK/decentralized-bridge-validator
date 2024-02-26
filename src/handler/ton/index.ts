@@ -1,3 +1,4 @@
+import { EntityManager } from "@mikro-orm/sqlite";
 import { Address, Sender, TonClient, WalletContractV4 } from "@ton/ton";
 import TonWeb from "tonweb";
 import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
@@ -19,10 +20,11 @@ export function tonHandler(
   signer: WalletContractV4,
   bridge: string,
   storage: BridgeStorage,
-  lastBlock_: bigint,
+  lastBlock_: number,
   walletSender: Sender,
   secretKey: string,
   initialFunds: bigint,
+  em: EntityManager,
 ): THandler {
   const chainIdent = "TON";
   const bc = client.open(
@@ -41,7 +43,7 @@ export function tonHandler(
     nftData: (_, ctr) => nftData(_, ctr, client),
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
-      listenForLockEvents(builder, cb, lastBlock_, client, bridge),
+      listenForLockEvents(builder, cb, lastBlock_, client, bridge, em),
   };
 }
 

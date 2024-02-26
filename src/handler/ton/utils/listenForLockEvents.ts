@@ -1,16 +1,21 @@
+import { EntityManager } from "@mikro-orm/sqlite";
 import { Address, TonClient } from "@ton/ton";
 import { raise } from "..";
 import { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
+import { Block } from "../../../persistence/entities/block";
 import { EventIter } from "../../types";
-import TonLog from "./log";
+import log from "./log";
+
+const CHAIN_IDENT = "TON";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: EventIter,
-  lastBlock_: bigint,
+  lastBlock_: number,
   client: TonClient,
   bridge: string,
+  em: EntityManager,
 ) {
   let lastBlock = Number(lastBlock_);
   while (true) {
@@ -32,13 +37,18 @@ export default async function listenForLockEvents(
       );
 
       const startBlock = lastBlock;
-      lastBlock = Number(transactions[0].lt);
       if (!transactions.length) {
-        TonLog(
-          `No Transactions found in chain from block: ${startBlock} to: ${lastBlock}`,
+        log(
+          `No Transactions found in chain from block: ${startBlock} to: ${transactions[0].lt}`,
         );
-        TonLog("Waiting for 10 Seconds before looking for new transactions");
+        log("Waiting for 10 Seconds before looking for new transactions");
         await new Promise<undefined>((e) => setTimeout(e, 10000));
+        lastBlock = Number(transactions[0].lt);
+        await em.upsert(Block, {
+          chain: CHAIN_IDENT,
+          contractAddress: bridge,
+          lastBlock: lastBlock,
+        });
         continue;
       }
       for (const tx of transactions) {
@@ -83,9 +93,14 @@ export default async function listenForLockEvents(
           );
         }
       }
+      lastBlock = Number(transactions[0].lt);
+      await em.upsert(Block, {
+        chain: CHAIN_IDENT,
+        contractAddress: bridge,
+        lastBlock: lastBlock,
+      });
     } catch (e) {
-      TonLog(`TON: ${e} while listening for ton events`);
-      TonLog("Sleeping for 10 seconds");
+      log(`${e} while listening for ton events. Sleeping for 10 seconds`);
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

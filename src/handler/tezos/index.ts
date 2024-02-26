@@ -5,6 +5,7 @@ import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
 
 import { THandler } from "../types";
 
+import { EntityManager } from "@mikro-orm/sqlite";
 import {
   addSelfAsValidator,
   getBalance,
@@ -19,10 +20,11 @@ export async function tezosHandler(
   signer: Signer,
   bridge: string,
   storage: BridgeStorage,
-  lastBlock_: bigint,
+  lastBlock_: number,
   blockChunks: number,
   restApiUrl: string,
   initialFunds: bigint,
+  em: EntityManager,
 ): Promise<THandler> {
   const chainIdent = "TEZOS";
   const bc = await provider.contract.at<BridgeContractType>(bridge);
@@ -41,6 +43,7 @@ export async function tezosHandler(
         provider,
         bridge,
         restApiUrl,
+        em,
       ),
     signClaimData: (data) => signClaimData(data, signer),
     nftData: (tid, ctr) => nftData(tid, ctr, provider),

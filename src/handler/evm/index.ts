@@ -1,3 +1,4 @@
+import { EntityManager } from "@mikro-orm/sqlite";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { TSupportedChains } from "../../config";
 import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
@@ -17,10 +18,11 @@ export function evmHandler(
   signer: Wallet,
   bridge: string,
   storage: BridgeStorage,
-  lastBlock_: bigint,
+  lastBlock_: number,
   blockChunks: number,
   initialFunds: bigint,
   currency: string,
+  em: EntityManager,
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -37,6 +39,7 @@ export function evmHandler(
       bridge,
       bc,
       chainIdent,
+      em,
     ),
     nftData: nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),

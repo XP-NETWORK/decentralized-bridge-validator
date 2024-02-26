@@ -16,7 +16,9 @@ import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 
+import { EntityManager } from "@mikro-orm/sqlite";
 import MikroOrmConfig from "./mikro-orm.config";
+import { Block } from "./persistence/entities/block";
 import {
   IBridgeConfig,
   IEvmChainConfig,
@@ -26,33 +28,38 @@ import {
   ITonChainConfig,
 } from "./types";
 
-export function configEvmHandler(
-  chainIdent: TSupportedChains,
-  rpc: string,
-  pk: string,
-  bridge: string,
+export async function configEvmHandler(
+  conf: IEvmChainConfig,
   storage: BridgeStorage,
-  lastBlock: bigint,
-  intialFund: string,
-  currency: string,
+  em: EntityManager,
 ) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
   return evmHandler(
-    chainIdent,
-    new JsonRpcProvider(rpc),
-    new Wallet(pk),
-    bridge,
+    conf.chain as TSupportedChains,
+    new JsonRpcProvider(conf.rpcURL),
+    new Wallet(secrets.evmWallet.privateKey),
+    conf.contractAddress,
     storage,
-    lastBlock,
+    lb?.lastBlock ?? conf.lastBlock,
     1000,
-    BigInt(intialFund),
-    currency,
+    BigInt(conf.intialFund),
+    conf.nativeCoinSymbol,
+    em.fork(),
   );
 }
 
 export async function configTezosHandler(
   conf: ITezosChainConfig,
   storage: BridgeStorage,
+  em: EntityManager,
 ) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
   const Tezos = new TezosToolkit(conf.rpcURL);
   const im = new InMemorySigner(secrets.tezosWallet.secretKey);
   return tezosHandler(
@@ -60,17 +67,23 @@ export async function configTezosHandler(
     im,
     conf.contractAddress,
     storage,
-    BigInt(conf.lastBlock),
+    lb?.lastBlock ?? conf.lastBlock,
     1000,
     conf.restApiURL,
     BigInt(conf.intialFund),
+    em.fork(),
   );
 }
 
 export async function configSecretHandler(
   conf: ISecretChainConfig,
   storage: BridgeStorage,
+  em: EntityManager,
 ) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
   const wallet = new SecretWallet(secrets.secretWallet.privateKey);
   const client = new SecretNetworkClient({
     chainId: conf.chainId,
@@ -89,16 +102,22 @@ export async function configSecretHandler(
       })
     ).code_hash ?? raise("Failed to get Code Hash"),
     storage,
-    BigInt(conf.lastBlock),
+    lb?.lastBlock ?? conf.lastBlock,
     1000,
     BigInt(conf.intialFund),
+    em.fork(),
   );
 }
 
 export async function configMultiversXHandler(
   conf: IMultiversXChainConfig,
   storage: BridgeStorage,
+  em: EntityManager,
 ) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
   const provider = new ProxyNetworkProvider(conf.gatewayURL);
   return multiversxHandler(
     provider,
@@ -110,14 +129,16 @@ export async function configMultiversXHandler(
     conf.chainID,
     conf.contractAddress,
     storage,
-    BigInt(conf.lastBlock),
+    lb?.lastBlock ?? conf.lastBlock,
     BigInt(conf.intialFund),
+    em.fork(),
   );
 }
 
 export async function configTonHandler(
   conf: ITonChainConfig,
   storage: BridgeStorage,
+  em: EntityManager,
 ) {
   const TC = new TonClient({
     endpoint: conf.rpcURL,
@@ -127,16 +148,21 @@ export async function configTonHandler(
     publicKey: Buffer.from(secrets.tonWallet.publicKey, "hex"),
     workchain: 0,
   });
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
   return tonHandler(
     TC,
     new TonWeb.HttpProvider(conf.rpcURL),
     wallet,
     conf.contractAddress,
     storage,
-    BigInt(conf.lastBlock),
+    lb?.lastBlock ?? conf.lastBlock,
     TC.open(wallet).sender(Buffer.from(secrets.tonWallet.secretKey, "hex")),
     secrets.tonWallet.secretKey,
     BigInt(conf.intialFund),
+    em.fork(),
   );
 }
 
@@ -154,44 +180,41 @@ export async function configDeps(config: IBridgeConfig) {
     em,
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
-      ...config.bridgeChains
-        .filter((e) => e.chainType === "evm")
-        .map((c) => {
-          const config = c as IEvmChainConfig;
-          return configEvmHandler(
-            config.chain as TSupportedChains,
-            config.rpcURL,
-            secrets.evmWallet.privateKey,
-            config.contractAddress,
-            storage,
-            BigInt(config.lastBlock),
-            config.intialFund,
-            config.nativeCoinSymbol,
-          );
-        }),
+      ...(await Promise.all(
+        config.bridgeChains
+          .filter((e) => e.chainType === "evm")
+          .map((c) => {
+            const config = c as IEvmChainConfig;
+            return configEvmHandler(config, storage, em.fork());
+          }),
+      )),
       await configTezosHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "tezos",
         ) as ITezosChainConfig) ?? raise("No Tezos Config Found"),
         storage,
+        em.fork(),
       ),
       await configSecretHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "scrt",
         ) as ISecretChainConfig) ?? raise("No Secret Config Found"),
         storage,
+        em.fork(),
       ),
       await configMultiversXHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "multiversX",
         ) as IMultiversXChainConfig) ?? raise("No Secret Config Found"),
         storage,
+        em.fork(),
       ),
       await configTonHandler(
         (config.bridgeChains.find(
           (e) => e.chainType === "ton",
         ) as ITonChainConfig) ?? raise("No Secret Config Found"),
         storage,
+        em.fork(),
       ),
     ],
   };

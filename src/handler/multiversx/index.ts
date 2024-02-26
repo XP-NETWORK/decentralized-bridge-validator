@@ -8,6 +8,7 @@ import { BridgeStorage } from "../../contractsTypes/evm";
 import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
 import { THandler } from "../types";
 
+import { EntityManager } from "@mikro-orm/sqlite";
 import {
   addSelfAsValidator,
   getBalance,
@@ -24,8 +25,9 @@ export function multiversxHandler(
   chainID: string,
   bridge: string,
   storage: BridgeStorage,
-  lastBlock: bigint,
+  lastBlock: number,
   initialFunds: bigint,
+  em: EntityManager,
 ): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -56,6 +58,7 @@ export function multiversxHandler(
         gateway,
         provider,
         gatewayURL,
+        em,
       ),
     nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL),
     signClaimData: (data) => signClaimData(data, signer),

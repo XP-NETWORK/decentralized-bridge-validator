@@ -2,6 +2,7 @@ import { SecretNetworkClient, Wallet } from "secretjs";
 import { BridgeStorage } from "../../contractsTypes/evm";
 import { THandler } from "../types";
 
+import { EntityManager } from "@mikro-orm/sqlite";
 import {
   addSelfAsValidator,
   getBalance,
@@ -18,9 +19,10 @@ export function secretsHandler(
   bridge: string,
   bridgeCodeHash: string,
   storage: BridgeStorage,
-  lastBlock_: bigint,
+  lastBlock_: number,
   blockChunks: number,
   initialFunds: bigint,
+  em: EntityManager,
 ): THandler {
   return {
     initialFunds: initialFunds,
@@ -31,7 +33,15 @@ export function secretsHandler(
     selfIsValidator: () =>
       selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
     listenForLockEvents: (cb, iter) =>
-      listenForLockEvents(cb, iter, lastBlock_, client, blockChunks, bridge),
+      listenForLockEvents(
+        cb,
+        iter,
+        lastBlock_,
+        client,
+        blockChunks,
+        bridge,
+        em,
+      ),
     addSelfAsValidator: () =>
       addSelfAsValidator(
         publicKey,

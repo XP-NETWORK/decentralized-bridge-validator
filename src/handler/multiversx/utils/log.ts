@@ -1,5 +1,5 @@
 import chalk from "chalk";
 
-export default function MxLog(msg: string) {
-  console.log(chalk.blueBright("MULTIVERSX:\t"), msg);
+export default function MxLog(...msg: unknown[]) {
+  console.log(chalk.blueBright("MULTIVERSX:\t"), ...msg);
 }

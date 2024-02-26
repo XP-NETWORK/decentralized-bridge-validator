@@ -17,9 +17,9 @@ const listenForLockEvents = (
   em: EntityManager,
 ) => {
   return async (builder: EventBuilder, cb: EventIter) => {
-    try {
-      let lastBlock = lastBlock_;
-      while (true) {
+    let lastBlock = lastBlock_;
+    while (true) {
+      try {
         const latestBlockNumber = await provider.getBlockNumber();
 
         const latestBlock =
@@ -55,7 +55,7 @@ const listenForLockEvents = (
         for (const log of logs) {
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
-          return cb(
+          cb(
             builder.nftLocked(
               decoded.args.tokenId,
               decoded.args.destinationChain,
@@ -75,12 +75,13 @@ const listenForLockEvents = (
           lastBlock: lastBlock,
         });
         await em.flush();
+      } catch (e) {
+        log(
+          `${e} while listening for events. Sleeping for 10 seconds`,
+          chainIdent,
+        );
+        await new Promise((e) => setTimeout(e, 10000));
       }
-    } catch (e) {
-      log(
-        `${e} while listening for ton events. Sleeping for 10 seconds`,
-        chainIdent,
-      );
     }
   };
 };

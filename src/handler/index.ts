@@ -13,6 +13,7 @@ export async function listenEvents(
   const builder = eventBuilder();
 
   async function poolEvents(chain: THandler) {
+    ValidatorLog(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
       const sourceChain = map.get(ev.sourceChain as TSupportedChains);
       if (!sourceChain)

@@ -49,10 +49,7 @@ type IChainConfig = {
   lastBlock: number;
   chainType: string;
 };
-type IChainConfigAndWallets = {
-  chainConfig: TChain;
-  wallets: IGeneratedWallets;
-};
+
 type IEvmChainConfig = {
   chainType: "evm";
   rpcURL: string;
@@ -94,15 +91,6 @@ type IStakingConfig = {
   lastBlock: number;
 } & IEvmChainConfig;
 
-type IStakingChainConfigAndEvmWallet = {
-  stakingChainConfig: IStakingConfig;
-  evmWallet: IEvmWallet;
-};
-type IStakingChainConfigAndWallets = {
-  stakingChainConfig: IStakingConfig;
-  wallets: IGeneratedWallets;
-};
-
 type TChain =
   | IMultiversXChainConfig
   | IEvmChainConfig
@@ -125,7 +113,6 @@ export type SignerAndSignature = {
 export {
   IBridgeConfig,
   IChainConfig,
-  IChainConfigAndWallets,
   IConfigAndWallets,
   IEvmChainConfig,
   IEvmWallet,
@@ -136,8 +123,6 @@ export {
   IMultiversXWallet,
   ISecretChainConfig,
   ISecretWallet,
-  IStakingChainConfigAndEvmWallet,
-  IStakingChainConfigAndWallets,
   IStakingConfig,
   ITezosChainConfig,
   ITezosWallet,

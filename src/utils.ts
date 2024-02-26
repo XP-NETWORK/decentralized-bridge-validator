@@ -9,9 +9,9 @@ import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
 import { Interface, createInterface } from "readline/promises";
 import secrets from "../secrets.json";
-import { ValidatorLog } from "./handler/addSelf";
 import { getBalance } from "./handler/evm/utils";
 import { THandler } from "./handler/types";
+import { ValidatorLog } from "./handler/utils";
 import { IEvmChainConfig, IGeneratedWallets, IStakingConfig } from "./types";
 
 export async function generateAndSaveWallets() {
@@ -64,7 +64,7 @@ async function requireEnoughStorageChainBalance(
       new JsonRpcProvider(storageConfig.rpcURL),
     );
     if (balance < BigInt(storageConfig.intialFund)) {
-      console.log(
+      ValidatorLog(
         `Current balance: ${ethers.formatEther(
           balance,
         )}; Fund chain your wallet ${secrets.evmWallet.address} on ${
@@ -92,7 +92,7 @@ async function requireEnoughBalanceInChains(
       const balance = await chain.getBalance();
       const remainingRaw = chain.initialFunds - BigInt(balance);
       if (balance < BigInt(chain.initialFunds)) {
-        console.log(
+        ValidatorLog(
           `Current balance: ${ethers.formatEther(
             balance,
           )}; Fund chain your wallet ${chain.address} on ${
@@ -121,7 +121,7 @@ async function requireEnoughStakingBalance(
       new JsonRpcProvider(stakingConfig.rpcURL),
     );
     if (balance < BigInt(stakingConfig.intialFund)) {
-      console.log(
+      ValidatorLog(
         `Current balance: ${ethers.formatEther(
           balance,
         )}; Fund chain storage your wallet ${secrets.evmWallet.address} on ${

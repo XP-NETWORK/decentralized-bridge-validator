@@ -2,7 +2,7 @@ import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import { listenEvents } from "./handler";
-import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/addSelf";
+import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/utils";
 
 import { IBridgeConfig } from "./types";
 import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
@@ -21,7 +21,7 @@ async function main() {
 
   if (process.argv.includes("--testnet")) {
     config = testnetBridgeConfig;
-    console.log("Setting up for testnet environment");
+    ValidatorLog("Setting up for testnet environment");
   }
 
   const deps = await configDeps(config);

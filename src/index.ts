@@ -5,12 +5,12 @@ import { listenEvents } from "./handler";
 import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/addSelf";
 
 import { IBridgeConfig } from "./types";
-import { generateWallets, requireEnoughBalance } from "./utils";
+import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
 
 async function main() {
   if (!fs.existsSync("secrets.json")) {
     ValidatorLog("Secrets Not Found. Generating new Wallets");
-    await generateWallets();
+    await generateAndSaveWallets();
   }
   if (process.argv.includes("--help")) {
     console.info(help);

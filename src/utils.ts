@@ -12,9 +12,9 @@ import secrets from "../secrets.json";
 import { ValidatorLog } from "./handler/addSelf";
 import { getBalance } from "./handler/evm/utils";
 import { THandler } from "./handler/types";
-import { IEvmChainConfig, IStakingConfig } from "./types";
+import { IEvmChainConfig, IGeneratedWallets, IStakingConfig } from "./types";
 
-export async function generateWallets() {
+export async function generateAndSaveWallets() {
   const wallets = {
     evmWallet: await evmGw()(),
     secretWallet: await secretGw(),
@@ -23,6 +23,17 @@ export async function generateWallets() {
     tonWallet: await tonGw(),
   };
   return fs.writeFile("secrets.json", JSON.stringify(wallets));
+}
+
+export async function generateWallets(): Promise<IGeneratedWallets> {
+  const wallets = {
+    evmWallet: await evmGw()(),
+    secretWallet: await secretGw(),
+    tezosWallet: await tzGw(),
+    multiversXWallet: await mxGw(),
+    tonWallet: await tonGw(),
+  };
+  return wallets;
 }
 
 export async function requireEnoughBalance(

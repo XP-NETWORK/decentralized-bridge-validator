@@ -1,9 +1,33 @@
-type IMultiversXWallet = {
-  password: string;
-  privateKey: string;
-  address: string;
+type ISecretKeyCrypto = {
+  ciphertext: string;
+  cipherparams: {
+    iv: string;
+  };
+  cipher: string;
+  kdf: string;
+  kdfparams: {
+    dklen: number;
+    salt: string;
+    n: number;
+    r: number;
+    p: number;
+  };
+  mac: string;
 };
 
+type ISecretKey = {
+  version: number;
+  kind: string;
+  id: string;
+  address: string;
+  bech32: string;
+  crypto: ISecretKeyCrypto;
+};
+
+type IMultiversXWallet = {
+  password: string;
+  userWallet: ISecretKey;
+};
 type ITonWallet = {
   publicKey: string;
   secretKey: string;

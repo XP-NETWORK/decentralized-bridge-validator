@@ -5,7 +5,7 @@ const MikroOrmConfig: Options = {
   driver: SqliteDriver,
   dbName: "validator.db",
   entities: [Block],
-  debug: true,
+  debug: false,
 };
 
 export default MikroOrmConfig;

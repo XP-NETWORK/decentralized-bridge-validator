@@ -16,6 +16,6 @@
   },
   "files": {
     "include": ["src/**/*.ts"],
-    "ignore": ["src/contractsTypes/**/*.ts"]
+    "ignore": ["src/contractsTypes/**/*.ts", "src/tests/**/*.ts"]
   }
 }

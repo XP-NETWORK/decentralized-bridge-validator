@@ -45,6 +45,7 @@
     "openapi-client-axios": "^7.5.4",
     "secretjs": "=1.12.3",
     "ton-crypto": "^3.2.0",
-    "tonweb": "^0.0.62"
+    "tonweb": "^0.0.62",
+    "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge"
   }
 }

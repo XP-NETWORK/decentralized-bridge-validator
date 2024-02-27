@@ -13,7 +13,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
     chainType: "evm",
-    lastBlock: 38081769,
+    lastBlock: 38081771,
   },
   {
     chain: "ETH",
@@ -22,7 +22,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
     chainType: "evm",
-    lastBlock: 5321096,
+    lastBlock: 5382558,
   },
   {
     chain: "MATIC",
@@ -73,6 +73,16 @@ export const bridgeTestChains = [
     lastBlock: 5240862,
     nativeCoinSymbol: "XTZ",
     chainType: "tezos",
+  },
+  {
+    chain: "HEDERA",
+    rpcURL: "https://testnet.hashio.io/api",
+    nativeCoinSymbol: "HBAR",
+    intialFund: "50000000000000000",
+    contractAddress: "0x742f68F53583Be22a62338e916eB8DE90D07daB1",
+    chainType: "hedera",
+    lastBlock: 7095475,
+    royaltyInfoProxyAddress: "0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF",
   },
 ] as const satisfies TChain[];
 

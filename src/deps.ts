@@ -4,9 +4,10 @@ import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
 import { TezosToolkit } from "@taquito/taquito";
 import { TonClient, WalletContractV4 } from "@ton/ton";
-import { JsonRpcProvider, Wallet } from "ethers";
+import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
+import { privateKeyToAccount } from "web3-eth-accounts";
 import secrets from "../secrets.json";
 import { TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
@@ -48,6 +49,7 @@ export async function configEvmHandler(
     BigInt(conf.intialFund),
     conf.nativeCoinSymbol,
     em.fork(),
+    privateKeyToAccount(secrets.evmWallet.privateKey),
   );
 }
 
@@ -170,7 +172,7 @@ export async function configDeps(config: IBridgeConfig) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,
-    new Wallet(secrets.evmWallet.privateKey, storageProvider),
+    new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();

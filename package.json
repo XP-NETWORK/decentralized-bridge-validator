@@ -43,9 +43,10 @@
     "ethers": "^6.11.1",
     "libsodium-wrappers-sumo": "^0.7.13",
     "openapi-client-axios": "^7.5.4",
-    "secretjs": "=1.12.3",
+    "secretjs": "=1.12.4",
     "ton-crypto": "^3.2.0",
     "tonweb": "^0.0.62",
+    "web3-eth-accounts": "^4.1.1",
     "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge"
   }
 }

@@ -44,6 +44,7 @@ export async function listenEvents(
         tokenId: ev.tokenId,
         transactionHash: ev.transactionHash,
       };
+      console.log(inft);
 
       const signature = await sourceChain.signClaimData(inft);
 

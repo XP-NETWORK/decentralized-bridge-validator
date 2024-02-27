@@ -1,5 +1,6 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { JsonRpcProvider, Wallet } from "ethers";
+import { Web3Account } from "web3-eth-accounts";
 import { TSupportedChains } from "../../config";
 import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
 import { THandler } from "../types";
@@ -23,6 +24,7 @@ export function evmHandler(
   initialFunds: bigint,
   currency: string,
   em: EntityManager,
+  txSigner: Web3Account,
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -43,6 +45,6 @@ export function evmHandler(
     ),
     nftData: nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),
-    signClaimData: signClaimData(chainIdent, signer),
+    signClaimData: signClaimData(chainIdent, txSigner),
   };
 }

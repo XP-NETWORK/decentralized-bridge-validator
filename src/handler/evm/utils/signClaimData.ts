@@ -1,9 +1,10 @@
-import { Wallet, ethers, isAddress } from "ethers";
+import { ethers, isAddress } from "ethers";
+import { Web3Account } from "web3-eth-accounts";
 import { log } from ".";
 import { TSupportedChains } from "../../../config";
 import { TNftTransferDetailsObject } from "../../types";
 
-const signClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
+const signClaimData = (chainIdent: TSupportedChains, signer: Web3Account) => {
   return async (data: TNftTransferDetailsObject) => {
     if (!isAddress(data.destinationUserAddress)) {
       data.destinationUserAddress = data.royaltyReceiver;
@@ -13,7 +14,7 @@ const signClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
       data.tokenId,
       data.sourceChain,
       data.destinationChain,
-      data.destinationUserAddress.toString(),
+      data.destinationUserAddress,
       data.sourceNftContractAddress,
       data.name,
       data.symbol,
@@ -42,7 +43,7 @@ const signClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
       "uint256", // fee that needs to be paid by the user to the bridge,
     ];
 
-    const signature = await signer.signMessage(
+    const { signature } = signer.sign(
       ethers.keccak256(
         ethers.AbiCoder.defaultAbiCoder().encode(
           nftTransferDetailsTypes,
@@ -52,7 +53,7 @@ const signClaimData = (chainIdent: TSupportedChains, signer: Wallet) => {
     );
 
     return {
-      signature: signature,
+      signature,
       signer: signer.address,
     };
   };

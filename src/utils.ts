@@ -120,7 +120,7 @@ async function requireEnoughStakingBalance(
       new VoidSigner(secrets.evmWallet.address),
       new JsonRpcProvider(stakingConfig.rpcURL),
     );
-    if (balance < BigInt(stakingConfig.intialFund)) {
+    if (balance < BigInt(stakingConfig.intialFund) * 2n) {
       ValidatorLog(
         `Current balance: ${ethers.formatEther(
           balance,

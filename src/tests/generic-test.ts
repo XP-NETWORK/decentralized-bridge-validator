@@ -4,13 +4,10 @@ import {
   MetaMap,
 } from "xp-decentralized-sdk";
 import { bridgeTestChains } from "../config";
-import { ERC721Royalty } from "../contractsTypes/evm";
 import { SignerAndSignature, TChain } from "../types";
 import { generateWallets } from "../utils";
-
 import { getConfigs } from "./configs";
 import { generateData } from "./data";
-import { deployEVMNftContract } from "./mint";
 import { getSigners } from "./signers";
 
 (async () => {
@@ -25,26 +22,28 @@ import { getSigners } from "./signers";
 
   // Create a NFT Contract
   console.log(`Deploying NFT Contract on BSC`);
-  let contract: ERC721Royalty;
+  let contract: string;
   let deployed = false;
 
   while (!deployed) {
-    try {
-      contract = await deployEVMNftContract({
-        evmChainConfig: configs.bsc,
-        evmWallet: signers.bsc,
-      });
-      deployed = true;
-    } catch (e) {
-      `Retrying to deploy NFT Contract on BSC`;
-    }
+    const bsc = await factory.inner(data.bsc.config.chain as "BSC");
+    contract = await bsc.deployCollection(
+      signers.bsc,
+      {
+        name: "TestContract",
+        symbol: "TST",
+      },
+      undefined,
+    );
+    /// Sleep for 5 seconds to wait for the contract to be deployed
+    await new Promise((e) => setTimeout(e, 5000));
   }
 
   for (let i = 0; i <= NFTS_TO_MINT; i++) {
     // Mint NFT
     const bsc = await factory.inner(data.bsc.config.chain as "BSC");
     const minted = await bsc.mintNft(signers.bsc, {
-      contract: await contract!.getAddress(),
+      contract: contract!,
       tokenId: BigInt(i),
       uri: `https://meta.polkamon.com/polkamon/${i}`,
       royalty: 10n,
@@ -52,7 +51,7 @@ import { getSigners } from "./signers";
     });
     await minted.wait();
     console.log(
-      `Minted NFT on BSC with Token ID: ${i} at ${await contract!.getAddress()} in tx: ${
+      `Minted NFT on BSC with Token ID: ${i} at ${contract!} in tx: ${
         minted.hash
       }`,
     );
@@ -60,12 +59,12 @@ import { getSigners } from "./signers";
     const approved = await bsc.approveNft(
       signers.bsc,
       i.toString(),
-      await contract!.getAddress(),
+      contract!,
       {},
     );
     await approved.wait();
     console.log(
-      `Approved NFT on BSC with Token ID: ${i} at ${await contract!.getAddress()} in tx: ${
+      `Approved NFT on BSC with Token ID: ${i} at ${contract!} in tx: ${
         minted.hash
       }`,
     );
@@ -170,7 +169,7 @@ import { getSigners } from "./signers";
     {
       fromChain: data.bsc,
       toChain: data.eth,
-      contractAddress: await contract!.getAddress(),
+      contractAddress: contract!,
       tokenId: "0",
       nftType: "singular",
     },

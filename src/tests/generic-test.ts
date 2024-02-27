@@ -3,6 +3,7 @@ import {
   ChainFactoryConfigs,
   MetaMap,
 } from "xp-decentralized-sdk";
+
 import { bridgeTestChains } from "../config";
 import { SignerAndSignature, TChain } from "../types";
 import { generateWallets } from "../utils";
@@ -14,61 +15,9 @@ import { getSigners } from "./signers";
   const genWallets = await generateWallets();
   const factory = ChainFactory(ChainFactoryConfigs.TestNet());
 
-  const NFTS_TO_MINT = 1;
-
   const signers = getSigners(genWallets);
   const configs = getConfigs(bridgeTestChains as unknown as TChain[]);
   const data = await generateData(genWallets, configs);
-
-  // Create a NFT Contract
-  console.log(`Deploying NFT Contract on BSC`);
-  let contract: string;
-  let deployed = false;
-
-  while (!deployed) {
-    const bsc = await factory.inner(data.bsc.config.chain as "BSC");
-    contract = await bsc.deployCollection(
-      signers.bsc,
-      {
-        name: "TestContract",
-        symbol: "TST",
-      },
-      undefined,
-    );
-    /// Sleep for 5 seconds to wait for the contract to be deployed
-    await new Promise((e) => setTimeout(e, 5000));
-  }
-
-  for (let i = 0; i <= NFTS_TO_MINT; i++) {
-    // Mint NFT
-    const bsc = await factory.inner(data.bsc.config.chain as "BSC");
-    const minted = await bsc.mintNft(signers.bsc, {
-      contract: contract!,
-      tokenId: BigInt(i),
-      uri: `https://meta.polkamon.com/polkamon/${i}`,
-      royalty: 10n,
-      royaltyReceiver: data.bsc.address,
-    });
-    await minted.wait();
-    console.log(
-      `Minted NFT on BSC with Token ID: ${i} at ${contract!} in tx: ${
-        minted.hash
-      }`,
-    );
-    // Approve NFT
-    const approved = await bsc.approveNft(
-      signers.bsc,
-      i.toString(),
-      contract!,
-      {},
-    );
-    await approved.wait();
-    console.log(
-      `Approved NFT on BSC with Token ID: ${i} at ${contract!} in tx: ${
-        minted.hash
-      }`,
-    );
-  }
 
   // Lock the NFTs
   async function transfer(
@@ -77,10 +26,20 @@ import { getSigners } from "./signers";
         fromChain: (typeof data)[keyof typeof data];
         toChain: (typeof data)[keyof typeof data];
         tokenId: string;
-        contractAddress: string;
+
         codeInfo?: CodeInfo;
         nonce?: string;
         nftType: "singular" | "multiple";
+        deployArgs: {
+          name: string;
+          symbol: string;
+        };
+        mintArgs: {
+          tokenId: string;
+          uri: string;
+          royalty: string;
+          royaltyReceiver: string;
+        };
       },
     ],
   ) {
@@ -88,13 +47,43 @@ import { getSigners } from "./signers";
       const chain = await factory.inner(
         tx.fromChain.config.chain as keyof MetaMap,
       );
+
+      const contract = await chain.deployCollection(
+        tx.fromChain.signer as any,
+        tx.deployArgs as any,
+        undefined,
+      );
+      /// Sleep for 5 seconds to wait for the contract to be deployed
+      await new Promise((e) => setTimeout(e, 5000));
+
+      // Mint NFT
+
+      const minted = await chain.mintNft(
+        tx.fromChain.signer as any,
+        tx.mintArgs as any,
+      );
+
+      console.log(
+        `Minted NFT on BSC with Token ID: 1 at ${contract!} in tx: ${minted}`,
+      );
+      // Approve NFT
+      const approved = await chain.approveNft(
+        tx.fromChain.signer as any,
+        "0",
+        contract!,
+        {},
+      );
+
+      console.log(
+        `Approved NFT on BSC with Token ID: 0 at ${contract!} in tx: ${approved}`,
+      );
       let locked = false;
       let lockHash: string = "";
       while (!locked) {
         try {
           const lock = await chain.lockNft(
             tx.fromChain.signer as any,
-            tx.contractAddress,
+            contract,
             tx.toChain.config.chain as keyof MetaMap,
             tx.toChain.address,
             BigInt(tx.tokenId),
@@ -169,9 +158,18 @@ import { getSigners } from "./signers";
     {
       fromChain: data.bsc,
       toChain: data.eth,
-      contractAddress: contract!,
       tokenId: "0",
       nftType: "singular",
+      deployArgs: {
+        name: "TestContract",
+        symbol: "TST",
+      },
+      mintArgs: {
+        tokenId: "0",
+        uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
+        royalty: "0",
+        royaltyReceiver: signers.eth.address,
+      },
     },
   ]);
 })().catch((e) => {

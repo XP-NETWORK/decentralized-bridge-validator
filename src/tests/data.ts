@@ -5,7 +5,7 @@ import { TezosToolkit } from "@taquito/taquito";
 import { TonClient, WalletContractV4 } from "@ton/ton";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { createInterface } from "readline/promises";
-import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
+import { Wallet as ScrtWallet, SecretNetworkClient } from "secretjs";
 import TonWeb from "tonweb";
 import { IGeneratedWallets } from "../types";
 import { getConfigs } from "./configs";
@@ -21,7 +21,7 @@ export async function generateData(
 ) {
   const tonweb = new TonWeb(new TonWeb.HttpProvider(configs.ton.rpcURL));
 
-  const walletClass = tonweb.wallet.all["v4R2"];
+  const walletClass = tonweb.wallet.all.v4R2;
 
   const wallet = new walletClass(tonweb.provider, {
     publicKey: TonWeb.utils.hexToBytes(genWallets.tonWallet.publicKey),
@@ -29,32 +29,33 @@ export async function generateData(
   return {
     bsc: {
       signer: await (async () => {
-        const wallet = new Wallet(
-          genWallets.evmWallet.privateKey,
-          new JsonRpcProvider(configs.bsc.rpcURL),
+        const provider = new JsonRpcProvider(
+          "https://bsc-testnet.public.blastapi.io",
         );
+        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
         await requireFundsForAddress(
-          async () => (await wallet.provider?.getBalance(wallet)) ?? 0n,
+          async () => await provider.getBalance(wallet),
           wallet.address,
+          "BSC",
         );
+        return wallet;
       })(),
       config: configs.bsc,
       address: genWallets.evmWallet.address,
     },
-    hedera: {
-      signer: await (async () => {
-        const wallet = new Wallet(
-          genWallets.evmWallet.privateKey,
-          new JsonRpcProvider(configs.hedera.rpcURL),
-        );
-        await requireFundsForAddress(
-          async () => (await wallet.provider?.getBalance(wallet)) ?? 0n,
-          wallet.address,
-        );
-      })(),
-      config: configs.hedera,
-      address: genWallets.evmWallet.address,
-    },
+    // hedera: {
+    //   signer: await (async () => {
+    //     const provider = new JsonRpcProvider(configs.hedera.rpcURL);
+    //     const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
+    //     await requireFundsForAddress(
+    //       async () => (await provider.getBalance(wallet)) ?? 0n,
+    //       wallet.address,
+    //       "HEDERA",
+    //     );
+    //   })(),
+    //   config: configs.hedera,
+    //   address: genWallets.evmWallet.address,
+    // },
     multiversx: {
       signer: await (async () => {
         const signer = UserSigner.fromWallet(
@@ -62,12 +63,16 @@ export async function generateData(
           genWallets.multiversXWallet.password,
         );
 
-        await requireFundsForAddress(async () => {
-          const np = new ProxyNetworkProvider(configs.multiversx.gatewayURL);
-          return BigInt(
-            (await np.getAccount(signer.getAddress())).balance.toString(),
-          );
-        }, signer.getAddress().bech32());
+        await requireFundsForAddress(
+          async () => {
+            const np = new ProxyNetworkProvider(configs.multiversx.gatewayURL);
+            return BigInt(
+              (await np.getAccount(signer.getAddress())).balance.toString(),
+            );
+          },
+          signer.getAddress().bech32(),
+          "MULTIVERSX",
+        );
         return signer;
       })(),
       config: configs.multiversx,
@@ -75,14 +80,14 @@ export async function generateData(
     },
     eth: {
       signer: await (async () => {
-        const wallet = new Wallet(
-          genWallets.evmWallet.privateKey,
-          new JsonRpcProvider(configs.eth.rpcURL),
-        );
+        const provider = new JsonRpcProvider(configs.eth.rpcURL);
+        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
         await requireFundsForAddress(
-          async () => (await wallet.provider?.getBalance(wallet)) ?? 0n,
+          async () => (await provider.getBalance(wallet)) ?? 0n,
           wallet.address,
+          "ETH",
         );
+        return wallet;
       })(),
       config: configs.eth,
       address: genWallets.evmWallet.address,
@@ -99,6 +104,7 @@ export async function generateData(
               ).toString(),
             ),
           await signer.publicKeyHash(),
+          "TEZOS",
         );
       })(),
       config: configs.tezos,
@@ -108,7 +114,7 @@ export async function generateData(
     },
     secret: {
       signer: await (async () => {
-        const wallet = new SecretWallet(genWallets.secretWallet.privateKey);
+        const wallet = new ScrtWallet(genWallets.secretWallet.privateKey);
         await requireFundsForAddress(
           async () =>
             BigInt(
@@ -123,6 +129,7 @@ export async function generateData(
               ).balance?.amount ?? "0",
             ),
           wallet.address,
+          "SECRET",
         );
         return wallet;
       })(),
@@ -137,11 +144,13 @@ export async function generateData(
         });
         const tc = new TonClient({
           endpoint: configs.ton.rpcURL,
-          apiKey: "api-key",
+          apiKey:
+            "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292",
         });
         await requireFundsForAddress(
           async () => await tc.getBalance(wallet.address),
           wallet.address.toString(),
+          "TON",
         );
         return wallet;
       })(),
@@ -154,6 +163,7 @@ export async function generateData(
 async function requireFundsForAddress(
   gb: () => Promise<bigint>,
   address: string,
+  chain: string,
   minBalance = 0.1,
 ) {
   let funded = false;
@@ -161,10 +171,11 @@ async function requireFundsForAddress(
     const balance = await gb();
     if (balance < minBalance) {
       await int.question(
-        `Fund the wallet: ${address} and press enter to continue. Current Balance: ${balance}`,
+        `Fund the wallet: ${address} on ${chain} and press enter to continue. Current Balance: ${balance}\n`,
       );
       continue;
     }
+    console.log(`${chain} Has Enough Funds ✅`);
     funded = true;
   }
 }

@@ -1,57 +1,71 @@
 import {
   ChainFactory,
   ChainFactoryConfigs,
+  DeployCollection,
   MetaMap,
+  MintNft,
+  TApproveNFT,
 } from "xp-decentralized-sdk";
-import { bridgeTestChains } from "../config";
-import { SignerAndSignature, TChain } from "../types";
 
+import { SignerAndSignature } from "../types";
+
+import { readFile } from "fs/promises";
+import { TInferChainH } from "xp-decentralized-sdk/dist/factory/types/utils";
+import { bridgeTestChains } from "../config";
 import { getConfigs } from "./configs";
 import { generateData } from "./data";
 import { getSigners } from "./signers";
-import { readFile } from "fs/promises";
+
+type InferSigner<FC extends keyof MetaMap> =
+  TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
+
+type InferDeployArgs<FC extends keyof MetaMap> =
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;
+
+type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  any,
+  infer R,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  any
+>
+  ? R
+  : never;
 
 (async () => {
   const genWallets = JSON.parse(await readFile("secrets.json", "utf-8"));
   const factory = ChainFactory(ChainFactoryConfigs.TestNet());
 
   const signers = getSigners(genWallets);
-  const configs = getConfigs(bridgeTestChains as unknown as TChain[]);
-  const data = await generateData(genWallets, configs);
+  const configs = getConfigs(bridgeTestChains);
+  const data = await generateData(
+    genWallets,
+
+    configs,
+  );
 
   // Lock the NFTs
-  async function transfer(
+  async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     args: [
       {
-        fromChain: (typeof data)[keyof typeof data];
-        toChain: (typeof data)[keyof typeof data];
-        tokenId: string;
-
-        codeInfo?: CodeInfo;
-        nonce?: string;
+        fromChain: FC;
+        toChain: TC;
+        signer: InferSigner<FC>;
+        claimSigner: InferSigner<TC>;
         nftType: "singular" | "multiple";
-        deployArgs: {
-          name: string;
-          symbol: string;
-        };
-        mintArgs: {
-          tokenId: string;
-          uri: string;
-          royalty: string;
-          royaltyReceiver: string;
-        };
+        deployArgs: InferDeployArgs<FC>;
+        mintArgs: InferMintArgs<FC>;
+        receiver: string;
       },
     ],
   ) {
     for (const tx of args) {
-      const chain = await factory.inner(
-        tx.fromChain.config.chain as keyof MetaMap,
-      );
-      console.log(chain.deployCollection);
+      const chain = await factory.inner(tx.fromChain);
 
       const contract = await chain.deployCollection(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.fromChain.signer as any,
+        tx.signer as any,
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         tx.deployArgs as any,
         undefined,
@@ -64,19 +78,29 @@ import { readFile } from "fs/promises";
 
       const minted = await chain.mintNft(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.fromChain.signer as any,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.mintArgs as any,
+        tx.signer as any,
+        {
+          //@ts-ignore
+          ...tx.mintArgs,
+          contract: contract,
+          contractAddress: contract,
+          identifier: contract,
+        },
       );
 
       console.log(
-        `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${minted}`,
+        `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${JSON.stringify(
+          minted,
+          null,
+          4,
+        )}`,
       );
+      await new Promise((e) => setTimeout(e, 5000));
       // Approve NFT
       const approved = await chain.approveNft(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.fromChain.signer as any,
-        "0",
+        tx.signer as any,
+        "1",
         contract,
         {},
       );
@@ -90,12 +114,12 @@ import { readFile } from "fs/promises";
         try {
           const lock = await chain.lockNft(
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            tx.fromChain.signer as any,
+            tx.signer as any,
             contract,
-            tx.toChain.config.chain as keyof MetaMap,
-            tx.toChain.address,
-            BigInt(tx.tokenId),
-            { gasLimit: 1000000 },
+            tx.toChain,
+            tx.receiver,
+            BigInt("1"),
+            {},
           );
           console.log("Lock Hash:", lock.hash());
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -105,7 +129,7 @@ import { readFile } from "fs/promises";
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         } catch (e: any) {
           console.log(
-            `Retrying to lock NFT on ${tx.fromChain.config.chain}`,
+            `Retrying to lock NFT on ${tx.fromChain}`,
             e.shortMessage,
           );
         }
@@ -119,11 +143,11 @@ import { readFile } from "fs/promises";
 
       console.log("Fetching Signatures");
 
-      const tc = await factory.inner(tx.toChain.config.chain as keyof MetaMap);
+      const tc = await factory.inner(tx.toChain);
 
       let signatures = await tc
         .getStorageContract()
-        .getLockNftSignatures(lockHash, tx.fromChain.config.chain);
+        .getLockNftSignatures(lockHash, tx.fromChain);
       const neededSignatures =
         Math.floor((2 / 3) * Number(await tc.getValidatorCount())) + 1;
       while (signatures.length < neededSignatures) {
@@ -133,7 +157,7 @@ import { readFile } from "fs/promises";
         );
         signatures = await tc
           .getStorageContract()
-          .getLockNftSignatures(lockHash, tx.fromChain.config.chain);
+          .getLockNftSignatures(lockHash, tx.fromChain);
       }
 
       const signatureArray: SignerAndSignature[] = signatures.map((item) => {
@@ -148,13 +172,13 @@ import { readFile } from "fs/promises";
         try {
           const claim = await tc.claimNft(
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            tx.toChain.signer as any,
+            tx.claimSigner as any,
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tc.transform(nftDetails) as any,
             {},
             signatureArray,
           );
-          console.log(`Claimed on ${tx.toChain.config.chain} at ${claim}`);
+          console.log(`Claimed on ${tx.toChain} at ${claim}`);
           claimed = true;
           return "";
         } catch (e) {
@@ -167,19 +191,22 @@ import { readFile } from "fs/promises";
 
   await transfer([
     {
-      fromChain: data.bsc,
-      toChain: data.eth,
-      tokenId: "0",
+      fromChain: "ETH",
+      toChain: "BSC",
       nftType: "singular",
+      claimSigner: data.bsc.signer,
+      receiver: signers.bsc.address,
+      signer: data.eth.signer,
       deployArgs: {
         name: "TestContract",
         symbol: "TST",
       },
       mintArgs: {
-        tokenId: "0",
+        tokenId: 1n,
         uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-        royalty: "0",
+        royalty: 10n,
         royaltyReceiver: signers.eth.address,
+        contract: "",
       },
     },
   ]);

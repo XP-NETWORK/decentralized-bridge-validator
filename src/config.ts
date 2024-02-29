@@ -22,7 +22,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
     chainType: "evm",
-    lastBlock: 5387396,
+    lastBlock: 5388599,
   },
   {
     chain: "MATIC",

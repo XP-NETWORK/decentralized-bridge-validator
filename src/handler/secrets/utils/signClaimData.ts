@@ -1,5 +1,5 @@
+import { sha256 } from "@noble/hashes/sha256";
 import * as secp256k1 from "@noble/secp256k1";
-import { sha256 } from "ethers";
 import { Wallet } from "secretjs";
 import { TNftTransferDetailsObject } from "../../types";
 
@@ -14,7 +14,7 @@ export default async function signClaimData(
     der: false,
   });
   return {
-    signer: wallet.address,
+    signer: Buffer.from(wallet.publicKey).toString("hex"),
     signature: `0x${Buffer.from(signature).toString("hex")}`,
   };
 }

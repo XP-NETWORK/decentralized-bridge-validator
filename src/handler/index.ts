@@ -17,7 +17,10 @@ export async function listenEvents(
     chain.listenForLockEvents(builder, async (ev) => {
       const sourceChain = map.get(ev.sourceChain as TSupportedChains);
       if (!sourceChain)
-        throw new Error(`Unsupported chain for ${ev.transactionHash}`);
+        throw new Error(`Unsupported src chain for ${ev.transactionHash}`);
+      const destinationChain = map.get(ev.destinationChain as TSupportedChains);
+      if (!destinationChain)
+        throw new Error(`Unsupported dest chain for ${ev.transactionHash}`);
 
       const nftDetails = await sourceChain.nftData(
         ev.tokenId,
@@ -44,8 +47,9 @@ export async function listenEvents(
         tokenId: ev.tokenId,
         transactionHash: ev.transactionHash,
       };
+      console.log(inft);
 
-      const signature = await sourceChain.signClaimData(inft);
+      const signature = await destinationChain.signClaimData(inft);
 
       const alreadyProcessed = await deps.storage
         .usedSignatures(signature.signature)

@@ -191,6 +191,7 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
           console.log("Got Claim Data");
           foundedData = true;
         } catch (e) {
+          await new Promise((s) => setTimeout(s, 5000));
           console.log(
             `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
             e,
@@ -236,9 +237,10 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
             tc.transform(nftDetails) as any,
             signatureArray,
           );
-          console.log(`Claimed on ${tx.toChain} at ${JSON.stringify(claim)}`);
+          console.log(`Claimed on ${tx.toChain} at ${claim}`);
           claimed = true;
         } catch (e) {
+          await new Promise((s) => setTimeout(s, 5000));
           console.log(e);
           console.log("Retrying Claiming");
         }
@@ -247,23 +249,23 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
 
   const firstTest = createTest({
     fromChain: "ETH",
-    toChain: "BSC",
+    toChain: "TEZOS",
     nftType: "singular",
-    claimSigner: data.bsc.signer,
-    receiver: signers.bsc.address,
+    claimSigner: signers.tezos,
+    receiver: await signers.tezos.publicKeyHash(),
     signer: data.eth.signer,
     deployArgs: {
       name: "TestContract",
       symbol: "TST",
     },
     mintArgs: {
-      tokenId: 1n,
+      tokenId: 400n,
       uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
       royalty: 10n,
       royaltyReceiver: signers.eth.address,
       contract: "",
     },
-    approveTokenId: "1",
+    approveTokenId: "400",
   });
   await transferMultiple([firstTest]);
 })().catch((e) => {

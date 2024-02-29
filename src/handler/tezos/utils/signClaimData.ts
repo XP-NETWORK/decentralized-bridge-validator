@@ -2,7 +2,6 @@ import { packDataBytes } from "@taquito/michel-codec";
 import { Signer } from "@taquito/taquito";
 import { validateAddress } from "@taquito/utils";
 import { keccak256 } from "ethers";
-import { log } from ".";
 import {
   TezosNftTransferDetailsSchema,
   TezosNftTransferDetailsTypes,
@@ -14,8 +13,10 @@ export default async function signClaimData(
   signer: Signer,
 ) {
   // Mitigation if destination user address is invalid
-  data.destinationUserAddress = data.royaltyReceiver;
-  log("Invalid Tezos destination address", data.destinationUserAddress);
+  const destionationUserAddress =
+    validateAddress(data.destinationUserAddress) === 3
+      ? data.destinationUserAddress
+      : data.royaltyReceiver;
 
   const isTezosAddr = validateAddress(data.sourceNftContractAddress) === 3;
 
@@ -31,7 +32,7 @@ export default async function signClaimData(
     token_id: data.tokenId,
     source_chain: data.sourceChain,
     dest_chain: data.destinationChain,
-    dest_address: data.destinationUserAddress,
+    dest_address: destionationUserAddress,
     source_nft_contract_address: sourceNftContractAddress,
     name: data.name,
     symbol: data.symbol,

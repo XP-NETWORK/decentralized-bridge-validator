@@ -48,24 +48,56 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
   const configs = getConfigs(bridgeTestChains);
   const data = await generateData(genWallets, configs);
 
+  function createTest<
+    FC extends keyof MetaMap,
+    TC extends keyof MetaMap,
+  >(args: {
+    fromChain: FC;
+    toChain: TC;
+    signer: InferSigner<FC>;
+    claimSigner: InferSigner<TC>;
+    nftType: "singular" | "multiple";
+    deployArgs: InferDeployArgs<FC>;
+    mintArgs: InferMintArgs<FC>;
+    receiver: string;
+    approveTokenId: string;
+  }) {
+    return args;
+  }
+
+  async function transferMultiple(
+    args: {
+      fromChain: any;
+      toChain: any;
+      signer: InferSigner<any>;
+      claimSigner: InferSigner<any>;
+      nftType: "singular" | "multiple";
+      deployArgs: InferDeployArgs<any>;
+      mintArgs: InferMintArgs<any>;
+      receiver: any;
+      approveTokenId: any;
+    }[],
+  ) {
+    await transfer(args);
+  }
+
   // Lock the NFTs
   async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
-    args: [
-      {
-        fromChain: FC;
-        toChain: TC;
-        signer: InferSigner<FC>;
-        claimSigner: InferSigner<TC>;
-        nftType: "singular" | "multiple";
-        deployArgs: InferDeployArgs<FC>;
-        mintArgs: InferMintArgs<FC>;
-        receiver: string;
-        approveTokenId: string;
-      },
-    ],
+    args: {
+      fromChain: FC;
+      toChain: TC;
+      signer: InferSigner<FC>;
+      claimSigner: InferSigner<TC>;
+      nftType: "singular" | "multiple";
+      deployArgs: InferDeployArgs<FC>;
+      mintArgs: InferMintArgs<FC>;
+      receiver: string;
+      approveTokenId: string;
+    }[],
   ) {
     for (const tx of args) {
       const chain = await factory.inner(tx.fromChain);
+
       const contract = await chain.deployCollection(
         tx.signer as any,
         tx.deployArgs as any,
@@ -76,26 +108,32 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
 
       // Mint NFT
 
-      const minted = await chain.mintNft(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.signer as any,
-        {
-          //@ts-ignore
-          ...tx.mintArgs,
-          contract: contract,
-          contractAddress: contract,
-          identifier: contract,
-        },
-      );
-
-      console.log(
-        `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${JSON.stringify(
-          minted,
-          null,
-          4,
-        )}`,
-      );
-      await new Promise((e) => setTimeout(e, 5000));
+      let isMinted = false;
+      while (!isMinted) {
+        try {
+          const minted = await chain.mintNft(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            tx.signer as any,
+            {
+              //@ts-ignore
+              ...tx.mintArgs,
+              contract: contract,
+              contractAddress: contract,
+              identifier: contract,
+            },
+          );
+          isMinted = true;
+          console.log(
+            `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${JSON.stringify(
+              minted,
+              null,
+              4,
+            )}`,
+          );
+        } catch (e) {
+          console.log(`Failed to mint NFT on ${tx.fromChain}`, e);
+        }
+      }
 
       let approved = false;
       while (!approved) {
@@ -135,7 +173,6 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
           );
           console.log("Lock Hash:", lock.hash());
           //@ts-ignore
-          lock.tx?.wait && lock.tx.wait();
           locked = true;
           lockHash = lock.hash();
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -145,6 +182,21 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
       }
 
       console.log(`Finding Claim Data for Lock Hash: ${lockHash}`);
+
+      let foundedData = false;
+      while (!foundedData) {
+        try {
+          const nftDetails = await factory.getClaimData(chain, lockHash);
+          console.log(nftDetails);
+          console.log("Got Claim Data");
+          foundedData = true;
+        } catch (e) {
+          console.log(
+            `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
+            e,
+          );
+        }
+      }
 
       const nftDetails = await factory.getClaimData(chain, lockHash);
       console.log(nftDetails);
@@ -193,28 +245,27 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
     }
   }
 
-  await transfer([
-    {
-      fromChain: "ETH",
-      toChain: "BSC",
-      nftType: "singular",
-      claimSigner: data.bsc.signer,
-      receiver: signers.bsc.address,
-      signer: data.eth.signer,
-      deployArgs: {
-        name: "TestContract",
-        symbol: "TST",
-      },
-      mintArgs: {
-        tokenId: 1n,
-        uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-        royalty: 10n,
-        royaltyReceiver: signers.eth.address,
-        contract: "",
-      },
-      approveTokenId: "1",
+  const firstTest = createTest({
+    fromChain: "ETH",
+    toChain: "BSC",
+    nftType: "singular",
+    claimSigner: data.bsc.signer,
+    receiver: signers.bsc.address,
+    signer: data.eth.signer,
+    deployArgs: {
+      name: "TestContract",
+      symbol: "TST",
     },
-  ]);
+    mintArgs: {
+      tokenId: 1n,
+      uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
+      royalty: 10n,
+      royaltyReceiver: signers.eth.address,
+      contract: "",
+    },
+    approveTokenId: "1",
+  });
+  await transferMultiple([firstTest]);
 })().catch((e) => {
   console.error(e);
 });

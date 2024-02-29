@@ -7,11 +7,12 @@ import {
   TApproveNFT,
 } from "xp-decentralized-sdk";
 
-import { SignerAndSignature } from "../types";
+import { IGeneratedWallets, SignerAndSignature } from "../types";
 
 import { readFile } from "fs/promises";
 import { TInferChainH } from "xp-decentralized-sdk/dist/factory/types/utils";
 import { bridgeTestChains } from "../config";
+import { generateWallets } from "../utils";
 import { getConfigs } from "./configs";
 import { generateData } from "./data";
 import { getSigners } from "./signers";
@@ -20,30 +21,32 @@ type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
 
 type InferDeployArgs<FC extends keyof MetaMap> =
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;
 
 type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   any,
   infer R,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  any,
   any
 >
   ? R
   : never;
 
 (async () => {
-  const genWallets = JSON.parse(await readFile("secrets.json", "utf-8"));
+  const file = await readFile("secrets.json", "utf-8").catch(() => "");
+  let genWallets: IGeneratedWallets;
+  if (!file) {
+    console.log("No file found");
+    genWallets = await generateWallets();
+  } else {
+    genWallets = JSON.parse(file);
+  }
+
   const factory = ChainFactory(ChainFactoryConfigs.TestNet());
 
   const signers = getSigners(genWallets);
   const configs = getConfigs(bridgeTestChains);
-  const data = await generateData(
-    genWallets,
-
-    configs,
-  );
+  const data = await generateData(genWallets, configs);
 
   // Lock the NFTs
   async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
@@ -57,18 +60,15 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
         deployArgs: InferDeployArgs<FC>;
         mintArgs: InferMintArgs<FC>;
         receiver: string;
+        approveTokenId: string;
       },
     ],
   ) {
     for (const tx of args) {
       const chain = await factory.inner(tx.fromChain);
-
       const contract = await chain.deployCollection(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         tx.signer as any,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         tx.deployArgs as any,
-        undefined,
       );
       console.log(`Deployed NFT Contract: ${contract}`);
       /// Sleep for 5 seconds to wait for the contract to be deployed
@@ -96,14 +96,26 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
         )}`,
       );
       await new Promise((e) => setTimeout(e, 5000));
-      // Approve NFT
-      const approved = await chain.approveNft(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        tx.signer as any,
-        "1",
-        contract,
-        {},
-      );
+
+      let approved = false;
+      while (!approved) {
+        try {
+          const approve = await chain.approveNft(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            tx.signer as any,
+            tx.approveTokenId,
+            contract,
+            {},
+          );
+          console.log(
+            `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approve}`,
+          );
+          approved = true;
+        } catch (e) {
+          await new Promise((e) => setTimeout(e, 5000));
+          console.log("Retrying Approving NFT", e);
+        }
+      }
 
       console.log(
         `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approved}`,
@@ -118,20 +130,17 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
             contract,
             tx.toChain,
             tx.receiver,
-            BigInt("1"),
+            BigInt(tx.approveTokenId),
             {},
           );
           console.log("Lock Hash:", lock.hash());
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          await (lock.tx as any).wait();
+          //@ts-ignore
+          lock.tx?.wait && lock.tx.wait();
           locked = true;
           lockHash = lock.hash();
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         } catch (e: any) {
-          console.log(
-            `Retrying to lock NFT on ${tx.fromChain}`,
-            e.shortMessage,
-          );
+          console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
         }
       }
 
@@ -171,22 +180,17 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
       while (!claimed)
         try {
           const claim = await tc.claimNft(
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tx.claimSigner as any,
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tc.transform(nftDetails) as any,
-            {},
             signatureArray,
           );
-          console.log(`Claimed on ${tx.toChain} at ${claim}`);
+          console.log(`Claimed on ${tx.toChain} at ${JSON.stringify(claim)}`);
           claimed = true;
-          return "";
         } catch (e) {
           console.log(e);
           console.log("Retrying Claiming");
         }
     }
-    return "";
   }
 
   await transfer([
@@ -208,6 +212,7 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
         royaltyReceiver: signers.eth.address,
         contract: "",
       },
+      approveTokenId: "1",
     },
   ]);
 })().catch((e) => {

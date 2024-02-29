@@ -3831,7 +3831,7 @@ ws@8.5.0:
 
 "xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge":
   version "1.0.0"
-  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#0a1c042d7d7fa1dc0a1591e9a81291c237573001"
+  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#3237a4a15b6b822879a68414f01549fdaa592a59"
   dependencies:
     "@multiversx/sdk-core" "^12.18.0"
     "@multiversx/sdk-network-providers" "^2.2.1"

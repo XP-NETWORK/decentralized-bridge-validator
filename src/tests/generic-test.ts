@@ -6,10 +6,10 @@ import {
 import { bridgeTestChains } from "../config";
 import { SignerAndSignature, TChain } from "../types";
 
+import { readFile } from "fs/promises";
 import { getConfigs } from "./configs";
 import { generateData } from "./data";
 import { getSigners } from "./signers";
-import { readFile } from "fs/promises";
 
 (async () => {
   const genWallets = JSON.parse(await readFile("secrets.json", "utf-8"));
@@ -151,8 +151,8 @@ import { readFile } from "fs/promises";
             tx.toChain.signer as any,
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tc.transform(nftDetails) as any,
-            {},
             signatureArray,
+            {},
           );
           console.log(`Claimed on ${tx.toChain.config.chain} at ${claim}`);
           claimed = true;

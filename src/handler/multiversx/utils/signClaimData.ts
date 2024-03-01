@@ -9,7 +9,7 @@ import {
 } from "@multiversx/sdk-core/out";
 import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
-import { keccak256 } from "ethers";
+import { keccak256 } from "js-sha3";
 import { MXClaimDataSchema } from "../../../contractsTypes/multiversx/schema";
 import { TNftTransferDetailsObject } from "../../types";
 
@@ -65,7 +65,7 @@ export default async function signClaimData(
 
   const signedData = await signer.sign(Buffer.from(keccak256(data), "hex"));
   return {
-    signature: signedData.toString("hex"),
-    signer: signer.getAddress().bech32(),
+    signature: `0x${signedData.toString("hex")}`,
+    signer: signer.getAddress().hex(),
   };
 }

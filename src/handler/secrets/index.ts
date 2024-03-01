@@ -16,6 +16,7 @@ export function secretsHandler(
   client: SecretNetworkClient,
   wallet: Wallet,
   publicKey: string,
+  privateKey: string,
   bridge: string,
   bridgeCodeHash: string,
   storage: BridgeStorage,
@@ -29,7 +30,12 @@ export function secretsHandler(
     chainIdent: "SECRET",
     currency: "USCRT",
     address: client.address,
-    signClaimData: (data) => signClaimData(data, wallet),
+    signClaimData: (data) =>
+      signClaimData(
+        data,
+        Buffer.from(privateKey),
+        Buffer.from(publicKey, "hex"),
+      ),
     selfIsValidator: () =>
       selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
     listenForLockEvents: (cb, iter) =>

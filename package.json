@@ -41,6 +41,7 @@
     "axios": "^1.6.7",
     "chalk": "4",
     "ethers": "^6.11.1",
+    "js-sha3": "^0.9.3",
     "libsodium-wrappers-sumo": "^0.7.13",
     "openapi-client-axios": "^7.5.4",
     "secretjs": "=1.12.4",

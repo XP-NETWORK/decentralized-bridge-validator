@@ -82,7 +82,7 @@ export default async function listenForLockEvents(
           const tokenAmount = String(decodedLogs[5].charCodeAt(0));
           const nftType = decodedLogs[6];
           const sourceChain = decodedLogs[7];
-          cb(
+          await cb(
             builder.nftLocked(
               tokenId,
               destinationChain,

@@ -79,7 +79,7 @@ export default async function listenForLockEvents(
             }
           };
 
-          return cb(
+          await cb(
             builder.nftLocked(
               tokenId.toString(),
               destinationChain,

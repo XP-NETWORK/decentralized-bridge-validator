@@ -97,6 +97,7 @@ export async function configSecretHandler(
     client,
     wallet,
     secrets.secretWallet.publicKey,
+    secrets.secretWallet.privateKey,
     conf.contractAddress,
     (
       await client.query.compute.codeHashByContractAddress({

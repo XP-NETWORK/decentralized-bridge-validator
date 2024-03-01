@@ -25,7 +25,7 @@ export type TNftTransferDetailsObject = {
   fee: string;
 };
 
-export type EventIter = (event: LockEvent) => void;
+export type EventIter = (event: LockEvent) => Promise<void>;
 
 export interface THandler {
   addSelfAsValidator(): Promise<"success" | "failure">;

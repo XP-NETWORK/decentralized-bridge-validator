@@ -55,7 +55,7 @@ const listenForLockEvents = (
         for (const log of logs) {
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
-          cb(
+          await cb(
             builder.nftLocked(
               decoded.args.tokenId,
               decoded.args.destinationChain,

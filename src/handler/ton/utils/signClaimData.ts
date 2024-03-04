@@ -87,8 +87,8 @@ export default async function signClaimData(
         .endCell(),
       royalty: {
         $$type: "RoyaltyParams",
-        numerator: BigInt(10000),
-        denominator: BigInt(royalty),
+        denominator: BigInt(10000),
+        numerator: BigInt(royalty),
         destination: Address.parseFriendly(royaltyReceiver).address,
       },
       transactionHash,

@@ -152,7 +152,9 @@ export async function generateData(
           wallet.address.toString(),
           "TON",
         );
-        return wallet;
+        const sender = tc.open(wallet);
+
+        return sender;
       })(),
       config: configs.ton,
       address: (await wallet.getAddress()).toString(),

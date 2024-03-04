@@ -57,11 +57,11 @@ const listenForLockEvents = (
           if (!decoded) continue;
           await cb(
             builder.nftLocked(
-              decoded.args.tokenId,
+              decoded.args.tokenId.toString(),
               decoded.args.destinationChain,
               decoded.args.destinationUserAddress,
               decoded.args.sourceNftContractAddress,
-              decoded.args.tokenAmount,
+              decoded.args.tokenAmount.toString(),
               decoded.args.nftType,
               decoded.args.sourceChain,
               log.transactionHash,

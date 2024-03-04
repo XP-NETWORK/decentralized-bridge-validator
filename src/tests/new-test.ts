@@ -249,10 +249,12 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
 
   const firstTest = createTest({
     fromChain: "ETH",
-    toChain: "TEZOS",
+    toChain: "TON",
     nftType: "singular",
-    claimSigner: signers.tezos,
-    receiver: await signers.tezos.publicKeyHash(),
+    claimSigner: data.ton.signer.sender(
+      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
+    ),
+    receiver: data.ton.signer.address.toString(),
     signer: data.eth.signer,
     deployArgs: {
       name: "TestContract",

@@ -38,3 +38,36 @@ export async function checkOrAddSelfAsVal(chains: THandler[]) {
     }
   }
 }
+
+export async function retry<T>(
+  func: () => Promise<T>,
+  ctx: string,
+  retries = 3,
+): Promise<T> {
+  let left = retries;
+  while (left >= 0) {
+    try {
+      return await func();
+    } catch (err) {
+      if (retries === 0) {
+        throw err;
+      }
+      ValidatorLog(
+        `Context: ${ctx} - Retrying ${retries} more times. Waiting ${
+          6000 * (3 - retries)
+        }ms.`,
+      );
+      await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
+      left--;
+    }
+  }
+
+  return await func().catch(async (err) => {
+    if (retries === 0) {
+      throw err;
+    }
+    ValidatorLog(`Context: ${ctx} - Retrying ${retries} more times.`);
+    await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
+    return retry(func, ctx, retries - 1);
+  });
+}

@@ -1,7 +1,7 @@
 import { TSupportedChains } from "../config";
 import { BridgeStorage } from "../contractsTypes/evm";
 import { THandler, TNftTransferDetailsObject } from "./types";
-import { ValidatorLog } from "./utils";
+import { ValidatorLog, retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -62,14 +62,20 @@ export async function listenEvents(
         return;
       }
 
-      const approved = await deps.storage.approveLockNft(
-        inft.transactionHash,
-        sourceChain.chainIdent,
-        signature.signature,
-        signature.signer,
-        {
-          gasPrice: 1000000,
-        },
+      const approvalFn = async () =>
+        await deps.storage.approveLockNft(
+          inft.transactionHash,
+          sourceChain.chainIdent,
+          signature.signature,
+          signature.signer,
+          {
+            gasPrice: 1000000,
+          },
+        );
+      const approved = await retry(
+        approvalFn,
+        `Approving transfer ${JSON.stringify(inft, null, 2)}`,
+        6,
       );
       ValidatorLog(
         `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,

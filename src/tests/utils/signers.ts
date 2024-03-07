@@ -3,7 +3,7 @@ import { InMemorySigner } from "@taquito/signer";
 import { Wallet } from "ethers";
 import { Wallet as SecretWallet } from "secretjs";
 import { keyPairFromSecretKey } from "ton-crypto";
-import { IGeneratedWallets } from "../types";
+import { IGeneratedWallets } from "../../types";
 
 export function getSigners(genWallets: IGeneratedWallets) {
   return {

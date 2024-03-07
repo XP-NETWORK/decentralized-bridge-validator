@@ -7,17 +7,17 @@ import { JsonRpcProvider, Wallet } from "ethers";
 import { createInterface } from "readline/promises";
 import { Wallet as ScrtWallet, SecretNetworkClient } from "secretjs";
 import TonWeb from "tonweb";
-import { IGeneratedWallets } from "../types";
-import { getConfigs } from "./configs";
+import { IGeneratedWallets } from "../../types";
+import { getChainConfigs } from "./chainConfigs";
 
 const int = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-export async function generateData(
+export async function generateConfig(
   genWallets: IGeneratedWallets,
-  configs: ReturnType<typeof getConfigs>,
+  configs: ReturnType<typeof getChainConfigs>,
 ) {
   const tonweb = new TonWeb(new TonWeb.HttpProvider(configs.ton.rpcURL));
 

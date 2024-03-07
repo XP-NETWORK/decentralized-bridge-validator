@@ -5,9 +5,9 @@ import {
   ITezosChainConfig,
   ITonChainConfig,
   TChain,
-} from "../types";
+} from "../../types";
 
-export function getConfigs(bridgeTestChains: TChain[]) {
+export function getChainConfigs(bridgeTestChains: TChain[]) {
   return {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     bsc: bridgeTestChains.find((e) => e.chain === "BSC")! as IEvmChainConfig,

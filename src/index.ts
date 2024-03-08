@@ -2,9 +2,14 @@ import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import { listenEvents } from "./handler";
-import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/utils";
+import {
+  ValidatorLog,
+  checkOrAddSelfAsVal,
+  retry,
+  stakeTokens,
+} from "./handler/utils";
 
-import { IBridgeConfig } from "./types";
+import { IBridgeConfig, IGeneratedWallets } from "./types";
 import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
 
 async function main() {
@@ -12,6 +17,9 @@ async function main() {
     ValidatorLog("Secrets Not Found. Generating new Wallets");
     await generateAndSaveWallets();
   }
+  const secrets: IGeneratedWallets = JSON.parse(
+    fs.readFileSync("secrets.json", "utf-8"),
+  );
   if (process.argv.includes("--help")) {
     console.info(help);
     process.exit(0);
@@ -34,6 +42,11 @@ async function main() {
 
   await checkOrAddSelfAsVal(deps.chains);
 
+  await retry(
+    () => stakeTokens(config.stakingConfig, secrets, deps.chains),
+    "Staking Tokens",
+    10,
+  );
   listenEvents(deps.chains, deps.storage);
 }
 

@@ -140,3 +140,4 @@ export const prodBridgeConfig: IBridgeConfig = {
 
 export type TSupportedChainsConfig = (typeof bridgeTestChains)[number];
 export type TSupportedChains = TSupportedChainsConfig["chain"];
+export type TSupportedChainTypes = TSupportedChainsConfig["chainType"];

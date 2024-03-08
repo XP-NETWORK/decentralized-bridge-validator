@@ -41,6 +41,8 @@ export function multiversxHandler(
   });
 
   return {
+    publicKey: signer.getAddress().hex(),
+    chainType: "multiversX",
     initialFunds: initialFunds,
     currency: "EGLD",
     address: signer.getAddress().bech32(),

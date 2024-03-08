@@ -1,4 +1,4 @@
-import { TSupportedChains } from "../config";
+import { TSupportedChainTypes, TSupportedChains } from "../config";
 import { EventBuilder } from "../handler";
 
 export type TNftData = {
@@ -40,6 +40,8 @@ export interface THandler {
   initialFunds: bigint;
   currency: string;
   address: string;
+  chainType: TSupportedChainTypes;
+  publicKey: string;
 }
 
 export type LockEvent = {

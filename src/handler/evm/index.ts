@@ -28,6 +28,8 @@ export function evmHandler(
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
+    publicKey: signer.address,
+    chainType: "evm",
     getBalance: () => getBalance(signer, provider),
     chainIdent,
     initialFunds: initialFunds,

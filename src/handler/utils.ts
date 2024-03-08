@@ -18,6 +18,9 @@ export function waitForMSWithMsg(ms: number, msg: string): Promise<void> {
 }
 
 import chalk from "chalk";
+import { JsonRpcProvider, Wallet } from "ethers";
+import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
+import { IGeneratedWallets, IStakingConfig } from "../types";
 import { THandler } from "./types";
 
 export function ValidatorLog(...log: unknown[]) {
@@ -44,24 +47,6 @@ export async function retry<T>(
   ctx: string,
   retries = 3,
 ): Promise<T> {
-  let left = retries;
-  while (left >= 0) {
-    try {
-      return await func();
-    } catch (err) {
-      if (retries === 0) {
-        throw err;
-      }
-      ValidatorLog(
-        `Context: ${ctx} - Retrying ${retries} more times. Waiting ${
-          6000 * (3 - retries)
-        }ms.`,
-      );
-      await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
-      left--;
-    }
-  }
-
   return await func().catch(async (err) => {
     if (retries === 0) {
       throw err;
@@ -70,4 +55,50 @@ export async function retry<T>(
     await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
     return retry(func, ctx, retries - 1);
   });
+}
+
+export async function stakeTokens(
+  conf: IStakingConfig,
+  secrets: IGeneratedWallets,
+  chains: THandler[],
+) {
+  const others = chains.filter((e) => e.chainType !== "evm");
+  const provider = new JsonRpcProvider(conf.rpcURL);
+  const signer = new Wallet(secrets.evmWallet.privateKey, provider);
+  const staker = ERC20Staking__factory.connect(conf.contractAddress, signer);
+  const token = ERC20__factory.connect(conf.coinAddress, signer);
+  const staked = await staker.stakingBalances(secrets.evmWallet.address);
+  if (staked > 0n) {
+    ValidatorLog(
+      `Already staked ${staked} ${conf.coinSymbol} in contract ${conf.contractAddress}`,
+    );
+    return;
+  }
+  const amtToStake = conf.intialFund;
+
+  const approve = await (
+    await token.approve(conf.contractAddress, amtToStake)
+  ).wait();
+  if (!approve || approve.status !== 1) {
+    throw new Error("Failed to approve staking");
+  }
+
+  const staking = await (
+    await staker.stakeERC20([
+      {
+        validatorAddress: secrets.evmWallet.address,
+        chainType: "evm",
+      },
+      ...others.map((e) => {
+        return {
+          validatorAddress: e.publicKey,
+          chainType: e.chainType,
+        };
+      }),
+    ])
+  ).wait();
+
+  if (!staking || staking.status !== 1) {
+    throw new Error("Failed to stake");
+  }
 }

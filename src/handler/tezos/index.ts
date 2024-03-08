@@ -30,6 +30,8 @@ export async function tezosHandler(
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    publicKey: await signer.publicKey(),
+    chainType: "tezos",
     initialFunds: initialFunds,
     address: await signer.publicKeyHash(),
     currency: "XTZ",

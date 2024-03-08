@@ -26,6 +26,8 @@ export function secretsHandler(
   em: EntityManager,
 ): THandler {
   return {
+    publicKey,
+    chainType: "scrt",
     initialFunds: initialFunds,
     chainIdent: "SECRET",
     currency: "USCRT",

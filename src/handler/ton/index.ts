@@ -32,6 +32,8 @@ export function tonHandler(
   );
   const tonweb = new TonWeb(provider);
   return {
+    publicKey: TonWeb.utils.bytesToHex(signer.publicKey),
+    chainType: "ton",
     initialFunds: initialFunds,
     currency: "TON",
     address: signer.address.toString(),

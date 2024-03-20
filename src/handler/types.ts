@@ -38,6 +38,7 @@ export interface THandler {
   selfIsValidator(): Promise<boolean>;
   getBalance(): Promise<bigint>;
   initialFunds: bigint;
+  decimals: number;
   currency: string;
   address: string;
 }

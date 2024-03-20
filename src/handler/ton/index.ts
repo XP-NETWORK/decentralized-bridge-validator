@@ -24,6 +24,7 @@ export function tonHandler(
   walletSender: Sender,
   secretKey: string,
   initialFunds: bigint,
+  decimals: number,
   em: EntityManager,
 ): THandler {
   const chainIdent = "TON";
@@ -32,7 +33,8 @@ export function tonHandler(
   );
   const tonweb = new TonWeb(provider);
   return {
-    initialFunds: initialFunds,
+    initialFunds,
+    decimals,
     currency: "TON",
     address: signer.address.toString(),
     getBalance: () => getBalance(client, signer.address),

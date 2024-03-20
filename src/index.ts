@@ -1,17 +1,13 @@
-import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import { listenEvents } from "./handler";
 import { ValidatorLog, checkOrAddSelfAsVal } from "./handler/utils";
 
 import { IBridgeConfig } from "./types";
-import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
+import { loadSecrets, requireEnoughBalance } from "./utils";
 
 async function main() {
-  if (!fs.existsSync("secrets.json")) {
-    ValidatorLog("Secrets Not Found. Generating new Wallets");
-    await generateAndSaveWallets();
-  }
+  await loadSecrets();
   if (process.argv.includes("--help")) {
     console.info(help);
     process.exit(0);

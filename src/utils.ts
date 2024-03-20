@@ -1,20 +1,36 @@
-import fs from "fs/promises";
+import fs from "fs";
+import path from "path";
+import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
+import { writeFile } from "fs/promises";
+import { Interface, createInterface } from "readline/promises";
 import { generateWallet as evmGw } from "./handler/evm/utils";
+import { getBalance } from "./handler/evm/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
 import { generateWallet as tzGw } from "./handler/tezos/utils";
 import { generateWallet as tonGw } from "./handler/ton/utils";
-
-import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
-
-import { Interface, createInterface } from "readline/promises";
-import secrets from "../secrets.json";
-import { getBalance } from "./handler/evm/utils";
 import { THandler } from "./handler/types";
 import { ValidatorLog } from "./handler/utils";
 import { IEvmChainConfig, IGeneratedWallets, IStakingConfig } from "./types";
 
+export const loadSecrets = async (): Promise<IGeneratedWallets> => {
+  if (!fs.existsSync("secrets.json")) {
+    ValidatorLog("Secrets Not Found. Generating new Wallets");
+    await generateAndSaveWallets();
+  }
+  let secrets: IGeneratedWallets;
+  try {
+    secrets = require("../secrets.json");
+    return secrets;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error loading secrets.json");
+  }
+};
+
 export async function generateAndSaveWallets() {
+  const rootDirPath = path.resolve(__dirname, ".."); // Adjust based on actual structure
+  const secretsPath = path.join(rootDirPath, "secrets.json");
   const wallets = {
     evmWallet: await evmGw()(),
     secretWallet: await secretGw(),
@@ -22,7 +38,7 @@ export async function generateAndSaveWallets() {
     multiversXWallet: await mxGw(),
     tonWallet: await tonGw(),
   };
-  return fs.writeFile("secrets.json", JSON.stringify(wallets));
+  return writeFile(secretsPath, JSON.stringify(wallets));
 }
 
 export async function generateWallets(): Promise<IGeneratedWallets> {
@@ -56,6 +72,7 @@ async function requireEnoughStorageChainBalance(
   storageConfig: IEvmChainConfig,
   stdio: Interface,
 ) {
+  const secrets = await loadSecrets();
   // Check for Storage Funds
   let storageFunded = false;
   while (!storageFunded) {
@@ -97,7 +114,9 @@ async function requireEnoughBalanceInChains(
             balance,
           )}; Fund chain your wallet ${chain.address} on ${
             chain.chainIdent
-          } with ${ethers.formatEther(remainingRaw)} ${chain.currency}.`,
+          } with ${
+            Number(remainingRaw) / Number(`1${"0".repeat(chain.decimals)}`)
+          } ${chain.currency}.`,
         );
         // Sleep for 10 Seconds
         await stdio.question("Press Enter to continue...");
@@ -113,6 +132,7 @@ async function requireEnoughStakingBalance(
   stakingConfig: IStakingConfig,
   stdio: Interface,
 ): Promise<void> {
+  const secrets = await loadSecrets();
   // Check for Staking Funds
   let stakingCoinFunded = false;
   while (!stakingCoinFunded) {

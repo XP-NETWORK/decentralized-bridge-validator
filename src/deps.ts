@@ -8,7 +8,6 @@ import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import { privateKeyToAccount } from "web3-eth-accounts";
-import secrets from "../secrets.json";
 import { TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
 import { evmHandler } from "./handler/evm";
@@ -28,12 +27,15 @@ import {
   ITezosChainConfig,
   ITonChainConfig,
 } from "./types";
+import { loadSecrets } from "./utils";
 
 export async function configEvmHandler(
   conf: IEvmChainConfig,
   storage: BridgeStorage,
   em: EntityManager,
 ) {
+  const secrets = await loadSecrets();
+
   const lb = await em.findOne(Block, {
     chain: conf.chain,
     contractAddress: conf.contractAddress,
@@ -47,6 +49,7 @@ export async function configEvmHandler(
     lb?.lastBlock ?? conf.lastBlock,
     1000,
     BigInt(conf.intialFund),
+    conf.decimals,
     conf.nativeCoinSymbol,
     em.fork(),
     privateKeyToAccount(secrets.evmWallet.privateKey),
@@ -58,6 +61,8 @@ export async function configTezosHandler(
   storage: BridgeStorage,
   em: EntityManager,
 ) {
+  const secrets = await loadSecrets();
+
   const lb = await em.findOne(Block, {
     chain: conf.chain,
     contractAddress: conf.contractAddress,
@@ -73,6 +78,7 @@ export async function configTezosHandler(
     1000,
     conf.restApiURL,
     BigInt(conf.intialFund),
+    conf.decimals,
     em.fork(),
   );
 }
@@ -82,6 +88,8 @@ export async function configSecretHandler(
   storage: BridgeStorage,
   em: EntityManager,
 ) {
+  const secrets = await loadSecrets();
+
   const lb = await em.findOne(Block, {
     chain: conf.chain,
     contractAddress: conf.contractAddress,
@@ -108,6 +116,7 @@ export async function configSecretHandler(
     lb?.lastBlock ?? conf.lastBlock,
     1000,
     BigInt(conf.intialFund),
+    conf.decimals,
     em.fork(),
   );
 }
@@ -117,6 +126,8 @@ export async function configMultiversXHandler(
   storage: BridgeStorage,
   em: EntityManager,
 ) {
+  const secrets = await loadSecrets();
+
   const lb = await em.findOne(Block, {
     chain: conf.chain,
     contractAddress: conf.contractAddress,
@@ -134,6 +145,7 @@ export async function configMultiversXHandler(
     storage,
     lb?.lastBlock ?? conf.lastBlock,
     BigInt(conf.intialFund),
+    conf.decimals,
     em.fork(),
   );
 }
@@ -143,6 +155,8 @@ export async function configTonHandler(
   storage: BridgeStorage,
   em: EntityManager,
 ) {
+  const secrets = await loadSecrets();
+
   const TC = new TonClient({
     endpoint: conf.rpcURL,
     apiKey: "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292",
@@ -165,11 +179,13 @@ export async function configTonHandler(
     TC.open(wallet).sender(Buffer.from(secrets.tonWallet.secretKey, "hex")),
     secrets.tonWallet.secretKey,
     BigInt(conf.intialFund),
+    conf.decimals,
     em.fork(),
   );
 }
 
 export async function configDeps(config: IBridgeConfig) {
+  const secrets = await loadSecrets();
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,

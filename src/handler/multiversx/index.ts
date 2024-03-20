@@ -27,6 +27,7 @@ export function multiversxHandler(
   storage: BridgeStorage,
   lastBlock: number,
   initialFunds: bigint,
+  decimals: number,
   em: EntityManager,
 ): THandler {
   const multiversXBridgeAddress = new Address(bridge);
@@ -41,7 +42,8 @@ export function multiversxHandler(
   });
 
   return {
-    initialFunds: initialFunds,
+    initialFunds,
+    decimals,
     currency: "EGLD",
     address: signer.getAddress().bech32(),
     getBalance: () => getBalance(provider, signer.getAddress()),

@@ -23,10 +23,12 @@ export function secretsHandler(
   lastBlock_: number,
   blockChunks: number,
   initialFunds: bigint,
+  decimals: number,
   em: EntityManager,
 ): THandler {
   return {
-    initialFunds: initialFunds,
+    initialFunds,
+    decimals,
     chainIdent: "SECRET",
     currency: "USCRT",
     address: client.address,

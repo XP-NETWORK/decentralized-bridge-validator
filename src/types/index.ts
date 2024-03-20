@@ -72,6 +72,7 @@ type IChainConfig = {
   contractAddress: string;
   lastBlock: number;
   chainType: string;
+  decimals: number;
 };
 
 type IEvmChainConfig = {

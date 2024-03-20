@@ -22,6 +22,7 @@ export function evmHandler(
   lastBlock_: number,
   blockChunks: number,
   initialFunds: bigint,
+  decimals: number,
   currency: string,
   em: EntityManager,
   txSigner: Web3Account,
@@ -30,8 +31,9 @@ export function evmHandler(
   return {
     getBalance: () => getBalance(signer, provider),
     chainIdent,
-    initialFunds: initialFunds,
-    currency: currency,
+    initialFunds,
+    decimals,
+    currency,
     address: signer.address,
     addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
     listenForLockEvents: listenForLockEvents(

@@ -13,7 +13,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
     chainType: "evm",
-    lastBlock: 38081771,
+    lastBlock: 38733903,
   },
   {
     chain: "ETH",
@@ -22,7 +22,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
     chainType: "evm",
-    lastBlock: 5414593,
+    lastBlock: 5522348,
   },
   {
     chain: "MATIC",
@@ -31,7 +31,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
     chainType: "evm",
-    lastBlock: 46101677,
+    lastBlock: 47259261,
   },
   {
     chain: "MULTIVERSX",
@@ -88,10 +88,10 @@ export const bridgeTestChains = [
 
 export const storageTestnetConfig: IEvmChainConfig = {
   chain: "OP",
-  rpcURL: "https://optimism-goerli.publicnode.com",
+  rpcURL: "https://sepolia.optimism.io",
   nativeCoinSymbol: "OP",
   intialFund: "100000000000000000",
-  contractAddress: "0xaeD15b9AEd9401658A177abaab5854f31973F5C8",
+  contractAddress: "0x8411EeadD374bDE549F61a166FFBeFca592bC60a",
   chainType: "evm",
   lastBlock: 17608314,
 };
@@ -105,7 +105,7 @@ export const stakingTestChain: IStakingConfig = {
   coinAddress: "0x9739a54004300e74532c1147b82791193d82B093",
   contractAddress: "0x6e372D7fe53F4B7Baa3543Deffe6B87833846D37",
   intialFund: "100000000000000000",
-  lastBlock: 36698700,
+  lastBlock: 38733903,
 };
 
 export const testnetBridgeConfig: IBridgeConfig = {

@@ -13,6 +13,7 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
 export async function tezosHandler(
@@ -30,6 +31,7 @@ export async function tezosHandler(
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    signData: (buf) => signData(buf, signer),
     publicKey: await signer.publicKey(),
     chainType: "tezos",
     initialFunds: initialFunds,

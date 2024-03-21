@@ -6,6 +6,7 @@ import log from "./log";
 import nftData from "./nftData";
 import selfIsValidator from "./selfIsValidator";
 import signClaimData from "./signClaimData";
+import signData from "./signData";
 
 export {
   addSelfAsValidator,
@@ -16,4 +17,5 @@ export {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 };

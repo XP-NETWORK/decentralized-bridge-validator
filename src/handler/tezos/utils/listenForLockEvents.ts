@@ -3,14 +3,14 @@ import { TezosToolkit } from "@taquito/taquito";
 import { EntityManager } from "@mikro-orm/sqlite";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
+import { LockEventIter } from "../../types";
 import { TezosGetContractOperations, log } from "./index";
 
 const CHAIN_IDENT = "TEZOS";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock_: number,
   blockChunks: number,
   provider: TezosToolkit,

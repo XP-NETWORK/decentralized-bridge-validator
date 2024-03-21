@@ -4,14 +4,14 @@ import { raise } from "..";
 import { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
+import { LockEventIter } from "../../types";
 import log from "./log";
 
 const CHAIN_IDENT = "TON";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock_: number,
   client: TonClient,
   bridge: string,

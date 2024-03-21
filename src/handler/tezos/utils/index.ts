@@ -7,6 +7,7 @@ import nftData from "./nftData";
 import TezosGetContractOperations from "./operations";
 import selfIsValidator from "./selfIsValidator";
 import signClaimData from "./signClaimData";
+import signData from "./signData";
 
 export {
   TezosGetContractOperations,
@@ -18,4 +19,5 @@ export {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 };

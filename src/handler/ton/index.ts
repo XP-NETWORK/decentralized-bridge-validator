@@ -12,6 +12,7 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
 export function tonHandler(
@@ -32,6 +33,7 @@ export function tonHandler(
   );
   const tonweb = new TonWeb(provider);
   return {
+    signData: (buf) => signData(buf, Buffer.from(secretKey, "hex"), signer),
     publicKey: TonWeb.utils.bytesToHex(signer.publicKey),
     chainType: "ton",
     initialFunds: initialFunds,

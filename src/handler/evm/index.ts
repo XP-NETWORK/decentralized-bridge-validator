@@ -11,6 +11,7 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
 export function evmHandler(
@@ -28,6 +29,7 @@ export function evmHandler(
 ): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
+    signData: (buf) => signData(buf, txSigner),
     publicKey: signer.address,
     chainType: "evm",
     getBalance: () => getBalance(signer, provider),

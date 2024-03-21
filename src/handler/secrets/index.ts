@@ -10,6 +10,7 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
 export function secretsHandler(
@@ -27,6 +28,12 @@ export function secretsHandler(
 ): THandler {
   return {
     publicKey,
+    signData: (buf) =>
+      signData(
+        buf,
+        Buffer.from(privateKey, "hex"),
+        Buffer.from(publicKey, "hex"),
+      ),
     chainType: "scrt",
     initialFunds: initialFunds,
     chainIdent: "SECRET",

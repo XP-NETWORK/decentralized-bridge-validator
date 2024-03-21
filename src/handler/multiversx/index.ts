@@ -16,6 +16,7 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
 export function multiversxHandler(
@@ -41,6 +42,7 @@ export function multiversxHandler(
   });
 
   return {
+    signData: (buf) => signData(buf, signer),
     publicKey: signer.getAddress().hex(),
     chainType: "multiversX",
     initialFunds: initialFunds,

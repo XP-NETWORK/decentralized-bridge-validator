@@ -1,6 +1,11 @@
-import { TSupportedChains } from "../config";
+import { TSupportedChainTypes, TSupportedChains } from "../config";
 import { BridgeStorage } from "../contractsTypes/evm";
-import { THandler, TNftTransferDetailsObject } from "./types";
+import {
+  StakeEvent,
+  THandler,
+  TNftTransferDetailsObject,
+  TStakingHandler,
+} from "./types";
 import { ValidatorLog, retry } from "./utils";
 
 export async function listenEvents(
@@ -92,8 +97,79 @@ export async function listenEvents(
   }
 }
 
+export async function listenStakeEvents(
+  chains: Array<THandler>,
+  storage: BridgeStorage,
+  stakingChain: TStakingHandler,
+) {
+  const map = new Map<TSupportedChainTypes, THandler>();
+  const deps = { storage };
+
+  const builder = eventBuilder();
+
+  async function poolEvents(chain: TStakingHandler) {
+    ValidatorLog("Listening for Staking Events");
+    chain.listenForStakingEvents(builder, async (ev) => {
+      const signatures: {
+        validatorAddress: string;
+        signerAndSignature: {
+          signerAddress: string;
+          signature: string;
+        };
+      }[] = [];
+      for (const sig of ev) {
+        const dc = map.get(sig.chainType);
+        if (!dc) {
+          throw new Error(`Unknown destination chain type: ${sig.chainType}`);
+        }
+        const signerAndSignature = await dc.signData(sig.validatorAddress);
+        signatures.push({
+          validatorAddress: sig.validatorAddress,
+          signerAndSignature: {
+            signature: signerAndSignature.signature,
+            signerAddress: signerAndSignature.signer,
+          },
+        });
+      }
+      const newEvmValidator = ev.find((item) => item.chainType === "evm");
+      if (!newEvmValidator) {
+        throw new Error("Unreachable State");
+      }
+
+      const approvalFn = async () =>
+        await deps.storage.approveStake(
+          newEvmValidator.validatorAddress,
+          signatures,
+        );
+      const approved = await retry(
+        approvalFn,
+        `Approving stake ${JSON.stringify(ev, null, 2)}`,
+        6,
+      );
+      ValidatorLog(
+        `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
+      );
+    });
+  }
+
+  for (const chain of chains) {
+    if (chain.chainType === "evm") {
+      if (chain.chainIdent === "BSC") {
+        map.set(chain.chainType, chain);
+        continue;
+      }
+      continue;
+    }
+    map.set(chain.chainType, chain);
+  }
+  poolEvents(stakingChain);
+}
+
 export function eventBuilder() {
   return {
+    staked(stake: StakeEvent) {
+      return stake;
+    },
     nftLocked(
       tokenId: string,
       destinationChain: string,

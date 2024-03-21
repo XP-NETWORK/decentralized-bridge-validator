@@ -2,14 +2,14 @@ import { EntityManager } from "@mikro-orm/sqlite";
 import { SecretNetworkClient } from "secretjs";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
+import { LockEventIter } from "../../types";
 import log from "./log";
 
 const CHAIN_IDENT = "SECRET";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock_: number,
   client: SecretNetworkClient,
   blockChunks: number,

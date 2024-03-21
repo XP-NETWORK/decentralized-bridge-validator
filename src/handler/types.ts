@@ -25,14 +25,16 @@ export type TNftTransferDetailsObject = {
   fee: string;
 };
 
-export type EventIter = (event: LockEvent) => Promise<void>;
+export type LockEventIter = (event: LockEvent) => Promise<void>;
+export type StakeEventIter = (event: StakeEvent) => Promise<void>;
 
 export interface THandler {
   addSelfAsValidator(): Promise<"success" | "failure">;
-  listenForLockEvents(builder: EventBuilder, cb: EventIter): Promise<void>;
+  listenForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
   signClaimData(
-    buf: TNftTransferDetailsObject,
+    nfto: TNftTransferDetailsObject,
   ): Promise<{ signer: string; signature: string }>;
+  signData(buf: string): Promise<{ signer: string; signature: string }>;
   nftData(tokenId: string, contract: string): Promise<TNftData>;
   chainIdent: TSupportedChains;
   selfIsValidator(): Promise<boolean>;
@@ -42,6 +44,13 @@ export interface THandler {
   address: string;
   chainType: TSupportedChainTypes;
   publicKey: string;
+}
+
+export interface TStakingHandler {
+  listenForStakingEvents(
+    builder: EventBuilder,
+    cb: StakeEventIter,
+  ): Promise<void>;
 }
 
 export type LockEvent = {
@@ -54,3 +63,8 @@ export type LockEvent = {
   sourceChain: string;
   transactionHash: string;
 };
+
+export type StakeEvent = {
+  validatorAddress: string;
+  chainType: TSupportedChainTypes;
+}[];

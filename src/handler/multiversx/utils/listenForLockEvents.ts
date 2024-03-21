@@ -3,7 +3,7 @@ import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interfac
 import axios, { Axios } from "axios";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
+import { LockEventIter } from "../../types";
 import { Root } from "../types/gateway";
 import MxLog from "./log";
 
@@ -11,7 +11,7 @@ const CHAIN_IDENT = "MULTIVERSX";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock: number,
   bridge: string,
   gateway: Axios,

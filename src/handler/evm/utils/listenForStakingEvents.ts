@@ -3,21 +3,21 @@ import { JsonRpcProvider } from "ethers";
 import { log } from ".";
 import { EventBuilder } from "../..";
 import { TSupportedChains } from "../../../config";
-import { Bridge, Bridge__factory } from "../../../contractsTypes/evm";
+import { ERC20Staking__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
+import { StakeEventIter } from "../../types";
 
-const listenForLockEvents = (
+const listenForStakingEvents = (
   provider: JsonRpcProvider,
   lastBlock_: number,
+  staker: string,
   blockChunks: number,
-  bridge: string,
-  bc: Bridge,
   chainIdent: TSupportedChains,
   em: EntityManager,
 ) => {
-  return async (builder: EventBuilder, cb: LockEventIter) => {
+  return async (builder: EventBuilder, cb: StakeEventIter) => {
     let lastBlock = lastBlock_;
+    const stakerInt = ERC20Staking__factory.createInterface();
     while (true) {
       try {
         const latestBlockNumber = await provider.getBlockNumber();
@@ -30,9 +30,10 @@ const listenForLockEvents = (
         const logs = await provider.getLogs({
           fromBlock: lastBlock,
           toBlock: latestBlock,
-          address: bridge,
+          address: staker,
           topics: [
-            Bridge__factory.createInterface().getEvent("Locked").topicHash,
+            ERC20Staking__factory.createInterface().getEvent("Staked")
+              .topicHash,
           ],
         });
         const startBlock = lastBlock;
@@ -45,7 +46,7 @@ const listenForLockEvents = (
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
             chain: chainIdent,
-            contractAddress: await bc.getAddress(),
+            contractAddress: staker,
             lastBlock: lastBlock,
           });
           await em.flush();
@@ -53,25 +54,14 @@ const listenForLockEvents = (
           continue;
         }
         for (const log of logs) {
-          const decoded = bc.interface.parseLog(log);
+          const decoded = stakerInt.parseLog(log);
           if (!decoded) continue;
-          await cb(
-            builder.nftLocked(
-              decoded.args.tokenId.toString(),
-              decoded.args.destinationChain,
-              decoded.args.destinationUserAddress,
-              decoded.args.sourceNftContractAddress,
-              decoded.args.tokenAmount.toString(),
-              decoded.args.nftType,
-              decoded.args.sourceChain,
-              log.transactionHash,
-            ),
-          );
+          await cb(builder.staked(decoded.args.validatorAddressAndChainType));
         }
         lastBlock = latestBlockNumber;
         await em.upsert(Block, {
           chain: chainIdent,
-          contractAddress: await bc.getAddress(),
+          contractAddress: staker,
           lastBlock: lastBlock,
         });
         await em.flush();
@@ -86,4 +76,4 @@ const listenForLockEvents = (
   };
 };
 
-export default listenForLockEvents;
+export default listenForStakingEvents;

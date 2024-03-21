@@ -18,6 +18,7 @@ import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 
 import { EntityManager } from "@mikro-orm/sqlite";
+import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import {
@@ -25,6 +26,7 @@ import {
   IEvmChainConfig,
   IMultiversXChainConfig,
   ISecretChainConfig,
+  IStakingConfig,
   ITezosChainConfig,
   ITonChainConfig,
 } from "./types";
@@ -50,6 +52,23 @@ export async function configEvmHandler(
     conf.nativeCoinSymbol,
     em.fork(),
     privateKeyToAccount(secrets.evmWallet.privateKey),
+  );
+}
+export async function configStakingHandler(
+  em: EntityManager,
+  conf: IStakingConfig,
+) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
+  return evmStakingHandler(
+    conf.chain as TSupportedChains,
+    new JsonRpcProvider(conf.rpcURL),
+    lb?.lastBlock ?? conf.lastBlock,
+    1000,
+    em.fork(),
+    conf.contractAddress,
   );
 }
 
@@ -181,6 +200,7 @@ export async function configDeps(config: IBridgeConfig) {
   return {
     storage,
     em,
+    staking: await configStakingHandler(em.fork(), config.stakingConfig),
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...(await Promise.all(

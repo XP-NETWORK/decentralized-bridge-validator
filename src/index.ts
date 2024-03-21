@@ -1,7 +1,7 @@
 import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
-import { listenEvents } from "./handler";
+import { listenEvents, listenStakeEvents } from "./handler";
 import {
   ValidatorLog,
   checkOrAddSelfAsVal,
@@ -48,6 +48,7 @@ async function main() {
     10,
   );
   listenEvents(deps.chains, deps.storage);
+  listenStakeEvents(deps.chains, deps.storage, deps.staking);
 }
 
 export const help = `

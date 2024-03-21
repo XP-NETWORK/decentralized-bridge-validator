@@ -122,8 +122,8 @@ async function requireEnoughBalanceInChains(
         continue;
       }
       funded = true;
+      ValidatorLog(`${chain.chainIdent} Has Enough Funds: ✅`);
     }
-    ValidatorLog(`${chain.chainIdent} Has Enough Funds: ✅`);
   }
 }
 
@@ -146,15 +146,12 @@ async function requireEnoughStakingBalanceAndChainBalance(
   }
 
   while (!stakingChainFunded) {
-    const balance = await getBalance(
-      new VoidSigner(secrets.evmWallet.address),
-      new JsonRpcProvider(stakingConfig.rpcURL),
-    );
+    const balance = await bscHandler.getBalance();
     if (balance < requireFunds) {
       ValidatorLog(
         `Current balance: ${ethers.formatEther(
           balance,
-        )}; Fund chain storage your wallet ${secrets.evmWallet.address} on ${
+        )}; Fund staking chain your wallet ${secrets.evmWallet.address} on ${
           stakingConfig.chain
         } with ${ethers.formatEther(
           balance - BigInt(stakingConfig.intialFund),

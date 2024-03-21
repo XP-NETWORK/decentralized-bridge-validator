@@ -1,14 +1,9 @@
 import { AbiRegistry, SmartContract } from "@multiversx/sdk-core/out";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
-import { UserSigner } from "@multiversx/sdk-wallet/out";
 import axios from "axios";
-
-import { BridgeStorage } from "../../contractsTypes/evm";
 import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
 import { THandler } from "../types";
-
-import { EntityManager } from "@mikro-orm/sqlite";
+import { MultiversXHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -19,17 +14,17 @@ import {
   signData,
 } from "./utils";
 
-export function multiversxHandler(
-  provider: INetworkProvider,
-  gatewayURL: string,
-  signer: UserSigner,
-  chainID: string,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock: number,
-  initialFunds: bigint,
-  em: EntityManager,
-): THandler {
+export function multiversxHandler({
+  provider,
+  gatewayURL,
+  signer,
+  chainID,
+  bridge,
+  storage,
+  lastBlock,
+  initialFunds,
+  em,
+}: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
   const bc = new SmartContract({

@@ -1,10 +1,8 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { Address, Sender, TonClient, WalletContractV4 } from "@ton/ton";
+import { Address } from "@ton/ton";
 import TonWeb from "tonweb";
-import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
-import { BridgeStorage } from "../../contractsTypes/evm";
 import { Bridge } from "../../contractsTypes/ton/tonBridge";
 import { THandler } from "../types";
+import { TonParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -15,18 +13,18 @@ import {
   signData,
 } from "./utils";
 
-export function tonHandler(
-  client: TonClient,
-  provider: HttpProvider,
-  signer: WalletContractV4,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  walletSender: Sender,
-  secretKey: string,
-  initialFunds: bigint,
-  em: EntityManager,
-): THandler {
+export function tonHandler({
+  client,
+  provider,
+  signer,
+  bridge,
+  storage,
+  lastBlock_,
+  walletSender,
+  secretKey,
+  initialFunds,
+  em,
+}: TonParams): THandler {
   const chainIdent = "TON";
   const bc = client.open(
     Bridge.fromAddress(Address.parseFriendly(bridge).address),

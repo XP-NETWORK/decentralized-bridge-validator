@@ -72,11 +72,13 @@ type IChainConfig = {
   contractAddress: string;
   lastBlock: number;
   chainType: string;
+  decimals: number;
 };
 
 type IEvmChainConfig = {
   chainType: "evm";
   rpcURL: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type IHederaChainConfig = {
@@ -89,6 +91,7 @@ type ISecretChainConfig = {
   chainType: "scrt";
   rpcURL: string;
   chainId: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type ITonChainConfig = {
@@ -100,6 +103,7 @@ type ITezosChainConfig = {
   chainType: "tezos";
   restApiURL: string;
   rpcURL: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type IMultiversXChainConfig = {

@@ -32,12 +32,13 @@ async function main() {
     ValidatorLog("Setting up for testnet environment");
   }
 
-  const deps = await configDeps(config);
+  const deps = await configDeps(config, secrets);
 
   await requireEnoughBalance(
     deps.chains,
     config.storageConfig,
     config.stakingConfig,
+    secrets,
   );
 
   await checkOrAddSelfAsVal(deps.chains);

@@ -1,9 +1,6 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { JsonRpcProvider, Wallet } from "ethers";
-import { Web3Account } from "web3-eth-accounts";
-import { TSupportedChains } from "../../config";
-import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
+import { Bridge__factory } from "../../contractsTypes/evm";
 import { THandler } from "../types";
+import { EVMHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -14,19 +11,19 @@ import {
   signData,
 } from "./utils";
 
-export function evmHandler(
-  chainIdent: TSupportedChains,
-  provider: JsonRpcProvider,
-  signer: Wallet,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  initialFunds: bigint,
-  currency: string,
-  em: EntityManager,
-  txSigner: Web3Account,
-): THandler {
+export function evmHandler({
+  chainIdent,
+  provider,
+  signer,
+  bridge,
+  storage,
+  lastBlock_,
+  blockChunks,
+  initialFunds,
+  currency,
+  em,
+  txSigner,
+}: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
     signData: (buf) => signData(buf, txSigner),

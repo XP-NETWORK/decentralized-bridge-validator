@@ -1,11 +1,6 @@
-import { Signer, TezosToolkit } from "@taquito/taquito";
-
-import { BridgeStorage } from "../../contractsTypes/evm";
 import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
-
 import { THandler } from "../types";
-
-import { EntityManager } from "@mikro-orm/sqlite";
+import { TezosHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -16,17 +11,17 @@ import {
   signData,
 } from "./utils";
 
-export async function tezosHandler(
-  provider: TezosToolkit,
-  signer: Signer,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  restApiUrl: string,
-  initialFunds: bigint,
-  em: EntityManager,
-): Promise<THandler> {
+export async function tezosHandler({
+  provider,
+  signer,
+  bridge,
+  storage,
+  lastBlock_,
+  blockChunks,
+  restApiUrl,
+  initialFunds,
+  em,
+}: TezosHandlerParams): Promise<THandler> {
   const chainIdent = "TEZOS";
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 

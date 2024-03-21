@@ -1,8 +1,5 @@
-import { SecretNetworkClient, Wallet } from "secretjs";
-import { BridgeStorage } from "../../contractsTypes/evm";
 import { THandler } from "../types";
-
-import { EntityManager } from "@mikro-orm/sqlite";
+import { SecretsHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -13,19 +10,19 @@ import {
   signData,
 } from "./utils";
 
-export function secretsHandler(
-  client: SecretNetworkClient,
-  wallet: Wallet,
-  publicKey: string,
-  privateKey: string,
-  bridge: string,
-  bridgeCodeHash: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  initialFunds: bigint,
-  em: EntityManager,
-): THandler {
+export function secretsHandler({
+  client,
+  wallet,
+  publicKey,
+  privateKey,
+  bridge,
+  bridgeCodeHash,
+  storage,
+  lastBlock_,
+  blockChunks,
+  initialFunds,
+  em,
+}: SecretsHandlerParams): THandler {
   return {
     publicKey,
     signData: (buf) =>

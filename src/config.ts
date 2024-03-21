@@ -14,6 +14,8 @@ export const bridgeTestChains = [
     contractAddress: "0x3EC2839EcEAfa2Ce9e419718364B070563Db516e",
     chainType: "evm",
     lastBlock: 38733903,
+    decimals: 18,
+    blockChunks: 1000,
   },
   {
     chain: "ETH",
@@ -23,6 +25,8 @@ export const bridgeTestChains = [
     contractAddress: "0xA0C15702892491597D369A04d7366Af234cF5F73",
     chainType: "evm",
     lastBlock: 5522348,
+    decimals: 18,
+    blockChunks: 1000,
   },
   {
     chain: "MATIC",
@@ -32,6 +36,8 @@ export const bridgeTestChains = [
     contractAddress: "0x1f89dce7eBFb78D6CA0A4d16F9B6a9F61B186ebc",
     chainType: "evm",
     lastBlock: 47259261,
+    decimals: 18,
+    blockChunks: 1000,
   },
   {
     chain: "MULTIVERSX",
@@ -44,6 +50,7 @@ export const bridgeTestChains = [
     gatewayURL: "https://devnet-gateway.multiversx.com",
     lastBlock: 2343441,
     chainID: "D",
+    decimals: 18,
   },
   {
     chain: "TON",
@@ -53,6 +60,7 @@ export const bridgeTestChains = [
     contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
     chainType: "ton",
     lastBlock: 16810573000003,
+    decimals: 9,
   },
   {
     chain: "SECRET",
@@ -63,6 +71,8 @@ export const bridgeTestChains = [
     chainType: "scrt",
     chainId: "pulsar-3",
     lastBlock: 3223704,
+    decimals: 6,
+    blockChunks: 1000,
   },
   {
     chain: "TEZOS",
@@ -73,6 +83,8 @@ export const bridgeTestChains = [
     lastBlock: 5240862,
     nativeCoinSymbol: "XTZ",
     chainType: "tezos",
+    decimals: 6,
+    blockChunks: 1000,
   },
   {
     chain: "HEDERA",
@@ -83,6 +95,7 @@ export const bridgeTestChains = [
     chainType: "hedera",
     lastBlock: 7095475,
     royaltyInfoProxyAddress: "0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF",
+    decimals: 18,
   },
 ] as const satisfies TChain[];
 
@@ -94,6 +107,8 @@ export const storageTestnetConfig: IEvmChainConfig = {
   contractAddress: "0x8411EeadD374bDE549F61a166FFBeFca592bC60a",
   chainType: "evm",
   lastBlock: 17608314,
+  decimals: 18,
+  blockChunks: 1000,
 };
 
 export const stakingTestChain: IStakingConfig = {
@@ -106,6 +121,8 @@ export const stakingTestChain: IStakingConfig = {
   contractAddress: "0x6e372D7fe53F4B7Baa3543Deffe6B87833846D37",
   intialFund: "100000000000000000",
   lastBlock: 38733903,
+  decimals: 18,
+  blockChunks: 1000,
 };
 
 export const testnetBridgeConfig: IBridgeConfig = {
@@ -124,6 +141,8 @@ export const prodBridgeConfig: IBridgeConfig = {
     contractAddress: "0xBridgeStorageAddress",
     chainType: "evm",
     lastBlock: 21321,
+    decimals: 18,
+    blockChunks: 1000,
   },
   stakingConfig: {
     chain: "BSC",
@@ -135,6 +154,8 @@ export const prodBridgeConfig: IBridgeConfig = {
     contractAddress: "0x5a38d6534214ec8Ce0598c37773738F4F7E9FC66",
     intialFund: "100000000000000000000",
     lastBlock: 34255418,
+    decimals: 18,
+    blockChunks: 1000,
   },
 };
 

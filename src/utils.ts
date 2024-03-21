@@ -8,7 +8,7 @@ import { generateWallet as tonGw } from "./handler/ton/utils";
 import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
 import { Interface, createInterface } from "readline/promises";
-import secrets from "../secrets.json";
+
 import { getBalance } from "./handler/evm/utils";
 import { raise } from "./handler/ton";
 import { THandler } from "./handler/types";
@@ -41,6 +41,7 @@ export async function requireEnoughBalance(
   chains: THandler[],
   storageConfig: IEvmChainConfig,
   stakingConfig: IStakingConfig,
+  secrets: IGeneratedWallets,
 ) {
   const stdio = createInterface({
     input: process.stdin,
@@ -52,7 +53,7 @@ export async function requireEnoughBalance(
 
   const otherChains = chains.filter((chain) => chain.chainIdent !== "BSC");
 
-  await requireEnoughStorageChainBalance(storageConfig, stdio);
+  await requireEnoughStorageChainBalance(storageConfig, stdio, secrets);
 
   await requireEnoughBalanceInChains(otherChains, stdio);
 
@@ -60,12 +61,14 @@ export async function requireEnoughBalance(
     stakingConfig,
     stdio,
     bscHandler,
+    secrets,
   );
 }
 
 async function requireEnoughStorageChainBalance(
   storageConfig: IEvmChainConfig,
   stdio: Interface,
+  secrets: IGeneratedWallets,
 ) {
   // Check for Storage Funds
   let storageFunded = false;
@@ -131,6 +134,7 @@ async function requireEnoughStakingBalanceAndChainBalance(
   stakingConfig: IStakingConfig,
   stdio: Interface,
   bscHandler: THandler,
+  secrets: IGeneratedWallets,
 ): Promise<void> {
   let requireFunds =
     BigInt(bscHandler.initialFunds) + BigInt(stakingConfig.intialFund);

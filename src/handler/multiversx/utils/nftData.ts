@@ -1,5 +1,6 @@
 import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
+import { retry } from "../../utils";
 
 export default async function nftData(
   tokenId: string,
@@ -19,22 +20,28 @@ export default async function nftData(
             "gateway",
             "api",
           )}/nfts/${collection}-${nonceAsHex}`,
-        )
-      ).json()
-    ).data;
+        ).catch(() => undefined)
+      )
+        ?.json()
+        ?.catch(() => undefined)
+    )?.data;
     return {
-      metaData: atob(response.uris[1]),
-      royalties: response.royalties,
+      metaData: atob(response.uris?.at(1) ?? ""),
+      royalties: response?.royalties ?? 0,
     };
   };
-  const nftDetails = await provider.getDefinitionOfTokenCollection(contract);
+  const nftDetails = await retry(
+    () => provider.getDefinitionOfTokenCollection(contract),
+    `Trying to fetch Nft Data for ${contract}`,
+    5,
+  ).catch(() => undefined);
   const { royalties, metaData } = await getNonFungibleToken(
     contract,
     parseInt(tokenId),
   );
   return {
-    name: nftDetails.name,
-    symbol: nftDetails.ticker,
+    name: nftDetails?.name ?? "XP Wrapped Nft",
+    symbol: nftDetails?.ticker ?? "XPNFT",
     metadata: metaData,
     royalty: BigInt(royalties),
   };

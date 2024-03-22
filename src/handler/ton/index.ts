@@ -2,6 +2,7 @@ import { Address } from "@ton/ton";
 import TonWeb from "tonweb";
 import { Bridge } from "../../contractsTypes/ton/tonBridge";
 import { THandler } from "../types";
+import { retry } from "../utils";
 import { TonParams } from "./types";
 import {
   addSelfAsValidator,
@@ -43,7 +44,19 @@ export function tonHandler({
     addSelfAsValidator: () =>
       addSelfAsValidator(storage, bc, signer, walletSender),
     selfIsValidator: () => selfIsValidator(signer, tonweb, bridge),
-    nftData: (_, ctr) => nftData(_, ctr, client),
+    nftData: (_, ctr) =>
+      retry(
+        () => nftData(_, ctr, client),
+        `Trying to fetch data for ${ctr}`,
+        5,
+      ).catch(() => {
+        return {
+          metadata: "",
+          name: "XP Wrapped Nft",
+          symbol: "TTON",
+          royalty: 0n,
+        };
+      }),
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(builder, cb, lastBlock_, client, bridge, em),

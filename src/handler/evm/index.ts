@@ -23,6 +23,7 @@ export function evmHandler({
   currency,
   em,
   txSigner,
+  decimals,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -47,5 +48,6 @@ export function evmHandler({
     nftData: nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),
     signClaimData: signClaimData(chainIdent, txSigner),
+    decimals: BigInt(10 ** decimals),
   };
 }

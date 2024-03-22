@@ -13,4 +13,5 @@ export type MultiversXHandlerParams = {
   lastBlock: number;
   initialFunds: bigint;
   em: EntityManager;
+  decimals: number;
 };

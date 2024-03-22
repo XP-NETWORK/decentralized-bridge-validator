@@ -12,4 +12,5 @@ export type TezosHandlerParams = {
   restApiUrl: string;
   initialFunds: bigint;
   em: EntityManager;
+  decimals: number;
 };

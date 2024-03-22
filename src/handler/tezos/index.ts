@@ -21,6 +21,7 @@ export async function tezosHandler({
   restApiUrl,
   initialFunds,
   em,
+  decimals,
 }: TezosHandlerParams): Promise<THandler> {
   const chainIdent = "TEZOS";
   const bc = await provider.contract.at<BridgeContractType>(bridge);
@@ -49,5 +50,6 @@ export async function tezosHandler({
     selfIsValidator: () => selfIsValidator(bc, signer),
     addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer),
     chainIdent: chainIdent,
+    decimals: BigInt(10 ** decimals),
   };
 }

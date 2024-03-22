@@ -24,6 +24,7 @@ export function multiversxHandler({
   lastBlock,
   initialFunds,
   em,
+  decimals,
 }: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -61,5 +62,6 @@ export function multiversxHandler({
       ),
     nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL),
     signClaimData: (data) => signClaimData(data, signer),
+    decimals: BigInt(10 ** decimals),
   };
 }

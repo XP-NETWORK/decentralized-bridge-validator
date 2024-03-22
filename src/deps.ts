@@ -101,6 +101,7 @@ export async function configTezosHandler(
     restApiUrl: conf.restApiURL,
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
+    decimals: conf.decimals,
   });
 }
 
@@ -138,6 +139,7 @@ export async function configSecretHandler(
     blockChunks: conf.blockChunks,
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
+    decimals: conf.decimals,
   });
 }
 
@@ -165,6 +167,7 @@ export async function configMultiversXHandler(
     lastBlock: lb?.lastBlock ?? conf.lastBlock,
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
+    decimals: conf.decimals,
   });
 }
 
@@ -199,6 +202,7 @@ export async function configTonHandler(
     secretKey: tonWallet.secretKey,
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
+    decimals: conf.decimals,
   });
 }
 

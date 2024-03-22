@@ -44,6 +44,7 @@ export interface THandler {
   address: string;
   chainType: TSupportedChainTypes;
   publicKey: string;
+  decimals: bigint;
 }
 
 export interface TStakingHandler {

@@ -15,4 +15,5 @@ export type TonParams = {
   secretKey: string;
   initialFunds: bigint;
   em: EntityManager;
+  decimals: number;
 };

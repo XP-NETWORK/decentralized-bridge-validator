@@ -118,7 +118,7 @@ async function requireEnoughBalanceInChains(
             balance,
           )}; Fund chain your wallet ${chain.address} on ${
             chain.chainIdent
-          } with ${ethers.formatEther(remainingRaw)} ${chain.currency}.`,
+          } with ${remainingRaw / chain.decimals} ${chain.currency}.`,
         );
         // Sleep for 10 Seconds
         await stdio.question("Press Enter to continue...");

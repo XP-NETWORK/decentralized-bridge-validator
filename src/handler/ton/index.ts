@@ -24,6 +24,7 @@ export function tonHandler({
   secretKey,
   initialFunds,
   em,
+  decimals,
 }: TonParams): THandler {
   const chainIdent = "TON";
   const bc = client.open(
@@ -46,6 +47,7 @@ export function tonHandler({
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(builder, cb, lastBlock_, client, bridge, em),
+    decimals: BigInt(10 ** decimals),
   };
 }
 

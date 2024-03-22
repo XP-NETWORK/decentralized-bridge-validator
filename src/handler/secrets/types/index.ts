@@ -14,4 +14,5 @@ export type SecretsHandlerParams = {
   blockChunks: number;
   initialFunds: bigint;
   em: EntityManager;
+  decimals: number;
 };

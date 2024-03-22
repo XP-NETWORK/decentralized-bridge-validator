@@ -22,6 +22,7 @@ export function secretsHandler({
   blockChunks,
   initialFunds,
   em,
+  decimals,
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
@@ -65,5 +66,6 @@ export function secretsHandler({
       ),
     getBalance: () => getBalance(client),
     nftData: (tid, ctr) => nftData(tid, ctr, client),
+    decimals: BigInt(10 ** decimals),
   };
 }

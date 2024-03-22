@@ -1,6 +1,7 @@
 import fs from "fs";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
+import "./environment";
 import { listenEvents, listenStakeEvents } from "./handler";
 import {
   ValidatorLog,

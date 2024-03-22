@@ -179,7 +179,7 @@ export async function configTonHandler(
 ) {
   const client = new TonClient({
     endpoint: conf.rpcURL,
-    apiKey: "f3f6ef64352ac53cdfca18a3ba5372983e4037182c2b510fc52de5a259ecf292",
+    apiKey: process.env.TON_API_KEY,
   });
   const signer = WalletContractV4.create({
     publicKey: Buffer.from(tonWallet.publicKey, "hex"),

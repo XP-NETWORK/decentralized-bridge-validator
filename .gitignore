@@ -3,3 +3,4 @@ dist/
 secrets.json
 validator.db
 .yarn
+.env

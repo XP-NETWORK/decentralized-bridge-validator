@@ -24,6 +24,8 @@
     "useTsNode": true
   },
   "dependencies": {
+    "@cosmjs/amino": "^0.32.3",
+    "@cosmjs/cosmwasm-stargate": "^0.32.3",
     "@mikro-orm/core": "^6.1.4",
     "@mikro-orm/migrations": "^6.1.4",
     "@mikro-orm/sqlite": "^6.1.4",
@@ -38,8 +40,10 @@
     "@ton/core": "^0.54.0",
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.9.0",
+    "@xp/cosmos-client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "axios": "^1.6.7",
     "chalk": "4",
+    "client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "dotenv": "^16.4.5",
     "ethers": "^6.11.1",
     "js-sha3": "^0.9.3",

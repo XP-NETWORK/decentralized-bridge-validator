@@ -119,13 +119,21 @@ type IStakingConfig = {
   lastBlock: number;
 } & IEvmChainConfig;
 
+type ICosmosChainConfig = {
+  chainType: "cosmos";
+  rpcURL: string;
+  chainId: string;
+  blockChunks: number;
+} & IChainConfig;
+
 type TChain =
   | IMultiversXChainConfig
   | IEvmChainConfig
   | ITonChainConfig
   | ISecretChainConfig
   | ITezosChainConfig
-  | IHederaChainConfig;
+  | IHederaChainConfig
+  | ICosmosChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];

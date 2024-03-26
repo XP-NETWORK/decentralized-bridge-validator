@@ -97,6 +97,18 @@ export const bridgeTestChains = [
     royaltyInfoProxyAddress: "0x870f7b68c0a64733dcF4D95E5C06aa34387B98BF",
     decimals: 18,
   },
+  {
+    chain: "COSMOS",
+    chainType: "cosmos",
+    blockChunks: 1000,
+    chainId: "",
+    rpcURL: "https://rpc.sentry-01.theta-testnet.polypore.xyz",
+    contractAddress: "",
+    decimals: 1e9,
+    intialFund: "300000000",
+    lastBlock: 20917847,
+    nativeCoinSymbol: "uatom",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

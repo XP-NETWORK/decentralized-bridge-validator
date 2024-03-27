@@ -1,57 +1,59 @@
-import { readFile } from "fs/promises";
 import { ChainFactory, ChainFactoryConfigs } from "xp-decentralized-sdk";
-import { TChainFactory } from "xp-decentralized-sdk/dist/factory/types/utils";
-import { bridgeTestChains } from "../config";
-import { IGeneratedWallets } from "../types";
-import { generateWallets } from "../utils";
 import {
-  createTest,
-  generateConfig,
-  getChainConfigs,
-  getSigners,
-  transferMultiple,
-} from "./utils";
+  emv_to_evm,
+  evm_to_mx,
+  evm_to_secret,
+  evm_to_tezos,
+  evm_to_ton,
+} from "./evm-tests";
+import { mx_to_evm, mx_to_secret, mx_to_tezos, mx_to_ton } from "./mx-tests";
+import {
+  secret_to_evm,
+  secret_to_mx,
+  secret_to_tezos,
+  secret_to_ton,
+} from "./secret-tests";
+import {
+  tezos_to_evm,
+  tezos_to_mx,
+  tezos_to_secret,
+  tezos_to_ton,
+} from "./tezos-tests";
+import { transferMultiple } from "./utils";
 
-const testcases = async (factory: TChainFactory) => {
-  const file = await readFile("secrets.json", "utf-8").catch(() => "");
-  let genWallets: IGeneratedWallets;
-  if (!file) {
-    console.log("No file found");
-    genWallets = await generateWallets();
-  } else {
-    genWallets = JSON.parse(file);
-  }
+(async () => {
+  const evmtests = await Promise.all([
+    emv_to_evm(),
+    evm_to_mx(),
+    evm_to_secret(),
+    evm_to_tezos(),
+    evm_to_ton(),
+  ]);
 
-  const signers = getSigners(genWallets);
-  const chainConfigs = getChainConfigs(bridgeTestChains);
-  const configs = await generateConfig(genWallets, chainConfigs);
+  const mxtests = await Promise.all([
+    mx_to_evm(),
+    mx_to_secret(),
+    mx_to_tezos(),
+    mx_to_ton(),
+  ]);
 
-  const firstTest = createTest({
-    fromChain: "ETH",
-    toChain: "TON",
-    nftType: "singular",
-    claimSigner: configs.ton.signer.sender(
-      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
-    ),
-    receiver: configs.ton.signer.address.toString(),
-    signer: configs.eth.signer,
-    deployArgs: {
-      name: "TestContract",
-      symbol: "TST",
-    },
-    mintArgs: {
-      tokenId: 400n,
-      uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-      royalty: 10n,
-      royaltyReceiver: signers.eth.address,
-      contract: "",
-    },
-    approveTokenId: "400",
-  });
-  await transferMultiple([firstTest], factory);
-};
+  const secrettest = await Promise.all([
+    secret_to_evm(),
+    secret_to_mx(),
+    secret_to_tezos(),
+    secret_to_ton(),
+  ]);
 
-const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-testcases(factory)
-  .catch((e) => console.error(e))
-  .then((e) => console.log(e));
+  const tezostests = await Promise.all([
+    tezos_to_evm(),
+    tezos_to_mx(),
+    tezos_to_secret(),
+    tezos_to_ton(),
+  ]);
+
+  const factory = ChainFactory(ChainFactoryConfigs.TestNet());
+  await transferMultiple(
+    [...evmtests, ...mxtests, ...secrettest, ...tezostests],
+    factory,
+  );
+})();

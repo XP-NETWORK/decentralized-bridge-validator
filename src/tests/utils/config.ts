@@ -93,7 +93,7 @@ export async function generateConfig(
       address: genWallets.evmWallet.address,
     },
     tezos: {
-      signer: (async () => {
+      signer: await (async () => {
         const signer = new InMemorySigner(genWallets.tezosWallet.secretKey);
         const Tezos = new TezosToolkit(configs.tezos.rpcURL);
         await requireFundsForAddress(
@@ -106,6 +106,7 @@ export async function generateConfig(
           await signer.publicKeyHash(),
           "TEZOS",
         );
+        return signer;
       })(),
       config: configs.tezos,
       address: await new InMemorySigner(

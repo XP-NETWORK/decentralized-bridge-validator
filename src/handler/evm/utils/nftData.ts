@@ -40,7 +40,7 @@ const nftData = (provider: JsonRpcProvider) => {
       symbol: symbol || "XPNFT",
       // If undefined, set royalty as zero.
       royalty: (royalty ?? [0n, 0n])[1],
-      metadata: metadata || "https://google.com",
+      metadata: metadata || "",
     };
   };
 };

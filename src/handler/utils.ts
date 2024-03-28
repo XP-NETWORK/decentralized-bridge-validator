@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { JsonRpcProvider, Wallet, isError } from "ethers";
+import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
 import { IGeneratedWallets, IStakingConfig } from "../types";
 import { THandler } from "./types";
@@ -101,21 +101,4 @@ export async function stakeTokens(
   if (!staking || staking.status !== 1) {
     throw new Error("Failed to stake");
   }
-}
-
-export async function ethersRetry<T>(
-  func: () => Promise<T>,
-  ctx: string,
-  retries = 3,
-): Promise<T> {
-  return await func().catch(async (err) => {
-    if (isError(err, "CALL_EXCEPTION")) {
-    }
-    if (retries === 0) {
-      throw err;
-    }
-    ValidatorLog(`Context: ${ctx} - Retrying ${retries} more times.`);
-    await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
-    return ethersRetry(func, ctx, retries - 1);
-  });
 }

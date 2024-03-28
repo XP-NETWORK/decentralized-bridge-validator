@@ -8,6 +8,7 @@ import { Root } from "../types/gateway";
 import MxLog from "./log";
 
 const CHAIN_IDENT = "MULTIVERSX";
+const WAIT_TIME = 1000;
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
@@ -54,7 +55,7 @@ export default async function listenForLockEvents(
             lastBlock: Number(lastBlock_),
           });
           await em.flush();
-          await new Promise<undefined>((e) => setTimeout(e, 10000));
+          await new Promise<undefined>((e) => setTimeout(e, WAIT_TIME));
           continue;
         }
         for (const tx of txsForBridge) {
@@ -105,7 +106,7 @@ export default async function listenForLockEvents(
       }
     } catch (e) {
       MxLog(`${e} while listening for events. Sleeping for 10 seconds`);
-      await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
+      await new Promise<undefined>((resolve) => setTimeout(resolve, WAIT_TIME));
     }
   }
 }

@@ -77,7 +77,7 @@ const listenForLockEvents = (
         await em.flush();
       } catch (e) {
         log(
-          `${e} while listening for events. Sleeping for 10 seconds`,
+          `${e} while listening for lock events. Sleeping for 10 seconds`,
           chainIdent,
         );
         await new Promise((e) => setTimeout(e, 10000));

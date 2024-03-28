@@ -84,7 +84,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     );
     console.log(`Deployed NFT Contract: ${contract}`);
     /// Sleep for 5 seconds to wait for the contract to be deployed
-    await new Promise((e) => setTimeout(e, 5000));
+    await sleep(5);
 
     // Mint NFT
 
@@ -99,19 +99,18 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             ...tx.mintArgs,
             contract: contract,
             contractAddress: contract,
-            identifier: contract,
+            ticker: contract,
           },
         );
         isMinted = true;
         console.log(
-          `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${JSON.stringify(
+          `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${stringify(
             minted,
-            null,
-            4,
           )}`,
         );
       } catch (e) {
         console.log(`Failed to mint NFT on ${tx.fromChain}`, e);
+        await sleep(5);
       }
     }
 
@@ -132,6 +131,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       } catch (e) {
         await new Promise((e) => setTimeout(e, 5000));
         console.log("Retrying Approving NFT", e);
+        await sleep(5);
       }
     }
 
@@ -158,6 +158,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (e: any) {
         console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
+        await sleep(5);
       }
     }
 
@@ -171,11 +172,11 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         console.log("Got Claim Data");
         foundedData = true;
       } catch (e) {
-        await new Promise((s) => setTimeout(s, 5000));
         console.log(
           `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
           e,
         );
+        await sleep(5);
       }
     }
 
@@ -194,7 +195,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       Math.floor((2 / 3) * Number(await tc.getValidatorCount())) + 1;
     while (signatures.length < neededSignatures) {
       await waitForMSWithMsg(
-        1000,
+        2500,
         `waiting for signatures, ${signatures.length}`,
       );
       signatures = await tc
@@ -217,12 +218,31 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tc.transform(nftDetails) as any,
           signatureArray,
         );
-        console.log(`Claimed on ${tx.toChain} at ${claim}`);
+        console.log(`Claimed on ${tx.toChain} at ${stringify(claim)}`);
         claimed = true;
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
         console.log(e);
         console.log("Retrying Claiming");
+        await sleep(5);
       }
   }
+}
+
+function stringify(content: unknown): string {
+  return JSON.stringify(
+    content,
+    (_, value) => {
+      if (typeof value === "bigint") {
+        return `BigInt(${value.toString()})`;
+      }
+      return value;
+    },
+    4,
+  );
+}
+
+function sleep(secs: number) {
+  console.log(`Sleeping for ${secs} seconds`);
+  return new Promise((resolve) => setTimeout(resolve, secs * 1000));
 }

@@ -38,7 +38,6 @@ export const mx_to_evm = async () => {
       ticker: "TST",
     },
     mintArgs: {
-      identifier: "",
       name: "Test Nft",
       ticker: "TST",
       uris: [

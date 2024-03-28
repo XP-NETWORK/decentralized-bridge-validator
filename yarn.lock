@@ -4079,8 +4079,10 @@ ws@^7:
 
 "xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge":
   version "1.0.0"
-  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#ab9dd2a6fadee72842950870ae80f2fcd10cef0f"
+  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#d34d368c8207c390978e24ca74b68fe28ec6a377"
   dependencies:
+    "@cosmjs/amino" "^0.32.3"
+    "@cosmjs/cosmwasm-stargate" "^0.32.3"
     "@multiversx/sdk-core" "^12.18.0"
     "@multiversx/sdk-network-providers" "^2.2.1"
     "@multiversx/sdk-wallet" "^4.3.0"
@@ -4091,6 +4093,7 @@ ws@^7:
     "@ton/crypto" "^3.2.0"
     "@ton/ton" "^13.9.0"
     "@tzkt/sdk-api" "^2.2.1"
+    "@xp/cosmos-client" "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge"
     axios "^1.6.7"
     ethers "^6.10.0"
     secretjs "^1.12.4-beta.0"

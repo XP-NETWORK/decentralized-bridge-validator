@@ -4,7 +4,7 @@ import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
 
 export default async function signData(
   buf: string,
-  pk: Buffer,
+  pk: string,
   pubk: Uint8Array,
 ) {
   const messageHash = sha256(

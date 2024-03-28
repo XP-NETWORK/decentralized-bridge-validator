@@ -55,3 +55,5 @@ if (require.main === module) {
     await transferMultiple([test], factory);
   })();
 }
+
+// TESTED: ✅OK (MX Fails with `legacy async call invalid`)

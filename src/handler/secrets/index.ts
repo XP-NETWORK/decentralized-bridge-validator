@@ -26,23 +26,14 @@ export function secretsHandler({
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
-    signData: (buf) =>
-      signData(
-        buf,
-        Buffer.from(privateKey, "hex"),
-        Buffer.from(publicKey, "hex"),
-      ),
+    signData: (buf) => signData(buf, privateKey, Buffer.from(publicKey, "hex")),
     chainType: "scrt",
     initialFunds: initialFunds,
     chainIdent: "SECRET",
     currency: "USCRT",
     address: client.address,
     signClaimData: (data) =>
-      signClaimData(
-        data,
-        Buffer.from(privateKey),
-        Buffer.from(publicKey, "hex"),
-      ),
+      signClaimData(data, privateKey, Buffer.from(publicKey, "hex")),
     selfIsValidator: () =>
       selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
     listenForLockEvents: (cb, iter) =>

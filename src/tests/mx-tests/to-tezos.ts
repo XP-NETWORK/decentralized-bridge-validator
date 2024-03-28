@@ -37,7 +37,6 @@ export const mx_to_tezos = async () => {
       ticker: "TST",
     },
     mintArgs: {
-      identifier: "",
       name: "Test Nft",
       ticker: "TST",
       uris: [

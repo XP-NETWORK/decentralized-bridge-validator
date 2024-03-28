@@ -40,7 +40,6 @@ export const mx_to_ton = async () => {
       ticker: "TST",
     },
     mintArgs: {
-      identifier: "",
       name: "Test Nft",
       ticker: "TST",
       uris: [

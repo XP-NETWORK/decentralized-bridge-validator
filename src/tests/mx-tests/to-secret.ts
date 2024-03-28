@@ -44,7 +44,6 @@ export const mx_to_secret = async () => {
       ticker: "TST",
     },
     mintArgs: {
-      identifier: "",
       name: "Test Nft",
       ticker: "TST",
       uris: [

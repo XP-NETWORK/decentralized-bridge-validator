@@ -6,7 +6,7 @@ import { TNftTransferDetailsObject } from "../../types";
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
   privateKey: string,
-  pubk: Uint8Array,
+  pubk: string,
 ) {
   const messageHash = sha256(
     [
@@ -32,7 +32,7 @@ export default async function signClaimData(
     der: false,
   });
   return {
-    signer: Buffer.from(pubk).toString("hex"),
+    signer: pubk,
     signature: `0x${Buffer.from(signature).toString("hex")}`,
   };
 }

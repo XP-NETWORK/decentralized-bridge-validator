@@ -40,7 +40,7 @@ export const tezos_to_secret = async () => {
     signer: signers.tezos,
     deployArgs: {
       name: "TestContract",
-      symbol: "TST",
+      description: "Test Contract Description",
     },
     mintArgs: {
       tokenId: "400" as any,

@@ -42,7 +42,7 @@ export const tezos_to_evm = async () => {
     approveTokenId: "400",
     deployArgs: {
       name: "TestContract",
-      symbol: "TST",
+      description: "Test Contract Description",
     },
   });
   return firstTest;

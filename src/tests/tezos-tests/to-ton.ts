@@ -36,7 +36,7 @@ export const tezos_to_ton = async () => {
     signer: signers.tezos,
     deployArgs: {
       name: "TestContract",
-      symbol: "TST",
+      description: "Test Contract Description",
     },
     mintArgs: {
       contract: "",

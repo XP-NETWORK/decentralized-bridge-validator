@@ -70,7 +70,7 @@ export async function listenEvents(
       const approvalFn = async () =>
         await deps.storage.approveLockNft(
           inft.transactionHash,
-          sourceChain.chainIdent,
+          chain.chainIdent,
           signature.signature,
           signature.signer,
           {

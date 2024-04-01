@@ -16,12 +16,17 @@ import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { EntityManager } from "@mikro-orm/sqlite";
+import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import {
+  CosmWasmWallet,
   IBridgeConfig,
+  ICosmWasmChainConfig,
   IEvmChainConfig,
   IEvmWallet,
   IGeneratedWallets,
@@ -102,6 +107,37 @@ export async function configTezosHandler(
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
     decimals: conf.decimals,
+  });
+}
+
+export async function configCosmWasmChainHandler(
+  conf: ICosmWasmChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  cosmWasmWallet: CosmWasmWallet,
+) {
+  const directWallet = await DirectSecp256k1Wallet.fromKey(
+    Buffer.from(cosmWasmWallet.privateKey, "hex"),
+    conf.walletPrefix,
+  );
+  const client = await SigningCosmWasmClient.connectWithSigner(
+    conf.rpcURL,
+    directWallet,
+  );
+  return cosmWasmHandler({
+    chainIdent: conf.chain as TSupportedChains,
+    blockChunks: conf.blockChunks,
+    bridge: conf.contractAddress,
+    client: client,
+    currency: conf.nativeCoinSymbol,
+    decimals: conf.decimals,
+    em: em.fork(),
+    initialFunds: BigInt(conf.intialFund),
+    lastBlock_: conf.lastBlock,
+    privateKey: cosmWasmWallet.privateKey,
+    publicKey: cosmWasmWallet.publicKey,
+    storage: storage,
+    wallet: directWallet,
   });
 }
 
@@ -234,6 +270,19 @@ export async function configDeps(
               storage,
               em.fork(),
               secrets.evmWallet,
+            );
+          }),
+      )),
+      ...(await Promise.all(
+        config.bridgeChains
+          .filter((e) => e.chainType === "cosmwasm")
+          .map((c) => {
+            const config = c as ICosmWasmChainConfig;
+            return configCosmWasmChainHandler(
+              config,
+              storage,
+              em.fork(),
+              secrets.secretWallet,
             );
           }),
       )),

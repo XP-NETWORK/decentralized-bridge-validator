@@ -98,16 +98,18 @@ export const bridgeTestChains = [
     decimals: 18,
   },
   {
-    chain: "COSMOS",
-    chainType: "cosmos",
-    blockChunks: 1000,
-    chainId: "",
-    rpcURL: "https://rpc.sentry-01.theta-testnet.polypore.xyz",
-    contractAddress: "",
-    decimals: 1e9,
-    intialFund: "300000000",
-    lastBlock: 20917847,
-    nativeCoinSymbol: "uatom",
+    chainType: "cosmwasm",
+    blockChunks: 100000,
+    chain: "TERRA",
+    chainId: "pisco-1",
+    contractAddress:
+      "terra1hypmjkxnvyfyjzenxvwjd5q23khx06630hm8qyjdl6zhgx32rnqq62d9sf",
+    decimals: 6,
+    intialFund: "100000",
+    lastBlock: 10399767,
+    nativeCoinSymbol: "uluna",
+    rpcURL: "https://rpc.testcosmos.directory/terra2testnet",
+    walletPrefix: "terra",
   },
 ] as const satisfies TChain[];
 

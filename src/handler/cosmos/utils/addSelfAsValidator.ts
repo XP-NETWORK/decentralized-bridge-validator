@@ -8,9 +8,10 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import SecretLog from "./log";
+import { log } from "./index";
 
 export default async function addSelfAsValidator(
+  identifier: string,
   storage: BridgeStorage,
   bridge: Bridge.BridgeClient,
   wallet: AccountData,
@@ -64,7 +65,7 @@ export default async function addSelfAsValidator(
     });
     return "success";
   } catch (e) {
-    SecretLog("Failed to add self as validator: ", e);
+    log(identifier, "Failed to add self as validator: ", e);
     return "failure";
   }
 }

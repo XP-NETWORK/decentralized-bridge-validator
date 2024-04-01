@@ -46,6 +46,10 @@ type ISecretWallet = {
   publicKey: string;
   privateKey: string;
 };
+type CosmWasmWallet = {
+  publicKey: string;
+  privateKey: string;
+};
 
 type ITezosWallet = {
   publicKey: string;
@@ -119,11 +123,12 @@ type IStakingConfig = {
   lastBlock: number;
 } & IEvmChainConfig;
 
-type ICosmosChainConfig = {
-  chainType: "cosmos";
+type ICosmWasmChainConfig = {
+  chainType: "cosmwasm";
   rpcURL: string;
   chainId: string;
   blockChunks: number;
+  walletPrefix: string;
 } & IChainConfig;
 
 type TChain =
@@ -133,7 +138,7 @@ type TChain =
   | ISecretChainConfig
   | ITezosChainConfig
   | IHederaChainConfig
-  | ICosmosChainConfig;
+  | ICosmWasmChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -160,6 +165,8 @@ export {
   ISecretChainConfig,
   ISecretWallet,
   IStakingConfig,
+  ICosmWasmChainConfig,
+  CosmWasmWallet,
   ITezosChainConfig,
   ITezosWallet,
   ITonChainConfig,

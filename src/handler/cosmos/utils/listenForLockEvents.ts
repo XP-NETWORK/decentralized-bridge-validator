@@ -9,6 +9,7 @@ import log from "./log";
 const CHAIN_IDENT = "SECRET";
 
 export default async function listenForLockEvents(
+  identifier: string,
   builder: EventBuilder,
   cb: LockEventIter,
   lastBlock_: number,
@@ -35,6 +36,7 @@ export default async function listenForLockEvents(
         lastBlock = latestBlockNumber;
         if (!logs.length) {
           log(
+            identifier,
             `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
           );
           lastBlock = latestBlockNumber;
@@ -86,7 +88,10 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      log(`${e} while listening for events. Sleeping for 10 seconds`);
+      log(
+        identifier,
+        `${e} while listening for events. Sleeping for 10 seconds`,
+      );
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
 }

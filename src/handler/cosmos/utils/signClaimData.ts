@@ -5,8 +5,8 @@ import { TNftTransferDetailsObject } from "../../types";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
-  privateKey: Uint8Array,
-  pubk: Uint8Array,
+  privateKey: string,
+  pubk: string,
 ) {
   const messageHash = sha256(
     [

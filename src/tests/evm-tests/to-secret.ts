@@ -39,8 +39,8 @@ export const evm_to_secret = async () => {
     receiver: configs.secret.signer.address,
     signer: configs.eth.signer,
     deployArgs: {
-      name: "TestContract",
-      symbol: "TST",
+      name: `TestContract${Math.random() * 100000000}`,
+      symbol: `TST${Math.random() * 100000000}`,
     },
     mintArgs: {
       tokenId: 400n,
@@ -62,4 +62,4 @@ if (require.main === module) {
   })();
 }
 
-// TESTED: ✅OK (Secret Fails with `Code 1`)
+// TESTED: ✅OK

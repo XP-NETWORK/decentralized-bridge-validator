@@ -31,7 +31,7 @@ export const secret_to_mx = async () => {
     toChain: "MULTIVERSX",
     nftType: "singular",
     claimSigner: configs.multiversx.signer,
-    receiver: configs.multiversx.signer.getAddress().bech32(),
+    receiver: await configs.multiversx.signer.getAddress(),
     signer: new SecretNetworkClient({
       chainId: configs.secret.config.chainId,
       url: configs.secret.config.rpcURL,

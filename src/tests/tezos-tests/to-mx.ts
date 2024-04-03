@@ -30,7 +30,7 @@ export const tezos_to_mx = async () => {
     toChain: "MULTIVERSX",
     nftType: "singular",
     claimSigner: configs.multiversx.signer,
-    receiver: configs.multiversx.signer.getAddress().bech32(),
+    receiver: await configs.multiversx.signer.getAddress(),
     signer: signers.tezos,
     deployArgs: {
       name: "TestContract",

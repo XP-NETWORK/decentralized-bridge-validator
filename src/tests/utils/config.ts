@@ -7,6 +7,7 @@ import { JsonRpcProvider, Wallet } from "ethers";
 import { createInterface } from "readline/promises";
 import { Wallet as ScrtWallet, SecretNetworkClient } from "secretjs";
 import TonWeb from "tonweb";
+import { userSignerToSigner } from "xp-decentralized-sdk";
 import { IGeneratedWallets } from "../../types";
 import { getChainConfigs } from "./chainConfigs";
 
@@ -89,7 +90,7 @@ export async function generateConfig(
           signer.getAddress().bech32(),
           "MULTIVERSX"
         );
-        return signer;
+        return userSignerToSigner(signer);
       })(),
       config: configs.multiversx,
       address: genWallets.multiversXWallet.userWallet.address,

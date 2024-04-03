@@ -4,6 +4,7 @@ import { InMemorySigner } from "@taquito/signer";
 import { Wallet } from "ethers";
 import { Wallet as SecretWallet } from "secretjs";
 import { keyPairFromSecretKey } from "ton-crypto";
+import { userSignerToSigner } from "xp-decentralized-sdk";
 import { IGeneratedWallets } from "../../types";
 
 export function getSigners(genWallets: IGeneratedWallets) {
@@ -11,9 +12,11 @@ export function getSigners(genWallets: IGeneratedWallets) {
     bsc: new Wallet(genWallets.evmWallet.privateKey),
     eth: new Wallet(genWallets.evmWallet.privateKey),
     tezos: new InMemorySigner(genWallets.tezosWallet.secretKey),
-    multiversx: UserSigner.fromWallet(
-      genWallets.multiversXWallet.userWallet,
-      genWallets.multiversXWallet.password,
+    multiversx: userSignerToSigner(
+      UserSigner.fromWallet(
+        genWallets.multiversXWallet.userWallet,
+        genWallets.multiversXWallet.password,
+      ),
     ),
     secret: new SecretWallet(genWallets.secretWallet.privateKey),
     ton: keyPairFromSecretKey(

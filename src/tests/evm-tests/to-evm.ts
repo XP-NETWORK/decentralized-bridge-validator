@@ -27,12 +27,12 @@ export const emv_to_evm = async () => {
   const configs = await generateConfig(genWallets, chainConfigs);
 
   const firstTest = createTest({
-    fromChain: "ETH",
-    toChain: "BSC",
+    fromChain: "BSC",
+    toChain: "MATIC",
     nftType: "singular",
-    claimSigner: configs.bsc.signer,
-    receiver: await configs.bsc.signer.getAddress(),
-    signer: configs.eth.signer,
+    claimSigner: configs.matic.signer,
+    receiver: await configs.matic.signer.getAddress(),
+    signer: configs.bsc.signer,
     deployArgs: {
       name: "TestContract",
       symbol: "TST",

@@ -25,7 +25,9 @@ export async function listenEvents(
         throw new Error(`Unsupported src chain for ${ev.transactionHash}`);
       const destinationChain = map.get(ev.destinationChain as TSupportedChains);
       if (!destinationChain)
-        throw new Error(`Unsupported dest chain for ${ev.transactionHash}`);
+        throw new Error(
+          `Unsupported dest chain for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
+        );
 
       const nftDetails = await sourceChain.nftData(
         ev.tokenId,

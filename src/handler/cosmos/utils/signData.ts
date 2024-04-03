@@ -12,5 +12,5 @@ export default async function signData(buf: string, pk: string, pubk: string) {
       der: false,
     }),
   ).toString("hex")}`;
-  return { signature, signer: Buffer.from(pubk).toString("hex") };
+  return { signature, signer: pubk };
 }

@@ -32,7 +32,7 @@ export default async function signClaimData(
     der: false,
   });
   return {
-    signer: Buffer.from(pubk).toString("hex"),
+    signer: pubk,
     signature: `0x${Buffer.from(signature).toString("hex")}`,
   };
 }

@@ -1,3 +1,4 @@
+import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
 import { Wallet } from "ethers";
@@ -17,6 +18,10 @@ export function getSigners(genWallets: IGeneratedWallets) {
     secret: new SecretWallet(genWallets.secretWallet.privateKey),
     ton: keyPairFromSecretKey(
       Buffer.from(genWallets.tonWallet.secretKey, "hex"),
+    ),
+    terra: DirectSecp256k1Wallet.fromKey(
+      Buffer.from(genWallets.secretWallet.privateKey, "hex"),
+      "terra",
     ),
   };
 }

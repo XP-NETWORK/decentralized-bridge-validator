@@ -9,7 +9,6 @@ import {
   TInferChainH,
 } from "xp-decentralized-sdk/dist/factory/types/utils";
 import { waitForMSWithMsg } from "../../handler/utils";
-import { SignerAndSignature } from "../../types";
 
 type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
@@ -203,9 +202,9 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         .getLockNftSignatures(lockHash, tx.fromChain);
     }
 
-    const signatureArray: SignerAndSignature[] = signatures.map((item) => {
+    const signatureArray = signatures.map((item) => {
       return {
-        signer: item.signerAddress,
+        signerAddress: item.signerAddress,
         signature: item.signature,
       };
     });

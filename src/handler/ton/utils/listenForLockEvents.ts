@@ -24,26 +24,30 @@ export default async function listenForLockEvents(
         Address.parseFriendly(bridge).address,
         { limit: 1 },
       );
+      if (Number(latestTx[0].lt) === lastBlock) {
+        log(
+          `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
+        );
+        await new Promise<undefined>((e) => setTimeout(e, 10000));
+        continue;
+      }
 
       const transactions = await client.getTransactions(
         Address.parseFriendly(bridge).address,
         {
           limit: 100,
-          hash: latestTx[0].hash().toString("base64"),
           lt: latestTx[0].lt.toString(),
           to_lt: String(lastBlock),
           inclusive: true,
         },
       );
 
-      const startBlock = lastBlock;
       if (!transactions.length) {
         log(
-          `No Transactions found in chain from block: ${startBlock} to: ${transactions[0].lt}`,
+          `No Transactions found in chain from block: ${lastBlock} to: ${latestTx[0].lt.toString()}. Waiting for 10 Seconds before looking for new transactions`,
         );
-        log("Waiting for 10 Seconds before looking for new transactions");
         await new Promise<undefined>((e) => setTimeout(e, 10000));
-        lastBlock = Number(transactions[0].lt);
+        lastBlock = Number(latestTx[0].lt);
         await em.upsert(Block, {
           chain: CHAIN_IDENT,
           contractAddress: bridge,

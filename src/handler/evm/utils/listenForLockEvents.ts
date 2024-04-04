@@ -35,14 +35,13 @@ const listenForLockEvents = (
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
-        const startBlock = lastBlock;
 
         if (!logs.length) {
           log(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+            `No Transactions found in chain from block: ${lastBlock} to: ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
             chainIdent,
           );
-          lastBlock = latestBlockNumber;
+          lastBlock = latestBlock;
           await em.upsert(Block, {
             chain: chainIdent,
             contractAddress: await bc.getAddress(),
@@ -68,7 +67,7 @@ const listenForLockEvents = (
             ),
           );
         }
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlock;
         await em.upsert(Block, {
           chain: chainIdent,
           contractAddress: await bc.getAddress(),

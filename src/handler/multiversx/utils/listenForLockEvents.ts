@@ -8,7 +8,7 @@ import { Root } from "../types/gateway";
 import MxLog from "./log";
 
 const CHAIN_IDENT = "MULTIVERSX";
-const WAIT_TIME = 1000;
+const WAIT_TIME = 10000;
 
 export default async function listenForLockEvents(
   builder: EventBuilder,

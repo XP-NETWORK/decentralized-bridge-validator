@@ -103,7 +103,7 @@ export const bridgeTestChains = [
     chain: "TERRA",
     chainId: "pisco-1",
     contractAddress:
-      "terra1hypmjkxnvyfyjzenxvwjd5q23khx06630hm8qyjdl6zhgx32rnqq62d9sf",
+      "terra1pscwnx4dch2pmdkda89mdnl5n576hnccrjw4dlssfq5nhgrr850scz0q64",
     decimals: 6,
     intialFund: "100000",
     lastBlock: 10399767,

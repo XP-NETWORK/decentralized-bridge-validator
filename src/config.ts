@@ -78,7 +78,7 @@ export const bridgeTestChains = [
     chain: "TEZOS",
     rpcURL: "https://ghostnet.ecadinfra.com",
     restApiURL: "https://api.ghostnet.tzkt.io",
-    contractAddress: "KT1NHxTSXAFKH2y94PpfqDsg4bZ5SiF2V8a4",
+    contractAddress: "KT18pSSB3f9H3xtHzBfMCjTdPja82nqpAm66",
     intialFund: "50000",
     lastBlock: 5240862,
     nativeCoinSymbol: "XTZ",

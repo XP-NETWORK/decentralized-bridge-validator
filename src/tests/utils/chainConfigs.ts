@@ -1,5 +1,6 @@
 import {
   IEvmChainConfig,
+  IHederaChainConfig,
   IMultiversXChainConfig,
   ISecretChainConfig,
   ITezosChainConfig,
@@ -14,9 +15,9 @@ export function getChainConfigs(bridgeTestChains: TChain[]) {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     eth: bridgeTestChains.find((e) => e.chain === "ETH")! as IEvmChainConfig,
     matic: bridgeTestChains.find((e) => e.chain === "MATIC")! as IEvmChainConfig,
-    // hedera: bridgeTestChains.find(
-    //   (e) => e.chain === "HEDERA",
-    // )! as IHederaChainConfig,
+    hedera: bridgeTestChains.find(
+      (e) => e.chain === "HEDERA",
+    )! as IHederaChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     tezos: bridgeTestChains.find(
       (e) => e.chain === "TEZOS"

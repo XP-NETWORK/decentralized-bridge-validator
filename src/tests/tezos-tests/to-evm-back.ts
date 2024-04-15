@@ -1,17 +1,16 @@
 import { readFile } from "fs/promises";
 import { ChainFactory, ChainFactoryConfigs } from "xp-decentralized-sdk";
+
 import { bridgeTestChains } from "../../config";
 import { IGeneratedWallets } from "../../types";
 import { generateWallets } from "../../utils";
+import { generateConfig, getChainConfigs } from "../utils";
 import {
-  createTest,
-  generateConfig,
-  getChainConfigs,
-  getSigners,
-  transferMultiple,
-} from "../utils";
+  createTransferBackTest,
+  transferBackMultiple,
+} from "../utils/transfer-back";
 
-export const evm_to_cosm = async () => {
+export const tezos_to_evm_back = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -21,30 +20,27 @@ export const evm_to_cosm = async () => {
     genWallets = JSON.parse(file);
   }
 
-  const signers = await getSigners(genWallets);
   const chainConfigs = getChainConfigs(bridgeTestChains);
   const configs = await generateConfig(genWallets, chainConfigs);
-  const terraSigner = await signers.terra;
 
-  const firstTest = createTest({
-    fromChain: "ETH",
-    toChain: "TERRA",
+  const firstTest = createTransferBackTest({
+    fromChain: "TEZOS",
+    toChain: "MATIC",
     nftType: "singular",
-    claimSigner: terraSigner,
-    receiver: (await terraSigner.getAccounts())[0].address,
-    signer: configs.eth.signer,
+    claimSigner: configs.matic.signer,
+    receiver: await configs.matic.signer.getAddress(),
+    signer: configs.tezos.signer,
     deployArgs: {
-      name: `TestContract${Math.random() * 100000000}`,
-      symbol: `TST${Math.random() * 100000000}`,
+      name: "TestContract",
+      description: "Bruh"
     },
     mintArgs: {
-      tokenId: 400n,
+      tokenId: 400,
       uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-      royalty: 10n,
-      royaltyReceiver: signers.eth.address,
       contract: "",
     },
     approveTokenId: "400",
+    signerAddress: configs.bsc.signer.address,
   });
   return firstTest;
 };
@@ -52,9 +48,7 @@ export const evm_to_cosm = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await evm_to_cosm();
-    await transferMultiple([test], factory);
+    const test = await tezos_to_evm_back();
+    await transferBackMultiple([test], factory);
   })();
 }
-
-// TESTED: ✅OK

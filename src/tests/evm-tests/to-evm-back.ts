@@ -10,7 +10,7 @@ import {
   transferBackMultiple,
 } from "../utils/transfer-back";
 
-export const emv_to_evm = async () => {
+export const emv_to_evm_back = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -51,7 +51,7 @@ export const emv_to_evm = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await emv_to_evm();
+    const test = await emv_to_evm_back();
     await transferBackMultiple([test], factory);
   })();
 }

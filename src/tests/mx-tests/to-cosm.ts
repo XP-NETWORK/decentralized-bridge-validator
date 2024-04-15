@@ -12,7 +12,7 @@ import {
   transferMultiple,
 } from "../utils";
 
-export const mx_to_secret = async () => {
+export const mx_to_cosm = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -54,7 +54,7 @@ export const mx_to_secret = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await mx_to_secret();
+    const test = await mx_to_cosm();
     await transferMultiple([test], factory);
   })();
 }

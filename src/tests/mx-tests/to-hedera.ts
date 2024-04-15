@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import { ChainFactory, ChainFactoryConfigs } from "xp-decentralized-sdk";
+
 import { bridgeTestChains } from "../../config";
 import { IGeneratedWallets } from "../../types";
 import { generateWallets } from "../../utils";
@@ -11,7 +12,7 @@ import {
   transferMultiple,
 } from "../utils";
 
-export const evm_to_cosm = async () => {
+export const mx_to_hedera = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -21,28 +22,27 @@ export const evm_to_cosm = async () => {
     genWallets = JSON.parse(file);
   }
 
-  const signers = await getSigners(genWallets);
+  const signers = getSigners(genWallets);
   const chainConfigs = getChainConfigs(bridgeTestChains);
   const configs = await generateConfig(genWallets, chainConfigs);
-  const terraSigner = await signers.terra;
 
   const firstTest = createTest({
-    fromChain: "ETH",
-    toChain: "TERRA",
+    fromChain: "MULTIVERSX",
+    toChain: "HEDERA",
     nftType: "singular",
-    claimSigner: terraSigner,
-    receiver: (await terraSigner.getAccounts())[0].address,
-    signer: configs.eth.signer,
+    claimSigner: configs.hedera.signer,
+    receiver: await configs.hedera.signer.getAddress(),
+    signer: signers.multiversx,
     deployArgs: {
-      name: `TestContract${Math.random() * 100000000}`,
-      symbol: `TST${Math.random() * 100000000}`,
+      name: "TestContract",
+      ticker: "TST",
     },
     mintArgs: {
-      tokenId: 400n,
-      uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-      royalty: 10n,
-      royaltyReceiver: signers.eth.address,
-      contract: "",
+      name: "Test Nft",
+      ticker: "TST",
+      uris: [
+        "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
+      ],
     },
     approveTokenId: "400",
   });
@@ -52,9 +52,7 @@ export const evm_to_cosm = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await evm_to_cosm();
+    const test = await mx_to_hedera();
     await transferMultiple([test], factory);
   })();
 }
-
-// TESTED: ✅OK

@@ -60,19 +60,20 @@ export async function generateConfig(
       config: configs.matic,
       address: genWallets.evmWallet.address,
     },
-    // hedera: {
-    //   signer: await (async () => {
-    //     const provider = new JsonRpcProvider(configs.hedera.rpcURL);
-    //     const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
-    //     await requireFundsForAddress(
-    //       async () => (await provider.getBalance(wallet)) ?? 0n,
-    //       wallet.address,
-    //       "HEDERA",
-    //     );
-    //   })(),
-    //   config: configs.hedera,
-    //   address: genWallets.evmWallet.address,
-    // },
+    hedera: {
+      signer: await (async () => {
+        const provider = new JsonRpcProvider(configs.hedera.rpcURL);
+        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
+        await requireFundsForAddress(
+          async () => (await provider.getBalance(wallet)) ?? 0n,
+          wallet.address,
+          "HEDERA",
+        );
+        return wallet
+      })(),
+      config: configs.hedera,
+      address: genWallets.evmWallet.address,
+    },
     multiversx: {
       signer: await(async () => {
         const signer = UserSigner.fromWallet(

@@ -12,7 +12,7 @@ import {
   transferMultiple,
 } from "../utils";
 
-export const tezos_to_evm = async () => {
+export const tezos_to_cosm = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -52,7 +52,7 @@ export const tezos_to_evm = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await tezos_to_evm();
+    const test = await tezos_to_cosm();
     await transferMultiple([test], factory);
   })();
 }

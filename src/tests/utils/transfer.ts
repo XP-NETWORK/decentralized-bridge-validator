@@ -2,6 +2,7 @@ import {
   DeployCollection,
   MetaMap,
   MintNft,
+  ReadClaimed721Event,
   TApproveNFT,
 } from "xp-decentralized-sdk";
 import {
@@ -56,7 +57,7 @@ export async function transferMultiple(
   }[],
   factory: TChainFactory,
 ) {
-  await transfer(args, factory);
+  return await transfer(args, factory);
 }
 
 // Lock the NFTs
@@ -73,8 +74,9 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     approveTokenId: string;
   }[],
   factory: TChainFactory,
-) {
+): Promise<{ contract: string; tokenId: string } | undefined> {
   for (const tx of args) {
+    console.log(`Transferring from ${tx.fromChain} to ${tx.toChain}`)
     const chain = await factory.inner(tx.fromChain);
 
     const contract = await chain.deployCollection(
@@ -210,6 +212,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     });
 
     let claimed = false;
+    let ch = "";
     while (!claimed)
       try {
         const claim = await tc.claimNft(
@@ -219,13 +222,37 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         );
         console.log(`Claimed on ${tx.toChain} at ${stringify(claim)}`);
         claimed = true;
+        ch = claim.hash();
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
         console.log(e);
         console.log("Retrying Claiming");
         await sleep(5);
       }
+      const dc = await factory.inner(tx.toChain);
+    if (canDecodeClaimData(dc)) {
+      let claimDecoded = false;
+
+      while (!claimDecoded) {
+        console.log(ch);
+        try {
+          const decoded = await dc.readClaimed721Event(ch);
+          console.log(decoded)
+          return {
+            contract: decoded.nft_contract,
+            tokenId: decoded.token_id,
+          };
+        } catch (e) {
+          console.log(`Failed to decode claim event`, e);
+          await sleep(5);
+        }
+      }
+    } else {
+      return undefined;
+    }
   }
+
+  return undefined;
 }
 
 function stringify(content: unknown): string {
@@ -244,4 +271,8 @@ function stringify(content: unknown): string {
 function sleep(secs: number) {
   console.log(`Sleeping for ${secs} seconds`);
   return new Promise((resolve) => setTimeout(resolve, secs * 1000));
+}
+
+export function canDecodeClaimData(t: any): t is ReadClaimed721Event {
+  return "readClaimed721Event" in t;
 }

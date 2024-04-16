@@ -244,6 +244,27 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       }
       if (!decodedValue) throw new Error(`Failed to get decoded value`);
 
+       let approved = false;
+      while (!approved) {
+        try {
+          const approve = await tc.approveNft(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            tx.claimSigner as any,
+            decodedValue.token_id,
+            decodedValue.nft_contract,
+            {},
+          );
+          console.log(
+            `Approved NFT on ${tx.toChain} with Token ID: ${decodedValue.token_id} at ${contract} in tx: ${approve}`,
+          );
+          approved = true;
+        } catch (e) {
+          await new Promise((e) => setTimeout(e, 5000));
+          console.log("Retrying Approving NFT", e);
+          await sleep(5);
+        }
+      }
+
       let lockedAgain = false;
       let lockAgain = undefined;
 
@@ -257,6 +278,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             BigInt(decodedValue.token_id),
           );
           lockedAgain = true;
+          console.log(`Locked at ${lockAgain.hash()}`)
         } catch (e) {
           console.log(`Failed to lock again`, e);
         }
@@ -269,6 +291,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       while (!gotLockBackClaimData) {
         try {
           lockBackClaimData = await factory.getClaimData(tc, lockAgain.hash());
+          gotLockBackClaimData = true
         } catch (error) {
           console.log(`Failed to find lock back claim data`, error);
         }
@@ -276,53 +299,54 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
 
       if (!lockBackClaimData) throw new Error(`Undefined`);
 
-      {
-        let signatures = await tc
+      const fc = await factory.inner(tx.fromChain);
+
+      console.log(`fetching signatures for`, lockAgain.hash(), tx.toChain)
+        let againsignatures = await fc
           .getStorageContract()
-          .getLockNftSignatures(lockAgain.hash(), tx.fromChain);
-        const neededSignatures =
-          Math.floor((2 / 3) * Number(await tc.getValidatorCount())) + 1;
-        while (signatures.length < neededSignatures) {
+          .getLockNftSignatures(lockAgain.hash(), tx.toChain);
+        const againneededSignatures =
+          Math.floor((2 / 3) * Number(await fc.getValidatorCount())) + 1;
+        while (againsignatures.length < againneededSignatures) {
           await waitForMSWithMsg(
             2500,
-            `waiting for signatures, ${signatures.length}`,
+            `waiting for signatures, ${againsignatures.length}`,
           );
-          signatures = await tc
+          againsignatures = await tc
             .getStorageContract()
-            .getLockNftSignatures(lockHash, tx.fromChain);
+            .getLockNftSignatures(lockHash, tx.toChain);
+            console.log(againsignatures)
         }
+        const againSignatureArray = againsignatures.map((item) => {
+            return {
+              signerAddress: item.signerAddress,
+              signature: item.signature,
+            };
+          });
 
-        const signatureArray = signatures.map((item) => {
-          return {
-            signerAddress: item.signerAddress,
-            signature: item.signature,
-          };
-        });
-
-        let claimed = false;
-        let claimHash = "";
-        const fc = await factory.inner(tx.fromChain);
-        while (!claimed)
-          try {
-            const claim = await fc.claimNft(
-              tx.signer as any,
-              fc.transform(lockBackClaimData) as any,
-              signatureArray,
-            );
-            console.log(
-              `Claimed on ${tx.toChain} at ${stringify(
-                claim,
-              )} . hash: ${claimHash}`,
-            );
-            claimed = true;
-            claimHash = claim.hash();
-          } catch (e) {
-            await new Promise((s) => setTimeout(s, 5000));
-            console.log(e);
-            console.log("Retrying Claiming");
-            await sleep(5);
-          }
-      }
+          let claimedAgain = false;
+          let claimHashAgain = "";
+          while (!claimedAgain)
+            try {
+              const claim = await fc.claimNft(
+                tx.signer as any,
+                fc.transform(lockBackClaimData) as any,
+                againSignatureArray,
+              );
+              console.log(
+                `Claimed on ${tx.toChain} at ${stringify(
+                  claim,
+                )} . hash: ${claimHashAgain}`,
+              );
+              claimed = true;
+              claimHashAgain = claim.hash();
+            } catch (e) {
+              await new Promise((s) => setTimeout(s, 5000));
+              console.log(e);
+              console.log("Retrying Claiming");
+              await sleep(5);
+            }
+        
     }
   }
 }

@@ -26,10 +26,10 @@ export const emv_to_evm_back = async () => {
 
   const firstTest = createTransferBackTest({
     fromChain: "BSC",
-    toChain: "MATIC",
+    toChain: "ETH",
     nftType: "singular",
-    claimSigner: configs.matic.signer,
-    receiver: await configs.matic.signer.getAddress(),
+    claimSigner: configs.eth.signer,
+    receiver: await configs.eth.signer.getAddress(),
     signer: configs.bsc.signer,
     deployArgs: {
       name: "TestContract",
@@ -55,3 +55,5 @@ if (require.main === module) {
     await transferBackMultiple([test], factory);
   })();
 }
+
+// OK TESTED✅

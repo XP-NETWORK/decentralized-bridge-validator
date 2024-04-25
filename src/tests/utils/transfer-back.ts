@@ -10,6 +10,8 @@ import {
   TInferChainH,
 } from "xp-decentralized-sdk/dist/factory/types/utils";
 import { waitForMSWithMsg } from "../../handler/utils";
+import { BridgeStorage__factory } from "../../contractsTypes/evm";
+import { JsonRpcProvider } from "ethers";
 
 type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
@@ -225,6 +227,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         console.log(`Claimed on ${tx.toChain} at ${stringify(claim)}`);
         claimed = true;
         claimHash = claim.hash();
+        console.log(claim, claimHash)
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
         console.log(e);
@@ -302,9 +305,12 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       const fc = await factory.inner(tx.fromChain);
 
       console.log(`fetching signatures for`, lockAgain.hash(), tx.toChain)
-        let againsignatures = await fc
-          .getStorageContract()
-          .getLockNftSignatures(lockAgain.hash(), tx.toChain);
+        let againsignatures =await  BridgeStorage__factory.connect(
+          "0x8411EeadD374bDE549F61a166FFBeFca592bC60a",
+          new JsonRpcProvider(
+            "https://public.stackup.sh/api/v1/node/optimism-sepolia"
+          )
+        ).getLockNftSignatures(lockAgain.hash(), tx.toChain);
         const againneededSignatures =
           Math.floor((2 / 3) * Number(await fc.getValidatorCount())) + 1;
         while (againsignatures.length < againneededSignatures) {
@@ -325,7 +331,6 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           });
 
           let claimedAgain = false;
-          let claimHashAgain = "";
           while (!claimedAgain)
             try {
               const claim = await fc.claimNft(
@@ -336,10 +341,9 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
               console.log(
                 `Claimed on ${tx.toChain} at ${stringify(
                   claim,
-                )} . hash: ${claimHashAgain}`,
+                )} . hash: ${claim.hash()}`,
               );
-              claimed = true;
-              claimHashAgain = claim.hash();
+              claimedAgain = true;
             } catch (e) {
               await new Promise((s) => setTimeout(s, 5000));
               console.log(e);
@@ -356,17 +360,23 @@ export function canDecodeClaimData(t: any): t is ReadClaimed721Event {
 }
 
 function stringify(content: unknown): string {
-  return JSON.stringify(
-    content,
-    (_, value) => {
-      if (typeof value === "bigint") {
-        return `BigInt(${value.toString()})`;
-      }
-      return value;
-    },
-    4,
-  );
+  return JSON.stringify(content, replacerFunc);
 }
+ const replacerFunc = () => {
+   const visited = new WeakSet();
+   return (_: string, value: any) => {
+     if (typeof value === "object" && value !== null) {
+       if (visited.has(value)) {
+         return;
+       }
+       visited.add(value);
+     }
+     if (typeof value === "bigint") {
+       return `BigInt(${value.toString()})`;
+     }
+     return value;
+   };
+ };
 
 function sleep(secs: number) {
   console.log(`Sleeping for ${secs} seconds`);

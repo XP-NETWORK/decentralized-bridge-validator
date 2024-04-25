@@ -51,7 +51,9 @@ export async function retry<T>(
     if (retries === 0) {
       throw err;
     }
-    ValidatorLog(`Context: ${ctx} - Retrying ${retries} more times.`);
+    ValidatorLog(
+      `Context: ${ctx} - Retrying ${retries} more times. Error: ${err}`,
+    );
     await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
     return retry(func, ctx, retries - 1);
   });

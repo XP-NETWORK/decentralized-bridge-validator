@@ -69,16 +69,14 @@ export async function listenEvents(
         return;
       }
 
-      const approvalFn = async () =>
-        await deps.storage.approveLockNft(
+      const approvalFn = async () => {
+        return await deps.storage.approveLockNft(
           inft.transactionHash,
           chain.chainIdent,
           signature.signature,
           signature.signer,
-          {
-            gasPrice: 1000000,
-          },
         );
+      };
       const approved = await retry(
         approvalFn,
         `Approving transfer ${JSON.stringify(inft, null, 2)}`,

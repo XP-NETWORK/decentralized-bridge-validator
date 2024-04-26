@@ -304,13 +304,13 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
 
       const fc = await factory.inner(tx.fromChain);
 
-      console.log(`fetching signatures for`, lockAgain.hash(), tx.toChain)
-        let againsignatures =await  BridgeStorage__factory.connect(
+      console.log(`fetching signatures for`, claimHash, tx.toChain);
+        let againsignatures = await BridgeStorage__factory.connect(
           "0x8411EeadD374bDE549F61a166FFBeFca592bC60a",
           new JsonRpcProvider(
-            "https://public.stackup.sh/api/v1/node/optimism-sepolia"
-          )
-        ).getLockNftSignatures(lockAgain.hash(), tx.toChain);
+            "https://public.stackup.sh/api/v1/node/optimism-sepolia",
+          ),
+        ).getLockNftSignatures(lockBackClaimData.transactionHash, tx.toChain);
         const againneededSignatures =
           Math.floor((2 / 3) * Number(await fc.getValidatorCount())) + 1;
         while (againsignatures.length < againneededSignatures) {
@@ -320,7 +320,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           );
           againsignatures = await tc
             .getStorageContract()
-            .getLockNftSignatures(lockHash, tx.toChain);
+            .getLockNftSignatures(lockBackClaimData.transactionHash, tx.toChain);
             console.log(againsignatures)
         }
         const againSignatureArray = againsignatures.map((item) => {

@@ -54,7 +54,7 @@ export default async function listenForLockEvents(
           const isLocked = log.tag === "locked";
           if (!isLocked) continue;
           const sourceNftContractAddress = extractStrOrAddr(
-            log.source_nft_address,
+            log.payload.source_nft_address,
           );
 
           const {
@@ -64,8 +64,7 @@ export default async function listenForLockEvents(
             token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
-            transaction_hash: transactionHash,
-          } = log;
+          } = log.payload;
           await cb(
             builder.nftLocked(
               tokenId,
@@ -75,7 +74,7 @@ export default async function listenForLockEvents(
               tokenAmount,
               nftType,
               sourceChain,
-              transactionHash,
+              log.transactionId.toString(),
             ),
           );
         }
@@ -87,7 +86,7 @@ export default async function listenForLockEvents(
         });
       }
     } catch (e) {
-      log(`${e} while listening for ton events. Sleeping for 10 seconds`);
+      log(`${e} while listening for tezos events. Sleeping for 10 seconds`);
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

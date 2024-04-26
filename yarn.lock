@@ -4079,7 +4079,7 @@ ws@^7:
 
 "xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge":
   version "1.0.0"
-  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#ac833f98a96d8f67701d54497488050b1f130779"
+  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#253edc355917ee68fed0ca188dcd71aa7d02fd42"
   dependencies:
     "@cosmjs/amino" "^0.32.3"
     "@cosmjs/cosmwasm-stargate" "^0.32.3"

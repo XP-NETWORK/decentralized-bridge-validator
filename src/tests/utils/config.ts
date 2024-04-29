@@ -47,7 +47,7 @@ export async function generateConfig(
     matic: {
       signer: await(async () => {
         const provider = new JsonRpcProvider(
-          "https://polygon-mumbai-bor.publicnode.com"
+          "https://rpc-amoy.polygon.technology/"
         );
         const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
         await requireFundsForAddress(

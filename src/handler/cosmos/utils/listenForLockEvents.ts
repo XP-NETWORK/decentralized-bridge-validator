@@ -6,8 +6,6 @@ import { Block } from "../../../persistence/entities/block";
 import { LockEventIter } from "../../types";
 import log from "./log";
 
-const CHAIN_IDENT = "SECRET";
-
 export default async function listenForLockEvents(
   identifier: string,
   builder: EventBuilder,
@@ -29,8 +27,7 @@ export default async function listenForLockEvents(
             ? lastBlock + blockChunks
             : latestBlockNumber;
 
-        const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
-
+        const query = `execute._contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
         const logs = await client.searchTx(query);
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
@@ -41,7 +38,7 @@ export default async function listenForLockEvents(
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
-            chain: CHAIN_IDENT,
+            chain: identifier,
             contractAddress: bridge,
             lastBlock: lastBlock,
           });
@@ -81,7 +78,7 @@ export default async function listenForLockEvents(
         }
         lastBlock = latestBlockNumber;
         await em.upsert(Block, {
-          chain: CHAIN_IDENT,
+          chain: identifier,
           contractAddress: bridge,
           lastBlock: lastBlock,
         });

@@ -30,18 +30,19 @@ export const cosm_to_evm_back = async () => {
     nftType: "singular",
     claimSigner: configs.matic.signer,
     receiver: await configs.matic.signer.getAddress(),
-    signer: (await signers.terra),
+    signer: await signers.terra,
     deployArgs: {
       name: "TestContract",
-      symbol: "TC"
+      symbol: "TC",
     },
     mintArgs: {
       token_id: "400",
-      token_uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
+      token_uri:
+        "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
       contract: "",
     },
     approveTokenId: "400",
-    signerAddress: configs.bsc.signer.address,
+    signerAddress: (await (await signers.terra).getAccounts())[0].address,
   });
   return firstTest;
 };
@@ -53,3 +54,5 @@ if (require.main === module) {
     await transferBackMultiple([test], factory);
   })();
 }
+
+// OK TESTED✅

@@ -40,8 +40,8 @@ export const cosm_to_secret = async () => {
     receiver: signers.secret.address,
     signer: await signers.terra,
     deployArgs: {
-      name: "TestContract",
-      symbol: "TST",
+      name: "TestContract" + Math.floor(Math.random() * 1000).toString(),
+      symbol: "TST" + Math.floor(Math.random() * 1000).toString(),
     },
     mintArgs: {
       contract: "",
@@ -61,3 +61,5 @@ if (require.main === module) {
     await transferMultiple([test], factory);
   })();
 }
+
+// OK TESTED✅

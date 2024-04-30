@@ -28,7 +28,7 @@ export const cosm_to_evm = async () => {
 
   const firstTest = createTest({
     fromChain: "TERRA",
-    toChain: "BSC",
+    toChain: "ETH",
     nftType: "singular",
     claimSigner: configs.bsc.signer,
     receiver: await configs.bsc.signer.getAddress(),
@@ -38,9 +38,10 @@ export const cosm_to_evm = async () => {
       symbol: "TST",
     },
     mintArgs: {
-        contract: "",
-        token_id: '400',
-        token_uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
+      contract: "",
+      token_id: "400",
+      token_uri:
+        "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
     },
     approveTokenId: "400",
   });
@@ -54,3 +55,5 @@ if (require.main === module) {
     await transferMultiple([test], factory);
   })();
 }
+
+// OK TESTED✅

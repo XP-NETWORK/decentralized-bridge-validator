@@ -89,6 +89,7 @@ type IHederaChainConfig = {
   chainType: "hedera";
   rpcURL: string;
   royaltyInfoProxyAddress: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type ISecretChainConfig = {

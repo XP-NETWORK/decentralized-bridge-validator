@@ -31,7 +31,7 @@ export const cosm_to_ton = async () => {
     toChain: "TON",
     nftType: "singular",
     claimSigner: configs.ton.signer.sender(
-      Buffer.from(genWallets.tonWallet.secretKey, "hex")
+      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
     ),
     receiver: configs.ton.signer.address.toString(),
     signer: await signers.terra,
@@ -57,3 +57,6 @@ if (require.main === module) {
     await transferMultiple([test], factory);
   })();
 }
+
+
+// OK TESTED✅

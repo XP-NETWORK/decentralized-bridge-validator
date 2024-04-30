@@ -36,7 +36,7 @@ export default async function nftData(
     metadata: tokenURI,
     royalty: BigInt(
       (nft_info?.extension as { royalty_info: { sale_price: string } })
-        ?.royalty_info.sale_price ?? 0,
+        ?.royalty_info.sale_price ?? 1,
     ),
   };
 }

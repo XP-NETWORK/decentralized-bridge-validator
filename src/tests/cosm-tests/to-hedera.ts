@@ -28,10 +28,10 @@ export const cosm_to_hedera = async () => {
 
   const firstTest = createTest({
     fromChain: "TERRA",
-    toChain: "BSC",
+    toChain: "HEDERA",
     nftType: "singular",
     claimSigner: configs.bsc.signer,
-    receiver: await configs.bsc.signer.getAddress(),
+    receiver: await configs.hedera.signer.getAddress(),
     signer: await signers.terra,
     deployArgs: {
       name: "TestContract",

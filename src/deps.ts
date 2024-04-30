@@ -30,6 +30,7 @@ import {
   IEvmChainConfig,
   IEvmWallet,
   IGeneratedWallets,
+  IHederaChainConfig,
   IMultiversXChainConfig,
   IMultiversXWallet,
   ISecretChainConfig,
@@ -43,6 +44,32 @@ import {
 
 export async function configEvmHandler(
   conf: IEvmChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  wallet: IEvmWallet,
+) {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
+  return evmHandler({
+    blockChunks: conf.blockChunks,
+    bridge: conf.contractAddress,
+    chainIdent: conf.chain as TSupportedChains,
+    currency: conf.nativeCoinSymbol,
+    decimals: conf.decimals,
+    em: em.fork(),
+    initialFunds: BigInt(conf.intialFund),
+    lastBlock_: lb?.lastBlock ?? conf.lastBlock,
+    provider: new JsonRpcProvider(conf.rpcURL),
+    signer: new Wallet(wallet.privateKey),
+    storage,
+    txSigner: privateKeyToAccount(wallet.privateKey),
+  });
+}
+
+export async function configHederaHandler(
+  conf: IHederaChainConfig,
   storage: BridgeStorage,
   em: EntityManager,
   wallet: IEvmWallet,
@@ -266,6 +293,19 @@ export async function configDeps(
           .map((c) => {
             const config = c as IEvmChainConfig;
             return configEvmHandler(
+              config,
+              storage,
+              em.fork(),
+              secrets.evmWallet,
+            );
+          }),
+      )),
+      ...(await Promise.all(
+        config.bridgeChains
+          .filter((e) => e.chainType === "hedera")
+          .map((c) => {
+            const config = c as IHederaChainConfig;
+            return configHederaHandler(
               config,
               storage,
               em.fork(),

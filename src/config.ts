@@ -67,7 +67,7 @@ export const bridgeTestChains = [
     rpcURL: "https://api.pulsar.scrttestnet.com",
     nativeCoinSymbol: "USCRT",
     intialFund: "50000",
-    contractAddress: "secret1uxthnjt74cny9wnwx8czmgrc8taz0r8yfas565",
+    contractAddress: "secret1c9k79ee6t0erdawjv8nflgeynt70ryke26vj7d",
     chainType: "scrt",
     chainId: "pulsar-3",
     lastBlock: 3223704,

@@ -5,4 +5,5 @@ export * from "./to-cosm";
 export * from "./to-ton";
 export * from "./to-cosm-back";
 export * from "./to-evm-back";
+export * from "./to-secret-back"
 export * from "./to-hedera"

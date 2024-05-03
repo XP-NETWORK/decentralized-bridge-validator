@@ -14,7 +14,7 @@ import { BridgeStorage__factory } from "../../contractsTypes/evm";
 import { JsonRpcProvider } from "ethers";
 
 type InferSigner<FC extends keyof MetaMap> =
-  TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
+  TInferChainH<FC> extends TApproveNFT<infer R, any, any> ? R : never;
 
 type InferDeployArgs<FC extends keyof MetaMap> =
   TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;

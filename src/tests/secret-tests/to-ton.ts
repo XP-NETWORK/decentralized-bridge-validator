@@ -61,3 +61,5 @@ if (require.main === module) {
     await transferMultiple([test], factory);
   })();
 }
+
+// TESTED: ✅OK

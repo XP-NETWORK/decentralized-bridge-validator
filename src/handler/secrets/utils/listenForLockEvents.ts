@@ -74,7 +74,7 @@ export default async function listenForLockEvents(
               destinationChain,
               destinationUserAddress,
               sourceNftContractAddress,
-              tokenAmount,
+              tokenAmount.toString(),
               nftType,
               sourceChain,
               log.transactionHash,

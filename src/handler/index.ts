@@ -22,11 +22,13 @@ export async function listenEvents(
     chain.listenForLockEvents(builder, async (ev) => {
       const sourceChain = map.get(ev.sourceChain as TSupportedChains);
       if (!sourceChain)
-        throw new Error(`Unsupported src chain for ${ev.transactionHash}`);
+        return ValidatorLog(
+          `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
+        );
       const destinationChain = map.get(ev.destinationChain as TSupportedChains);
       if (!destinationChain)
-        throw new Error(
-          `Unsupported dest chain for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
+        return ValidatorLog(
+          `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
         );
 
       const nftDetails = await sourceChain.nftData(

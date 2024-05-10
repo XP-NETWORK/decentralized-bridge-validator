@@ -5,12 +5,11 @@ import { ChainFactory, ChainFactoryConfigs } from "xp-decentralized-sdk";
 import { bridgeTestChains } from "../../config";
 import { IGeneratedWallets } from "../../types";
 import { generateWallets } from "../../utils";
+import { generateConfig, getChainConfigs, getSigners } from "../utils";
 import {
-  generateConfig,
-  getChainConfigs,
-  getSigners,
-} from "../utils";
-import { createTransferBackTest, transferBackMultiple } from "../utils/transfer-back";
+  createTransferBackTest,
+  transferBackMultiple,
+} from "../utils/transfer-back";
 
 export const secret_to_cosm_back = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
@@ -49,7 +48,7 @@ export const secret_to_cosm_back = async () => {
       uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
     },
     approveTokenId: "400",
-    signerAddress: configs.secret.signer.address
+    signerAddress: configs.secret.signer.address,
   });
   return firstTest;
 };
@@ -61,3 +60,5 @@ if (require.main === module) {
     await transferBackMultiple([test], factory);
   })();
 }
+
+// TESTED: ✅OK

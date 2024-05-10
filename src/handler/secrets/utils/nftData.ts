@@ -61,7 +61,11 @@ export default async function nftData(
     `Trying to fetch Nft Info for ${contract}`,
     5,
   ).catch(() => undefined);
-  const tokenURI = nft_info?.extension?.media[0]?.url || "";
+  const tokenURI =
+    nft_info?.extension?.media[0]?.url ||
+    //@ts-ignore
+    nft_info?.token_uri ||
+    "";
 
   return {
     name: data?.name ?? "XP Wrapped Nft",

@@ -65,6 +65,7 @@ export async function configEvmHandler(
     signer: new Wallet(wallet.privateKey),
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),
+    royaltyProxy: undefined,
   });
 }
 
@@ -91,6 +92,7 @@ export async function configHederaHandler(
     signer: new Wallet(wallet.privateKey),
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),
+    royaltyProxy: conf.royaltyInfoProxyAddress,
   });
 }
 export async function configStakingHandler(

@@ -10,6 +10,7 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+import nftDataForHedera from "./utils/nftDataForHedera";
 
 export function evmHandler({
   chainIdent,
@@ -24,12 +25,13 @@ export function evmHandler({
   em,
   txSigner,
   decimals,
+  royaltyProxy,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
     signData: (buf) => signData(buf, txSigner),
     publicKey: signer.address,
-    chainType: "evm",
+    chainType: royaltyProxy !== undefined ? "hedera" : "evm",
     getBalance: () => getBalance(signer, provider),
     chainIdent,
     initialFunds: initialFunds,
@@ -45,7 +47,11 @@ export function evmHandler({
       chainIdent,
       em,
     ),
-    nftData: nftData(provider),
+
+    nftData:
+      royaltyProxy !== undefined
+        ? nftDataForHedera(provider, royaltyProxy)
+        : nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),
     signClaimData: signClaimData(chainIdent, txSigner),
     decimals: BigInt(10 ** decimals),

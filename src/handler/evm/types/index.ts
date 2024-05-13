@@ -17,4 +17,5 @@ export type EVMHandlerParams = {
   em: EntityManager;
   txSigner: Web3Account;
   decimals: number;
+  royaltyProxy: string | undefined;
 };

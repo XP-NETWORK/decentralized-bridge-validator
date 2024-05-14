@@ -104,12 +104,11 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         );
         isMinted = true;
         console.log(
-          `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${stringify(
+          `Minted NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${stringify(
             minted,
           )}`,
         );
       } catch (e) {
-        console.log(`Failed to mint NFT on ${tx.fromChain}`, e);
         await sleep(5);
       }
     }
@@ -125,12 +124,12 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           {},
         );
         console.log(
-          `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approve}`,
+          `Approved NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${approve}`,
         );
         approved = true;
       } catch (e) {
         await new Promise((e) => setTimeout(e, 5000));
-        console.log("Retrying Approving NFT", e);
+        // console.log("Retrying Approving NFT", e);
         await sleep(5);
       }
     }
@@ -157,7 +156,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         lockHash = lock.hash();
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (e: any) {
-        console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
+        // console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
         await sleep(5);
       }
     }
@@ -172,19 +171,19 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         console.log("Got Claim Data");
         foundedData = true;
       } catch (e) {
-        console.log(
-          `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
-          e,
-        );
+        // console.log(
+        //   `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
+        //   e,
+        // );
         await sleep(5);
       }
     }
 
     const nftDetails = await factory.getClaimData(chain, lockHash);
-    console.log(nftDetails);
-    console.log("Got Claim Data");
+    // console.log(nftDetails);
+    // console.log("Got Claim Data");
 
-    console.log("Fetching Signatures");
+    // console.log("Fetching Signatures");
 
     const tc = await factory.inner(tx.toChain);
 
@@ -224,8 +223,8 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         ch = claim.hash();
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
-        console.log(e);
-        console.log("Retrying Claiming");
+        // console.log(e);
+        // console.log("Retrying Claiming");
         await sleep(5);
       }
       const dc = await factory.inner(tx.toChain);

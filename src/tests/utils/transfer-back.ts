@@ -109,7 +109,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         );
         isMinted = true;
         console.log(
-          `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${stringify(
+          `Minted NFT on ${tx.fromChain} with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${stringify(
             minted,
           )}`,
         );
@@ -130,7 +130,8 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           {},
         );
         console.log(
-          `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approve}`,
+          `Approved NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx:`,
+          approve,
         );
         approved = true;
       } catch (e) {
@@ -140,9 +141,6 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       }
     }
 
-    console.log(
-      `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approved}`,
-    );
     let locked = false;
     let lockHash = "";
     while (!locked) {
@@ -156,7 +154,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           BigInt(tx.approveTokenId),
           {},
         );
-        console.log("Lock Hash:", lock.hash());
+        console.log(`Lock Hash on ${tx.fromChain}:`, lock.hash());
         //@ts-ignore
         locked = true;
         lockHash = lock.hash();
@@ -258,7 +256,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             {},
           );
           console.log(
-            `Approved NFT on ${tx.toChain} with Token ID: ${decodedValue.token_id} at ${contract} in tx: ${approve}`,
+            `Approved NFT on ${tx.toChain} with Token ID: ${decodedValue.token_id} at ${decodedValue.nft_contract} in tx: ${approve}`,
           );
           approved = true;
         } catch (e) {
@@ -281,7 +279,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             BigInt(decodedValue.token_id),
           );
           lockedAgain = true;
-          console.log(`Locked at ${lockAgain.hash()}`)
+          console.log(`Locked on ${tx.toChain} at ${lockAgain.hash()}`)
         } catch (e) {
           console.log(`Failed to lock again`, e);
         }
@@ -339,9 +337,9 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
                 againSignatureArray,
               );
               console.log(
-                `Claimed on ${tx.toChain} at ${stringify(
+                `Claimed on ${tx.fromChain} at ${stringify(
                   claim,
-                )} . hash: ${claim.hash()}`,
+                )}. hash: ${claim.hash()}`,
               );
               claimedAgain = true;
             } catch (e) {

@@ -5,13 +5,13 @@ import { bridgeTestChains } from "../../config";
 import { IGeneratedWallets } from "../../types";
 import { generateWallets } from "../../utils";
 import {
+  createTest,
   generateConfig,
   getChainConfigs,
-  getSigners,
+  transferMultiple,
 } from "../utils";
-import { createTransferBackTest, transferBackMultiple } from "../utils/transfer-back";
 
-export const evm_to_secret_back = async () => {
+export const hedera_to_secret = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
   let genWallets: IGeneratedWallets;
   if (!file) {
@@ -21,12 +21,11 @@ export const evm_to_secret_back = async () => {
     genWallets = JSON.parse(file);
   }
 
-  const signers = getSigners(genWallets);
   const chainConfigs = getChainConfigs(bridgeTestChains);
   const configs = await generateConfig(genWallets, chainConfigs);
 
-  const firstTest = createTransferBackTest({
-    fromChain: "ETH",
+  const firstTest = createTest({
+    fromChain: "HEDERA",
     toChain: "SECRET",
     nftType: "singular",
     claimSigner: new SecretNetworkClient({
@@ -36,20 +35,16 @@ export const evm_to_secret_back = async () => {
       walletAddress: configs.secret.signer.address,
     }),
     receiver: configs.secret.signer.address,
-    signer: configs.eth.signer,
+    signer: configs.hedera.signer,
     deployArgs: {
       name: `TestContract${Math.random() * 100000000}`,
       symbol: `TST${Math.random() * 100000000}`,
     },
     mintArgs: {
-      tokenId: 400n,
       uri: "https://gateway.pinata.cloud/ipfs/QmQd3v1ZQrW1Q1g7KxGjzV5Vw5Uz1c4v2z3FQX2w1d5b1z",
-      royalty: 10n,
-      royaltyReceiver: signers.eth.address,
       contract: "",
     },
     approveTokenId: "400",
-    signerAddress: configs.eth.signer.address
   });
   return firstTest;
 };
@@ -57,8 +52,8 @@ export const evm_to_secret_back = async () => {
 if (require.main === module) {
   (async () => {
     const factory = ChainFactory(ChainFactoryConfigs.TestNet());
-    const test = await evm_to_secret_back();
-    await transferBackMultiple([test], factory);
+    const test = await hedera_to_secret();
+    await transferMultiple([test], factory);
   })();
 }
 

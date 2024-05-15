@@ -57,7 +57,7 @@ export const bridgeTestChains = [
     rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
     nativeCoinSymbol: "TON",
     intialFund: "500000000",
-    contractAddress: "EQDI6P9gheuWLh1euThjFE2muUpa9tp2y49TD6Zz5oOF5gWL",
+    contractAddress: "EQBth6KbeHoQc61Zx7R5IUeEfiGdweRF4r1Svbd-BxiaQsui",
     chainType: "ton",
     lastBlock: 16810573000003,
     decimals: 9,

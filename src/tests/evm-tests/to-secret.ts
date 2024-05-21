@@ -27,7 +27,7 @@ export const evm_to_secret = async () => {
   const configs = await generateConfig(genWallets, chainConfigs);
 
   const firstTest = createTest({
-    fromChain: "ETH",
+    fromChain: "BSC",
     toChain: "SECRET",
     nftType: "singular",
     claimSigner: new SecretNetworkClient({
@@ -37,10 +37,10 @@ export const evm_to_secret = async () => {
       walletAddress: configs.secret.signer.address,
     }),
     receiver: configs.secret.signer.address,
-    signer: configs.eth.signer,
+    signer: configs.bsc.signer,
     deployArgs: {
-      name: `TestContract${Math.random() * 100000000}`,
-      symbol: `TST${Math.random() * 100000000}`,
+      name: `TestContract`,
+      symbol: `TST`,
     },
     mintArgs: {
       tokenId: 400n,

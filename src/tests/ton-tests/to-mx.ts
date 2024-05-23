@@ -25,15 +25,20 @@ export const ton_to_mx = async () => {
   const chainConfigs = getChainConfigs(bridgeTestChains);
   const configs = await generateConfig(genWallets, chainConfigs);
 
+
+  const signer = configs.ton.signer.sender(
+    Buffer.from(genWallets.tonWallet.secretKey, "hex")
+  );
+  //@ts-ignore
+  signer.address = configs.ton.signer.address;
+
   const firstTest = createTest({
     fromChain: "TON",
     toChain: "MULTIVERSX",
     nftType: "singular",
     claimSigner: configs.multiversx.signer,
-    receiver: (await configs.multiversx.signer.getAddress()),
-    signer: configs.ton.signer.sender(
-      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
-    ),
+    receiver: await configs.multiversx.signer.getAddress(),
+    signer,
     deployArgs: {
       owner_address: configs.ton.signer.address,
       collection_content: beginCell()
@@ -48,7 +53,10 @@ export const ton_to_mx = async () => {
       },
     },
     mintArgs: {
-      contract: configs.ton.signer.address,
+      contract: '',
+      owner: configs.ton.signer.address,
+      token_id: 1n,
+      uri: "https://meta.polkamon.com/meta?id=10001852306",
     },
     approveTokenId: "1",
   });

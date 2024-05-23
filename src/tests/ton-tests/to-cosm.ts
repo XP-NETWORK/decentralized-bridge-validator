@@ -30,26 +30,29 @@ export const ton_to_cosm = async () => {
     fromChain: "TON",
     toChain: "TERRA",
     nftType: "singular",
-    claimSigner: (await signer.terra),
-    receiver: (await (await signer.terra).getAccounts())[0].address,
+    claimSigner: await signer.terra,
+    receiver:( await(await signer.terra).getAccounts())[0].address,
     signer: configs.ton.signer.sender(
-      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
+      Buffer.from(genWallets.tonWallet.secretKey, "hex")
     ),
     deployArgs: {
       owner_address: configs.ton.signer.address,
       collection_content: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail("")
+        .storeInt(Math.floor(Math.random() * 100000), 256)
+        .storeStringRefTail((Math.random() * 100000).toString())
         .endCell(),
       royalty_params: {
         $$type: "RoyaltyParams",
-        denominator: 10n,
+        denominator: 1000n,
         destination: configs.ton.signer.address,
         numerator: 1n,
       },
     },
     mintArgs: {
-      contract: configs.ton.signer.address,
+      contract: "",
+      owner: configs.ton.signer.address,
+      token_id: 1n,
+      uri: "https://meta.polkamon.com/meta?id=10001852306",
     },
     approveTokenId: "1",
   });

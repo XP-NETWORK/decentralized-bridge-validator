@@ -59,7 +59,7 @@ export default async function listenForLockEvents(
         for (let i = 0; i < tx.outMessages.size; i++) {
           const log = tx.outMessages.get(i) ?? raise("Unreachable");
           // if its not the lock nft event we early return
-          if (log.body.asSlice().loadUint(32) !== 3571773646) {
+          if (log.body.asSlice().loadUint(32) !== 4205190074) {
             continue;
           }
           const {
@@ -86,13 +86,13 @@ export default async function listenForLockEvents(
           await cb(
             builder.nftLocked(
               tokenId.toString(),
-              destinationChain,
-              destinationUserAddress,
+              destinationChain.asSlice().loadStringRefTail(),
+              destinationUserAddress.asSlice().loadStringRefTail(),
               getSourceNftContractAddress(),
               tokenAmount.toString(),
               nftType,
               sourceChain,
-              Buffer.from(tx.hash()).toString("hex"),
+              Buffer.from(tx.hash()).toString("base64"),
             ),
           );
         }

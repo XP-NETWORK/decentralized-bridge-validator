@@ -27,7 +27,7 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
 
 export function createTest<
   FC extends keyof MetaMap,
-  TC extends keyof MetaMap,
+  TC extends keyof MetaMap
 >(args: {
   fromChain: FC;
   toChain: TC;
@@ -54,7 +54,7 @@ export async function transferMultiple(
     receiver: any;
     approveTokenId: any;
   }[],
-  factory: TChainFactory,
+  factory: TChainFactory
 ) {
   return await transfer(args, factory);
 }
@@ -72,15 +72,15 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     receiver: string;
     approveTokenId: string;
   }[],
-  factory: TChainFactory,
+  factory: TChainFactory
 ): Promise<{ contract: string; tokenId: string } | undefined> {
   for (const tx of args) {
-    console.log(`Transferring from ${tx.fromChain} to ${tx.toChain}`)
+    console.log(`Transferring from ${tx.fromChain} to ${tx.toChain}`);
     const chain = await factory.inner(tx.fromChain);
 
     const contract = await chain.deployCollection(
       tx.signer as any,
-      tx.deployArgs as any,
+      tx.deployArgs as any
     );
     console.log(`Deployed NFT Contract: ${contract}`);
     /// Sleep for 5 seconds to wait for the contract to be deployed
@@ -100,43 +100,42 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             contract: contract,
             contractAddress: contract,
             ticker: contract,
-          },
+          }
         );
         isMinted = true;
         console.log(
-          `Minted NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${stringify(
-            minted,
-          )}`,
+          `Minted NFT on BSC with Token ID: ${
+            tx.approveTokenId
+          } at ${contract} in tx: ${stringify(minted)}`
         );
       } catch (e) {
         await sleep(5);
       }
     }
-
-    let approved = false;
-    while (!approved) {
-      try {
-        const approve = await chain.approveNft(
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          tx.signer as any,
-          tx.approveTokenId,
-          contract,
-          {},
-        );
-        console.log(
-          `Approved NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${approve}`,
-        );
-        approved = true;
-      } catch (e) {
-        await new Promise((e) => setTimeout(e, 5000));
-        // console.log("Retrying Approving NFT", e);
-        await sleep(5);
+    if ("approveNft" in chain) {
+      console.log(`Requires approval`)
+      let approved = false;
+      while (!approved) {
+        try {
+          const approve = await chain.approveNft(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            tx.signer as any,
+            tx.approveTokenId,
+            contract,
+            {}
+          );
+          console.log(
+            `Approved NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${approve}`
+          );
+          approved = true;
+        } catch (e) {
+          await new Promise((e) => setTimeout(e, 5000));
+          console.log("Retrying Approving NFT", e);
+          await sleep(5);
+        }
       }
     }
 
-    console.log(
-      `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approved}`,
-    );
     let locked = false;
     let lockHash = "";
     while (!locked) {
@@ -148,7 +147,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tx.toChain,
           tx.receiver,
           BigInt(tx.approveTokenId),
-          {},
+          {}
         );
         console.log("Lock Hash:", lock.hash());
         //@ts-ignore
@@ -156,7 +155,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         lockHash = lock.hash();
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (e: any) {
-        // console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
+        console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
         await sleep(5);
       }
     }
@@ -195,7 +194,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     while (signatures.length < neededSignatures) {
       await waitForMSWithMsg(
         2500,
-        `waiting for signatures, ${signatures.length}`,
+        `waiting for signatures, ${signatures.length}`
       );
       signatures = await tc
         .getStorageContract()
@@ -216,18 +215,18 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         const claim = await tc.claimNft(
           tx.claimSigner as any,
           tc.transform(nftDetails) as any,
-          signatureArray,
+          signatureArray
         );
         console.log(`Claimed on ${tx.toChain} at ${stringify(claim)}`);
         claimed = true;
         ch = claim.hash();
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
-        // console.log(e);
-        // console.log("Retrying Claiming");
+        console.log(e);
+        console.log("Retrying Claiming");
         await sleep(5);
       }
-      const dc = await factory.inner(tx.toChain);
+    const dc = await factory.inner(tx.toChain);
     if (canDecodeClaimData(dc)) {
       let claimDecoded = false;
 
@@ -235,7 +234,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         console.log(ch);
         try {
           const decoded = await dc.readClaimed721Event(ch);
-          console.log(decoded)
+          console.log(decoded);
           return {
             contract: decoded.nft_contract,
             tokenId: decoded.token_id,
@@ -262,7 +261,7 @@ function stringify(content: unknown): string {
       }
       return value;
     },
-    4,
+    4
   );
 }
 

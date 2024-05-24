@@ -26,12 +26,13 @@ export function evmHandler({
   txSigner,
   decimals,
   royaltyProxy,
+  chainType,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
     signData: (buf) => signData(buf, txSigner),
     publicKey: signer.address,
-    chainType: royaltyProxy !== undefined ? "hedera" : "evm",
+    chainType,
     getBalance: () => getBalance(signer, provider),
     chainIdent,
     initialFunds: initialFunds,

@@ -26,8 +26,9 @@ export function tonHandler({
   initialFunds,
   em,
   decimals,
+  chainType,
+  chainIdent,
 }: TonParams): THandler {
-  const chainIdent = "TON";
   const bc = client.open(
     Bridge.fromAddress(Address.parseFriendly(bridge).address),
   );
@@ -35,7 +36,7 @@ export function tonHandler({
   return {
     signData: (buf) => signData(buf, Buffer.from(secretKey, "hex"), signer),
     publicKey: TonWeb.utils.bytesToHex(signer.publicKey),
-    chainType: "ton",
+    chainType,
     initialFunds: initialFunds,
     currency: "TON",
     address: signer.address.toString(),

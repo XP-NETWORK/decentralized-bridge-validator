@@ -1,6 +1,7 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { SecretNetworkClient, Wallet } from "secretjs";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
+import { TSupportedChainTypes, TSupportedChains } from "../../../config";
 
 export type SecretsHandlerParams = {
   client: SecretNetworkClient;
@@ -15,4 +16,6 @@ export type SecretsHandlerParams = {
   initialFunds: bigint;
   em: EntityManager;
   decimals: number;
+  chainType: TSupportedChainTypes;
+  chainIdent: TSupportedChains;
 };

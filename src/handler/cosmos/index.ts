@@ -25,13 +25,14 @@ export async function cosmWasmHandler({
   em,
   currency,
   decimals,
+  chainType,
 }: CosmosHandlerParams): Promise<THandler> {
   const sender = (await wallet.getAccounts())[0];
   const bc = new Bridge.BridgeClient(client, sender.address, bridge);
   return {
     publicKey: Buffer.from(sender.pubkey).toString("hex"),
     signData: (buf) => signData(buf, privateKey, publicKey),
-    chainType: "cosmwasm",
+    chainType,
     initialFunds: initialFunds,
     chainIdent: chainIdent,
     currency: currency,

@@ -23,13 +23,15 @@ export function secretsHandler({
   initialFunds,
   em,
   decimals,
+  chainIdent,
+  chainType,
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
     signData: (buf) => signData(buf, privateKey, publicKey),
-    chainType: "scrt",
+    chainType,
     initialFunds: initialFunds,
-    chainIdent: "SECRET",
+    chainIdent,
     currency: "USCRT",
     address: client.address,
     signClaimData: (data) => signClaimData(data, privateKey, publicKey),

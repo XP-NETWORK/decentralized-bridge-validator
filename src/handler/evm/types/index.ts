@@ -1,7 +1,7 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { Web3Account } from "web3-eth-accounts";
-import { TSupportedChains } from "../../../config";
+import { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import { BridgeStorage } from "../../../contractsTypes/evm";
 
 export type EVMHandlerParams = {
@@ -18,4 +18,5 @@ export type EVMHandlerParams = {
   txSigner: Web3Account;
   decimals: number;
   royaltyProxy: string | undefined;
+  chainType: TSupportedChainTypes;
 };

@@ -8,7 +8,7 @@ import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import { privateKeyToAccount } from "web3-eth-accounts";
-import { TSupportedChains } from "./config";
+import { TSupportedChainTypes, TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
 import { evmHandler } from "./handler/evm";
 import { multiversxHandler } from "./handler/multiversx";
@@ -21,6 +21,7 @@ import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { EntityManager } from "@mikro-orm/sqlite";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
+import { THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import {
@@ -66,6 +67,7 @@ export async function configEvmHandler(
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),
     royaltyProxy: undefined,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 
@@ -93,6 +95,7 @@ export async function configHederaHandler(
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),
     royaltyProxy: conf.royaltyInfoProxyAddress,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 export async function configStakingHandler(
@@ -136,6 +139,8 @@ export async function configTezosHandler(
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
     decimals: conf.decimals,
+    chainIdent: conf.chain as TSupportedChains,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 
@@ -167,6 +172,7 @@ export async function configCosmWasmChainHandler(
     publicKey: cosmWasmWallet.publicKey,
     storage: storage,
     wallet: directWallet,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 
@@ -205,6 +211,8 @@ export async function configSecretHandler(
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
     decimals: conf.decimals,
+    chainIdent: conf.chain as TSupportedChains,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 
@@ -232,6 +240,8 @@ export async function configMultiversXHandler(
     lastBlock: lb?.lastBlock ?? conf.lastBlock,
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
+    chainIdent: conf.chain as TSupportedChains,
+    chainType: conf.chainType as TSupportedChainTypes,
     decimals: conf.decimals,
   });
 }
@@ -268,6 +278,8 @@ export async function configTonHandler(
     initialFunds: BigInt(conf.intialFund),
     em: em.fork(),
     decimals: conf.decimals,
+    chainIdent: conf.chain as TSupportedChains,
+    chainType: conf.chainType as TSupportedChainTypes,
   });
 }
 
@@ -283,6 +295,48 @@ export async function configDeps(
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();
   const em = orm.em;
+
+  const tz = config.bridgeChains.find((e) => e.chainType === "tezos");
+  const tzHelper = tz
+    ? await configTezosHandler(
+        tz as ITezosChainConfig,
+        storage,
+        em.fork(),
+        secrets.tezosWallet,
+      )
+    : undefined;
+
+  const scrtc = config.bridgeChains.find((e) => e.chainType === "scrt");
+  const scrt = scrtc
+    ? await configSecretHandler(
+        scrtc as ISecretChainConfig,
+        storage,
+        em.fork(),
+        secrets.secretWallet,
+      )
+    : undefined;
+
+  const mxc = config.bridgeChains.find((e) => e.chainType === "multiversX");
+  const mx = mxc
+    ? await configMultiversXHandler(
+        mxc as IMultiversXChainConfig,
+        storage,
+        em.fork(),
+        secrets.multiversXWallet,
+      )
+    : undefined;
+
+  const tonc = config.bridgeChains.find((e) => e.chainType === "ton");
+
+  const ton = tonc
+    ? await configTonHandler(
+        tonc as ITonChainConfig,
+        storage,
+        em.fork(),
+        secrets.tonWallet,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -328,38 +382,10 @@ export async function configDeps(
             );
           }),
       )),
-      await configTezosHandler(
-        (config.bridgeChains.find(
-          (e) => e.chainType === "tezos",
-        ) as ITezosChainConfig) ?? raise("No Tezos Config Found"),
-        storage,
-        em.fork(),
-        secrets.tezosWallet,
-      ),
-      await configSecretHandler(
-        (config.bridgeChains.find(
-          (e) => e.chainType === "scrt",
-        ) as ISecretChainConfig) ?? raise("No Secret Config Found"),
-        storage,
-        em.fork(),
-        secrets.secretWallet,
-      ),
-      await configMultiversXHandler(
-        (config.bridgeChains.find(
-          (e) => e.chainType === "multiversX",
-        ) as IMultiversXChainConfig) ?? raise("No Secret Config Found"),
-        storage,
-        em.fork(),
-        secrets.multiversXWallet,
-      ),
-      await configTonHandler(
-        (config.bridgeChains.find(
-          (e) => e.chainType === "ton",
-        ) as ITonChainConfig) ?? raise("No Secret Config Found"),
-        storage,
-        em.fork(),
-        secrets.tonWallet,
-      ),
-    ],
+      tzHelper,
+      scrt,
+      mx,
+      ton,
+    ].filter((e) => e !== undefined) as THandler[],
   };
 }

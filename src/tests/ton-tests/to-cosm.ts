@@ -11,7 +11,6 @@ import {
   getSigners,
   transferMultiple,
 } from "../utils";
-import { beginCell } from "@ton/core";
 
 export const ton_to_cosm = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
@@ -31,16 +30,13 @@ export const ton_to_cosm = async () => {
     toChain: "TERRA",
     nftType: "singular",
     claimSigner: await signer.terra,
-    receiver:( await(await signer.terra).getAccounts())[0].address,
+    receiver: (await (await signer.terra).getAccounts())[0].address,
     signer: configs.ton.signer.sender(
-      Buffer.from(genWallets.tonWallet.secretKey, "hex")
+      Buffer.from(genWallets.tonWallet.secretKey, "hex"),
     ),
     deployArgs: {
       owner_address: configs.ton.signer.address,
-      collection_content: beginCell()
-        .storeInt(Math.floor(Math.random() * 100000), 256)
-        .storeStringRefTail((Math.random() * 100000).toString())
-        .endCell(),
+      collection_meta_uri: (Math.random() * 100000).toString(),
       royalty_params: {
         $$type: "RoyaltyParams",
         denominator: 1000n,

@@ -10,7 +10,6 @@ import {
   getChainConfigs,
   transferMultiple,
 } from "../utils";
-import { beginCell } from "@ton/core";
 
 export const ton_to_tezos = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
@@ -41,10 +40,7 @@ export const ton_to_tezos = async () => {
     signer,
     deployArgs: {
       owner_address: configs.ton.signer.address,
-      collection_content: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail("")
-        .endCell(),
+      collection_meta_uri: (Math.random() * 100000).toString(),
       royalty_params: {
         $$type: "RoyaltyParams",
         denominator: 10n,
@@ -53,7 +49,7 @@ export const ton_to_tezos = async () => {
       },
     },
     mintArgs: {
-      contract: '',
+      contract: "",
       owner: configs.ton.signer.address,
       token_id: 1n,
       uri: "https://meta.polkamon.com/meta?id=10001852306",

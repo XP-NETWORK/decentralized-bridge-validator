@@ -10,7 +10,6 @@ import {
   getChainConfigs,
   transferMultiple,
 } from "../utils";
-import { beginCell } from "@ton/core";
 import { SecretNetworkClient } from "secretjs";
 
 export const ton_to_secret = async () => {
@@ -47,10 +46,7 @@ export const ton_to_secret = async () => {
     signer,
     deployArgs: {
       owner_address: configs.ton.signer.address,
-      collection_content: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail("")
-        .endCell(),
+      collection_meta_uri: (Math.random() * 100000).toString(),
       royalty_params: {
         $$type: "RoyaltyParams",
         denominator: 10n,
@@ -59,7 +55,7 @@ export const ton_to_secret = async () => {
       },
     },
     mintArgs: {
-      contract: '',
+      contract: "",
       owner: configs.ton.signer.address,
       token_id: 1n,
       uri: "https://meta.polkamon.com/meta?id=10001852306",

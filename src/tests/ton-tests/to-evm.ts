@@ -10,7 +10,6 @@ import {
   getChainConfigs,
   transferMultiple,
 } from "../utils";
-import { beginCell } from "@ton/core";
 
 export const ton_to_evm = async () => {
   const file = await readFile("secrets.json", "utf-8").catch(() => "");
@@ -40,10 +39,7 @@ export const ton_to_evm = async () => {
     signer: signer,
     deployArgs: {
       owner_address: configs.ton.signer.address,
-      collection_content: beginCell()
-        .storeInt(Math.floor(Math.random() * 100000), 256)
-        .storeStringRefTail((Math.random() * 100000).toString())
-        .endCell(),
+      collection_meta_uri: (Math.random() * 100000).toString(),
       royalty_params: {
         $$type: "RoyaltyParams",
         denominator: 10n,

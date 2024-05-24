@@ -24,7 +24,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xCa3563d84f0D62344B8467382623d780Bb58871f",
     chainType: "evm",
-    lastBlock: 5873410,
+    lastBlock: 5969848,
     decimals: 18,
     blockChunks: 1000,
   },
@@ -76,7 +76,7 @@ export const bridgeTestChains = [
   },
   {
     chain: "TEZOS",
-    rpcURL: "https://ghostnet.tezos.marigold.dev/",
+    rpcURL: "https://ghostnet.smartpy.io",
     restApiURL: "https://api.ghostnet.tzkt.io",
     contractAddress: "KT18pSSB3f9H3xtHzBfMCjTdPja82nqpAm66",
     intialFund: "50000",

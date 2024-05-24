@@ -27,12 +27,12 @@ export const emv_to_hedera = async () => {
   const configs = await generateConfig(genWallets, chainConfigs);
 
   const firstTest = createTest({
-    fromChain: "BSC",
+    fromChain: "ETH",
     toChain: "HEDERA",
     nftType: "singular",
     claimSigner: configs.hedera.signer,
     receiver: await configs.hedera.signer.getAddress(),
-    signer: configs.bsc.signer,
+    signer: configs.eth.signer,
     deployArgs: {
       name: "TestContract",
       symbol: "TST",

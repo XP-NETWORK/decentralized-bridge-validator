@@ -36,7 +36,12 @@ export const ton_to_cosm = async () => {
     ),
     deployArgs: {
       owner_address: configs.ton.signer.address,
-      collection_meta_uri: (Math.random() * 100000).toString(),
+      collection_meta: {
+        name: 'Test Collection',
+        symbol: (Math.random() * 100000).toString(),
+        description: 'Testnet Collection for Testing XP NFT Bridge',
+        image: ''
+      },
       royalty_params: {
         $$type: "RoyaltyParams",
         denominator: 1000n,

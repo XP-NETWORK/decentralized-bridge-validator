@@ -9,6 +9,7 @@ import {
 } from "../../../contractsTypes/ton/tonBridge";
 import { TNftTransferDetailsObject } from "../../types";
 import TonLog from "./log";
+import { buildJettonContent } from "./tep64";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
@@ -75,16 +76,17 @@ export default async function signClaimData(
     data3: {
       $$type: "ClaimData3",
       fee: BigInt(fee),
-      metadata,
+      metadata: beginCell().storeInt(1, 8).storeStringTail(metadata).endCell(),
       royaltyReceiver: Address.parseFriendly(royaltyReceiver).address,
       sourceNftContractAddress: sourceNftContractAddress_,
     },
     data4: {
       $$type: "ClaimData4",
-      newContent: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail(metadata)
-        .endCell(),
+      newContent: buildJettonContent({
+        name: name,
+        symbol: symbol,
+        description: "",
+      }),
       royalty: {
         $$type: "RoyaltyParams",
         denominator: BigInt(10000),

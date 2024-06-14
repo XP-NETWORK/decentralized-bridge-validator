@@ -26,12 +26,12 @@ export const evm_to_mx = async () => {
   const configs = await generateConfig(genWallets, chainConfigs);
 
   const firstTest = createTest({
-    fromChain: "ETH",
+    fromChain: "MATIC",
     toChain: "MULTIVERSX",
     nftType: "singular",
     claimSigner: configs.multiversx.signer,
     receiver: await configs.multiversx.signer.getAddress(),
-    signer: configs.eth.signer,
+    signer: configs.matic.signer,
     deployArgs: {
       name: "TestContract",
       symbol: "TST",

@@ -44,7 +44,7 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "EGLD",
     intialFund: "50000000000000000",
     contractAddress:
-      "erd1qqqqqqqqqqqqqpgqtsw8s3evjjyqqa2j2tfn9yvufqskdv236n9s2a06h9",
+      "erd1qqqqqqqqqqqqqpgq9ln8vmv0wm4t72d8c2pu375szezwhx90sjrshceelc",
     chainType: "multiversX",
     elasticSearchURL: "https://devnet-index.multiversx.com",
     gatewayURL: "https://devnet-gateway.multiversx.com",

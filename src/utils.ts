@@ -84,7 +84,7 @@ async function requireEnoughStorageChainBalance(
         )}; Fund chain your wallet ${secrets.evmWallet.address} on ${
           storageConfig.chain
         } with ${ethers.formatEther(
-          balance - BigInt(storageConfig.intialFund),
+          BigInt(storageConfig.intialFund) - balance,
         )} ${storageConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
@@ -158,7 +158,7 @@ async function requireEnoughStakingBalanceAndChainBalance(
         )}; Fund staking chain your wallet ${secrets.evmWallet.address} on ${
           stakingConfig.chain
         } with ${ethers.formatEther(
-          balance - BigInt(stakingConfig.intialFund),
+          BigInt(stakingConfig.intialFund) - balance,
         )} ${stakingConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds

@@ -29,7 +29,7 @@
     "@mikro-orm/core": "^6.1.4",
     "@mikro-orm/migrations": "^6.1.4",
     "@mikro-orm/sqlite": "^6.1.4",
-    "@multiversx/sdk-core": "^12.18.0",
+    "@multiversx/sdk-core": "^13.2.1",
     "@multiversx/sdk-network-providers": "^2.2.1",
     "@multiversx/sdk-wallet": "^4.3.0",
     "@noble/secp256k1": "^1.7.0",

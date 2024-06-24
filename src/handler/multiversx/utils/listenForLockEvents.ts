@@ -1,6 +1,11 @@
 import { EntityManager } from "@mikro-orm/sqlite";
+import {
+  TransactionEventsParser,
+  TransactionsConverter,
+  findEventsByFirstTopic,
+} from "@multiversx/sdk-core/out";
 import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
-import axios, { Axios } from "axios";
+import { Axios } from "axios";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import { LockEventIter } from "../../types";
@@ -17,8 +22,10 @@ export default async function listenForLockEvents(
   bridge: string,
   gateway: Axios,
   provider: INetworkProvider,
-  gatewayURL: string,
+  _gatewayURL: string,
   em: EntityManager,
+  converter: TransactionsConverter,
+  eventsParser: TransactionEventsParser,
 ) {
   let lastBlock_ = lastBlock;
   while (true) {
@@ -31,10 +38,7 @@ export default async function listenForLockEvents(
         ).data;
 
         const txsForBridge = txs.data.hyperblock.transactions.filter(
-          (e) =>
-            (e.receiver.toLowerCase() === bridge.toLowerCase() &&
-              e.function === "lock721") ||
-            e.function === "lock1155",
+          (e) => e.function === "lock721" || e.function === "lock1155",
         );
 
         if (!txsForBridge.length) {
@@ -59,38 +63,30 @@ export default async function listenForLockEvents(
           continue;
         }
         for (const tx of txsForBridge) {
-          const response = (
-            await axios.get(
-              `${gatewayURL.replace("gateway", "api")}/transactions/${tx.hash}`,
-            )
-          ).data;
-          const lockEvent = response.results.logs.find(
-            (e: { identifier: string }) =>
-              e.identifier === "lock721" || e.identifier === "lock1155",
+          const transactionOnNetworkMultisig = await provider.getTransaction(
+            tx.hash,
           );
-          const completed = response.results.logs.find(
-            (e: { identifier: string }) => e.identifier === "completedTxEvent",
+          const transactionOutcomeLock =
+            converter.transactionOnNetworkToOutcome(
+              transactionOnNetworkMultisig,
+            );
+          const [event] = findEventsByFirstTopic(
+            transactionOutcomeLock,
+            "Locked",
           );
-
-          if (!lockEvent || !completed) {
-            throw new Error("Invalid Lock Transaction");
-          }
-          const decodedLogs = decodeBase64Array(lockEvent.topics);
-          const tokenId = String(decodedLogs[1].charCodeAt(0));
-          const destinationChain = decodedLogs[2];
-          const destinationUserAddress = decodedLogs[3];
-          const sourceNftContractAddress = decodedLogs[4];
-          const tokenAmount = String(decodedLogs[5].charCodeAt(0));
-          const nftType = decodedLogs[6];
-          const sourceChain = decodedLogs[7];
+          const parsed = eventsParser.parseEvent({ event });
+          const destinationChain = parsed.destination_chain.toString("utf-8");
+          const sourceChain = parsed.chain.toString("utf-8");
+          const tokenId = parsed.token_id.toString();
+          const tokenAmount = parsed.token_amount.toString();
           await cb(
             builder.nftLocked(
               tokenId,
               destinationChain,
-              destinationUserAddress,
-              sourceNftContractAddress,
+              parsed.destination_user_address.toString("utf-8"),
+              parsed.source_nft_contract_address,
               tokenAmount,
-              nftType,
+              parsed.nft_type.toString("utf-8"),
               sourceChain,
               tx.hash,
             ),
@@ -110,9 +106,3 @@ export default async function listenForLockEvents(
     }
   }
 }
-
-const decodeBase64Array = (encodedArray: string[]): string[] => {
-  return encodedArray.map((encodedString) => {
-    return Buffer.from(encodedString, "base64").toString("utf-8");
-  });
-};

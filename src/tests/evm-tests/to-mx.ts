@@ -56,4 +56,4 @@ if (require.main === module) {
   })();
 }
 
-// TESTED: ✅OK (MX Fails with `legacy async call invalid`)
+// TESTED: ✅OK

@@ -9,7 +9,7 @@ import {
   retry,
   stakeTokens,
 } from "./handler/utils";
-
+import { configureRouter } from "./http";
 import { IBridgeConfig, IGeneratedWallets } from "./types";
 import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
 
@@ -51,6 +51,10 @@ async function main() {
   );
   listenEvents(deps.chains, deps.storage, deps.em.fork());
   listenStakeEvents(deps.chains, deps.storage, deps.staking, deps.em.fork());
+  const server = await configureRouter(deps.em.fork());
+  server.listen("4000", () => {
+    ValidatorLog("Server listening on port 8080...");
+  });
 }
 
 export const help = `

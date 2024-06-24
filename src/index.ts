@@ -49,8 +49,8 @@ async function main() {
     "Staking Tokens",
     10,
   );
-  listenEvents(deps.chains, deps.storage);
-  listenStakeEvents(deps.chains, deps.storage, deps.staking);
+  listenEvents(deps.chains, deps.storage, deps.em.fork());
+  listenStakeEvents(deps.chains, deps.storage, deps.staking, deps.em.fork());
 }
 
 export const help = `

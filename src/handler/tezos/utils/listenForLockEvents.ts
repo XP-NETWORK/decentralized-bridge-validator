@@ -66,7 +66,7 @@ export default async function listenForLockEvents(
             source_chain: sourceChain, // Source chain of NFT
           } = log.payload;
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               destinationUserAddress,

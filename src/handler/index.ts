@@ -1,5 +1,7 @@
+import { EntityManager } from "@mikro-orm/sqlite";
 import { TSupportedChainTypes, TSupportedChains } from "../config";
 import { BridgeStorage } from "../contractsTypes/evm";
+import { LockedEvent } from "../persistence/entities/locked";
 import {
   StakeEvent,
   THandler,
@@ -11,11 +13,12 @@ import { ValidatorLog, retry } from "./utils";
 export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
+  em: EntityManager,
 ) {
   const map = new Map<TSupportedChains, THandler>();
   const deps = { storage };
 
-  const builder = eventBuilder();
+  const builder = eventBuilder(em);
 
   async function poolEvents(chain: THandler) {
     ValidatorLog(`Listening for events on ${chain.chainIdent}`);
@@ -103,11 +106,12 @@ export async function listenStakeEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
+  em: EntityManager,
 ) {
   const map = new Map<TSupportedChainTypes, THandler>();
   const deps = { storage };
 
-  const builder = eventBuilder();
+  const builder = eventBuilder(em);
 
   async function poolEvents(chain: TStakingHandler) {
     ValidatorLog("Listening for Staking Events");
@@ -167,12 +171,12 @@ export async function listenStakeEvents(
   poolEvents(stakingChain);
 }
 
-export function eventBuilder() {
+export function eventBuilder(em: EntityManager) {
   return {
     staked(stake: StakeEvent) {
       return stake;
     },
-    nftLocked(
+    async nftLocked(
       tokenId: string,
       destinationChain: string,
       destinationUserAddress: string,
@@ -182,6 +186,17 @@ export function eventBuilder() {
       sourceChain: string,
       transactionHash: string,
     ) {
+      const ev = new LockedEvent(
+        tokenId,
+        destinationChain,
+        destinationUserAddress,
+        sourceNftContractAddress,
+        tokenAmount,
+        nftType,
+        sourceChain,
+        transactionHash,
+      );
+      await em.persistAndFlush(ev);
       return {
         tokenAmount,
         tokenId,

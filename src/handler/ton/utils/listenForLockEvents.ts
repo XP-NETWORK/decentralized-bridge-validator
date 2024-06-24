@@ -84,7 +84,7 @@ export default async function listenForLockEvents(
           };
 
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId.toString(),
               destinationChain.asSlice().loadStringRefTail(),
               destinationUserAddress.asSlice().loadStringRefTail(),

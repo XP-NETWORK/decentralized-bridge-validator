@@ -80,7 +80,7 @@ export default async function listenForLockEvents(
           const tokenId = parsed.token_id.toString();
           const tokenAmount = parsed.token_amount.toString();
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               parsed.destination_user_address.toString("utf-8"),

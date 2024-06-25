@@ -64,6 +64,7 @@ const listenForLockEvents = (
               decoded.args.nftType,
               decoded.args.sourceChain,
               log.transactionHash,
+              chainIdent,
             ),
           );
         }

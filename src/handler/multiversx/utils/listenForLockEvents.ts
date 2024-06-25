@@ -89,6 +89,7 @@ export default async function listenForLockEvents(
               parsed.nft_type.toString("utf-8"),
               sourceChain,
               tx.hash,
+              CHAIN_IDENT,
             ),
           );
         }

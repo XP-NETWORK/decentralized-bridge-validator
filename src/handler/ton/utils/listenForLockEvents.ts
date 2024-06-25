@@ -93,6 +93,7 @@ export default async function listenForLockEvents(
               nftType,
               sourceChain,
               Buffer.from(tx.hash()).toString("base64"),
+              CHAIN_IDENT,
             ),
           );
         }

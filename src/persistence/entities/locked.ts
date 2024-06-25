@@ -4,7 +4,7 @@ import { Entity, PrimaryKey, Property, Unique } from "@mikro-orm/core";
   tableName: "locked_event",
 })
 @Unique({
-  properties: ["transactionHash", "sourceChain"],
+  properties: ["transactionHash", "listenerChain"],
 })
 export class LockedEvent {
   @PrimaryKey()
@@ -34,6 +34,9 @@ export class LockedEvent {
   @Property()
   transactionHash!: string;
 
+  @Property()
+  listenerChain!: string;
+
   constructor(
     tokenId: string,
     destinationChain: string,
@@ -43,6 +46,7 @@ export class LockedEvent {
     nftType: string,
     sourceChain: string,
     transactionHash: string,
+    listenerChain: string,
   ) {
     this.tokenId = BigInt(tokenId);
     this.destinationUserAddress = destinationUserAddress;
@@ -52,5 +56,6 @@ export class LockedEvent {
     this.transactionHash = transactionHash;
     this.sourceNftContractAddress = sourceNftContractAddress;
     this.destinationChain = destinationChain;
+    this.listenerChain = listenerChain;
   }
 }

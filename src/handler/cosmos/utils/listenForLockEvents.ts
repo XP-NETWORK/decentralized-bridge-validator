@@ -73,6 +73,7 @@ export default async function listenForLockEvents(
               nftType,
               sourceChain,
               log.hash,
+              identifier,
             ),
           );
         }

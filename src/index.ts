@@ -34,6 +34,10 @@ async function main() {
   }
 
   const deps = await configDeps(config, secrets);
+  const server = await configureRouter(deps.em.fork());
+  server.listen(process.env.SERVER_PORT, () => {
+    ValidatorLog(`Server listening on port ${process.env.SERVER_PORT}`);
+  });
 
   await requireEnoughBalance(
     deps.chains,
@@ -51,10 +55,6 @@ async function main() {
   );
   listenEvents(deps.chains, deps.storage, deps.em.fork());
   listenStakeEvents(deps.chains, deps.storage, deps.staking, deps.em.fork());
-  const server = await configureRouter(deps.em.fork());
-  server.listen("4000", () => {
-    ValidatorLog("Server listening on port 8080...");
-  });
 }
 
 export const help = `

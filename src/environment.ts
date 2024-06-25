@@ -6,6 +6,7 @@ config();
 
 export const Env = z.object({
   TON_API_KEY: z.string(),
+  SERVER_PORT: z.string(),
 });
 
 export type Env = z.infer<typeof Env>;

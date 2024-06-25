@@ -185,18 +185,26 @@ export function eventBuilder(em: EntityManager) {
       nftType: string,
       sourceChain: string,
       transactionHash: string,
+      listenerChain: string,
     ) {
-      const ev = new LockedEvent(
-        tokenId,
-        destinationChain,
-        destinationUserAddress,
-        sourceNftContractAddress,
-        tokenAmount,
-        nftType,
-        sourceChain,
-        transactionHash,
-      );
-      await em.persistAndFlush(ev);
+      const found = await em.findOne(LockedEvent, {
+        transactionHash: transactionHash,
+        listenerChain,
+      });
+      if (!found) {
+        const ev = new LockedEvent(
+          tokenId,
+          destinationChain,
+          destinationUserAddress,
+          sourceNftContractAddress,
+          tokenAmount,
+          nftType,
+          sourceChain,
+          transactionHash,
+          listenerChain,
+        );
+        await em.persistAndFlush(ev);
+      }
       return {
         tokenAmount,
         tokenId,

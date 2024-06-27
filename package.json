@@ -24,6 +24,7 @@
     "useTsNode": true
   },
   "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.22.1",
     "@cosmjs/amino": "^0.32.3",
     "@cosmjs/cosmwasm-stargate": "^0.32.3",
     "@mikro-orm/core": "^6.1.4",

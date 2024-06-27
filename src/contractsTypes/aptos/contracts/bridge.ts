@@ -1,9 +1,9 @@
-export type TCollectionCounterObj = {
+type TCollectionCounterObj = {
   key: string;
   value: string;
 };
 
-export type TValidatorsObj = {
+type TValidatorsObj = {
   key: string;
   value: {
     pending_reward: string;

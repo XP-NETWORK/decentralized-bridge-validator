@@ -9,6 +9,7 @@ export default async function nftData(
   tokenAddress: AccountAddressInput,
   aptosClient: Aptos,
 ) {
+  aptosClient.getEvents;
   const tokenDataPromise = aptosClient.digitalAsset.getDigitalAssetData({
     digitalAssetAddress: tokenAddress,
   });

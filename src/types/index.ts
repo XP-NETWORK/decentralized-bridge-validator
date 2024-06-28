@@ -56,12 +56,19 @@ type ITezosWallet = {
   secretKey: string;
 };
 
+type IAptosWallet = {
+  publicKey: string;
+  privateKey: string;
+  account: string;
+};
+
 type IGeneratedWallets = {
   evmWallet: IEvmWallet;
   multiversXWallet: IMultiversXWallet;
   tonWallet: ITonWallet;
   secretWallet: ISecretWallet;
   tezosWallet: ITezosWallet;
+  aptosWallet: IAptosWallet;
 };
 
 type IConfigAndWallets = {
@@ -132,6 +139,11 @@ type ICosmWasmChainConfig = {
   walletPrefix: string;
 } & IChainConfig;
 
+type IAptosChainConfig = {
+  chainType: "aptos";
+  rpcURL: string;
+} & IChainConfig;
+
 type TChain =
   | IMultiversXChainConfig
   | IEvmChainConfig
@@ -139,7 +151,8 @@ type TChain =
   | ISecretChainConfig
   | ITezosChainConfig
   | IHederaChainConfig
-  | ICosmWasmChainConfig;
+  | ICosmWasmChainConfig
+  | IAptosChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -173,4 +186,6 @@ export {
   ITonChainConfig,
   ITonWallet,
   TChain,
+  IAptosChainConfig,
+  IAptosWallet,
 };

@@ -112,6 +112,17 @@ export const bridgeTestChains = [
     rpcURL: "https://terra-testnet-rpc.polkachu.com/",
     walletPrefix: "terra",
   },
+  {
+    chainType: "aptos",
+    intialFund: "100000",
+    decimals: 8,
+    chain: "APTOS",
+    contractAddress:
+      "0xc13865de6eac7883aa87d85a2d90736d769a3a896ae2165269a8b9479e0d841b",
+    lastBlock: 1005610,
+    nativeCoinSymbol: "APT",
+    rpcURL: "https://api.devnet.aptoslabs.com/v1",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

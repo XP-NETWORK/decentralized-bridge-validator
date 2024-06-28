@@ -1,5 +1,5 @@
 import chalk from "chalk";
 
-export default function AptosLog(...msg: unknown[]) {
-  console.log(chalk.black("TEZOS:\t\t"), ...msg);
+export default function AptosLog(msg: string) {
+  console.log(chalk.cyan("APTOS:\t"), msg);
 }

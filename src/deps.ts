@@ -1,4 +1,14 @@
+import {
+  Account,
+  Aptos,
+  AptosConfig,
+  Ed25519PrivateKey,
+  Network,
+} from "@aptos-labs/ts-sdk";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { MikroORM } from "@mikro-orm/core";
+import { EntityManager } from "@mikro-orm/sqlite";
 import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
@@ -10,22 +20,21 @@ import TonWeb from "tonweb";
 import { privateKeyToAccount } from "web3-eth-accounts";
 import { TSupportedChainTypes, TSupportedChains } from "./config";
 import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
+import { aptosHandler } from "./handler/aptos";
+import { cosmWasmHandler } from "./handler/cosmos";
 import { evmHandler } from "./handler/evm";
+import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import { multiversxHandler } from "./handler/multiversx";
 import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
-
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
-import { EntityManager } from "@mikro-orm/sqlite";
-import { cosmWasmHandler } from "./handler/cosmos";
-import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import { THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import {
   CosmWasmWallet,
+  IAptosChainConfig,
+  IAptosWallet,
   IBridgeConfig,
   ICosmWasmChainConfig,
   IEvmChainConfig,
@@ -172,6 +181,37 @@ export async function configCosmWasmChainHandler(
     publicKey: cosmWasmWallet.publicKey,
     storage: storage,
     wallet: directWallet,
+    chainType: conf.chainType as TSupportedChainTypes,
+  });
+}
+
+export async function configAptosHandler(
+  conf: IAptosChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  aptosWallet: IAptosWallet,
+) {
+  const DEVNET_CONFIG = new AptosConfig({
+    network: Network.DEVNET,
+  });
+  const DEVNET_CLIENT = new Aptos(DEVNET_CONFIG);
+
+  const account = Account.fromPrivateKey({
+    privateKey: new Ed25519PrivateKey(aptosWallet.privateKey),
+  });
+
+  return aptosHandler({
+    account: account,
+    chainIdent: conf.chain as TSupportedChains,
+    bridge: conf.contractAddress,
+    client: DEVNET_CLIENT,
+    decimals: conf.decimals,
+    em: em.fork(),
+    initialFunds: BigInt(conf.intialFund),
+    lastBlock_: conf.lastBlock,
+    privateKey: aptosWallet.privateKey,
+    publicKey: aptosWallet.publicKey,
+    storage: storage,
     chainType: conf.chainType as TSupportedChainTypes,
   });
 }
@@ -337,6 +377,16 @@ export async function configDeps(
       )
     : undefined;
 
+  const aptosc = config.bridgeChains.find((e) => e.chainType === "aptos");
+  const aptos = aptosc
+    ? await configAptosHandler(
+        aptosc as IAptosChainConfig,
+        storage,
+        em.fork(),
+        secrets.aptosWallet,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -386,6 +436,7 @@ export async function configDeps(
       scrt,
       mx,
       ton,
+      aptos,
     ].filter((e) => e !== undefined) as THandler[],
   };
 }

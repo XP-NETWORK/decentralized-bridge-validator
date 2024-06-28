@@ -33,7 +33,7 @@ const signClaimData = async (
 
   const signature = await ed.sign(msgHash, Buffer.from(privateKey, "hex"));
 
-  return { signature, signer: pubk };
+  return { signature: signature.toString(), signer: pubk };
 };
 
 export default signClaimData;

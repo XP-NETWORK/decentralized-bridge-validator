@@ -8,5 +8,3 @@ export default function generateWallet() {
     privateKey: account.privateKey.toString(),
   });
 }
-
-generateWallet().then((v) => console.log(v));

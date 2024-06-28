@@ -1,10 +1,11 @@
-import { AccountAddress, Aptos } from "@aptos-labs/ts-sdk";
+import { AccountAddressInput, Aptos } from "@aptos-labs/ts-sdk";
 
 export default async function getBalance(
   aptosClient: Aptos,
-  accountAddress: AccountAddress,
+  accountAddress: AccountAddressInput,
 ) {
-  return await aptosClient.getAccountAPTAmount({
+  const balance = await aptosClient.getAccountAPTAmount({
     accountAddress: accountAddress,
   });
+  return BigInt(balance);
 }

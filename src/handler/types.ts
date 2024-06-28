@@ -31,6 +31,7 @@ export type StakeEventIter = (event: StakeEvent) => Promise<void>;
 export interface THandler {
   addSelfAsValidator(): Promise<"success" | "failure">;
   listenForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
+  pollForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
   signClaimData(
     nfto: TNftTransferDetailsObject,
   ): Promise<{ signer: string; signature: string }>;

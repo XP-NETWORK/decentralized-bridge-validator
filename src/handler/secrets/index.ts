@@ -1,3 +1,5 @@
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
 import { THandler } from "../types";
 import { SecretsHandlerParams } from "./types";
 import {
@@ -9,6 +11,8 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+
+import SecretLog from "./utils/log";
 
 export function secretsHandler({
   client,
@@ -25,9 +29,24 @@ export function secretsHandler({
   decimals,
   chainIdent,
   chainType,
+  serverLinkHandler,
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            SecretLog,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, privateKey, publicKey),
     chainType,
     initialFunds: initialFunds,

@@ -53,7 +53,12 @@ async function main() {
     "Staking Tokens",
     10,
   );
-  listenEvents(deps.chains, deps.storage, deps.em.fork());
+  listenEvents(
+    deps.chains,
+    deps.storage,
+    deps.em.fork(),
+    deps.serverLinkHandler,
+  );
   listenStakeEvents(deps.chains, deps.storage, deps.staking, deps.em.fork());
 }
 

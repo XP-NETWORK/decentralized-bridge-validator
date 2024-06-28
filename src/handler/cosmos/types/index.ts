@@ -1,6 +1,7 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { EntityManager } from "@mikro-orm/sqlite";
+import { AxiosInstance } from "axios";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
 
@@ -19,4 +20,5 @@ export type CosmosHandlerParams = {
   currency: string;
   decimals: number;
   chainType: TSupportedChainTypes;
+  serverLinkHandler: AxiosInstance | undefined;
 };

@@ -19,6 +19,7 @@ import { raise, tonHandler } from "./handler/ton";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { EntityManager } from "@mikro-orm/sqlite";
+import axios, { AxiosInstance } from "axios";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import { THandler } from "./handler/types";
@@ -48,6 +49,7 @@ export async function configEvmHandler(
   storage: BridgeStorage,
   em: EntityManager,
   wallet: IEvmWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -68,6 +70,7 @@ export async function configEvmHandler(
     txSigner: privateKeyToAccount(wallet.privateKey),
     royaltyProxy: undefined,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 
@@ -76,6 +79,7 @@ export async function configHederaHandler(
   storage: BridgeStorage,
   em: EntityManager,
   wallet: IEvmWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -96,6 +100,7 @@ export async function configHederaHandler(
     txSigner: privateKeyToAccount(wallet.privateKey),
     royaltyProxy: conf.royaltyInfoProxyAddress,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 export async function configStakingHandler(
@@ -121,6 +126,7 @@ export async function configTezosHandler(
   storage: BridgeStorage,
   em: EntityManager,
   tezosWallet: ITezosWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -141,6 +147,7 @@ export async function configTezosHandler(
     decimals: conf.decimals,
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 
@@ -149,6 +156,7 @@ export async function configCosmWasmChainHandler(
   storage: BridgeStorage,
   em: EntityManager,
   cosmWasmWallet: CosmWasmWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const directWallet = await DirectSecp256k1Wallet.fromKey(
     Buffer.from(cosmWasmWallet.privateKey, "hex"),
@@ -173,6 +181,7 @@ export async function configCosmWasmChainHandler(
     storage: storage,
     wallet: directWallet,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 
@@ -181,6 +190,7 @@ export async function configSecretHandler(
   storage: BridgeStorage,
   em: EntityManager,
   secretWallet: ISecretWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -213,6 +223,7 @@ export async function configSecretHandler(
     decimals: conf.decimals,
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 
@@ -221,6 +232,7 @@ export async function configMultiversXHandler(
   storage: BridgeStorage,
   em: EntityManager,
   multiversXWallet: IMultiversXWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -243,6 +255,7 @@ export async function configMultiversXHandler(
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
     decimals: conf.decimals,
+    serverLinkHandler,
   });
 }
 
@@ -251,6 +264,7 @@ export async function configTonHandler(
   storage: BridgeStorage,
   em: EntityManager,
   tonWallet: ITonWallet,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const client = new TonClient({
     endpoint: conf.rpcURL,
@@ -280,6 +294,7 @@ export async function configTonHandler(
     decimals: conf.decimals,
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
   });
 }
 
@@ -295,6 +310,11 @@ export async function configDeps(
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();
   const em = orm.em;
+  const serverLinkHandler = process.env.SERVER_LINK
+    ? axios.create({
+        baseURL: process.env.SERVER_LINK,
+      })
+    : undefined;
 
   const tz = config.bridgeChains.find((e) => e.chainType === "tezos");
   const tzHelper = tz
@@ -303,6 +323,7 @@ export async function configDeps(
         storage,
         em.fork(),
         secrets.tezosWallet,
+        serverLinkHandler,
       )
     : undefined;
 
@@ -313,6 +334,7 @@ export async function configDeps(
         storage,
         em.fork(),
         secrets.secretWallet,
+        serverLinkHandler,
       )
     : undefined;
 
@@ -323,6 +345,7 @@ export async function configDeps(
         storage,
         em.fork(),
         secrets.multiversXWallet,
+        serverLinkHandler,
       )
     : undefined;
 
@@ -334,12 +357,14 @@ export async function configDeps(
         storage,
         em.fork(),
         secrets.tonWallet,
+        serverLinkHandler,
       )
     : undefined;
 
   return {
     storage,
     em,
+    serverLinkHandler,
     staking: await configStakingHandler(em.fork(), config.stakingConfig),
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
@@ -353,6 +378,7 @@ export async function configDeps(
               storage,
               em.fork(),
               secrets.evmWallet,
+              serverLinkHandler,
             );
           }),
       )),
@@ -366,6 +392,7 @@ export async function configDeps(
               storage,
               em.fork(),
               secrets.evmWallet,
+              serverLinkHandler,
             );
           }),
       )),
@@ -379,6 +406,7 @@ export async function configDeps(
               storage,
               em.fork(),
               secrets.secretWallet,
+              serverLinkHandler,
             );
           }),
       )),

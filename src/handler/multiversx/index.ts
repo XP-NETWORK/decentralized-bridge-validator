@@ -7,6 +7,8 @@ import {
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
 import axios from "axios";
 import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
 import { THandler } from "../types";
 import { MultiversXHandlerParams } from "./types";
 import {
@@ -18,6 +20,8 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+
+import MxLog from "./utils/log";
 
 export function multiversxHandler({
   provider,
@@ -32,6 +36,7 @@ export function multiversxHandler({
   decimals,
   chainType,
   chainIdent,
+  serverLinkHandler,
 }: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -49,6 +54,20 @@ export function multiversxHandler({
   });
 
   return {
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            MxLog,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, signer),
     publicKey: signer.getAddress().hex(),
     chainType,

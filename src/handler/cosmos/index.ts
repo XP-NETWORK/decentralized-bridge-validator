@@ -1,4 +1,6 @@
 import { Bridge } from "@xp/cosmos-client";
+import pollForLockEvents from "../poller/index";
+import { raise } from "../ton";
 import { THandler } from "../types";
 import { CosmosHandlerParams } from "./types";
 import {
@@ -10,6 +12,8 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+
+import CosmWasmLog from "./utils/log";
 
 export async function cosmWasmHandler({
   chainIdent,
@@ -26,6 +30,7 @@ export async function cosmWasmHandler({
   currency,
   decimals,
   chainType,
+  serverLinkHandler,
 }: CosmosHandlerParams): Promise<THandler> {
   const sender = (await wallet.getAccounts())[0];
   const bc = new Bridge.BridgeClient(client, sender.address, bridge);
@@ -55,5 +60,19 @@ export async function cosmWasmHandler({
     getBalance: () => getBalance(client, sender),
     nftData: (tid, ctr) => nftData(tid, ctr, client, sender),
     decimals: BigInt(10 ** decimals),
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            CosmWasmLog,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
   };
 }

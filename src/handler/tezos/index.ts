@@ -1,4 +1,6 @@
 import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
 import { THandler } from "../types";
 import { TezosHandlerParams } from "./types";
 import {
@@ -10,6 +12,8 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+
+import TezosLog from "./utils/log";
 
 export async function tezosHandler({
   provider,
@@ -24,10 +28,25 @@ export async function tezosHandler({
   decimals,
   chainType,
   chainIdent,
+  serverLinkHandler,
 }: TezosHandlerParams): Promise<THandler> {
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            TezosLog,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, signer),
     publicKey: await signer.publicKey(),
     chainType,

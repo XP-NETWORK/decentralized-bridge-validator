@@ -18,14 +18,14 @@ export async function configureRouter(em: EntityManager) {
     ),
     queryValidator(
       t.type({
-        cursor: tt.NumberFromString,
-        limit: tt.NumberFromString,
+        cursor: t.union([tt.NumberFromString, t.undefined]),
+        limit: t.union([tt.NumberFromString, t.undefined]),
       }),
     ),
     async (req, res) => {
       const chain = req.params.chain;
-      const cursor = req.query.cursor;
-      const limit = req.query.limit;
+      const cursor = req.query.cursor ?? 0;
+      const limit = req.query.limit ?? 10;
       const entities = await em
         .createQueryBuilder(LockedEvent, "lb")
         .select("*")

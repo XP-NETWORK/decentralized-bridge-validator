@@ -1,6 +1,7 @@
 import { Address } from "@ton/ton";
 import TonWeb from "tonweb";
 import { Bridge } from "../../contractsTypes/ton/tonBridge";
+import pollForLockEvents from "../poller";
 import { THandler } from "../types";
 import { retry } from "../utils";
 import { TonParams } from "./types";
@@ -13,6 +14,8 @@ import {
   signClaimData,
   signData,
 } from "./utils";
+
+import TonLog from "./utils/log";
 
 export function tonHandler({
   client,
@@ -28,12 +31,27 @@ export function tonHandler({
   decimals,
   chainType,
   chainIdent,
+  serverLinkHandler,
 }: TonParams): THandler {
   const bc = client.open(
     Bridge.fromAddress(Address.parseFriendly(bridge).address),
   );
   const tonweb = new TonWeb(provider);
   return {
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            TonLog,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, Buffer.from(secretKey, "hex"), signer),
     publicKey: TonWeb.utils.bytesToHex(signer.publicKey),
     chainType,

@@ -1,10 +1,13 @@
+import { raise } from "xp-decentralized-sdk";
 import { Bridge__factory } from "../../contractsTypes/evm";
+import pollForLockEvents from "../poller";
 import { THandler } from "../types";
 import { EVMHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
   listenForLockEvents,
+  log,
   nftData,
   selfIsValidator,
   signClaimData,
@@ -27,6 +30,7 @@ export function evmHandler({
   decimals,
   royaltyProxy,
   chainType,
+  serverLinkHandler,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -56,5 +60,12 @@ export function evmHandler({
     selfIsValidator: selfIsValidator(bc, signer),
     signClaimData: signClaimData(chainIdent, txSigner),
     decimals: BigInt(10 ** decimals),
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(chainIdent, builder, cb, em, serverLinkHandler, log)
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
   };
 }

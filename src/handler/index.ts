@@ -1,8 +1,10 @@
 import { EntityManager } from "@mikro-orm/sqlite";
+import { AxiosInstance } from "axios";
 import { TSupportedChainTypes, TSupportedChains } from "../config";
 import { BridgeStorage } from "../contractsTypes/evm";
 import { LockedEvent } from "../persistence/entities/locked";
 import {
+  LockEvent,
   StakeEvent,
   THandler,
   TNftTransferDetailsObject,
@@ -14,82 +16,94 @@ export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   em: EntityManager,
+  serverLinkHandler: AxiosInstance | undefined,
 ) {
   const map = new Map<TSupportedChains, THandler>();
   const deps = { storage };
 
   const builder = eventBuilder(em);
 
+  async function pollEvents(chain: THandler) {
+    ValidatorLog(`Polling for events on: ${chain.chainIdent}`);
+    chain.pollForLockEvents(builder, async (ev) => {
+      processEvent(chain, ev);
+    });
+  }
+
+  async function processEvent(chain: THandler, ev: LockEvent) {
+    const sourceChain = map.get(ev.sourceChain as TSupportedChains);
+    if (!sourceChain)
+      return ValidatorLog(
+        `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
+      );
+    const destinationChain = map.get(ev.destinationChain as TSupportedChains);
+    if (!destinationChain)
+      return ValidatorLog(
+        `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
+      );
+
+    const nftDetails = await sourceChain.nftData(
+      ev.tokenId,
+      ev.sourceNftContractAddress,
+    );
+    const fee = await deps.storage.chainFee(ev.destinationChain);
+    const royaltyReceiver = await deps.storage.chainRoyalty(
+      ev.destinationChain,
+    );
+
+    const inft: TNftTransferDetailsObject = {
+      destinationChain: ev.destinationChain,
+      destinationUserAddress: ev.destinationUserAddress,
+      fee: fee.toString(),
+      metadata: nftDetails.metadata,
+      name: nftDetails.name,
+      nftType: ev.nftType,
+      royalty: nftDetails.royalty.toString(),
+      royaltyReceiver,
+      sourceChain: ev.sourceChain,
+      sourceNftContractAddress: ev.sourceNftContractAddress,
+      symbol: nftDetails.symbol,
+      tokenAmount: ev.tokenAmount,
+      tokenId: ev.tokenId,
+      transactionHash: ev.transactionHash,
+    };
+    console.log(inft);
+
+    const signature = await destinationChain.signClaimData(inft);
+
+    const alreadyProcessed = await deps.storage
+      .usedSignatures(signature.signature)
+      .catch(() => false);
+
+    if (alreadyProcessed) {
+      ValidatorLog(
+        `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
+      );
+      return;
+    }
+
+    const approvalFn = async () => {
+      return await deps.storage.approveLockNft(
+        inft.transactionHash,
+        chain.chainIdent,
+        signature.signature,
+        signature.signer,
+      );
+    };
+    const approved = await retry(
+      approvalFn,
+      `Approving transfer ${JSON.stringify(inft, null, 2)}`,
+      6,
+    );
+    ValidatorLog(
+      `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
+    );
+  }
+
   async function poolEvents(chain: THandler) {
     ValidatorLog(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
-      const sourceChain = map.get(ev.sourceChain as TSupportedChains);
-      if (!sourceChain)
-        return ValidatorLog(
-          `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
-        );
-      const destinationChain = map.get(ev.destinationChain as TSupportedChains);
-      if (!destinationChain)
-        return ValidatorLog(
-          `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
-        );
-
-      const nftDetails = await sourceChain.nftData(
-        ev.tokenId,
-        ev.sourceNftContractAddress,
-      );
-      const fee = await deps.storage.chainFee(ev.destinationChain);
-      const royaltyReceiver = await deps.storage.chainRoyalty(
-        ev.destinationChain,
-      );
-
-      const inft: TNftTransferDetailsObject = {
-        destinationChain: ev.destinationChain,
-        destinationUserAddress: ev.destinationUserAddress,
-        fee: fee.toString(),
-        metadata: nftDetails.metadata,
-        name: nftDetails.name,
-        nftType: ev.nftType,
-        royalty: nftDetails.royalty.toString(),
-        royaltyReceiver,
-        sourceChain: ev.sourceChain,
-        sourceNftContractAddress: ev.sourceNftContractAddress,
-        symbol: nftDetails.symbol,
-        tokenAmount: ev.tokenAmount,
-        tokenId: ev.tokenId,
-        transactionHash: ev.transactionHash,
-      };
-      console.log(inft);
-
-      const signature = await destinationChain.signClaimData(inft);
-
-      const alreadyProcessed = await deps.storage
-        .usedSignatures(signature.signature)
-        .catch(() => false);
-
-      if (alreadyProcessed) {
-        ValidatorLog(
-          `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
-        );
-        return;
-      }
-
-      const approvalFn = async () => {
-        return await deps.storage.approveLockNft(
-          inft.transactionHash,
-          chain.chainIdent,
-          signature.signature,
-          signature.signer,
-        );
-      };
-      const approved = await retry(
-        approvalFn,
-        `Approving transfer ${JSON.stringify(inft, null, 2)}`,
-        6,
-      );
-      ValidatorLog(
-        `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
-      );
+      processEvent(chain, ev);
     });
   }
 
@@ -98,7 +112,7 @@ export async function listenEvents(
       throw Error("Duplicate chain nonce!");
     }
     map.set(chain.chainIdent, chain);
-    poolEvents(chain);
+    serverLinkHandler === undefined ? poolEvents(chain) : pollEvents(chain);
   }
 }
 

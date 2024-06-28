@@ -1,8 +1,7 @@
 import chalk from "chalk";
-import { TSupportedChains } from "../../../config";
 
-const log = (msg: string, chainIdent: TSupportedChains) => {
+const EvmLog = (chainIdent: string, ...msg: unknown[]) => {
   console.log(chalk.green(`EVM: ${chainIdent}\t`), msg);
 };
 
-export default log;
+export default EvmLog;

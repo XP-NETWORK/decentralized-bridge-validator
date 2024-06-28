@@ -1,6 +1,7 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { Sender } from "@ton/core";
 import { TonClient, WalletContractV4 } from "@ton/ton";
+import { AxiosInstance } from "axios";
 import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
@@ -19,4 +20,5 @@ export type TonParams = {
   decimals: number;
   chainType: TSupportedChainTypes;
   chainIdent: TSupportedChains;
+  serverLinkHandler: AxiosInstance | undefined;
 };

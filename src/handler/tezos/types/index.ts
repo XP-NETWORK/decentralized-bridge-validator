@@ -1,5 +1,6 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { Signer, TezosToolkit } from "@taquito/taquito";
+import { AxiosInstance } from "axios";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
 
@@ -16,4 +17,5 @@ export type TezosHandlerParams = {
   chainType: TSupportedChainTypes;
   decimals: number;
   chainIdent: TSupportedChains;
+  serverLinkHandler: AxiosInstance | undefined;
 };

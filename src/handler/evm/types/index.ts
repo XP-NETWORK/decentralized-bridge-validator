@@ -1,4 +1,5 @@
 import { EntityManager } from "@mikro-orm/sqlite";
+import { AxiosInstance } from "axios";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { Web3Account } from "web3-eth-accounts";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
@@ -19,4 +20,5 @@ export type EVMHandlerParams = {
   decimals: number;
   royaltyProxy: string | undefined;
   chainType: TSupportedChainTypes;
+  serverLinkHandler: AxiosInstance | undefined;
 };

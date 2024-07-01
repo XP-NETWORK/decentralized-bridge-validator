@@ -44,7 +44,7 @@ export default async function listenForLockEvents(
 
       if (!transactions.length) {
         logger.trace(
-          `No Transactions found in chain from block: ${lastBlock} to: ${latestTx[0].lt.toString()}. Waiting for 10 Seconds before looking for new transactions`,
+          ` ${lastBlock} -> ${latestTx[0].lt.toString()}: 0 TXs. Awaiting 10s`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
         lastBlock = Number(latestTx[0].lt);

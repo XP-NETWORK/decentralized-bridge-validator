@@ -40,8 +40,7 @@ const listenForStakingEvents = (
 
         if (!logs.length) {
           logger.trace(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
-            chainIdent,
+            `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {

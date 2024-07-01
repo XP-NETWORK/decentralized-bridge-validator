@@ -38,7 +38,7 @@ export default async function listenForLockEvents(
         lastBlock = latestBlockNumber;
         if (!logs.length) {
           logger.trace(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+            `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {

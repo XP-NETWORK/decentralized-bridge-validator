@@ -42,9 +42,7 @@ export default async function listenForLockEvents(
         );
 
         if (!txsForBridge.length) {
-          logger.trace(
-            `No Transactions found in chain from block: ${lastBlock_}. Waiting for 10 Seconds before looking for new transactions`,
-          );
+          logger.trace(`No TX Since: ${lastBlock_}. Awaiting 10s`);
           const lastestStatus = await provider.getNetworkStatus();
           const lastNonce = lastestStatus.HighestFinalNonce;
           lastBlock_ = lastBlock_ + 1;

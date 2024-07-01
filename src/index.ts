@@ -13,6 +13,7 @@ import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
 async function main() {
   const logger = new Logger({
     type: "pretty",
+    name: "Validator",
     stylePrettyLogs: true,
   });
   await configureValidator(logger);

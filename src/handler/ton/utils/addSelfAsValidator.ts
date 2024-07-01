@@ -7,19 +7,19 @@ import {
   NewValidator,
   SignerAndSignature,
 } from "../../../contractsTypes/ton/tonBridge";
-
+import { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import TonLog from "./log";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
   bc: OpenedContract<Bridge>,
   signer: WalletContractV4,
   walletSender: Sender,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
@@ -98,7 +98,7 @@ export default async function addSelfAsValidator(
     );
     return "success";
   } catch (e) {
-    TonLog("Failed to add self as validator: ", e);
+    logger.error("Failed to add self as validator: ", e);
     return "failure";
   }
 }

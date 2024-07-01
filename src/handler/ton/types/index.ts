@@ -5,6 +5,7 @@ import { AxiosInstance } from "axios";
 import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import { LogInstance } from "../../types";
 
 export type TonParams = {
   client: TonClient;
@@ -21,4 +22,5 @@ export type TonParams = {
   chainType: TSupportedChainTypes;
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

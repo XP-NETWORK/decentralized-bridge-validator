@@ -5,18 +5,20 @@ import { BridgeStorage } from "../contractsTypes/evm";
 import { LockedEvent } from "../persistence/entities/locked";
 import {
   LockEvent,
+  LogInstance,
   StakeEvent,
   THandler,
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { ValidatorLog, retry } from "./utils";
+import { retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   em: EntityManager,
   serverLinkHandler: AxiosInstance | undefined,
+  log: LogInstance,
 ) {
   const map = new Map<TSupportedChains, THandler>();
   const deps = { storage };
@@ -24,7 +26,7 @@ export async function listenEvents(
   const builder = eventBuilder(em);
 
   async function pollEvents(chain: THandler) {
-    ValidatorLog(`Polling for events on: ${chain.chainIdent}`);
+    log.info(`Polling for events on: ${chain.chainIdent}`);
     chain.pollForLockEvents(builder, async (ev) => {
       processEvent(chain, ev);
     });
@@ -32,15 +34,19 @@ export async function listenEvents(
 
   async function processEvent(chain: THandler, ev: LockEvent) {
     const sourceChain = map.get(ev.sourceChain as TSupportedChains);
-    if (!sourceChain)
-      return ValidatorLog(
+    if (!sourceChain) {
+      log.warn(
         `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
       );
+      return;
+    }
     const destinationChain = map.get(ev.destinationChain as TSupportedChains);
-    if (!destinationChain)
-      return ValidatorLog(
+    if (!destinationChain) {
+      log.warn(
         `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
       );
+      return;
+    }
 
     const nftDetails = await sourceChain.nftData(
       ev.tokenId,
@@ -67,7 +73,7 @@ export async function listenEvents(
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
     };
-    console.log(inft);
+    log.trace(inft);
 
     const signature = await destinationChain.signClaimData(inft);
 
@@ -76,7 +82,7 @@ export async function listenEvents(
       .catch(() => false);
 
     if (alreadyProcessed) {
-      ValidatorLog(
+      log.warn(
         `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
       );
       return;
@@ -93,15 +99,16 @@ export async function listenEvents(
     const approved = await retry(
       approvalFn,
       `Approving transfer ${JSON.stringify(inft, null, 2)}`,
+      log,
       6,
     );
-    ValidatorLog(
+    log.info(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
     );
   }
 
   async function poolEvents(chain: THandler) {
-    ValidatorLog(`Listening for events on ${chain.chainIdent}`);
+    log.info(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
       processEvent(chain, ev);
     });
@@ -121,6 +128,7 @@ export async function listenStakeEvents(
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
   em: EntityManager,
+  log: LogInstance,
 ) {
   const map = new Map<TSupportedChainTypes, THandler>();
   const deps = { storage };
@@ -128,7 +136,7 @@ export async function listenStakeEvents(
   const builder = eventBuilder(em);
 
   async function poolEvents(chain: TStakingHandler) {
-    ValidatorLog("Listening for Staking Events");
+    log.info("Listening for Staking Events");
     chain.listenForStakingEvents(builder, async (ev) => {
       const signatures: {
         validatorAddress: string;
@@ -164,9 +172,10 @@ export async function listenStakeEvents(
       const approved = await retry(
         approvalFn,
         `Approving stake ${JSON.stringify(ev, null, 2)}`,
+        log,
         6,
       );
-      ValidatorLog(
+      log.info(
         `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
       );
     });

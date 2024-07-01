@@ -3,6 +3,7 @@ import { Signer, TezosToolkit } from "@taquito/taquito";
 import { AxiosInstance } from "axios";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import { LogInstance } from "../../types";
 
 export type TezosHandlerParams = {
   provider: TezosToolkit;
@@ -18,4 +19,5 @@ export type TezosHandlerParams = {
   decimals: number;
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

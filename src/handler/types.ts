@@ -1,3 +1,4 @@
+import { Logger } from "tslog";
 import { TSupportedChainTypes, TSupportedChains } from "../config";
 import { EventBuilder } from "../handler";
 
@@ -70,3 +71,5 @@ export type StakeEvent = {
   validatorAddress: string;
   chainType: TSupportedChainTypes;
 }[];
+
+export type LogInstance = Logger<unknown>;

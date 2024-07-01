@@ -4,6 +4,7 @@ import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { AxiosInstance } from "axios";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import { LogInstance } from "../../types";
 
 export type MultiversXHandlerParams = {
   provider: INetworkProvider;
@@ -19,4 +20,5 @@ export type MultiversXHandlerParams = {
   chainType: TSupportedChainTypes;
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

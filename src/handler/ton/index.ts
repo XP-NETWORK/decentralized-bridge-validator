@@ -15,8 +15,6 @@ import {
   signData,
 } from "./utils";
 
-import TonLog from "./utils/log";
-
 export function tonHandler({
   client,
   provider,
@@ -32,6 +30,7 @@ export function tonHandler({
   chainType,
   chainIdent,
   serverLinkHandler,
+  logger,
 }: TonParams): THandler {
   const bc = client.open(
     Bridge.fromAddress(Address.parseFriendly(bridge).address),
@@ -46,7 +45,7 @@ export function tonHandler({
             cb,
             em,
             serverLinkHandler,
-            TonLog,
+            logger,
           )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
@@ -59,14 +58,15 @@ export function tonHandler({
     currency: "TON",
     address: signer.address.toString(),
     getBalance: () => getBalance(client, signer.address),
-    signClaimData: (d) => signClaimData(d, secretKey, signer),
+    signClaimData: (d) => signClaimData(d, secretKey, signer, logger),
     addSelfAsValidator: () =>
-      addSelfAsValidator(storage, bc, signer, walletSender),
+      addSelfAsValidator(storage, bc, signer, walletSender, logger),
     selfIsValidator: () => selfIsValidator(signer, tonweb, bridge),
     nftData: (_, ctr) =>
       retry(
         () => nftData(_, ctr, client),
         `Trying to fetch data for ${ctr}`,
+        logger,
         5,
       ).catch(() => {
         return {
@@ -78,7 +78,7 @@ export function tonHandler({
       }),
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
-      listenForLockEvents(builder, cb, lastBlock_, client, bridge, em),
+      listenForLockEvents(builder, cb, lastBlock_, client, bridge, em, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

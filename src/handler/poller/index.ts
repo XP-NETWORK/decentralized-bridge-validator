@@ -3,7 +3,7 @@ import { EntityManager } from "@mikro-orm/sqlite";
 import { AxiosInstance } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
 import { EventBuilder } from "../index";
-import { LockEventIter } from "../types";
+import { LockEventIter, LogInstance } from "../types";
 import { LockEventRes } from "./types";
 
 export default async function pollForLockEvents(
@@ -12,7 +12,7 @@ export default async function pollForLockEvents(
   cb: LockEventIter,
   em: EntityManager,
   serverLinkHandler: AxiosInstance,
-  logger: (identifier: string, ...args: unknown[]) => void,
+  logger: LogInstance,
 ) {
   const lastBlock = (await em.findOne(LockedEvent, {}))?.id;
   while (true) {
@@ -35,7 +35,7 @@ export default async function pollForLockEvents(
           ),
         );
       } catch (e) {
-        logger(
+        logger.error(
           identifier,
           `${e} while polling for events. Sleeping for 10 seconds`,
         );

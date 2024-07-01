@@ -3,8 +3,7 @@ import { EntityManager } from "@mikro-orm/sqlite";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import log from "./log";
+import { LockEventIter, LogInstance } from "../../types";
 
 export default async function listenForLockEvents(
   identifier: string,
@@ -15,6 +14,7 @@ export default async function listenForLockEvents(
   blockChunks: number,
   bridge: string,
   em: EntityManager,
+  log: LogInstance,
 ) {
   let lastBlock = lastBlock_;
   while (true)
@@ -32,7 +32,7 @@ export default async function listenForLockEvents(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          log(
+          log.info(
             identifier,
             `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
           );
@@ -86,7 +86,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      log(
+      log.error(
         identifier,
         `${e} while listening for events. Sleeping for 10 seconds`,
       );

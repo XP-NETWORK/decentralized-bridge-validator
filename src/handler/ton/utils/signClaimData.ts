@@ -7,14 +7,14 @@ import {
   ClaimData,
   storeClaimData,
 } from "../../../contractsTypes/ton/tonBridge";
-import { TNftTransferDetailsObject } from "../../types";
-import TonLog from "./log";
+import { LogInstance, TNftTransferDetailsObject } from "../../types";
 import { buildJettonContent } from "./tep64";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
   secretKey: string,
   signer: WalletContractV4,
+  logger: LogInstance,
 ) {
   const sk = Buffer.from(secretKey, "hex");
   const {
@@ -55,7 +55,7 @@ export default async function signClaimData(
       )
       .endCell();
   } catch (e) {
-    TonLog("Not Native TON Address");
+    logger.warn("Not Native TON Address");
   }
   const claimData: ClaimData = {
     $$type: "ClaimData",

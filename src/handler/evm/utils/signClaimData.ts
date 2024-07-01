@@ -1,14 +1,17 @@
 import { ethers, isAddress } from "ethers";
 import { Web3Account } from "web3-eth-accounts";
-import { log } from ".";
 import { TSupportedChains } from "../../../config";
-import { TNftTransferDetailsObject } from "../../types";
+import { LogInstance, TNftTransferDetailsObject } from "../../types";
 
-const signClaimData = (chainIdent: TSupportedChains, signer: Web3Account) => {
+const signClaimData = (
+  chainIdent: TSupportedChains,
+  signer: Web3Account,
+  logger: LogInstance,
+) => {
   return async (data: TNftTransferDetailsObject) => {
     if (!isAddress(data.destinationUserAddress)) {
       data.destinationUserAddress = data.royaltyReceiver;
-      log("Invalid destination address", chainIdent);
+      logger.warn("Invalid destination address", chainIdent);
     }
     const nftTransferDetailsValues = [
       data.tokenId,

@@ -8,9 +8,8 @@ import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interfac
 import { Axios } from "axios";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
+import { LockEventIter, LogInstance } from "../../types";
 import { Root } from "../types/gateway";
-import MxLog from "./log";
 
 const CHAIN_IDENT = "MULTIVERSX";
 const WAIT_TIME = 10000;
@@ -26,6 +25,7 @@ export default async function listenForLockEvents(
   em: EntityManager,
   converter: TransactionsConverter,
   eventsParser: TransactionEventsParser,
+  logger: LogInstance,
 ) {
   let lastBlock_ = lastBlock;
   while (true) {
@@ -42,7 +42,7 @@ export default async function listenForLockEvents(
         );
 
         if (!txsForBridge.length) {
-          MxLog(
+          logger.trace(
             `No Transactions found in chain from block: ${lastBlock_}. Waiting for 10 Seconds before looking for new transactions`,
           );
           const lastestStatus = await provider.getNetworkStatus();
@@ -103,7 +103,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      MxLog(`${e} while listening for events. Sleeping for 10 seconds`);
+      logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
       await new Promise<undefined>((resolve) => setTimeout(resolve, WAIT_TIME));
     }
   }

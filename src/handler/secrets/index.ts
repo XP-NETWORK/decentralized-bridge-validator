@@ -12,8 +12,6 @@ import {
   signData,
 } from "./utils";
 
-import SecretLog from "./utils/log";
-
 export function secretsHandler({
   client,
   wallet,
@@ -30,6 +28,7 @@ export function secretsHandler({
   chainIdent,
   chainType,
   serverLinkHandler,
+  logger,
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
@@ -41,7 +40,7 @@ export function secretsHandler({
             cb,
             em,
             serverLinkHandler,
-            SecretLog,
+            logger,
           )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
@@ -65,6 +64,7 @@ export function secretsHandler({
         blockChunks,
         bridge,
         em,
+        logger,
       ),
     addSelfAsValidator: () =>
       addSelfAsValidator(
@@ -74,9 +74,10 @@ export function secretsHandler({
         bridge,
         bridgeCodeHash,
         wallet,
+        logger,
       ),
     getBalance: () => getBalance(client),
-    nftData: (tid, ctr) => nftData(tid, ctr, client),
+    nftData: (tid, ctr) => nftData(tid, ctr, client, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

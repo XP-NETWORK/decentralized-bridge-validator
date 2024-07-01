@@ -13,8 +13,6 @@ import {
   signData,
 } from "./utils";
 
-import TezosLog from "./utils/log";
-
 export async function tezosHandler({
   provider,
   signer,
@@ -29,6 +27,7 @@ export async function tezosHandler({
   chainType,
   chainIdent,
   serverLinkHandler,
+  logger,
 }: TezosHandlerParams): Promise<THandler> {
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
@@ -41,7 +40,7 @@ export async function tezosHandler({
             cb,
             em,
             serverLinkHandler,
-            TezosLog,
+            logger,
           )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
@@ -64,11 +63,12 @@ export async function tezosHandler({
         bridge,
         restApiUrl,
         em,
+        logger,
       ),
     signClaimData: (data) => signClaimData(data, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, provider),
+    nftData: (tid, ctr) => nftData(tid, ctr, provider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
-    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer),
+    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer, logger),
     chainIdent: chainIdent,
     decimals: BigInt(10 ** decimals),
   };

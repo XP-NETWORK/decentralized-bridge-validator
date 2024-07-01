@@ -3,8 +3,8 @@ import { TezosToolkit } from "@taquito/taquito";
 import { EntityManager } from "@mikro-orm/sqlite";
 import { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import { TezosGetContractOperations, log } from "./index";
+import { LockEventIter, LogInstance } from "../../types";
+import { TezosGetContractOperations } from "./index";
 
 const CHAIN_IDENT = "TEZOS";
 
@@ -17,6 +17,7 @@ export default async function listenForLockEvents(
   bridge: string,
   restApiUrl: string,
   em: EntityManager,
+  logger: LogInstance,
 ) {
   let lastBlock = Number(lastBlock_);
   while (true) {
@@ -37,7 +38,7 @@ export default async function listenForLockEvents(
         });
         const startBlock = lastBlock;
         if (!logs.length) {
-          log(
+          logger.trace(
             `No Transactions found in chain TEZOS from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
           );
           lastBlock = latestBlockNumber;
@@ -87,7 +88,9 @@ export default async function listenForLockEvents(
         });
       }
     } catch (e) {
-      log(`${e} while listening for tezos events. Sleeping for 10 seconds`);
+      logger.error(
+        `${e} while listening for tezos events. Sleeping for 10 seconds`,
+      );
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

@@ -4,6 +4,7 @@ import { EntityManager } from "@mikro-orm/sqlite";
 import { AxiosInstance } from "axios";
 import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import { LogInstance } from "../../types";
 
 export type CosmosHandlerParams = {
   chainIdent: TSupportedChains;
@@ -21,4 +22,5 @@ export type CosmosHandlerParams = {
   decimals: number;
   chainType: TSupportedChainTypes;
   serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

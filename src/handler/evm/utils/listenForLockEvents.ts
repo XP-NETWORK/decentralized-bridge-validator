@@ -1,11 +1,10 @@
 import { EntityManager } from "@mikro-orm/sqlite";
 import { JsonRpcProvider } from "ethers";
-import { log } from ".";
 import { EventBuilder } from "../..";
 import { TSupportedChains } from "../../../config";
 import { Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
+import { LockEventIter, LogInstance } from "../../types";
 
 const listenForLockEvents = (
   provider: JsonRpcProvider,
@@ -15,6 +14,7 @@ const listenForLockEvents = (
   bc: Bridge,
   chainIdent: TSupportedChains,
   em: EntityManager,
+  logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: LockEventIter) => {
     let lastBlock = lastBlock_;
@@ -37,7 +37,7 @@ const listenForLockEvents = (
         });
 
         if (!logs.length) {
-          log(
+          logger.trace(
             `No Transactions found in chain from block: ${lastBlock} to: ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
             chainIdent,
           );
@@ -76,7 +76,7 @@ const listenForLockEvents = (
         });
         await em.flush();
       } catch (e) {
-        log(
+        logger.error(
           `${e} while listening for lock events. Sleeping for 10 seconds`,
           chainIdent,
         );

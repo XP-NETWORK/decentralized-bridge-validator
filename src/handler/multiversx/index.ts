@@ -21,8 +21,6 @@ import {
   signData,
 } from "./utils";
 
-import MxLog from "./utils/log";
-
 export function multiversxHandler({
   provider,
   gatewayURL,
@@ -37,6 +35,7 @@ export function multiversxHandler({
   chainType,
   chainIdent,
   serverLinkHandler,
+  logger,
 }: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -62,7 +61,7 @@ export function multiversxHandler({
             cb,
             em,
             serverLinkHandler,
-            MxLog,
+            logger,
           )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
@@ -78,7 +77,7 @@ export function multiversxHandler({
     chainIdent,
     selfIsValidator: () => selfIsValidator(bc, signer, provider),
     addSelfAsValidator: () =>
-      addSelfAsValidator(bc, chainID, storage, signer, provider),
+      addSelfAsValidator(bc, chainID, storage, signer, provider, logger),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(
         builder,
@@ -91,8 +90,9 @@ export function multiversxHandler({
         em,
         converter,
         eventsParser,
+        logger,
       ),
-    nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL),
+    nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL, logger),
     signClaimData: (data) => signClaimData(data, signer),
     decimals: BigInt(10 ** decimals),
   };

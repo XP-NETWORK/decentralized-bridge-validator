@@ -13,8 +13,6 @@ import {
   signData,
 } from "./utils";
 
-import CosmWasmLog from "./utils/log";
-
 export async function cosmWasmHandler({
   chainIdent,
   client,
@@ -31,6 +29,7 @@ export async function cosmWasmHandler({
   decimals,
   chainType,
   serverLinkHandler,
+  logger,
 }: CosmosHandlerParams): Promise<THandler> {
   const sender = (await wallet.getAccounts())[0];
   const bc = new Bridge.BridgeClient(client, sender.address, bridge);
@@ -54,11 +53,12 @@ export async function cosmWasmHandler({
         blockChunks,
         bridge,
         em,
+        logger,
       ),
     addSelfAsValidator: () =>
-      addSelfAsValidator(chainIdent, storage, bc, sender),
+      addSelfAsValidator(chainIdent, storage, bc, sender, logger),
     getBalance: () => getBalance(client, sender),
-    nftData: (tid, ctr) => nftData(tid, ctr, client, sender),
+    nftData: (tid, ctr) => nftData(tid, ctr, client, sender, logger),
     decimals: BigInt(10 ** decimals),
     pollForLockEvents: async (builder, cb) => {
       serverLinkHandler
@@ -68,7 +68,7 @@ export async function cosmWasmHandler({
             cb,
             em,
             serverLinkHandler,
-            CosmWasmLog,
+            logger,
           )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",

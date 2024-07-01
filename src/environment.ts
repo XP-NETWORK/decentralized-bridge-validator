@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { z } from "zod";
-import { ValidatorLog } from "./handler/utils";
+import { LogInstance } from "./handler/types";
 
 config();
 
@@ -9,16 +9,16 @@ export const Env = z.object({
   SERVER_PORT: z.string().optional(),
   SERVER_LINK: z.string().optional(),
 });
-
 export type Env = z.infer<typeof Env>;
 
-const environment = Env.safeParse(process.env);
+export async function configureValidator(log: LogInstance) {
+  const environment = Env.safeParse(process.env);
 
-if (!environment.success) {
-  ValidatorLog("Environment is invalid!");
-  process.exit(1);
+  if (!environment.success) {
+    log.error("Environment is invalid!");
+    process.exit(1);
+  }
 }
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv extends Env {}

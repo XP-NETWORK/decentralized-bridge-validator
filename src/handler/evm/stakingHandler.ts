@@ -3,7 +3,7 @@ import { JsonRpcProvider } from "ethers";
 
 import { TSupportedChains } from "../../config";
 
-import { TStakingHandler } from "../types";
+import { LogInstance, TStakingHandler } from "../types";
 import { listenForStakingEvents } from "./utils";
 
 export function evmStakingHandler(
@@ -13,6 +13,7 @@ export function evmStakingHandler(
   blockChunks: number,
   em: EntityManager,
   staker: string,
+  logger: LogInstance,
 ): TStakingHandler {
   return {
     listenForStakingEvents: (builder, cb) =>
@@ -23,6 +24,7 @@ export function evmStakingHandler(
         blockChunks,
         chainIdent,
         em.fork(),
+        logger,
       )(builder, cb),
   };
 }

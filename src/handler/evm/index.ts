@@ -7,7 +7,6 @@ import {
   addSelfAsValidator,
   getBalance,
   listenForLockEvents,
-  log,
   nftData,
   selfIsValidator,
   signClaimData,
@@ -31,6 +30,7 @@ export function evmHandler({
   royaltyProxy,
   chainType,
   serverLinkHandler,
+  logger,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -51,6 +51,7 @@ export function evmHandler({
       bc,
       chainIdent,
       em,
+      logger,
     ),
 
     nftData:
@@ -58,11 +59,18 @@ export function evmHandler({
         ? nftDataForHedera(provider, royaltyProxy)
         : nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),
-    signClaimData: signClaimData(chainIdent, txSigner),
+    signClaimData: signClaimData(chainIdent, txSigner, logger),
     decimals: BigInt(10 ** decimals),
     pollForLockEvents: async (builder, cb) => {
       serverLinkHandler
-        ? pollForLockEvents(chainIdent, builder, cb, em, serverLinkHandler, log)
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

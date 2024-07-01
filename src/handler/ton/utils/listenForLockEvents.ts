@@ -4,8 +4,7 @@ import { raise } from "..";
 import { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import log from "./log";
+import { LockEventIter, LogInstance } from "../../types";
 
 const CHAIN_IDENT = "TON";
 
@@ -16,6 +15,7 @@ export default async function listenForLockEvents(
   client: TonClient,
   bridge: string,
   em: EntityManager,
+  logger: LogInstance,
 ) {
   let lastBlock = Number(lastBlock_);
   while (true) {
@@ -25,7 +25,7 @@ export default async function listenForLockEvents(
         { limit: 1 },
       );
       if (Number(latestTx[0].lt) === lastBlock) {
-        log(
+        logger.trace(
           `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
@@ -43,7 +43,7 @@ export default async function listenForLockEvents(
       );
 
       if (!transactions.length) {
-        log(
+        logger.trace(
           `No Transactions found in chain from block: ${lastBlock} to: ${latestTx[0].lt.toString()}. Waiting for 10 Seconds before looking for new transactions`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
@@ -105,7 +105,9 @@ export default async function listenForLockEvents(
         lastBlock: lastBlock,
       });
     } catch (e) {
-      log(`${e} while listening for ton events. Sleeping for 10 seconds`);
+      logger.error(
+        `${e} while listening for ton events. Sleeping for 10 seconds`,
+      );
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

@@ -62,6 +62,7 @@
     "secretjs": "=1.12.4",
     "ton-crypto": "^3.2.0",
     "tonweb": "^0.0.62",
+    "tslog": "^4.9.3",
     "web3-eth-accounts": "^4.1.1",
     "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge",
     "zod": "^3.22.4"

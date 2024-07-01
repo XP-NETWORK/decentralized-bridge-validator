@@ -22,7 +22,7 @@ import { EntityManager } from "@mikro-orm/sqlite";
 import axios, { AxiosInstance } from "axios";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
-import { THandler } from "./handler/types";
+import { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import {
@@ -50,6 +50,7 @@ export async function configEvmHandler(
   em: EntityManager,
   wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  evmLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -71,6 +72,7 @@ export async function configEvmHandler(
     royaltyProxy: undefined,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: evmLogger,
   });
 }
 
@@ -80,6 +82,7 @@ export async function configHederaHandler(
   em: EntityManager,
   wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  hederaLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -101,11 +104,13 @@ export async function configHederaHandler(
     royaltyProxy: conf.royaltyInfoProxyAddress,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: hederaLogger,
   });
 }
 export async function configStakingHandler(
   em: EntityManager,
   conf: IStakingConfig,
+  logger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -118,6 +123,7 @@ export async function configStakingHandler(
     conf.blockChunks,
     em.fork(),
     conf.contractAddress,
+    logger,
   );
 }
 
@@ -127,6 +133,7 @@ export async function configTezosHandler(
   em: EntityManager,
   tezosWallet: ITezosWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  tzLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -148,6 +155,7 @@ export async function configTezosHandler(
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: tzLogger,
   });
 }
 
@@ -157,6 +165,7 @@ export async function configCosmWasmChainHandler(
   em: EntityManager,
   cosmWasmWallet: CosmWasmWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  cwLogger: LogInstance,
 ) {
   const directWallet = await DirectSecp256k1Wallet.fromKey(
     Buffer.from(cosmWasmWallet.privateKey, "hex"),
@@ -182,6 +191,7 @@ export async function configCosmWasmChainHandler(
     wallet: directWallet,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: cwLogger,
   });
 }
 
@@ -191,6 +201,7 @@ export async function configSecretHandler(
   em: EntityManager,
   secretWallet: ISecretWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  scrtLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -224,6 +235,7 @@ export async function configSecretHandler(
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: scrtLogger,
   });
 }
 
@@ -233,6 +245,7 @@ export async function configMultiversXHandler(
   em: EntityManager,
   multiversXWallet: IMultiversXWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  mxLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -256,6 +269,7 @@ export async function configMultiversXHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     decimals: conf.decimals,
     serverLinkHandler,
+    logger: mxLogger,
   });
 }
 
@@ -265,6 +279,7 @@ export async function configTonHandler(
   em: EntityManager,
   tonWallet: ITonWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  tonLogger: LogInstance,
 ) {
   const client = new TonClient({
     endpoint: conf.rpcURL,
@@ -295,12 +310,14 @@ export async function configTonHandler(
     chainIdent: conf.chain as TSupportedChains,
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
+    logger: tonLogger,
   });
 }
 
 export async function configDeps(
   config: IBridgeConfig,
   secrets: IGeneratedWallets,
+  logger: LogInstance,
 ) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
@@ -324,6 +341,7 @@ export async function configDeps(
         em.fork(),
         secrets.tezosWallet,
         serverLinkHandler,
+        logger.getSubLogger({ name: "TEZOS" }),
       )
     : undefined;
 
@@ -335,6 +353,7 @@ export async function configDeps(
         em.fork(),
         secrets.secretWallet,
         serverLinkHandler,
+        logger.getSubLogger({ name: "SECRET" }),
       )
     : undefined;
 
@@ -346,6 +365,7 @@ export async function configDeps(
         em.fork(),
         secrets.multiversXWallet,
         serverLinkHandler,
+        logger.getSubLogger({ name: "MULTIVERSX" }),
       )
     : undefined;
 
@@ -358,6 +378,7 @@ export async function configDeps(
         em.fork(),
         secrets.tonWallet,
         serverLinkHandler,
+        logger.getSubLogger({ name: "TON" }),
       )
     : undefined;
 
@@ -365,7 +386,11 @@ export async function configDeps(
     storage,
     em,
     serverLinkHandler,
-    staking: await configStakingHandler(em.fork(), config.stakingConfig),
+    staking: await configStakingHandler(
+      em.fork(),
+      config.stakingConfig,
+      logger,
+    ),
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...(await Promise.all(
@@ -379,6 +404,7 @@ export async function configDeps(
               em.fork(),
               secrets.evmWallet,
               serverLinkHandler,
+              logger.getSubLogger({ name: c.chain }),
             );
           }),
       )),
@@ -393,6 +419,7 @@ export async function configDeps(
               em.fork(),
               secrets.evmWallet,
               serverLinkHandler,
+              logger.getSubLogger({ name: "HEDERA" }),
             );
           }),
       )),
@@ -407,6 +434,7 @@ export async function configDeps(
               em.fork(),
               secrets.secretWallet,
               serverLinkHandler,
+              logger.getSubLogger({ name: c.chain }),
             );
           }),
       )),

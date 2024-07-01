@@ -74,6 +74,7 @@ export default async function listenForLockEvents(
             transactionOutcomeLock,
             "Locked",
           );
+          if (!event) continue;
           const parsed = eventsParser.parseEvent({ event });
           const destinationChain = parsed.destination_chain.toString("utf-8");
           const sourceChain = parsed.chain.toString("utf-8");

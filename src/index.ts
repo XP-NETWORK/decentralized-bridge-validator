@@ -34,10 +34,12 @@ async function main() {
   }
 
   const deps = await configDeps(config, secrets);
-  const server = await configureRouter(deps.em.fork());
-  server.listen(process.env.SERVER_PORT, () => {
-    ValidatorLog(`Server listening on port ${process.env.SERVER_PORT}`);
-  });
+  if (process.env.SERVER_PORT) {
+    const server = await configureRouter(deps.em.fork());
+    server.listen(process.env.SERVER_PORT, () => {
+      ValidatorLog(`Server listening on port ${process.env.SERVER_PORT}`);
+    });
+  }
 
   await requireEnoughBalance(
     deps.chains,

@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { generateWallet as aptosGw } from "./handler/aptos/utils";
 import { generateWallet as evmGw } from "./handler/evm/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
@@ -22,6 +23,7 @@ export async function generateAndSaveWallets() {
     tezosWallet: await tzGw(),
     multiversXWallet: await mxGw(),
     tonWallet: await tonGw(),
+    aptosWallet: await aptosGw(),
   };
   return fs.writeFile("secrets.json", JSON.stringify(wallets));
 }
@@ -33,6 +35,7 @@ export async function generateWallets(): Promise<IGeneratedWallets> {
     tezosWallet: await tzGw(),
     multiversXWallet: await mxGw(),
     tonWallet: await tonGw(),
+    aptosWallet: await aptosGw(),
   };
   return wallets;
 }

@@ -59,7 +59,6 @@ type ITezosWallet = {
 type IAptosWallet = {
   publicKey: string;
   privateKey: string;
-  account: string;
 };
 
 type IGeneratedWallets = {

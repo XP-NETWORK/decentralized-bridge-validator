@@ -57,9 +57,7 @@ const listenForLockEvents = async (
       for (const event of events) {
         const tokenId = event.data.token_id;
         const userAddress = event.data.destination_user_address;
-        const sourceNftContractAddress = bufferHexStrToString(
-          event.data.source_nft_contract_address,
-        );
+        const sourceNftContractAddress = event.data.collection_address;
         const tokenAmount = event.data.token_amount;
         const nftType = bufferHexStrToString(event.data.nft_type);
         const sourceChain = bufferHexStrToString(event.data.self_chain);

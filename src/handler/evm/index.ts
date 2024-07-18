@@ -1,9 +1,8 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { JsonRpcProvider, Wallet } from "ethers";
-import { Web3Account } from "web3-eth-accounts";
-import { TSupportedChains } from "../../config";
-import { BridgeStorage, Bridge__factory } from "../../contractsTypes/evm";
-import { THandler } from "../types";
+import { raise } from "xp-decentralized-sdk";
+import { Bridge__factory } from "../../contractsTypes/evm";
+import pollForLockEvents from "../poller";
+import type { THandler } from "../types";
+import type { EVMHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -11,28 +10,36 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
+import nftDataForHedera from "./utils/nftDataForHedera";
 
-export function evmHandler(
-  chainIdent: TSupportedChains,
-  provider: JsonRpcProvider,
-  signer: Wallet,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  initialFunds: bigint,
-  decimals: number,
-  currency: string,
-  em: EntityManager,
-  txSigner: Web3Account,
-): THandler {
+export function evmHandler({
+  chainIdent,
+  provider,
+  signer,
+  bridge,
+  storage,
+  lastBlock_,
+  blockChunks,
+  initialFunds,
+  currency,
+  em,
+  txSigner,
+  decimals,
+  royaltyProxy,
+  chainType,
+  serverLinkHandler,
+  logger,
+}: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
+    signData: (buf) => signData(buf, txSigner),
+    publicKey: signer.address,
+    chainType,
     getBalance: () => getBalance(signer, provider),
     chainIdent,
     initialFunds,
-    decimals,
     currency,
     address: signer.address,
     addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
@@ -44,9 +51,29 @@ export function evmHandler(
       bc,
       chainIdent,
       em,
+      logger,
     ),
-    nftData: nftData(provider),
+
+    nftData:
+      royaltyProxy !== undefined
+        ? nftDataForHedera(provider, royaltyProxy)
+        : nftData(provider),
     selfIsValidator: selfIsValidator(bc, signer),
-    signClaimData: signClaimData(chainIdent, txSigner),
+    signClaimData: signClaimData(chainIdent, txSigner, logger),
+    decimals: BigInt(10 ** decimals),
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
   };
 }

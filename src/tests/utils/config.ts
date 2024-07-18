@@ -7,6 +7,7 @@ import { JsonRpcProvider, Wallet } from "ethers";
 import { createInterface } from "readline/promises";
 import { Wallet as ScrtWallet, SecretNetworkClient } from "secretjs";
 import TonWeb from "tonweb";
+import { userSignerToSigner } from "xp-decentralized-sdk";
 import { IGeneratedWallets } from "../../types";
 import { getChainConfigs } from "./chainConfigs";
 
@@ -28,64 +29,81 @@ export async function generateConfig(
   });
   return {
     bsc: {
-      signer: await (async () => {
+      signer: await(async () => {
         const provider = new JsonRpcProvider(
-          "https://bsc-testnet.public.blastapi.io",
+          "https://bsc-testnet.public.blastapi.io"
         );
         const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
         await requireFundsForAddress(
           async () => await provider.getBalance(wallet),
           wallet.address,
-          "BSC",
+          "BSC"
         );
         return wallet;
       })(),
       config: configs.bsc,
       address: genWallets.evmWallet.address,
     },
-    // hedera: {
-    //   signer: await (async () => {
-    //     const provider = new JsonRpcProvider(configs.hedera.rpcURL);
-    //     const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
-    //     await requireFundsForAddress(
-    //       async () => (await provider.getBalance(wallet)) ?? 0n,
-    //       wallet.address,
-    //       "HEDERA",
-    //     );
-    //   })(),
-    //   config: configs.hedera,
-    //   address: genWallets.evmWallet.address,
-    // },
-    multiversx: {
+    matic: {
+      signer: await(async () => {
+        const provider = new JsonRpcProvider(
+          "https://rpc-amoy.polygon.technology/"
+        );
+        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
+        await requireFundsForAddress(
+          async () => await provider.getBalance(wallet),
+          wallet.address,
+          "MATIC"
+        );
+        return wallet;
+      })(),
+      config: configs.matic,
+      address: genWallets.evmWallet.address,
+    },
+    hedera: {
       signer: await (async () => {
+        const provider = new JsonRpcProvider(configs.hedera.rpcURL);
+        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
+        await requireFundsForAddress(
+          async () => (await provider.getBalance(wallet)) ?? 0n,
+          wallet.address,
+          "HEDERA",
+        );
+        return wallet
+      })(),
+      config: configs.hedera,
+      address: genWallets.evmWallet.address,
+    },
+    multiversx: {
+      signer: await(async () => {
         const signer = UserSigner.fromWallet(
           genWallets.multiversXWallet.userWallet,
-          genWallets.multiversXWallet.password,
+          genWallets.multiversXWallet.password
         );
 
         await requireFundsForAddress(
           async () => {
             const np = new ProxyNetworkProvider(configs.multiversx.gatewayURL);
             return BigInt(
-              (await np.getAccount(signer.getAddress())).balance.toString(),
+              (await np.getAccount(signer.getAddress())).balance.toString()
             );
           },
           signer.getAddress().bech32(),
-          "MULTIVERSX",
+          "MULTIVERSX"
         );
-        return signer;
+        return userSignerToSigner(signer);
       })(),
       config: configs.multiversx,
       address: genWallets.multiversXWallet.userWallet.address,
     },
     eth: {
-      signer: await (async () => {
+      signer: await(async () => {
         const provider = new JsonRpcProvider(configs.eth.rpcURL);
         const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
         await requireFundsForAddress(
           async () => (await provider.getBalance(wallet)) ?? 0n,
           wallet.address,
-          "ETH",
+          "ETH"
         );
         return wallet;
       })(),
@@ -93,7 +111,7 @@ export async function generateConfig(
       address: genWallets.evmWallet.address,
     },
     tezos: {
-      signer: (async () => {
+      signer: await(async () => {
         const signer = new InMemorySigner(genWallets.tezosWallet.secretKey);
         const Tezos = new TezosToolkit(configs.tezos.rpcURL);
         await requireFundsForAddress(
@@ -101,19 +119,20 @@ export async function generateConfig(
             BigInt(
               (
                 await Tezos.rpc.getBalance(await signer.publicKeyHash())
-              ).toString(),
+              ).toString()
             ),
           await signer.publicKeyHash(),
-          "TEZOS",
+          "TEZOS"
         );
+        return signer;
       })(),
       config: configs.tezos,
       address: await new InMemorySigner(
-        genWallets.tezosWallet.secretKey,
+        genWallets.tezosWallet.secretKey
       ).publicKeyHash(),
     },
     secret: {
-      signer: await (async () => {
+      signer: await(async () => {
         const wallet = new ScrtWallet(genWallets.secretWallet.privateKey);
         await requireFundsForAddress(
           async () =>
@@ -126,10 +145,10 @@ export async function generateConfig(
                   address: wallet.address,
                   denom: "uscrt",
                 })
-              ).balance?.amount ?? "0",
+              ).balance?.amount ?? "0"
             ),
           wallet.address,
-          "SECRET",
+          "SECRET"
         );
         return wallet;
       })(),
@@ -137,7 +156,7 @@ export async function generateConfig(
       address: genWallets.secretWallet.publicKey,
     },
     ton: {
-      signer: await (async () => {
+      signer: await(async () => {
         const wallet = WalletContractV4.create({
           publicKey: Buffer.from(genWallets.tonWallet.publicKey, "hex"),
           workchain: 0,
@@ -150,7 +169,7 @@ export async function generateConfig(
         await requireFundsForAddress(
           async () => await tc.getBalance(wallet.address),
           wallet.address.toString(),
-          "TON",
+          "TON"
         );
         const sender = tc.open(wallet);
 

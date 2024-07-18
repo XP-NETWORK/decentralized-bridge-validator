@@ -46,6 +46,10 @@ type ISecretWallet = {
   publicKey: string;
   privateKey: string;
 };
+type CosmWasmWallet = {
+  publicKey: string;
+  privateKey: string;
+};
 
 type ITezosWallet = {
   publicKey: string;
@@ -78,18 +82,21 @@ type IChainConfig = {
 type IEvmChainConfig = {
   chainType: "evm";
   rpcURL: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type IHederaChainConfig = {
   chainType: "hedera";
   rpcURL: string;
   royaltyInfoProxyAddress: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type ISecretChainConfig = {
   chainType: "scrt";
   rpcURL: string;
   chainId: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type ITonChainConfig = {
@@ -101,6 +108,7 @@ type ITezosChainConfig = {
   chainType: "tezos";
   restApiURL: string;
   rpcURL: string;
+  blockChunks: number;
 } & IChainConfig;
 
 type IMultiversXChainConfig = {
@@ -116,13 +124,22 @@ type IStakingConfig = {
   lastBlock: number;
 } & IEvmChainConfig;
 
+type ICosmWasmChainConfig = {
+  chainType: "cosmwasm";
+  rpcURL: string;
+  chainId: string;
+  blockChunks: number;
+  walletPrefix: string;
+} & IChainConfig;
+
 type TChain =
   | IMultiversXChainConfig
   | IEvmChainConfig
   | ITonChainConfig
   | ISecretChainConfig
   | ITezosChainConfig
-  | IHederaChainConfig;
+  | IHederaChainConfig
+  | ICosmWasmChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -135,7 +152,7 @@ export type SignerAndSignature = {
   signature: string;
 };
 
-export {
+export type {
   IBridgeConfig,
   IChainConfig,
   IConfigAndWallets,
@@ -149,6 +166,8 @@ export {
   ISecretChainConfig,
   ISecretWallet,
   IStakingConfig,
+  ICosmWasmChainConfig,
+  CosmWasmWallet,
   ITezosChainConfig,
   ITezosWallet,
   ITonChainConfig,

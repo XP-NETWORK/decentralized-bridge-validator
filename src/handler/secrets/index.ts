@@ -1,8 +1,7 @@
-import { SecretNetworkClient, Wallet } from "secretjs";
-import { BridgeStorage } from "../../contractsTypes/evm";
-import { THandler } from "../types";
-
-import { EntityManager } from "@mikro-orm/sqlite";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
+import type { THandler } from "../types";
+import type { SecretsHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -10,34 +9,50 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
-export function secretsHandler(
-  client: SecretNetworkClient,
-  wallet: Wallet,
-  publicKey: string,
-  privateKey: string,
-  bridge: string,
-  bridgeCodeHash: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  initialFunds: bigint,
-  decimals: number,
-  em: EntityManager,
-): THandler {
+export function secretsHandler({
+  client,
+  wallet,
+  publicKey,
+  privateKey,
+  bridge,
+  bridgeCodeHash,
+  storage,
+  lastBlock_,
+  blockChunks,
+  initialFunds,
+  em,
+  decimals,
+  chainIdent,
+  chainType,
+  serverLinkHandler,
+  logger,
+}: SecretsHandlerParams): THandler {
   return {
-    initialFunds,
-    decimals,
-    chainIdent: "SECRET",
+    publicKey,
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
+    signData: (buf) => signData(buf, privateKey, publicKey),
+    chainType,
+    initialFunds: initialFunds,
+    chainIdent,
     currency: "USCRT",
     address: client.address,
-    signClaimData: (data) =>
-      signClaimData(
-        data,
-        Buffer.from(privateKey),
-        Buffer.from(publicKey, "hex"),
-      ),
+    signClaimData: (data) => signClaimData(data, privateKey, publicKey),
     selfIsValidator: () =>
       selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
     listenForLockEvents: (cb, iter) =>
@@ -49,6 +64,7 @@ export function secretsHandler(
         blockChunks,
         bridge,
         em,
+        logger,
       ),
     addSelfAsValidator: () =>
       addSelfAsValidator(
@@ -58,8 +74,10 @@ export function secretsHandler(
         bridge,
         bridgeCodeHash,
         wallet,
+        logger,
       ),
     getBalance: () => getBalance(client),
-    nftData: (tid, ctr) => nftData(tid, ctr, client),
+    nftData: (tid, ctr) => nftData(tid, ctr, client, logger),
+    decimals: BigInt(10 ** decimals),
   };
 }

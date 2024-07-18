@@ -16,6 +16,10 @@
   },
   "files": {
     "include": ["src/**/*.ts"],
-    "ignore": ["src/contractsTypes/**/*.ts", "src/tests/**/*.ts"]
+    "ignore": [
+      "src/contractsTypes/**/*.ts",
+      "src/tests/**/*.ts",
+      "src/handler/ton/utils/tep64.ts"
+    ]
   }
 }

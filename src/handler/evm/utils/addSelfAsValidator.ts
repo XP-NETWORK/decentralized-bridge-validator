@@ -1,5 +1,5 @@
-import { Wallet } from "ethers";
-import { Bridge, BridgeStorage } from "../../../contractsTypes/evm";
+import type { Wallet } from "ethers";
+import type { Bridge, BridgeStorage } from "../../../contractsTypes/evm";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,

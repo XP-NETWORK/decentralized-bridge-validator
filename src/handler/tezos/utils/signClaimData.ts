@@ -1,12 +1,12 @@
 import { packDataBytes } from "@taquito/michel-codec";
-import { Signer } from "@taquito/taquito";
+import type { Signer } from "@taquito/taquito";
 import { validateAddress } from "@taquito/utils";
 import { keccak256 } from "ethers";
 import {
   TezosNftTransferDetailsSchema,
   TezosNftTransferDetailsTypes,
 } from "../../../contractsTypes/tezos/schema";
-import { TNftTransferDetailsObject } from "../../types";
+import type { TNftTransferDetailsObject } from "../../types";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,

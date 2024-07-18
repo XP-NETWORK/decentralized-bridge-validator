@@ -7,27 +7,31 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "format": "npx @biomejs/biome format src/ --write",
-    "lint": "npx @biomejs/biome lint src/  ",
+    "format": "npx @biomejs/biome format src/",
+    "lint": "npx @biomejs/biome lint src/ --write",
     "postinstall": "lefthook install",
     "dev": "tsc && node dist/index.js"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@mikro-orm/cli": "^6.1.4",
+    "@types/express": "^4.17.21",
     "@types/node": "^20.11.17",
     "lefthook": "^1.6.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "mikro-orm": {
     "useTsNode": true
   },
   "dependencies": {
+    "@bogeychan/elysia-polyfills": "^0.6.4",
+    "@cosmjs/amino": "^0.32.3",
+    "@cosmjs/cosmwasm-stargate": "^0.32.3",
     "@mikro-orm/core": "^6.1.4",
     "@mikro-orm/migrations": "^6.1.4",
     "@mikro-orm/sqlite": "^6.1.4",
-    "@multiversx/sdk-core": "^12.18.0",
+    "@multiversx/sdk-core": "^13.2.1",
     "@multiversx/sdk-network-providers": "^2.2.1",
     "@multiversx/sdk-wallet": "^4.3.0",
     "@noble/secp256k1": "^1.7.0",
@@ -38,16 +42,29 @@
     "@ton/core": "^0.54.0",
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.9.0",
+    "@xp/cosmos-client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "axios": "^1.6.7",
     "chalk": "4",
+    "client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
+    "dotenv": "^16.4.5",
+    "elysia": "^1.0.25",
     "ethers": "^6.11.1",
+    "express": "^4.19.2",
+    "fp-ts": "^2.16.6",
+    "http-status-codes": "^2.3.0",
+    "io-ts": "^2.2.21",
+    "io-ts-types": "^0.5.19",
     "js-sha3": "^0.9.3",
     "libsodium-wrappers-sumo": "^0.7.13",
+    "monocle-ts": "^2.3.13",
+    "newtype-ts": "^0.3.5",
     "openapi-client-axios": "^7.5.4",
     "secretjs": "=1.12.4",
     "ton-crypto": "^3.2.0",
     "tonweb": "^0.0.62",
+    "tslog": "^4.9.3",
     "web3-eth-accounts": "^4.1.1",
-    "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge"
+    "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge",
+    "zod": "^3.22.4"
   }
 }

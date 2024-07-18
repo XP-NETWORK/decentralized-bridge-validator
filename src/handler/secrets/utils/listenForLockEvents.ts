@@ -1,20 +1,20 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { SecretNetworkClient } from "secretjs";
-import { EventBuilder } from "../..";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { SecretNetworkClient } from "secretjs";
+import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
-import log from "./log";
+import type { LockEventIter, LogInstance } from "../../types";
 
 const CHAIN_IDENT = "SECRET";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock_: number,
   client: SecretNetworkClient,
   blockChunks: number,
   bridge: string,
   em: EntityManager,
+  logger: LogInstance,
 ) {
   let lastBlock = lastBlock_;
   while (true)
@@ -37,8 +37,8 @@ export default async function listenForLockEvents(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          log(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+          logger.trace(
+            `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
@@ -69,15 +69,16 @@ export default async function listenForLockEvents(
             source_chain: sourceChain, // Source chain of NFT
           } = parsedLog;
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               destinationUserAddress,
               sourceNftContractAddress,
-              tokenAmount,
+              tokenAmount.toString(),
               nftType,
               sourceChain,
               log.transactionHash,
+              CHAIN_IDENT,
             ),
           );
         }
@@ -90,7 +91,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      log(`${e} while listening for events. Sleeping for 10 seconds`);
+      logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
 }

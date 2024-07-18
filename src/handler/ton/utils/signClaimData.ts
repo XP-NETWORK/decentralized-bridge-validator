@@ -1,19 +1,20 @@
 import { Address, beginCell } from "@ton/core";
-import { WalletContractV4 } from "@ton/ton";
+import type { WalletContractV4 } from "@ton/ton";
 
 import { sign } from "ton-crypto";
 import TonWeb from "tonweb";
 import {
-  ClaimData,
+  type ClaimData,
   storeClaimData,
 } from "../../../contractsTypes/ton/tonBridge";
-import { TNftTransferDetailsObject } from "../../types";
-import TonLog from "./log";
+import type { LogInstance, TNftTransferDetailsObject } from "../../types";
+import { buildJettonContent } from "./tep64";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
   secretKey: string,
   signer: WalletContractV4,
+  logger: LogInstance,
 ) {
   const sk = Buffer.from(secretKey, "hex");
   const {
@@ -54,7 +55,7 @@ export default async function signClaimData(
       )
       .endCell();
   } catch (e) {
-    TonLog("Not Native TON Address");
+    logger.warn("Not Native TON Address");
   }
   const claimData: ClaimData = {
     $$type: "ClaimData",
@@ -75,16 +76,17 @@ export default async function signClaimData(
     data3: {
       $$type: "ClaimData3",
       fee: BigInt(fee),
-      metadata,
+      metadata: beginCell().storeInt(1, 8).storeStringTail(metadata).endCell(),
       royaltyReceiver: Address.parseFriendly(royaltyReceiver).address,
       sourceNftContractAddress: sourceNftContractAddress_,
     },
     data4: {
       $$type: "ClaimData4",
-      newContent: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail(metadata)
-        .endCell(),
+      newContent: buildJettonContent({
+        name: name,
+        symbol: symbol,
+        description: "",
+      }),
       royalty: {
         $$type: "RoyaltyParams",
         denominator: BigInt(10000),

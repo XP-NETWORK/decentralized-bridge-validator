@@ -1,5 +1,6 @@
 import {
   IEvmChainConfig,
+  IHederaChainConfig,
   IMultiversXChainConfig,
   ISecretChainConfig,
   ITezosChainConfig,
@@ -13,20 +14,21 @@ export function getChainConfigs(bridgeTestChains: TChain[]) {
     bsc: bridgeTestChains.find((e) => e.chain === "BSC")! as IEvmChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     eth: bridgeTestChains.find((e) => e.chain === "ETH")! as IEvmChainConfig,
-    // hedera: bridgeTestChains.find(
-    //   (e) => e.chain === "HEDERA",
-    // )! as IHederaChainConfig,
+    matic: bridgeTestChains.find((e) => e.chain === "MATIC")! as IEvmChainConfig,
+    hedera: bridgeTestChains.find(
+      (e) => e.chain === "HEDERA",
+    )! as IHederaChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     tezos: bridgeTestChains.find(
-      (e) => e.chain === "TEZOS",
+      (e) => e.chain === "TEZOS"
     )! as ITezosChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     multiversx: bridgeTestChains.find(
-      (e) => e.chain === "MULTIVERSX",
+      (e) => e.chain === "MULTIVERSX"
     )! as IMultiversXChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     secret: bridgeTestChains.find(
-      (e) => e.chain === "SECRET",
+      (e) => e.chain === "SECRET"
     )! as ISecretChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     ton: bridgeTestChains.find((e) => e.chain === "TON")! as ITonChainConfig,

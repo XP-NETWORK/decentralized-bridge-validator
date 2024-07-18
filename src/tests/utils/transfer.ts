@@ -2,6 +2,7 @@ import {
   DeployCollection,
   MetaMap,
   MintNft,
+  ReadClaimed721Event,
   TApproveNFT,
 } from "xp-decentralized-sdk";
 import {
@@ -9,11 +10,9 @@ import {
   TInferChainH,
 } from "xp-decentralized-sdk/dist/factory/types/utils";
 import { waitForMSWithMsg } from "../../handler/utils";
-import { SignerAndSignature } from "../../types";
 
 type InferSigner<FC extends keyof MetaMap> =
-  TInferChainH<FC> extends TApproveNFT<infer R, unknown, unknown> ? R : never;
-
+  TInferChainH<FC> extends TApproveNFT<infer R, any, any> ? R : never;
 type InferDeployArgs<FC extends keyof MetaMap> =
   TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;
 
@@ -28,7 +27,7 @@ type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
 
 export function createTest<
   FC extends keyof MetaMap,
-  TC extends keyof MetaMap,
+  TC extends keyof MetaMap
 >(args: {
   fromChain: FC;
   toChain: TC;
@@ -55,9 +54,9 @@ export async function transferMultiple(
     receiver: any;
     approveTokenId: any;
   }[],
-  factory: TChainFactory,
+  factory: TChainFactory
 ) {
-  await transfer(args, factory);
+  return await transfer(args, factory);
 }
 
 // Lock the NFTs
@@ -73,18 +72,19 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     receiver: string;
     approveTokenId: string;
   }[],
-  factory: TChainFactory,
-) {
+  factory: TChainFactory
+): Promise<{ contract: string; tokenId: string } | undefined> {
   for (const tx of args) {
+    console.log(`Transferring from ${tx.fromChain} to ${tx.toChain}`);
     const chain = await factory.inner(tx.fromChain);
 
     const contract = await chain.deployCollection(
       tx.signer as any,
-      tx.deployArgs as any,
+      tx.deployArgs as any
     );
     console.log(`Deployed NFT Contract: ${contract}`);
     /// Sleep for 5 seconds to wait for the contract to be deployed
-    await new Promise((e) => setTimeout(e, 5000));
+    await sleep(5);
 
     // Mint NFT
 
@@ -99,45 +99,43 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             ...tx.mintArgs,
             contract: contract,
             contractAddress: contract,
-            identifier: contract,
-          },
+            ticker: contract,
+          }
         );
         isMinted = true;
         console.log(
-          `Minted NFT on BSC with Token ID: 1 at ${contract} in tx: ${JSON.stringify(
-            minted,
-            null,
-            4,
-          )}`,
+          `Minted NFT on BSC with Token ID: ${
+            tx.approveTokenId
+          } at ${contract} in tx: ${stringify(minted)}`
         );
       } catch (e) {
-        console.log(`Failed to mint NFT on ${tx.fromChain}`, e);
+        await sleep(5);
+      }
+    }
+    if ("approveNft" in chain) {
+      console.log(`Requires approval`)
+      let approved = false;
+      while (!approved) {
+        try {
+          const approve = await chain.approveNft(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            tx.signer as any,
+            tx.approveTokenId,
+            contract,
+            {}
+          );
+          console.log(
+            `Approved NFT on BSC with Token ID: ${tx.approveTokenId} at ${contract} in tx: ${approve}`
+          );
+          approved = true;
+        } catch (e) {
+          await new Promise((e) => setTimeout(e, 5000));
+          console.log("Retrying Approving NFT", e);
+          await sleep(5);
+        }
       }
     }
 
-    let approved = false;
-    while (!approved) {
-      try {
-        const approve = await chain.approveNft(
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          tx.signer as any,
-          tx.approveTokenId,
-          contract,
-          {},
-        );
-        console.log(
-          `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approve}`,
-        );
-        approved = true;
-      } catch (e) {
-        await new Promise((e) => setTimeout(e, 5000));
-        console.log("Retrying Approving NFT", e);
-      }
-    }
-
-    console.log(
-      `Approved NFT on BSC with Token ID: 0 at ${contract} in tx: ${approved}`,
-    );
     let locked = false;
     let lockHash = "";
     while (!locked) {
@@ -149,7 +147,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tx.toChain,
           tx.receiver,
           BigInt(tx.approveTokenId),
-          {},
+          {}
         );
         console.log("Lock Hash:", lock.hash());
         //@ts-ignore
@@ -158,6 +156,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (e: any) {
         console.log(`Retrying to lock NFT on ${tx.fromChain}`, e);
+        await sleep(5);
       }
     }
 
@@ -171,19 +170,19 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
         console.log("Got Claim Data");
         foundedData = true;
       } catch (e) {
-        await new Promise((s) => setTimeout(s, 5000));
-        console.log(
-          `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
-          e,
-        );
+        // console.log(
+        //   `Retrying to find Claim Data for Lock Hash: ${lockHash}`,
+        //   e,
+        // );
+        await sleep(5);
       }
     }
 
     const nftDetails = await factory.getClaimData(chain, lockHash);
-    console.log(nftDetails);
-    console.log("Got Claim Data");
+    // console.log(nftDetails);
+    // console.log("Got Claim Data");
 
-    console.log("Fetching Signatures");
+    // console.log("Fetching Signatures");
 
     const tc = await factory.inner(tx.toChain);
 
@@ -194,35 +193,83 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       Math.floor((2 / 3) * Number(await tc.getValidatorCount())) + 1;
     while (signatures.length < neededSignatures) {
       await waitForMSWithMsg(
-        1000,
-        `waiting for signatures, ${signatures.length}`,
+        2500,
+        `waiting for signatures, ${signatures.length}`
       );
       signatures = await tc
         .getStorageContract()
         .getLockNftSignatures(lockHash, tx.fromChain);
     }
 
-    const signatureArray: SignerAndSignature[] = signatures.map((item) => {
+    const signatureArray = signatures.map((item) => {
       return {
-        signer: item.signerAddress,
+        signerAddress: item.signerAddress,
         signature: item.signature,
       };
     });
 
     let claimed = false;
+    let ch = "";
     while (!claimed)
       try {
         const claim = await tc.claimNft(
           tx.claimSigner as any,
           tc.transform(nftDetails) as any,
-          signatureArray,
+          signatureArray
         );
-        console.log(`Claimed on ${tx.toChain} at ${claim}`);
+        console.log(`Claimed on ${tx.toChain} at ${stringify(claim)}`);
         claimed = true;
+        ch = claim.hash();
       } catch (e) {
         await new Promise((s) => setTimeout(s, 5000));
         console.log(e);
         console.log("Retrying Claiming");
+        await sleep(5);
       }
+    const dc = await factory.inner(tx.toChain);
+    if (canDecodeClaimData(dc)) {
+      let claimDecoded = false;
+
+      while (!claimDecoded) {
+        console.log(ch);
+        try {
+          const decoded = await dc.readClaimed721Event(ch);
+          console.log(decoded);
+          return {
+            contract: decoded.nft_contract,
+            tokenId: decoded.token_id,
+          };
+        } catch (e) {
+          console.log(`Failed to decode claim event`, e);
+          await sleep(5);
+        }
+      }
+    } else {
+      return undefined;
+    }
   }
+
+  return undefined;
+}
+
+function stringify(content: unknown): string {
+  return JSON.stringify(
+    content,
+    (_, value) => {
+      if (typeof value === "bigint") {
+        return `BigInt(${value.toString()})`;
+      }
+      return value;
+    },
+    4
+  );
+}
+
+function sleep(secs: number) {
+  console.log(`Sleeping for ${secs} seconds`);
+  return new Promise((resolve) => setTimeout(resolve, secs * 1000));
+}
+
+export function canDecodeClaimData(t: any): t is ReadClaimed721Event {
+  return "readClaimed721Event" in t;
 }

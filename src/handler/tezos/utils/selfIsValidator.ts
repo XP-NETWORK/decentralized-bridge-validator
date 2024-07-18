@@ -1,5 +1,5 @@
-import { Signer } from "@taquito/taquito";
-import { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
+import type { Signer } from "@taquito/taquito";
+import type { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
 
 export default async function selfIsValidator(

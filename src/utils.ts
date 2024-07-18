@@ -1,21 +1,30 @@
-import fs from "fs";
-import path from "path";
-import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
-import { writeFile } from "fs/promises";
-import { Interface, createInterface } from "readline/promises";
+import fs from "node:fs";
+import { writeFile } from "node:fs/promises";
+import path from "node:path";
 import { generateWallet as evmGw } from "./handler/evm/utils";
-import { getBalance } from "./handler/evm/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
 import { generateWallet as tzGw } from "./handler/tezos/utils";
 import { generateWallet as tonGw } from "./handler/ton/utils";
-import { THandler } from "./handler/types";
-import { ValidatorLog } from "./handler/utils";
-import { IEvmChainConfig, IGeneratedWallets, IStakingConfig } from "./types";
 
-export const loadSecrets = async (): Promise<IGeneratedWallets> => {
+import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
+
+import { type Interface, createInterface } from "node:readline/promises";
+
+import { getBalance } from "./handler/evm/utils";
+import { raise } from "./handler/ton";
+import type { LogInstance, THandler } from "./handler/types";
+import type {
+  IEvmChainConfig,
+  IGeneratedWallets,
+  IStakingConfig,
+} from "./types";
+
+export const loadSecrets = async (
+  logger: LogInstance,
+): Promise<IGeneratedWallets> => {
   if (!fs.existsSync("secrets.json")) {
-    ValidatorLog("Secrets Not Found. Generating new Wallets");
+    logger.warn("Secrets Not Found. Generating new Wallets");
     await generateAndSaveWallets();
   }
   let secrets: IGeneratedWallets;
@@ -56,23 +65,38 @@ export async function requireEnoughBalance(
   chains: THandler[],
   storageConfig: IEvmChainConfig,
   stakingConfig: IStakingConfig,
+  secrets: IGeneratedWallets,
+  log: LogInstance,
 ) {
   const stdio = createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  await requireEnoughStorageChainBalance(storageConfig, stdio);
+  const bscHandler =
+    chains.find((chain) => chain.chainIdent === "BSC") ||
+    raise("BSC Chain not found");
 
-  await requireEnoughBalanceInChains(chains, stdio);
+  const otherChains = chains.filter((chain) => chain.chainIdent !== "BSC");
 
-  await requireEnoughStakingBalance(stakingConfig, stdio);
+  await requireEnoughStorageChainBalance(storageConfig, stdio, secrets, log);
+
+  await requireEnoughBalanceInChains(otherChains, stdio, log);
+
+  await requireEnoughStakingBalanceAndChainBalance(
+    stakingConfig,
+    stdio,
+    bscHandler,
+    secrets,
+    log,
+  );
 }
 
 async function requireEnoughStorageChainBalance(
   storageConfig: IEvmChainConfig,
   stdio: Interface,
+  secrets: IGeneratedWallets,
+  log: LogInstance,
 ) {
-  const secrets = await loadSecrets();
   // Check for Storage Funds
   let storageFunded = false;
   while (!storageFunded) {
@@ -81,13 +105,13 @@ async function requireEnoughStorageChainBalance(
       new JsonRpcProvider(storageConfig.rpcURL),
     );
     if (balance < BigInt(storageConfig.intialFund)) {
-      ValidatorLog(
+      log.error(
         `Current balance: ${ethers.formatEther(
           balance,
         )}; Fund chain your wallet ${secrets.evmWallet.address} on ${
           storageConfig.chain
         } with ${ethers.formatEther(
-          balance - BigInt(storageConfig.intialFund),
+          BigInt(storageConfig.intialFund) - balance,
         )} ${storageConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
@@ -96,65 +120,81 @@ async function requireEnoughStorageChainBalance(
     }
     storageFunded = true;
   }
-  ValidatorLog("Storage Has Enough Funds: ✅");
+  log.info("Storage Has Enough Funds: ✅");
 }
 
 async function requireEnoughBalanceInChains(
   chains: THandler[],
   stdio: Interface,
+  log: LogInstance,
 ) {
   for (const chain of chains) {
     let funded = false;
     while (!funded) {
+      if (await chain.selfIsValidator()) {
+        log.warn(
+          `Chain ${chain.chainIdent} is a validator. Skipping Checking for funding.`,
+        );
+        funded = true;
+        continue;
+      }
       const balance = await chain.getBalance();
       const remainingRaw = chain.initialFunds - BigInt(balance);
       if (balance < BigInt(chain.initialFunds)) {
-        ValidatorLog(
+        log.error(
           `Current balance: ${ethers.formatEther(
             balance,
           )}; Fund chain your wallet ${chain.address} on ${
             chain.chainIdent
-          } with ${
-            Number(remainingRaw) / Number(`1${"0".repeat(chain.decimals)}`)
-          } ${chain.currency}.`,
+          } with ${remainingRaw / BigInt(chain.decimals)} ${chain.currency}.`,
         );
         // Sleep for 10 Seconds
         await stdio.question("Press Enter to continue...");
         continue;
       }
       funded = true;
+      log.info(`${chain.chainIdent} Has Enough Funds: ✅`);
     }
-    ValidatorLog(`${chain.chainIdent} Has Enough Funds: ✅`);
   }
 }
 
-async function requireEnoughStakingBalance(
+async function requireEnoughStakingBalanceAndChainBalance(
   stakingConfig: IStakingConfig,
   stdio: Interface,
+  bscHandler: THandler,
+  secrets: IGeneratedWallets,
+  log: LogInstance,
 ): Promise<void> {
-  const secrets = await loadSecrets();
-  // Check for Staking Funds
-  let stakingCoinFunded = false;
-  while (!stakingCoinFunded) {
-    const balance = await getBalance(
-      new VoidSigner(secrets.evmWallet.address),
-      new JsonRpcProvider(stakingConfig.rpcURL),
+  let requireFunds =
+    BigInt(bscHandler.initialFunds) + BigInt(stakingConfig.intialFund);
+  let stakingChainFunded = false;
+
+  if (await bscHandler.selfIsValidator()) {
+    log.info(
+      `Chain ${bscHandler.chainIdent} is already validator. Skipping Checking for funding.`,
     );
-    if (balance < BigInt(stakingConfig.intialFund) * 2n) {
-      ValidatorLog(
+    requireFunds -= BigInt(bscHandler.initialFunds);
+  } else {
+    await requireEnoughBalanceInChains([bscHandler], stdio, log);
+  }
+
+  while (!stakingChainFunded) {
+    const balance = await bscHandler.getBalance();
+    if (balance < requireFunds) {
+      log.error(
         `Current balance: ${ethers.formatEther(
           balance,
-        )}; Fund chain storage your wallet ${secrets.evmWallet.address} on ${
+        )}; Fund staking chain your wallet ${secrets.evmWallet.address} on ${
           stakingConfig.chain
         } with ${ethers.formatEther(
-          balance - BigInt(stakingConfig.intialFund),
+          BigInt(stakingConfig.intialFund) - balance,
         )} ${stakingConfig.nativeCoinSymbol}.`,
       );
       // Sleep for 10 Seconds
       await stdio.question("Press Enter to continue...");
       continue;
     }
-    stakingCoinFunded = true;
+    stakingChainFunded = true;
   }
-  ValidatorLog("Staking Has Enough Funds: ✅");
+  log.info("Staking Has Enough Funds: ✅");
 }

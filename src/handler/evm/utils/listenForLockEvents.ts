@@ -1,11 +1,10 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { JsonRpcProvider } from "ethers";
-import { log } from ".";
-import { EventBuilder } from "../..";
-import { TSupportedChains } from "../../../config";
-import { Bridge, Bridge__factory } from "../../../contractsTypes/evm";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { JsonRpcProvider } from "ethers";
+import type { EventBuilder } from "../..";
+import type { TSupportedChains } from "../../../config";
+import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
+import type { LockEventIter, LogInstance } from "../../types";
 
 const listenForLockEvents = (
   provider: JsonRpcProvider,
@@ -15,8 +14,9 @@ const listenForLockEvents = (
   bc: Bridge,
   chainIdent: TSupportedChains,
   em: EntityManager,
+  logger: LogInstance,
 ) => {
-  return async (builder: EventBuilder, cb: EventIter) => {
+  return async (builder: EventBuilder, cb: LockEventIter) => {
     let lastBlock = lastBlock_;
     while (true) {
       try {
@@ -35,14 +35,13 @@ const listenForLockEvents = (
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
-        const startBlock = lastBlock;
 
         if (!logs.length) {
-          log(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+          logger.trace(
+            `No Transactions found in chain from block: ${lastBlock} to: ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
             chainIdent,
           );
-          lastBlock = latestBlockNumber;
+          lastBlock = latestBlock;
           await em.upsert(Block, {
             chain: chainIdent,
             contractAddress: await bc.getAddress(),
@@ -56,7 +55,7 @@ const listenForLockEvents = (
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               decoded.args.tokenId.toString(),
               decoded.args.destinationChain,
               decoded.args.destinationUserAddress,
@@ -65,10 +64,11 @@ const listenForLockEvents = (
               decoded.args.nftType,
               decoded.args.sourceChain,
               log.transactionHash,
+              chainIdent,
             ),
           );
         }
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlock;
         await em.upsert(Block, {
           chain: chainIdent,
           contractAddress: await bc.getAddress(),
@@ -76,8 +76,8 @@ const listenForLockEvents = (
         });
         await em.flush();
       } catch (e) {
-        log(
-          `${e} while listening for events. Sleeping for 10 seconds`,
+        logger.error(
+          `${e} while listening for lock events. Sleeping for 10 seconds`,
           chainIdent,
         );
         await new Promise((e) => setTimeout(e, 10000));

@@ -1,11 +1,8 @@
-import { Signer, TezosToolkit } from "@taquito/taquito";
-
-import { BridgeStorage } from "../../contractsTypes/evm";
-import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
-
-import { THandler } from "../types";
-
-import { EntityManager } from "@mikro-orm/sqlite";
+import type { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
+import type { THandler } from "../types";
+import type { TezosHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -13,26 +10,46 @@ import {
   nftData,
   selfIsValidator,
   signClaimData,
+  signData,
 } from "./utils";
 
-export async function tezosHandler(
-  provider: TezosToolkit,
-  signer: Signer,
-  bridge: string,
-  storage: BridgeStorage,
-  lastBlock_: number,
-  blockChunks: number,
-  restApiUrl: string,
-  initialFunds: bigint,
-  decimals: number,
-  em: EntityManager,
-): Promise<THandler> {
-  const chainIdent = "TEZOS";
+export async function tezosHandler({
+  provider,
+  signer,
+  bridge,
+  storage,
+  lastBlock_,
+  blockChunks,
+  restApiUrl,
+  initialFunds,
+  em,
+  decimals,
+  chainType,
+  chainIdent,
+  serverLinkHandler,
+  logger,
+}: TezosHandlerParams): Promise<THandler> {
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
-    initialFunds,
-    decimals,
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
+    signData: (buf) => signData(buf, signer),
+    publicKey: await signer.publicKey(),
+    chainType,
+    initialFunds: initialFunds,
     address: await signer.publicKeyHash(),
     currency: "XTZ",
     getBalance: async () => getBalance(provider, await signer.publicKeyHash()),
@@ -46,11 +63,13 @@ export async function tezosHandler(
         bridge,
         restApiUrl,
         em,
+        logger,
       ),
     signClaimData: (data) => signClaimData(data, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, provider),
+    nftData: (tid, ctr) => nftData(tid, ctr, provider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
-    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer),
+    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer, logger),
     chainIdent: chainIdent,
+    decimals: BigInt(10 ** decimals),
   };
 }

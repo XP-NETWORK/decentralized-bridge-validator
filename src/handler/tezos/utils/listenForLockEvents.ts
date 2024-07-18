@@ -1,22 +1,23 @@
-import { TezosToolkit } from "@taquito/taquito";
+import type { TezosToolkit } from "@taquito/taquito";
 
-import { EntityManager } from "@mikro-orm/sqlite";
-import { EventBuilder } from "../..";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { EventIter } from "../../types";
-import { TezosGetContractOperations, log } from "./index";
+import type { LockEventIter, LogInstance } from "../../types";
+import { TezosGetContractOperations } from "./index";
 
 const CHAIN_IDENT = "TEZOS";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
-  cb: EventIter,
+  cb: LockEventIter,
   lastBlock_: number,
   blockChunks: number,
   provider: TezosToolkit,
   bridge: string,
   restApiUrl: string,
   em: EntityManager,
+  logger: LogInstance,
 ) {
   let lastBlock = Number(lastBlock_);
   while (true) {
@@ -37,8 +38,8 @@ export default async function listenForLockEvents(
         });
         const startBlock = lastBlock;
         if (!logs.length) {
-          log(
-            `No Transactions found in chain TEZOS from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+          logger.trace(
+            ` ${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
@@ -54,7 +55,7 @@ export default async function listenForLockEvents(
           const isLocked = log.tag === "locked";
           if (!isLocked) continue;
           const sourceNftContractAddress = extractStrOrAddr(
-            log.source_nft_address,
+            log.payload.source_nft_address,
           );
 
           const {
@@ -64,10 +65,9 @@ export default async function listenForLockEvents(
             token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
-            transaction_hash: transactionHash,
-          } = log;
+          } = log.payload;
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               destinationUserAddress,
@@ -75,7 +75,8 @@ export default async function listenForLockEvents(
               tokenAmount,
               nftType,
               sourceChain,
-              transactionHash,
+              log.transactionId.toString(),
+              CHAIN_IDENT,
             ),
           );
         }
@@ -87,7 +88,9 @@ export default async function listenForLockEvents(
         });
       }
     } catch (e) {
-      log(`${e} while listening for ton events. Sleeping for 10 seconds`);
+      logger.error(
+        `${e} while listening for tezos events. Sleeping for 10 seconds`,
+      );
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

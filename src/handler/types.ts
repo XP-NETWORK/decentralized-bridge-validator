@@ -1,5 +1,6 @@
-import { TSupportedChains } from "../config";
-import { EventBuilder } from "../handler";
+import type { Logger } from "tslog";
+import type { TSupportedChainTypes, TSupportedChains } from "../config";
+import type { EventBuilder } from "../handler";
 
 export type TNftData = {
   name: string;
@@ -25,22 +26,34 @@ export type TNftTransferDetailsObject = {
   fee: string;
 };
 
-export type EventIter = (event: LockEvent) => Promise<void>;
+export type LockEventIter = (event: LockEvent) => Promise<void>;
+export type StakeEventIter = (event: StakeEvent) => Promise<void>;
 
 export interface THandler {
   addSelfAsValidator(): Promise<"success" | "failure">;
-  listenForLockEvents(builder: EventBuilder, cb: EventIter): Promise<void>;
+  listenForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
+  pollForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
   signClaimData(
-    buf: TNftTransferDetailsObject,
+    nfto: TNftTransferDetailsObject,
   ): Promise<{ signer: string; signature: string }>;
+  signData(buf: string): Promise<{ signer: string; signature: string }>;
   nftData(tokenId: string, contract: string): Promise<TNftData>;
   chainIdent: TSupportedChains;
   selfIsValidator(): Promise<boolean>;
   getBalance(): Promise<bigint>;
   initialFunds: bigint;
-  decimals: number;
   currency: string;
   address: string;
+  chainType: TSupportedChainTypes;
+  publicKey: string;
+  decimals: bigint;
+}
+
+export interface TStakingHandler {
+  listenForStakingEvents(
+    builder: EventBuilder,
+    cb: StakeEventIter,
+  ): Promise<void>;
 }
 
 export type LockEvent = {
@@ -53,3 +66,10 @@ export type LockEvent = {
   sourceChain: string;
   transactionHash: string;
 };
+
+export type StakeEvent = {
+  validatorAddress: string;
+  chainType: TSupportedChainTypes;
+}[];
+
+export type LogInstance = Logger<unknown>;

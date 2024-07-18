@@ -1,20 +1,21 @@
 import { hash } from "@stablelib/blake2b";
-import { Signer } from "@taquito/taquito";
+import type { Signer } from "@taquito/taquito";
 import { b58cdecode, b58cencode, prefix } from "@taquito/utils";
-import { BridgeStorage } from "../../../contractsTypes/evm";
-import { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import TezosLog from "./log";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
   bc: BridgeContractType,
   signer: Signer,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     let validatorsCount = (await bc.storage()).validators_count.toNumber();
@@ -70,7 +71,7 @@ export default async function addSelfAsValidator(
       .send();
     return "success";
   } catch (e) {
-    TezosLog("Failed to add self as validator: ", e);
+    logger.error("Failed to add self as validator: ", e);
     return "failure";
   }
 }

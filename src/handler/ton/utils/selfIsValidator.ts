@@ -1,6 +1,6 @@
 import { beginCell } from "@ton/core";
-import { WalletContractV4 } from "@ton/ton";
-import TonWeb from "tonweb";
+import type { WalletContractV4 } from "@ton/ton";
+import type TonWeb from "tonweb";
 
 export default async function selfIsValidator(
   signer: WalletContractV4,

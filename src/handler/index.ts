@@ -89,21 +89,26 @@ export async function listenEvents(
     }
 
     const approvalFn = async () => {
-      return await deps.storage.approveLockNft(
-        inft.transactionHash,
-        chain.chainIdent,
-        signature.signature,
-        signature.signer,
-      );
+      const tx = await (
+        await deps.storage.approveLockNft(
+          inft.transactionHash,
+          chain.chainIdent,
+          signature.signature,
+          signature.signer,
+        )
+      ).wait();
+      if (!tx?.status) throw new Error("Approve failed");
+      return tx;
     };
+
     const approved = await retry(
       approvalFn,
       `Approving transfer ${JSON.stringify(inft, null, 2)}`,
       log,
-      6,
+      100,
     );
     log.info(
-      `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
+      `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
   }
 

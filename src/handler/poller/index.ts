@@ -1,5 +1,6 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 
+import { setTimeout } from "node:timers/promises";
 import type { AxiosInstance } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
 import type { EventBuilder } from "../index";
@@ -27,8 +28,13 @@ export default async function pollForLockEvents(
   ).at(0);
   while (true) {
     const fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-      `/${identifier}?cursor=${lastId?.id ?? 0}`,
+      `/${identifier}?cursor=${(lastId?.id ?? 0) + 1}`,
     );
+    const nTx = fetch.data.length;
+    if (nTx === 0) {
+      logger.info("Got 0 Transactions. Awaiting 10s");
+      await setTimeout(10 * 1000);
+    }
     for (const tx of fetch.data) {
       try {
         await cb(
@@ -49,8 +55,10 @@ export default async function pollForLockEvents(
           identifier,
           `${e} while polling for events. Sleeping for 10 seconds`,
         );
-        await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
+        await setTimeout(10000);
       }
     }
+    logger.info(`Processed ${fetch.data.length} Transactions. Awaiting 10s`);
+    await setTimeout(10 * 1000);
   }
 }

@@ -8,7 +8,7 @@ import type {
 export const bridgeTestChains = [
   {
     chain: "BSC",
-    rpcURL: "https://bsc-testnet.blockpi.network/v1/rpc/public",
+    rpcURL: "https://bsc-testnet-rpc.publicnode.com",
     nativeCoinSymbol: "BNB",
     intialFund: "50000000000000000",
     contractAddress: "0xfdEd3B266B870a4F0f3A0A45e50741a02f4dba15",
@@ -33,7 +33,7 @@ export const bridgeTestChains = [
 
 export const storageTestnetConfig: IEvmChainConfig = {
   chain: "BSC",
-  rpcURL: "https://bsc-testnet.blockpi.network/v1/rpc/public",
+  rpcURL: "https://bsc-testnet-rpc.publicnode.com",
   nativeCoinSymbol: "BNB",
   intialFund: "0",
   contractAddress: "0xb40efe27C71b5022BCa34D5153B8E0C1ca2cEb2d",
@@ -45,7 +45,7 @@ export const storageTestnetConfig: IEvmChainConfig = {
 
 export const stakingTestChain: IStakingConfig = {
   chain: "BSC",
-  rpcURL: "https://bsc-testnet.blockpi.network/v1/rpc/public",
+  rpcURL: "https://bsc-testnet-rpc.publicnode.com",
   coinSymbol: "ERC",
   nativeCoinSymbol: "BNB",
   chainType: "evm",
@@ -78,7 +78,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   },
   stakingConfig: {
     chain: "BSC",
-    rpcURL: "https://bsc-testnet.blockpi.network/v1/rpc/public",
+    rpcURL: "https://bsc-testnet-rpc.publicnode.com",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: "evm",

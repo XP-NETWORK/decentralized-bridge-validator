@@ -1,6 +1,11 @@
-type TCollectionCounterObj = {
-  key: string;
-  value: string;
+type TAptosMapObj<K, V> = {
+  key: K;
+  value: V;
+};
+
+type TCollectionNFTObj = {
+  collection_address: string;
+  token_id: string;
 };
 
 type TValidatorsObj = {
@@ -18,10 +23,10 @@ export type TBridgeData = {
     handle: string;
   };
   nft_collection_tokens: {
-    handle: string;
+    handle: TAptosMapObj<TCollectionNFTObj, string>[];
   };
   nft_collections_counter: {
-    data: TCollectionCounterObj[];
+    data: TAptosMapObj<string, string>[];
   };
   nfts_counter: string;
   original_to_duplicate_mapping: {

@@ -8,6 +8,10 @@ const signClaimData = async (
   privateKey: string,
   pubk: string,
 ) => {
+  const cleanHexAddress = claimData.destinationUserAddress.startsWith("0x")
+    ? claimData.destinationUserAddress.slice(2)
+    : claimData.destinationUserAddress;
+
   const serializer = new BCS.Serializer();
   serializer.serializeStr(claimData.tokenId);
   serializer.serializeBytes(Buffer.from(claimData.sourceChain));
@@ -15,10 +19,9 @@ const signClaimData = async (
   serializer.serializeFixedBytes(
     new HexString(claimData.destinationUserAddress).toUint8Array(),
   );
-  serializer.serializeBytes(Buffer.from(claimData.sourceNftContractAddress));
+  serializer.serializeBytes(hexStringToUint8Array(cleanHexAddress));
   serializer.serializeStr(claimData.name);
   serializer.serializeU64(Number(claimData.royalty));
-  serializer.serializeU64(10000);
   serializer.serializeFixedBytes(
     new HexString(claimData.royaltyReceiver).toUint8Array(),
   );
@@ -34,6 +37,12 @@ const signClaimData = async (
   const signature = await ed.sign(msgHash, Buffer.from(privateKey, "hex"));
 
   return { signature: signature.toString(), signer: pubk };
+};
+
+const hexStringToUint8Array = (hexString: string): Uint8Array => {
+  return new Uint8Array(
+    hexString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [],
+  );
 };
 
 export default signClaimData;

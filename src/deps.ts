@@ -19,8 +19,8 @@ import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import { privateKeyToAccount } from "web3-eth-accounts";
 import type { TSupportedChainTypes, TSupportedChains } from "./config";
-import type {
-  BridgeStorage,
+import {
+  type BridgeStorage,
   BridgeStorage__factory,
 } from "./contractsTypes/evm";
 import { aptosHandler } from "./handler/aptos";

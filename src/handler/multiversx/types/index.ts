@@ -1,8 +1,10 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
-import { UserSigner } from "@multiversx/sdk-wallet/out";
-import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
-import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { UserSigner } from "@multiversx/sdk-wallet/out";
+import type { AxiosInstance } from "axios";
+import type { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
+import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { LogInstance } from "../../types";
 
 export type MultiversXHandlerParams = {
   provider: INetworkProvider;
@@ -17,4 +19,6 @@ export type MultiversXHandlerParams = {
   decimals: number;
   chainType: TSupportedChainTypes;
   chainIdent: TSupportedChains;
+  serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

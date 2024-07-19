@@ -1,8 +1,10 @@
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
-import { EntityManager } from "@mikro-orm/sqlite";
-import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
-import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import type { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { AxiosInstance } from "axios";
+import type { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
+import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { LogInstance } from "../../types";
 
 export type CosmosHandlerParams = {
   chainIdent: TSupportedChains;
@@ -19,4 +21,6 @@ export type CosmosHandlerParams = {
   currency: string;
   decimals: number;
   chainType: TSupportedChainTypes;
+  serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

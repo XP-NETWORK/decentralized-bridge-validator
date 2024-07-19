@@ -1,7 +1,7 @@
 import { sha256 } from "@noble/hashes/sha256";
 import * as secp256k1 from "@noble/secp256k1";
 
-import { TNftTransferDetailsObject } from "../../types";
+import type { TNftTransferDetailsObject } from "../../types";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,

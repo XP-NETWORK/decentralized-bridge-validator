@@ -1,8 +1,7 @@
-import chalk from "chalk";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
-import { IGeneratedWallets, IStakingConfig } from "../types";
-import { THandler } from "./types";
+import type { IGeneratedWallets, IStakingConfig } from "../types";
+import type { LogInstance, THandler } from "./types";
 
 export const confirmationCountNeeded = (validatorCount: number) => {
   const twoByThree = 0.666666667;
@@ -23,14 +22,12 @@ export function waitForMSWithMsg(ms: number, msg: string): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function ValidatorLog(...log: unknown[]) {
-  console.log(chalk.bgGray("VALIDATOR:\t"), ...log);
-}
-
-export async function checkOrAddSelfAsVal(chains: THandler[]) {
+export async function checkOrAddSelfAsVal(
+  chains: THandler[],
+  log: LogInstance,
+) {
   for (const chain of chains) {
     const selfIsValidator = await chain.selfIsValidator();
-    ValidatorLog(`Validator is already added to ${chain.chainIdent}`);
     if (!selfIsValidator) {
       const added = await chain.addSelfAsValidator();
       if (added === "failure") {
@@ -38,24 +35,23 @@ export async function checkOrAddSelfAsVal(chains: THandler[]) {
           `Failed to add self as validator for chain ${chain.chainIdent}`,
         );
       }
-    }
+    } else log.info(`Validator is already added to ${chain.chainIdent}`);
   }
 }
 
 export async function retry<T>(
   func: () => Promise<T>,
   ctx: string,
+  log: LogInstance,
   retries = 3,
 ): Promise<T> {
   return await func().catch(async (err) => {
     if (retries === 0) {
       throw err;
     }
-    ValidatorLog(
-      `Context: ${ctx} - Retrying ${retries} more times. Error: ${err}`,
-    );
+    log.info(`Context: ${ctx} - Retrying ${retries} more times. Error: ${err}`);
     await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
-    return retry(func, ctx, retries - 1);
+    return retry(func, ctx, log, retries - 1);
   });
 }
 
@@ -63,6 +59,7 @@ export async function stakeTokens(
   conf: IStakingConfig,
   secrets: IGeneratedWallets,
   chains: THandler[],
+  logger: LogInstance,
 ) {
   const others = chains.filter((e) => e.chainType !== "evm");
   const provider = new JsonRpcProvider(conf.rpcURL);
@@ -71,34 +68,33 @@ export async function stakeTokens(
   const token = ERC20__factory.connect(conf.coinAddress, signer);
   const staked = await staker.stakingBalances(secrets.evmWallet.address);
   if (staked > 0n) {
-    ValidatorLog(
+    logger.info(
       `Already staked ${staked} ${conf.coinSymbol} in contract ${conf.contractAddress}`,
     );
     return;
   }
-  const amtToStake = conf.intialFund;
+  const amtToStake = await staker.stakingAmount();
 
   const approve = await (
-    await token.approve(conf.contractAddress, amtToStake)
+    await token.approve(conf.contractAddress, amtToStake * amtToStake)
   ).wait();
   if (!approve || approve.status !== 1) {
     throw new Error("Failed to approve staking");
   }
 
-  const staking = await (
-    await staker.stakeERC20([
-      {
-        validatorAddress: secrets.evmWallet.address,
-        chainType: "evm",
-      },
-      ...others.map((e) => {
-        return {
-          validatorAddress: e.publicKey,
-          chainType: e.chainType,
-        };
-      }),
-    ])
-  ).wait();
+  const data = [
+    {
+      validatorAddress: secrets.evmWallet.address,
+      chainType: "evm",
+    },
+    ...others.map((e) => {
+      return {
+        validatorAddress: e.publicKey,
+        chainType: e.chainType,
+      };
+    }),
+  ];
+  const staking = await (await staker.stakeERC20(data)).wait();
 
   if (!staking || staking.status !== 1) {
     throw new Error("Failed to stake");

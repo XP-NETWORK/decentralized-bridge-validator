@@ -2,18 +2,18 @@ import {
   Account,
   Address,
   ResultsParser,
-  SmartContract,
+  type SmartContract,
 } from "@multiversx/sdk-core";
 import { AddressValue, BytesValue } from "@multiversx/sdk-core/out";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
-import { UserSigner } from "@multiversx/sdk-wallet/out";
-import { BridgeStorage } from "../../../contractsTypes/evm";
+import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { UserSigner } from "@multiversx/sdk-wallet/out";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import MxLog from "./log";
 
 export default async function addSelfAsValidator(
   bc: SmartContract,
@@ -21,6 +21,7 @@ export default async function addSelfAsValidator(
   storage: BridgeStorage,
   signer: UserSigner,
   provider: INetworkProvider,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     const vc = async (): Promise<bigint> => {
@@ -97,7 +98,7 @@ export default async function addSelfAsValidator(
     await provider.sendTransaction(transaction);
     return "success";
   } catch (error) {
-    MxLog("Failed to add self as validator: ", error);
+    logger.error("Failed to add self as validator: ", error);
     return "failure";
   }
 }

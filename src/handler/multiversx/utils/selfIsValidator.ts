@@ -1,10 +1,10 @@
 import {
   BytesValue,
   ResultsParser,
-  SmartContract,
+  type SmartContract,
 } from "@multiversx/sdk-core/out";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
-import { UserSigner } from "@multiversx/sdk-wallet/out";
+import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { UserSigner } from "@multiversx/sdk-wallet/out";
 
 export default async function selfIsValidator(
   bc: SmartContract,

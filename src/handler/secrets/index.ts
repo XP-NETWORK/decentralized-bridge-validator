@@ -1,5 +1,7 @@
-import { THandler } from "../types";
-import { SecretsHandlerParams } from "./types";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
+import type { THandler } from "../types";
+import type { SecretsHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -25,9 +27,25 @@ export function secretsHandler({
   decimals,
   chainIdent,
   chainType,
+  serverLinkHandler,
+  logger,
 }: SecretsHandlerParams): THandler {
   return {
     publicKey,
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, privateKey, publicKey),
     chainType,
     initialFunds: initialFunds,
@@ -46,6 +64,7 @@ export function secretsHandler({
         blockChunks,
         bridge,
         em,
+        logger,
       ),
     addSelfAsValidator: () =>
       addSelfAsValidator(
@@ -55,9 +74,10 @@ export function secretsHandler({
         bridge,
         bridgeCodeHash,
         wallet,
+        logger,
       ),
     getBalance: () => getBalance(client),
-    nftData: (tid, ctr) => nftData(tid, ctr, client),
+    nftData: (tid, ctr) => nftData(tid, ctr, client, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

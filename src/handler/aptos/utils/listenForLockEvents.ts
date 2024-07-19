@@ -67,7 +67,7 @@ const listenForLockEvents = async (
         const transactionHash = event.transaction_version;
 
         await cb(
-          builder.nftLocked(
+          await builder.nftLocked(
             tokenId,
             destinationChain,
             userAddress,
@@ -76,6 +76,7 @@ const listenForLockEvents = async (
             nftType,
             sourceChain,
             transactionHash,
+            CHAIN_IDENT,
           ),
         );
       }

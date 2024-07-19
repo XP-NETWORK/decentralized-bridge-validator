@@ -1,7 +1,9 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { SecretNetworkClient, Wallet } from "secretjs";
-import { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
-import { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { AxiosInstance } from "axios";
+import type { SecretNetworkClient, Wallet } from "secretjs";
+import type { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
+import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { LogInstance } from "../../types";
 
 export type SecretsHandlerParams = {
   client: SecretNetworkClient;
@@ -18,4 +20,6 @@ export type SecretsHandlerParams = {
   decimals: number;
   chainType: TSupportedChainTypes;
   chainIdent: TSupportedChains;
+  serverLinkHandler: AxiosInstance | undefined;
+  logger: LogInstance;
 };

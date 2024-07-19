@@ -1,14 +1,15 @@
-import { TezosToolkit } from "@taquito/taquito";
-import { Tzip16Module, bytes2Char, tzip16 } from "@taquito/tzip16";
+import type { TezosToolkit } from "@taquito/taquito";
+import { Tzip16Module, bytesToString, tzip16 } from "@taquito/tzip16";
 
-import { NFTContractType } from "../../../contractsTypes/tezos/NFT.types";
+import type { NFTContractType } from "../../../contractsTypes/tezos/NFT.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
-import TezosLog from "./log";
+import type { LogInstance } from "../../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
   provider: TezosToolkit,
+  logger: LogInstance,
 ) {
   const getNftTokenMetaData = async (contract: string, tokenId: bigint) => {
     const nftContract = await provider.contract.at<NFTContractType>(contract);
@@ -17,7 +18,7 @@ export default async function nftData(
       await nftContract.storage()
     ).token_metadata.get(tas.nat(tokenId.toString()));
     const metaDataInHex = tokenMetaData.token_info.get("");
-    return bytes2Char(metaDataInHex);
+    return bytesToString(metaDataInHex);
   };
   const tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId));
   let name = "NTEZOS";
@@ -27,7 +28,7 @@ export default async function nftData(
     const md = nftContract.tzip16();
     name = (await md.metadataName()) ?? name;
   } catch (e) {
-    TezosLog("error getting name Tezos");
+    logger.error("error getting name Tezos");
   }
   let symbol = "NTEZOS";
   try {
@@ -40,7 +41,7 @@ export default async function nftData(
     }
     symbol = JSON.parse(tokenMd).symbol ?? symbol;
   } catch (e) {
-    TezosLog("error getting symbol Tezos", e);
+    logger.error("error getting symbol Tezos", e);
   }
   let royalty = 0n;
   try {
@@ -65,7 +66,7 @@ export default async function nftData(
     const rate = Object.values(metaData.royalties.shares)[0];
     royalty = BigInt((rate / max_percentage) * 10000);
   } catch (e) {
-    TezosLog("Error getting royalty Tezos");
+    logger.error("Error getting royalty Tezos");
   }
   return {
     metadata: tokenMd,

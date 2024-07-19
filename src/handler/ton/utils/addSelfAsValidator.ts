@@ -1,25 +1,31 @@
-import { Address, OpenedContract, Sender, beginCell, toNano } from "@ton/core";
-import { Dictionary, WalletContractV4 } from "@ton/ton";
-import TonWeb from "tonweb";
-import { BridgeStorage } from "../../../contractsTypes/evm";
 import {
+  Address,
+  type OpenedContract,
+  type Sender,
+  beginCell,
+  toNano,
+} from "@ton/core";
+import { Dictionary, type WalletContractV4 } from "@ton/ton";
+import TonWeb from "tonweb";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type {
   Bridge,
   NewValidator,
   SignerAndSignature,
 } from "../../../contractsTypes/ton/tonBridge";
-
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import TonLog from "./log";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
   bc: OpenedContract<Bridge>,
   signer: WalletContractV4,
   walletSender: Sender,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
@@ -98,7 +104,7 @@ export default async function addSelfAsValidator(
     );
     return "success";
   } catch (e) {
-    TonLog("Failed to add self as validator: ", e);
+    logger.error("Failed to add self as validator: ", e);
     return "failure";
   }
 }

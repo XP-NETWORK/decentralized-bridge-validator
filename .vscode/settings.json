@@ -1,0 +1,6 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.sortImports": "always"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+}

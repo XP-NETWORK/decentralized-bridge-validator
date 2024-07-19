@@ -1,11 +1,10 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { JsonRpcProvider } from "ethers";
-import { log } from ".";
-import { EventBuilder } from "../..";
-import { TSupportedChains } from "../../../config";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { JsonRpcProvider } from "ethers";
+import type { EventBuilder } from "../..";
+import type { TSupportedChains } from "../../../config";
 import { ERC20Staking__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import { StakeEventIter } from "../../types";
+import type { LogInstance, StakeEventIter } from "../../types";
 
 const listenForStakingEvents = (
   provider: JsonRpcProvider,
@@ -14,6 +13,7 @@ const listenForStakingEvents = (
   blockChunks: number,
   chainIdent: TSupportedChains,
   em: EntityManager,
+  logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: StakeEventIter) => {
     let lastBlock = lastBlock_;
@@ -39,9 +39,8 @@ const listenForStakingEvents = (
         const startBlock = lastBlock;
 
         if (!logs.length) {
-          log(
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
-            chainIdent,
+          logger.trace(
+            `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
@@ -66,7 +65,7 @@ const listenForStakingEvents = (
         });
         await em.flush();
       } catch (e) {
-        log(
+        logger.error(
           `${e} while listening for events. Sleeping for 10 seconds`,
           chainIdent,
         );

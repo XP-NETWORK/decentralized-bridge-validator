@@ -1,13 +1,17 @@
-import { SecretNetworkClient, Wallet, pubkeyToAddress } from "secretjs";
+import {
+  type SecretNetworkClient,
+  type Wallet,
+  pubkeyToAddress,
+} from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
-import { BridgeStorage } from "../../../contractsTypes/evm";
-import { AddValidatorType } from "../../../contractsTypes/secret/secretBridge";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { AddValidatorType } from "../../../contractsTypes/secret/secretBridge";
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import SecretLog from "./log";
 
 export default async function addSelfAsValidator(
   publicKey: string,
@@ -16,6 +20,7 @@ export default async function addSelfAsValidator(
   bridge: string,
   bridgeCodeHash: string,
   wallet: Wallet,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
@@ -86,7 +91,7 @@ export default async function addSelfAsValidator(
 
     return "success";
   } catch (e) {
-    SecretLog("Failed to add self as validator: ", e);
+    logger.error("Failed to add self as validator: ", e);
     return "failure";
   }
 }

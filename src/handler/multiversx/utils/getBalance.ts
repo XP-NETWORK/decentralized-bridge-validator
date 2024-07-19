@@ -1,5 +1,5 @@
-import { IAddress } from "@multiversx/sdk-core/out";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { IAddress } from "@multiversx/sdk-core/out";
+import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 
 export default async function getBalance(
   provider: INetworkProvider,

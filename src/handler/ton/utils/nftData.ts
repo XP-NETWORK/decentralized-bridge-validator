@@ -1,5 +1,5 @@
-import { Address, TonClient } from "@ton/ton";
-import axios, { AxiosInstance } from "axios";
+import { Address, type TonClient } from "@ton/ton";
+import axios, { type AxiosInstance } from "axios";
 import { raise } from "..";
 import { NftCollection } from "../../../contractsTypes/ton/tonNftCollection";
 import { NftItem } from "../../../contractsTypes/ton/tonNftContract";

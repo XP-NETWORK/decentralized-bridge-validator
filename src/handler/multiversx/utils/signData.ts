@@ -1,4 +1,4 @@
-import { UserSigner } from "@multiversx/sdk-wallet/out";
+import type { UserSigner } from "@multiversx/sdk-wallet/out";
 
 export default async function signData(buf: string, signer: UserSigner) {
   return {

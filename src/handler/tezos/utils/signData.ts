@@ -1,6 +1,6 @@
 import { hash } from "@stablelib/blake2b";
 
-import { MichelCodecPacker, Signer } from "@taquito/taquito";
+import { MichelCodecPacker, type Signer } from "@taquito/taquito";
 import { b58cdecode, b58cencode, prefix } from "@taquito/utils";
 import { tas } from "xp-decentralized-sdk/dist/contractsTypes/tezos/type-aliases";
 

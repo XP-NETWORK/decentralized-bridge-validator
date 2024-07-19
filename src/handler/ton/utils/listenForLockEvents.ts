@@ -1,11 +1,10 @@
-import { EntityManager } from "@mikro-orm/sqlite";
-import { Address, TonClient } from "@ton/ton";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import { Address, type TonClient } from "@ton/ton";
 import { raise } from "..";
-import { EventBuilder } from "../..";
+import type { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import log from "./log";
+import type { LockEventIter, LogInstance } from "../../types";
 
 const CHAIN_IDENT = "TON";
 
@@ -16,6 +15,7 @@ export default async function listenForLockEvents(
   client: TonClient,
   bridge: string,
   em: EntityManager,
+  logger: LogInstance,
 ) {
   let lastBlock = Number(lastBlock_);
   while (true) {
@@ -25,7 +25,7 @@ export default async function listenForLockEvents(
         { limit: 1 },
       );
       if (Number(latestTx[0].lt) === lastBlock) {
-        log(
+        logger.trace(
           `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
@@ -43,8 +43,8 @@ export default async function listenForLockEvents(
       );
 
       if (!transactions.length) {
-        log(
-          `No Transactions found in chain from block: ${lastBlock} to: ${latestTx[0].lt.toString()}. Waiting for 10 Seconds before looking for new transactions`,
+        logger.trace(
+          ` ${lastBlock} -> ${latestTx[0].lt.toString()}: 0 TXs. Awaiting 10s`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
         lastBlock = Number(latestTx[0].lt);
@@ -84,7 +84,7 @@ export default async function listenForLockEvents(
           };
 
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId.toString(),
               destinationChain.asSlice().loadStringRefTail(),
               destinationUserAddress.asSlice().loadStringRefTail(),
@@ -93,6 +93,7 @@ export default async function listenForLockEvents(
               nftType,
               sourceChain,
               Buffer.from(tx.hash()).toString("base64"),
+              CHAIN_IDENT,
             ),
           );
         }
@@ -104,7 +105,9 @@ export default async function listenForLockEvents(
         lastBlock: lastBlock,
       });
     } catch (e) {
-      log(`${e} while listening for ton events. Sleeping for 10 seconds`);
+      logger.error(
+        `${e} while listening for ton events. Sleeping for 10 seconds`,
+      );
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

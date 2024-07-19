@@ -1,16 +1,15 @@
-import { EntityManager } from "@mikro-orm/sqlite";
+import type { EntityManager } from "@mikro-orm/sqlite";
 import {
-  TransactionEventsParser,
-  TransactionsConverter,
+  type TransactionEventsParser,
+  type TransactionsConverter,
   findEventsByFirstTopic,
 } from "@multiversx/sdk-core/out";
-import { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
-import { Axios } from "axios";
-import { EventBuilder } from "../..";
+import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { Axios } from "axios";
+import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import { Root } from "../types/gateway";
-import MxLog from "./log";
+import type { LockEventIter, LogInstance } from "../../types";
+import type { Root } from "../types/gateway";
 
 const CHAIN_IDENT = "MULTIVERSX";
 const WAIT_TIME = 10000;
@@ -26,6 +25,7 @@ export default async function listenForLockEvents(
   em: EntityManager,
   converter: TransactionsConverter,
   eventsParser: TransactionEventsParser,
+  logger: LogInstance,
 ) {
   let lastBlock_ = lastBlock;
   while (true) {
@@ -42,9 +42,7 @@ export default async function listenForLockEvents(
         );
 
         if (!txsForBridge.length) {
-          MxLog(
-            `No Transactions found in chain from block: ${lastBlock_}. Waiting for 10 Seconds before looking for new transactions`,
-          );
+          logger.trace(`No TX Since: ${lastBlock_}. Awaiting 10s`);
           const lastestStatus = await provider.getNetworkStatus();
           const lastNonce = lastestStatus.HighestFinalNonce;
           lastBlock_ = lastBlock_ + 1;
@@ -74,13 +72,14 @@ export default async function listenForLockEvents(
             transactionOutcomeLock,
             "Locked",
           );
+          if (!event) continue;
           const parsed = eventsParser.parseEvent({ event });
           const destinationChain = parsed.destination_chain.toString("utf-8");
           const sourceChain = parsed.chain.toString("utf-8");
           const tokenId = parsed.token_id.toString();
           const tokenAmount = parsed.token_amount.toString();
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               parsed.destination_user_address.toString("utf-8"),
@@ -89,6 +88,7 @@ export default async function listenForLockEvents(
               parsed.nft_type.toString("utf-8"),
               sourceChain,
               tx.hash,
+              CHAIN_IDENT,
             ),
           );
         }
@@ -101,7 +101,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      MxLog(`${e} while listening for events. Sleeping for 10 seconds`);
+      logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
       await new Promise<undefined>((resolve) => setTimeout(resolve, WAIT_TIME));
     }
   }

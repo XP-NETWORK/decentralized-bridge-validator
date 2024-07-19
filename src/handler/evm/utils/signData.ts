@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Web3Account } from "web3-eth-accounts";
+import type { Web3Account } from "web3-eth-accounts";
 
 export default function signData(buf: string, signer: Web3Account) {
   return Promise.resolve({

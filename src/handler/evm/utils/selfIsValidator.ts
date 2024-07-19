@@ -1,5 +1,5 @@
-import { Wallet } from "ethers";
-import { Bridge } from "../../../contractsTypes/evm";
+import type { Wallet } from "ethers";
+import type { Bridge } from "../../../contractsTypes/evm";
 
 const selfIsValidator = (bc: Bridge, signer: Wallet) => {
   return async () => {

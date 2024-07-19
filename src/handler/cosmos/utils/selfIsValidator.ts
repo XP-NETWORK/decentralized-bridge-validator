@@ -1,4 +1,4 @@
-import { Bridge } from "@xp/cosmos-client";
+import type { Bridge } from "@xp/cosmos-client";
 
 export default async function selfIsValidator(
   client: Bridge.BridgeClient,

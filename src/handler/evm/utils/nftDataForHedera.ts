@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from "ethers";
+import type { JsonRpcProvider } from "ethers";
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 import { RoyaltyInfoProxy__factory } from "../../../contractsTypes/hedera/RoyaltyInfoProxy__factory";
 

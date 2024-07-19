@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from "ethers";
+import type { JsonRpcProvider } from "ethers";
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 import { MAX_SALE_PRICE } from "../constants";
 

@@ -1,9 +1,9 @@
 import { beginCell } from "@ton/core";
 import { sign } from "@ton/crypto";
-import { WalletContractV4 } from "@ton/ton";
+import type { WalletContractV4 } from "@ton/ton";
 import TonWeb from "tonweb";
 import {
-  NewValidator,
+  type NewValidator,
   storeNewValidator,
 } from "../../../contractsTypes/ton/tonBridge";
 

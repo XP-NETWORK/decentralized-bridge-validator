@@ -1,4 +1,4 @@
-import { JsonRpcProvider, Signer } from "ethers";
+import type { JsonRpcProvider, Signer } from "ethers";
 
 export default async function getBalance(
   signer: Signer,

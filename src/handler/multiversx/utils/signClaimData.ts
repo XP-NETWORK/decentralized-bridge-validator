@@ -8,10 +8,10 @@ import {
   Struct,
 } from "@multiversx/sdk-core/out";
 import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
-import { UserSigner } from "@multiversx/sdk-wallet/out";
+import type { UserSigner } from "@multiversx/sdk-wallet/out";
 import { keccak256 } from "js-sha3";
 import { MXClaimDataSchema } from "../../../contractsTypes/multiversx/schema";
-import { TNftTransferDetailsObject } from "../../types";
+import type { TNftTransferDetailsObject } from "../../types";
 
 export default async function signClaimData(
   buf: TNftTransferDetailsObject,

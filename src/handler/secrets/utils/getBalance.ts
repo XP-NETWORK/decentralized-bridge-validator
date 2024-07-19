@@ -1,4 +1,4 @@
-import { SecretNetworkClient } from "secretjs";
+import type { SecretNetworkClient } from "secretjs";
 
 export default async function getBalance(client: SecretNetworkClient) {
   const response = await client.query.bank.balance({

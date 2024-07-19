@@ -1,92 +1,116 @@
-import { TSupportedChainTypes, TSupportedChains } from "../config";
-import { BridgeStorage } from "../contractsTypes/evm";
-import {
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { AxiosInstance } from "axios";
+import type { TSupportedChainTypes, TSupportedChains } from "../config";
+import type { BridgeStorage } from "../contractsTypes/evm";
+import { LockedEvent } from "../persistence/entities/locked";
+import type {
+  LockEvent,
+  LogInstance,
   StakeEvent,
   THandler,
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { ValidatorLog, retry } from "./utils";
+import { retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
+  em: EntityManager,
+  serverLinkHandler: AxiosInstance | undefined,
+  log: LogInstance,
 ) {
   const map = new Map<TSupportedChains, THandler>();
   const deps = { storage };
 
-  const builder = eventBuilder();
+  const builder = eventBuilder(em);
+
+  async function pollEvents(chain: THandler) {
+    log.info(`Polling for events on: ${chain.chainIdent}`);
+    chain.pollForLockEvents(builder, async (ev) => {
+      processEvent(chain, ev);
+    });
+  }
+
+  async function processEvent(chain: THandler, ev: LockEvent) {
+    const sourceChain = map.get(ev.sourceChain as TSupportedChains);
+    if (!sourceChain) {
+      log.warn(
+        `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
+      );
+      return;
+    }
+    const destinationChain = map.get(ev.destinationChain as TSupportedChains);
+    if (!destinationChain) {
+      log.warn(
+        `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
+      );
+      return;
+    }
+
+    const nftDetails = await sourceChain.nftData(
+      ev.tokenId,
+      ev.sourceNftContractAddress,
+    );
+    const fee = await deps.storage.chainFee(ev.destinationChain);
+    const royaltyReceiver = await deps.storage.chainRoyalty(
+      ev.destinationChain,
+    );
+
+    const inft: TNftTransferDetailsObject = {
+      destinationChain: ev.destinationChain,
+      destinationUserAddress: ev.destinationUserAddress,
+      fee: fee.toString(),
+      metadata: nftDetails.metadata,
+      name: nftDetails.name,
+      nftType: ev.nftType,
+      royalty: nftDetails.royalty.toString(),
+      royaltyReceiver,
+      sourceChain: ev.sourceChain,
+      sourceNftContractAddress: ev.sourceNftContractAddress,
+      symbol: nftDetails.symbol,
+      tokenAmount: ev.tokenAmount,
+      tokenId: ev.tokenId,
+      transactionHash: ev.transactionHash,
+    };
+    log.trace(inft);
+
+    const signature = await destinationChain.signClaimData(inft);
+
+    const alreadyProcessed = await deps.storage
+      .usedSignatures(signature.signature)
+      .catch(() => false);
+
+    if (alreadyProcessed) {
+      log.warn(
+        `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
+      );
+      return;
+    }
+
+    const approvalFn = async () => {
+      return await deps.storage.approveLockNft(
+        inft.transactionHash,
+        chain.chainIdent,
+        signature.signature,
+        signature.signer,
+      );
+    };
+    const approved = await retry(
+      approvalFn,
+      `Approving transfer ${JSON.stringify(inft, null, 2)}`,
+      log,
+      6,
+    );
+    log.info(
+      `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
+    );
+  }
 
   async function poolEvents(chain: THandler) {
-    ValidatorLog(`Listening for events on ${chain.chainIdent}`);
+    log.info(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
-      const sourceChain = map.get(ev.sourceChain as TSupportedChains);
-      if (!sourceChain)
-        return ValidatorLog(
-          `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
-        );
-      const destinationChain = map.get(ev.destinationChain as TSupportedChains);
-      if (!destinationChain)
-        return ValidatorLog(
-          `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
-        );
-
-      const nftDetails = await sourceChain.nftData(
-        ev.tokenId,
-        ev.sourceNftContractAddress,
-      );
-      const fee = await deps.storage.chainFee(ev.destinationChain);
-      const royaltyReceiver = await deps.storage.chainRoyalty(
-        ev.destinationChain,
-      );
-
-      const inft: TNftTransferDetailsObject = {
-        destinationChain: ev.destinationChain,
-        destinationUserAddress: ev.destinationUserAddress,
-        fee: fee.toString(),
-        metadata: nftDetails.metadata,
-        name: nftDetails.name,
-        nftType: ev.nftType,
-        royalty: nftDetails.royalty.toString(),
-        royaltyReceiver,
-        sourceChain: ev.sourceChain,
-        sourceNftContractAddress: ev.sourceNftContractAddress,
-        symbol: nftDetails.symbol,
-        tokenAmount: ev.tokenAmount,
-        tokenId: ev.tokenId,
-        transactionHash: ev.transactionHash,
-      };
-      console.log(inft);
-
-      const signature = await destinationChain.signClaimData(inft);
-
-      const alreadyProcessed = await deps.storage
-        .usedSignatures(signature.signature)
-        .catch(() => false);
-
-      if (alreadyProcessed) {
-        ValidatorLog(
-          `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
-        );
-        return;
-      }
-
-      const approvalFn = async () => {
-        return await deps.storage.approveLockNft(
-          inft.transactionHash,
-          chain.chainIdent,
-          signature.signature,
-          signature.signer,
-        );
-      };
-      const approved = await retry(
-        approvalFn,
-        `Approving transfer ${JSON.stringify(inft, null, 2)}`,
-        6,
-      );
-      ValidatorLog(
-        `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved.hash}`,
-      );
+      processEvent(chain, ev);
     });
   }
 
@@ -95,7 +119,7 @@ export async function listenEvents(
       throw Error("Duplicate chain nonce!");
     }
     map.set(chain.chainIdent, chain);
-    poolEvents(chain);
+    serverLinkHandler === undefined ? poolEvents(chain) : pollEvents(chain);
   }
 }
 
@@ -103,14 +127,16 @@ export async function listenStakeEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
+  em: EntityManager,
+  log: LogInstance,
 ) {
   const map = new Map<TSupportedChainTypes, THandler>();
   const deps = { storage };
 
-  const builder = eventBuilder();
+  const builder = eventBuilder(em);
 
   async function poolEvents(chain: TStakingHandler) {
-    ValidatorLog("Listening for Staking Events");
+    log.info("Listening for Staking Events");
     chain.listenForStakingEvents(builder, async (ev) => {
       const signatures: {
         validatorAddress: string;
@@ -138,17 +164,21 @@ export async function listenStakeEvents(
         throw new Error("Unreachable State");
       }
 
-      const approvalFn = async () =>
-        await deps.storage.approveStake(
+      const approvalFn = async () => {
+        const tx = await deps.storage.approveStake(
           newEvmValidator.validatorAddress,
           signatures,
         );
+        if (!(await tx.wait())?.status) throw new Error("TxFailed");
+        return tx;
+      };
       const approved = await retry(
         approvalFn,
         `Approving stake ${JSON.stringify(ev, null, 2)}`,
+        log,
         6,
       );
-      ValidatorLog(
+      log.info(
         `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
       );
     });
@@ -167,12 +197,12 @@ export async function listenStakeEvents(
   poolEvents(stakingChain);
 }
 
-export function eventBuilder() {
+export function eventBuilder(em: EntityManager) {
   return {
     staked(stake: StakeEvent) {
       return stake;
     },
-    nftLocked(
+    async nftLocked(
       tokenId: string,
       destinationChain: string,
       destinationUserAddress: string,
@@ -181,7 +211,26 @@ export function eventBuilder() {
       nftType: string,
       sourceChain: string,
       transactionHash: string,
+      listenerChain: string,
     ) {
+      const found = await em.findOne(LockedEvent, {
+        transactionHash: transactionHash,
+        listenerChain,
+      });
+      if (!found) {
+        const ev = new LockedEvent(
+          tokenId,
+          destinationChain,
+          destinationUserAddress,
+          sourceNftContractAddress,
+          tokenAmount,
+          nftType,
+          sourceChain,
+          transactionHash,
+          listenerChain,
+        );
+        await em.persistAndFlush(ev);
+      }
       return {
         tokenAmount,
         tokenId,

@@ -1,5 +1,5 @@
-import { AccountData } from "@cosmjs/amino";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import type { AccountData } from "@cosmjs/amino";
+import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 export default async function getBalance(
   client: SigningCosmWasmClient,

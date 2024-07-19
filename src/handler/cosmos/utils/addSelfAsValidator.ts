@@ -1,20 +1,21 @@
-import { AccountData } from "@cosmjs/amino";
-import { Bridge } from "@xp/cosmos-client";
+import type { AccountData } from "@cosmjs/amino";
+import type { Bridge } from "@xp/cosmos-client";
 import { pubkeyToAddress } from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
-import { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
-import { log } from "./index";
 
 export default async function addSelfAsValidator(
   identifier: string,
   storage: BridgeStorage,
   bridge: Bridge.BridgeClient,
   wallet: AccountData,
+  logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
@@ -65,7 +66,7 @@ export default async function addSelfAsValidator(
     });
     return "success";
   } catch (e) {
-    log(identifier, "Failed to add self as validator: ", e);
+    logger.error(identifier, "Failed to add self as validator: ", e);
     return "failure";
   }
 }

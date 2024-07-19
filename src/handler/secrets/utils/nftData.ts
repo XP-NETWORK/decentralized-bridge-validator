@@ -1,10 +1,12 @@
-import { SecretNetworkClient } from "secretjs";
+import type { SecretNetworkClient } from "secretjs";
+import type { LogInstance } from "../../types";
 import { retry } from "../../utils";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
   client: SecretNetworkClient,
+  log: LogInstance,
 ) {
   const data = await retry(
     async () => {
@@ -16,6 +18,7 @@ export default async function nftData(
       ).contract_info;
     },
     `Trying to fetch Nft Data for ${contract}`,
+    log,
     5,
   ).catch(() => undefined);
 
@@ -36,6 +39,7 @@ export default async function nftData(
       ).royalty_info.royalty_info;
     },
     `Trying to fetch Royalty Info for ${contract}`,
+    log,
     5,
   ).catch(() => undefined);
   const decimal_places_in_rates = royalty_info?.decimal_places_in_rates ?? 0;
@@ -59,6 +63,7 @@ export default async function nftData(
       ).nft_info;
     },
     `Trying to fetch Nft Info for ${contract}`,
+    log,
     5,
   ).catch(() => undefined);
   const tokenURI =

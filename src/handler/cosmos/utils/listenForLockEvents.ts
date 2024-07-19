@@ -1,10 +1,9 @@
-import { EntityManager } from "@mikro-orm/sqlite";
+import type { EntityManager } from "@mikro-orm/sqlite";
 
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { EventBuilder } from "../..";
+import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
-import log from "./log";
+import type { LockEventIter, LogInstance } from "../../types";
 
 export default async function listenForLockEvents(
   identifier: string,
@@ -15,6 +14,7 @@ export default async function listenForLockEvents(
   blockChunks: number,
   bridge: string,
   em: EntityManager,
+  log: LogInstance,
 ) {
   let lastBlock = lastBlock_;
   while (true)
@@ -32,9 +32,8 @@ export default async function listenForLockEvents(
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {
-          log(
-            identifier,
-            `No Transactions found in chain from block: ${startBlock} to: ${latestBlockNumber}. Waiting for 10 Seconds before looking for new transactions`,
+          log.info(
+            `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;
           await em.upsert(Block, {
@@ -64,7 +63,7 @@ export default async function listenForLockEvents(
             source_chain: sourceChain, // Source chain of NFT
           } = parsedLog;
           await cb(
-            builder.nftLocked(
+            await builder.nftLocked(
               tokenId,
               destinationChain,
               destinationUserAddress,
@@ -73,6 +72,7 @@ export default async function listenForLockEvents(
               nftType,
               sourceChain,
               log.hash,
+              identifier,
             ),
           );
         }
@@ -85,7 +85,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      log(
+      log.error(
         identifier,
         `${e} while listening for events. Sleeping for 10 seconds`,
       );

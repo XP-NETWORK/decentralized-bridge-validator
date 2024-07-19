@@ -1,4 +1,4 @@
-import { TezosToolkit } from "@taquito/taquito";
+import type { TezosToolkit } from "@taquito/taquito";
 
 export default async function getBalance(
   provider: TezosToolkit,

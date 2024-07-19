@@ -164,10 +164,14 @@ export type SignerAndSignature = {
   signature: string;
 };
 
-export {
+export type {
+  CosmWasmWallet,
+  IAptosChainConfig,
+  IAptosWallet,
   IBridgeConfig,
   IChainConfig,
   IConfigAndWallets,
+  ICosmWasmChainConfig,
   IEvmChainConfig,
   IEvmWallet,
   IGeneratedWallets,
@@ -178,13 +182,9 @@ export {
   ISecretChainConfig,
   ISecretWallet,
   IStakingConfig,
-  ICosmWasmChainConfig,
-  CosmWasmWallet,
   ITezosChainConfig,
   ITezosWallet,
   ITonChainConfig,
   ITonWallet,
   TChain,
-  IAptosChainConfig,
-  IAptosWallet,
 };

@@ -1,6 +1,8 @@
-import { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
-import { THandler } from "../types";
-import { TezosHandlerParams } from "./types";
+import type { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
+import type { THandler } from "../types";
+import type { TezosHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -24,10 +26,26 @@ export async function tezosHandler({
   decimals,
   chainType,
   chainIdent,
+  serverLinkHandler,
+  logger,
 }: TezosHandlerParams): Promise<THandler> {
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
   return {
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
     signData: (buf) => signData(buf, signer),
     publicKey: await signer.publicKey(),
     chainType,
@@ -45,11 +63,12 @@ export async function tezosHandler({
         bridge,
         restApiUrl,
         em,
+        logger,
       ),
     signClaimData: (data) => signClaimData(data, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, provider),
+    nftData: (tid, ctr) => nftData(tid, ctr, provider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
-    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer),
+    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer, logger),
     chainIdent: chainIdent,
     decimals: BigInt(10 ** decimals),
   };

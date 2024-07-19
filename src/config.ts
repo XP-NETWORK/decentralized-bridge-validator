@@ -18,6 +18,18 @@ export const bridgeTestChains = [
     blockChunks: 1000,
   },
   {
+    chain: "MATIC",
+    rpcURL: "https://polygon-amoy.blockpi.network/v1/rpc/public",
+    nativeCoinSymbol: "MATIC",
+    intialFund: "50000000000000000",
+    contractAddress: "0x676Bb24dA610fb55A1FB0252B49Ad478D38c2C69",
+    chainType: "evm",
+    lastBlock: 9674956,
+    decimals: 18,
+    blockChunks: 1000,
+  },
+
+  {
     chain: "HEDERA",
     rpcURL: "https://testnet.hashio.io/api",
     nativeCoinSymbol: "HBAR",

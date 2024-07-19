@@ -59,7 +59,12 @@ async function main() {
     10,
   );
 
-  await checkOrAddSelfAsVal(deps.chains, logger);
+  await retry(
+    () => checkOrAddSelfAsVal(deps.chains, logger),
+    "Add self as Validator",
+    logger,
+    10,
+  );
 
   listenEvents(
     deps.chains,

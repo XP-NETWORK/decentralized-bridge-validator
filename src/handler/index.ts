@@ -164,11 +164,14 @@ export async function listenStakeEvents(
         throw new Error("Unreachable State");
       }
 
-      const approvalFn = async () =>
-        await deps.storage.approveStake(
+      const approvalFn = async () => {
+        const tx = await deps.storage.approveStake(
           newEvmValidator.validatorAddress,
           signatures,
         );
+        if (!(await tx.wait())?.status) throw new Error("TxFailed");
+        return tx;
+      };
       const approved = await retry(
         approvalFn,
         `Approving stake ${JSON.stringify(ev, null, 2)}`,

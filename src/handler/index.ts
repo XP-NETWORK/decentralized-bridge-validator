@@ -107,7 +107,8 @@ export async function listenEvents(
         ) {
           return null;
         }
-        throw new Error("Approve failed");
+        console.log("approvalFn, avc");
+        throw err;
       }
     };
 

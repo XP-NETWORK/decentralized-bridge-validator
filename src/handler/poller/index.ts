@@ -14,10 +14,20 @@ export default async function pollForLockEvents(
   serverLinkHandler: AxiosInstance,
   logger: LogInstance,
 ) {
-  const lastBlock = (await em.findOne(LockedEvent, {}))?.id;
+  const lastId = (
+    await em
+      .createQueryBuilder(LockedEvent)
+      .select("*")
+      .where({
+        listenerChain: identifier,
+      })
+      .orderBy({
+        id: "desc",
+      })
+  ).at(0);
   while (true) {
     const fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-      `/${identifier}?cursor=${lastBlock}`,
+      `/${identifier}?cursor=${lastId?.id ?? 0}`,
     );
     for (const tx of fetch.data) {
       try {

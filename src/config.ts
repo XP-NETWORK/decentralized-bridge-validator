@@ -21,7 +21,7 @@ export const bridgeTestChains = [
     chain: "HEDERA",
     rpcURL: "https://testnet.hashio.io/api",
     nativeCoinSymbol: "HBAR",
-    intialFund: "50000000000000000",
+    intialFund: "10000000000000000000",
     contractAddress: "0x3C8A843c6c56f5cB0946054b3406ED0899EF7cec",
     chainType: "hedera",
     lastBlock: 6711430,

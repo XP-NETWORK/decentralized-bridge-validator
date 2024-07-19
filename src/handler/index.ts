@@ -90,14 +90,15 @@ export async function listenEvents(
 
     const approvalFn = async () => {
       try {
-        const tx = await (
-          await deps.storage.approveLockNft(
+        const tx = await Promise.race([(
+         await deps.storage.approveLockNft(
             inft.transactionHash,
             chain.chainIdent,
             signature.signature,
             signature.signer,
           )
-        ).wait();
+        ).wait(),new Promise((r) => setTimeout(r, 10000))]);
+        //@ts-ignore
         if (!tx?.status) throw new Error("Approve failed");
         return tx;
       } catch (err) {
@@ -118,7 +119,9 @@ export async function listenEvents(
       log,
       3,
     );
+    
     log.info(
+      //@ts-ignore
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
   }

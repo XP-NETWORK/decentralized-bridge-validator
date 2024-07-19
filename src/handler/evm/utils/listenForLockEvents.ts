@@ -41,7 +41,7 @@ const listenForLockEvents = (
             `No Transactions found in chain from block: ${lastBlock} to: ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
             chainIdent,
           );
-          lastBlock = latestBlock;
+          lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
             contractAddress: await bc.getAddress(),

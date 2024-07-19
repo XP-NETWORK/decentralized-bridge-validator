@@ -8,7 +8,7 @@ import {
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { MikroORM } from "@mikro-orm/core";
-import { EntityManager } from "@mikro-orm/sqlite";
+import type { EntityManager } from "@mikro-orm/sqlite";
 import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
 import { InMemorySigner } from "@taquito/signer";
@@ -18,8 +18,11 @@ import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
 import { SecretNetworkClient, Wallet as SecretWallet } from "secretjs";
 import TonWeb from "tonweb";
 import { privateKeyToAccount } from "web3-eth-accounts";
-import { TSupportedChainTypes, TSupportedChains } from "./config";
-import { BridgeStorage, BridgeStorage__factory } from "./contractsTypes/evm";
+import type { TSupportedChainTypes, TSupportedChains } from "./config";
+import type {
+  BridgeStorage,
+  BridgeStorage__factory,
+} from "./contractsTypes/evm";
 import { aptosHandler } from "./handler/aptos";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmHandler } from "./handler/evm";
@@ -29,12 +32,7 @@ import { secretsHandler } from "./handler/secrets";
 import { tezosHandler } from "./handler/tezos";
 import { raise, tonHandler } from "./handler/ton";
 
-// import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-// import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
-// import type { EntityManager } from "@mikro-orm/sqlite";
 import axios, { type AxiosInstance } from "axios";
-// import { cosmWasmHandler } from "./handler/cosmos";
-// import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import type { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";

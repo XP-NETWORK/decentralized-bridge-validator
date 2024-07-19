@@ -105,7 +105,7 @@ export async function listenEvents(
       approvalFn,
       `Approving transfer ${JSON.stringify(inft, null, 2)}`,
       log,
-      100,
+      3,
     );
     log.info(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,

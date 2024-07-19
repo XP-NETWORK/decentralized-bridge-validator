@@ -89,16 +89,26 @@ export async function listenEvents(
     }
 
     const approvalFn = async () => {
-      const tx = await (
-        await deps.storage.approveLockNft(
-          inft.transactionHash,
-          chain.chainIdent,
-          signature.signature,
-          signature.signer,
-        )
-      ).wait();
-      if (!tx?.status) throw new Error("Approve failed");
-      return tx;
+      try {
+        const tx = await (
+          await deps.storage.approveLockNft(
+            inft.transactionHash,
+            chain.chainIdent,
+            signature.signature,
+            signature.signer,
+          )
+        ).wait();
+        if (!tx?.status) throw new Error("Approve failed");
+        return tx;
+      } catch (err) {
+        if (
+          (err as { shortMessage: string }).shortMessage ===
+          'execution reverted: "Signature already used"'
+        ) {
+          return null;
+        }
+        throw new Error("Approve failed");
+      }
     };
 
     const approved = await retry(

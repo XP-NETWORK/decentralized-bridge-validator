@@ -28,7 +28,6 @@ export async function checkOrAddSelfAsVal(
 ) {
   for (const chain of chains) {
     const selfIsValidator = await chain.selfIsValidator();
-    log.info(`Validator is already added to ${chain.chainIdent}`);
     if (!selfIsValidator) {
       const added = await chain.addSelfAsValidator();
       if (added === "failure") {
@@ -36,7 +35,7 @@ export async function checkOrAddSelfAsVal(
           `Failed to add self as validator for chain ${chain.chainIdent}`,
         );
       }
-    }
+    } else log.info(`Validator is already added to ${chain.chainIdent}`);
   }
 }
 
@@ -74,29 +73,28 @@ export async function stakeTokens(
     );
     return;
   }
-  const amtToStake = conf.intialFund;
+  const amtToStake = await staker.stakingAmount();
 
   const approve = await (
-    await token.approve(conf.contractAddress, amtToStake)
+    await token.approve(conf.contractAddress, amtToStake * amtToStake)
   ).wait();
   if (!approve || approve.status !== 1) {
     throw new Error("Failed to approve staking");
   }
 
-  const staking = await (
-    await staker.stakeERC20([
-      {
-        validatorAddress: secrets.evmWallet.address,
-        chainType: "evm",
-      },
-      ...others.map((e) => {
-        return {
-          validatorAddress: e.publicKey,
-          chainType: e.chainType,
-        };
-      }),
-    ])
-  ).wait();
+  const data = [
+    {
+      validatorAddress: secrets.evmWallet.address,
+      chainType: "evm",
+    },
+    ...others.map((e) => {
+      return {
+        validatorAddress: e.publicKey,
+        chainType: e.chainType,
+      };
+    }),
+  ];
+  const staking = await (await staker.stakeERC20(data)).wait();
 
   if (!staking || staking.status !== 1) {
     throw new Error("Failed to stake");

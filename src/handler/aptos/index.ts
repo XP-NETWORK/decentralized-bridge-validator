@@ -1,5 +1,7 @@
-import { THandler } from "../types";
-import { AptosHandlerParams } from "./types";
+import pollForLockEvents from "../poller";
+import { raise } from "../ton";
+import type { THandler } from "../types";
+import type { AptosHandlerParams } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -23,6 +25,8 @@ export function aptosHandler({
   decimals,
   chainIdent,
   chainType,
+  serverLinkHandler,
+  logger,
 }: AptosHandlerParams): THandler {
   return {
     publicKey,
@@ -41,5 +45,19 @@ export function aptosHandler({
     getBalance: () => getBalance(client, account.accountAddress),
     nftData: (tid) => nftData(tid, client),
     decimals: BigInt(10 ** decimals),
+    pollForLockEvents: async (builder, cb) => {
+      serverLinkHandler
+        ? pollForLockEvents(
+            chainIdent,
+            builder,
+            cb,
+            em,
+            serverLinkHandler,
+            logger,
+          )
+        : raise(
+            "Unreachable. Wont be called if serverLinkHandler is not present.",
+          );
+    },
   };
 }

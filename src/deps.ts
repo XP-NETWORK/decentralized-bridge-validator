@@ -213,6 +213,8 @@ export async function configAptosHandler(
   storage: BridgeStorage,
   em: EntityManager,
   aptosWallet: IAptosWallet,
+  serverLinkHandler: AxiosInstance | undefined,
+  cwLogger: LogInstance,
 ) {
   const DEVNET_CONFIG = new AptosConfig({
     network: Network.DEVNET,
@@ -236,6 +238,8 @@ export async function configAptosHandler(
     publicKey: aptosWallet.publicKey,
     storage: storage,
     chainType: conf.chainType as TSupportedChainTypes,
+    serverLinkHandler,
+    logger: cwLogger,
   });
 }
 
@@ -433,6 +437,8 @@ export async function configDeps(
         storage,
         em.fork(),
         secrets.aptosWallet,
+        serverLinkHandler,
+        logger.getSubLogger({ name: "APTOS" }),
       )
     : undefined;
 

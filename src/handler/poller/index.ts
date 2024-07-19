@@ -15,22 +15,23 @@ export default async function pollForLockEvents(
   serverLinkHandler: AxiosInstance,
   logger: LogInstance,
 ) {
-  const lastEv = (
-    await em
-      .createQueryBuilder(LockedEvent)
-      .select("*")
-      .where({
-        listenerChain: identifier,
-      })
-      .orderBy({
-        id: "desc",
-      })
-  ).at(0);
-  let lastId = lastEv?.id;
-  if (lastId) {
-    lastId += 1;
-  }
   while (true) {
+    const lastEv = (
+      await em
+        .createQueryBuilder(LockedEvent)
+        .select("*")
+        .where({
+          listenerChain: identifier,
+        })
+        .orderBy({
+          id: "desc",
+        })
+    ).at(0);
+    let lastId = lastEv?.id;
+    if (lastId) {
+      lastId += 1;
+    }
+
     const fetch = await serverLinkHandler.get<Array<LockEventRes>>(
       `/${identifier}?cursor=${lastId ?? 0}`,
     );

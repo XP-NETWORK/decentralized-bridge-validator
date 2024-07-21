@@ -16,17 +16,17 @@ export default async function pollForLockEvents(
   logger: LogInstance,
 ) {
   while (true) {
-    const lastEv = (
-      await em
-        .createQueryBuilder(LockedEvent)
-        .select("*")
-        .where({
-          listenerChain: identifier,
-        })
-        .orderBy({
-          id: "desc",
-        })
-    ).at(0);
+    const lastEv = await em
+      .createQueryBuilder(LockedEvent)
+      .select("*")
+      .where({
+        listenerChain: identifier,
+      })
+      .orderBy({
+        id: "desc",
+      })
+      .getSingleResult();
+
     let lastId = lastEv?.id;
     if (lastId) {
       lastId += 1;

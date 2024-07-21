@@ -27,7 +27,7 @@ export default async function pollForLockEvents(
       })
       .getSingleResult();
 
-    let lastId = lastEv?.id ?? 1;
+    let lastId = lastEv?.id ?? 0;
     if (lastId) {
       lastId += 1;
     }
@@ -36,7 +36,7 @@ export default async function pollForLockEvents(
     let fetch: AxiosResponse<LockEventRes[], any>;
     try {
       fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-        `/${identifier}?cursor=${lastId}`,
+        `/${identifier}?cursor=${lastId}&limit=10`,
       );
     } catch (e) {
       const error = e as Error;

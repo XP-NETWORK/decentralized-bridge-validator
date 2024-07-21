@@ -1,7 +1,7 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 
 import { setTimeout } from "node:timers/promises";
-import type { AxiosInstance } from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
 import type { EventBuilder } from "../index";
 import type { LockEventIter, LogInstance } from "../types";
@@ -27,18 +27,30 @@ export default async function pollForLockEvents(
       })
       .getSingleResult();
 
-    let lastId = lastEv?.id;
+    let lastId = lastEv?.id ?? 1;
     if (lastId) {
       lastId += 1;
     }
 
-    const fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-      `/${identifier}?cursor=${lastId ?? 0}`,
-    );
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let fetch: AxiosResponse<LockEventRes[], any>;
+    try {
+      fetch = await serverLinkHandler.get<Array<LockEventRes>>(
+        `/${identifier}?cursor=${lastId}`,
+      );
+    } catch (e) {
+      const error = e as Error;
+      logger.error(`Error fetching data: ${error.message}`);
+      logger.info("Awaiting 2s");
+      await setTimeout(1 * 1000);
+      continue;
+    }
+
     const nTx = fetch.data.length;
     if (nTx === 0) {
-      logger.info("Got 0 Transactions. Awaiting 10s");
-      await setTimeout(10 * 1000);
+      logger.info(`0 Tx, lastId: ${lastId}, wait: 1s`);
+      await setTimeout(1 * 1000);
+      continue;
     }
     for (const tx of fetch.data) {
       try {
@@ -63,7 +75,7 @@ export default async function pollForLockEvents(
         await setTimeout(10000);
       }
     }
-    logger.info(`Processed ${fetch.data.length} Transactions. Awaiting 10s`);
-    await setTimeout(10 * 1000);
+    logger.info(`${fetch.data.length} Tx, lastId: ${lastId}, wait: 1s`);
+    await setTimeout(1 * 1000);
   }
 }

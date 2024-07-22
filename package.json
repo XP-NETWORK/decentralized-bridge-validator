@@ -48,7 +48,6 @@
     "aptos": "^1.21.0",
     "axios": "^1.6.7",
     "chalk": "4",
-    "client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "dotenv": "^16.4.5",
     "elysia": "^1.0.25",
     "ethers": "^6.11.1",

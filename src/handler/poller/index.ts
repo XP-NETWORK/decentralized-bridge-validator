@@ -1,6 +1,7 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 
-import type { AxiosInstance } from "axios";
+import { setTimeout } from "node:timers/promises";
+import type { AxiosInstance, AxiosResponse } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
 import type { EventBuilder } from "../index";
 import type { LockEventIter, LogInstance } from "../types";
@@ -14,11 +15,43 @@ export default async function pollForLockEvents(
   serverLinkHandler: AxiosInstance,
   logger: LogInstance,
 ) {
-  const lastBlock = (await em.findOne(LockedEvent, {}))?.id;
   while (true) {
-    const fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-      `/${identifier}?cursor=${lastBlock}`,
-    );
+    const lastEv = await em
+      .createQueryBuilder(LockedEvent)
+      .select("*")
+      .where({
+        listenerChain: identifier,
+      })
+      .orderBy({
+        id: "desc",
+      })
+      .getSingleResult();
+
+    let lastId = lastEv?.id ?? 0;
+    if (lastId) {
+      lastId += 1;
+    }
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let fetch: AxiosResponse<LockEventRes[], any>;
+    try {
+      fetch = await serverLinkHandler.get<Array<LockEventRes>>(
+        `/${identifier}?cursor=${lastId}&limit=10`,
+      );
+    } catch (e) {
+      const error = e as Error;
+      logger.error(`Error fetching data: ${error.message}`);
+      logger.info("Awaiting 2s");
+      await setTimeout(1 * 1000);
+      continue;
+    }
+
+    const nTx = fetch.data.length;
+    if (nTx === 0) {
+      logger.info(`0 Tx, lastId: ${lastId}, wait: 1s`);
+      await setTimeout(1 * 1000);
+      continue;
+    }
     for (const tx of fetch.data) {
       try {
         await cb(
@@ -39,8 +72,10 @@ export default async function pollForLockEvents(
           identifier,
           `${e} while polling for events. Sleeping for 10 seconds`,
         );
-        await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
+        await setTimeout(10000);
       }
     }
+    logger.info(`${fetch.data.length} Tx, lastId: ${lastId}, wait: 1s`);
+    await setTimeout(1 * 1000);
   }
 }

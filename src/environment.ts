@@ -5,7 +5,7 @@ import type { LogInstance } from "./handler/types";
 config();
 
 export const Env = z.object({
-  TON_API_KEY: z.string(),
+  TON_API_KEY: z.string().optional(),
   SERVER_PORT: z.string().optional(),
   SERVER_LINK: z.string().optional(),
 });

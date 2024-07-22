@@ -74,10 +74,13 @@ export async function stakeTokens(
     return;
   }
   const amtToStake = await staker.stakingAmount();
+  logger.info("Awaiting completion of approve transaction.");
 
   const approve = await (
     await token.approve(conf.contractAddress, amtToStake * amtToStake)
   ).wait();
+
+  logger.info("Approved to stake: ✅");
   if (!approve || approve.status !== 1) {
     throw new Error("Failed to approve staking");
   }
@@ -94,7 +97,10 @@ export async function stakeTokens(
       };
     }),
   ];
+
+  logger.info("Awaiting completion of stake transaction.");
   const staking = await (await staker.stakeERC20(data)).wait();
+  logger.info("Stake complete: ✅");
 
   if (!staking || staking.status !== 1) {
     throw new Error("Failed to stake");

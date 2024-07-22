@@ -4,6 +4,7 @@ import type { EventBuilder } from "../..";
 import type { TSupportedChains } from "../../../config";
 import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
+import { LockedEvent } from "../../../persistence/entities/locked";
 import type { LockEventIter, LogInstance } from "../../types";
 
 const listenForLockEvents = (
@@ -54,6 +55,13 @@ const listenForLockEvents = (
         for (const log of logs) {
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
+          const found = await em.findOne(LockedEvent, {
+            transactionHash: log.transactionHash,
+            listenerChain: chainIdent,
+          });
+          if (found) {
+            continue;
+          }
           await cb(
             await builder.nftLocked(
               decoded.args.tokenId.toString(),

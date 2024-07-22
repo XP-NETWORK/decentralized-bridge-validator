@@ -47,7 +47,7 @@ export const bridgeTestChains = [
     decimals: 8,
     chain: "APTOS",
     contractAddress:
-      "0xfe114e06fcf0e85325992fdd9d03b056949a9aa6f899265266859729d2d3471b",
+      "0xf912a22038eb93957780dc21d46d254a5475b9bc670ef860b90d26e15cc53805",
     lastBlock: 549392,
     nativeCoinSymbol: "APT",
     rpcURL: "https://api.devnet.aptoslabs.com/v1",

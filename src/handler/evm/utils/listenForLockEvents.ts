@@ -52,7 +52,11 @@ const listenForLockEvents = (
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;
         }
-        for (const log of logs) {
+        for (const log of logs.filter(
+          (lg, index, self) =>
+            index ===
+            self.findIndex((t) => t.transactionHash === lg.transactionHash),
+        )) {
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
           const found = await em.findOne(LockedEvent, {

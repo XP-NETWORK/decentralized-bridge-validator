@@ -1,8 +1,8 @@
-import { Aptos } from "@aptos-labs/ts-sdk";
-import { EntityManager } from "@mikro-orm/sqlite";
-import { EventBuilder } from "../..";
+import type { Aptos } from "@aptos-labs/ts-sdk";
+import type { EntityManager } from "@mikro-orm/sqlite";
+import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
-import { LockEventIter } from "../../types";
+import type { LockEventIter } from "../../types";
 import { BRIDGE_MODULE_NAME } from "../constants";
 import log from "./log";
 
@@ -12,26 +12,25 @@ const LOCK_EVENT = "LockedEvent";
 const listenForLockEvents = async (
   builder: EventBuilder,
   cb: LockEventIter,
-  lastBlock_: number,
+  lastTransaction_: number,
   client: Aptos,
   bridge: string,
   em: EntityManager,
 ) => {
-  let lastBlock = lastBlock_;
+  let lastTransaction = lastTransaction_;
 
   while (true) {
     try {
-      const ledgerInfo = await client.general.getLedgerInfo();
-      const latestBlock = Number(ledgerInfo.block_height);
+      const latestTransaction = lastTransaction + 100000;
       const events = await client.getEvents({
         options: {
           where: {
             type: {
               _eq: `${bridge}::${BRIDGE_MODULE_NAME}::${LOCK_EVENT}`,
             },
-            transaction_block_height: {
-              _gte: lastBlock,
-              _lt: latestBlock,
+            transaction_version: {
+              _gte: lastTransaction,
+              _lt: latestTransaction,
             },
           },
         },
@@ -39,15 +38,15 @@ const listenForLockEvents = async (
 
       if (!events.length) {
         log(
-          `No Transactions found in chain from block: ${lastBlock} to ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
+          `No Transactions found in chain from transaction number: ${lastTransaction} to ${latestTransaction}. Waiting for 10 Seconds before looking for new transactions`,
         );
 
-        lastBlock = latestBlock;
+        lastTransaction = latestTransaction;
 
         await em.upsert(Block, {
           chain: CHAIN_IDENT,
           contractAddress: bridge,
-          lastBlock: lastBlock,
+          lastBlock: lastTransaction,
         });
         await em.flush();
         await new Promise<undefined>((e) => setTimeout(e, 10000));
@@ -81,12 +80,12 @@ const listenForLockEvents = async (
         );
       }
 
-      lastBlock = latestBlock;
+      lastTransaction = latestTransaction;
 
       await em.upsert(Block, {
         chain: CHAIN_IDENT,
         contractAddress: bridge,
-        lastBlock: lastBlock,
+        lastBlock: lastTransaction,
       });
       await em.flush();
     } catch (e) {

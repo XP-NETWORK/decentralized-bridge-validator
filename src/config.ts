@@ -75,7 +75,6 @@ export const testnetBridgeConfig: IBridgeConfig = {
   stakingConfig: stakingTestChain,
 };
 
-
 export const prodBridgeConfig: IBridgeConfig = {
   bridgeChains: [
     {
@@ -138,7 +137,6 @@ export const prodBridgeConfig: IBridgeConfig = {
     blockChunks: 1000,
   },
 };
-
 
 export type TSupportedChainsConfig = (typeof bridgeTestChains)[number];
 export type TSupportedChains = TSupportedChainsConfig["chain"];

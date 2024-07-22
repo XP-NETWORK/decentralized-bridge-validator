@@ -1,3 +1,4 @@
+import { setTimeout } from "node:timers/promises";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
 import type { IGeneratedWallets, IStakingConfig } from "../types";
@@ -19,7 +20,7 @@ export function waitForMSWithMsg(ms: number, msg: string): Promise<void> {
       numberOfDecimals,
     )} seconds`,
   );
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return setTimeout(ms);
 }
 
 export async function checkOrAddSelfAsVal(
@@ -45,14 +46,16 @@ export async function retry<T>(
   log: LogInstance,
   retries = 3,
 ): Promise<T> {
-  return await func().catch(async (err) => {
+  try {
+    return await func();
+  } catch (err) {
     if (retries === 0) {
       throw err;
     }
     log.info(`Context: ${ctx} - Retrying ${retries} more times. Error: ${err}`);
-    await new Promise((r) => setTimeout(r, 6000 * (3 - retries)));
+    await setTimeout(6000 * (3 - retries));
     return retry(func, ctx, log, retries - 1);
-  });
+  }
 }
 
 export async function stakeTokens(

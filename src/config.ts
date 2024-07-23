@@ -79,7 +79,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   bridgeChains: [
     {
       chain: "BSC",
-      rpcURL: "https://bsc-rpc.publicnode.com",
+      rpcURL: "https://binance.llamarpc.com",
       nativeCoinSymbol: "BNB",
       intialFund: "50000000000000000",
       contractAddress: "0x1704D2170683E7CC3c849Bb30cD265844dAd2B49",
@@ -125,7 +125,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   },
   stakingConfig: {
     chain: "BSC",
-    rpcURL: "https://bsc-rpc.publicnode.com",
+    rpcURL: "https://binance.llamarpc.com",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: "evm",

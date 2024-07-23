@@ -41,7 +41,7 @@ const addSelfAsValidator = (
       });
 
       const added = await bc.addValidator(signer.address, stakingSignatures);
-      added.wait();
+      await added.wait();
       return "success";
     } catch (e) {
       return "failure";

@@ -44,6 +44,7 @@ const addSelfAsValidator = (
       added.wait();
       return "success";
     } catch (e) {
+      console.log(e);
       return "failure";
     }
   };

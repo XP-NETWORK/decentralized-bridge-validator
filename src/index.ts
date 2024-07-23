@@ -59,6 +59,14 @@ async function main() {
     10,
   );
 
+  listenStakeEvents(
+    deps.chains,
+    deps.storage,
+    deps.staking,
+    deps.em.fork(),
+    logger,
+  );
+
   await retry(
     () => checkOrAddSelfAsVal(deps.chains, logger),
     "Add self as Validator",
@@ -71,13 +79,6 @@ async function main() {
     deps.storage,
     deps.em.fork(),
     deps.serverLinkHandler,
-    logger,
-  );
-  listenStakeEvents(
-    deps.chains,
-    deps.storage,
-    deps.staking,
-    deps.em.fork(),
     logger,
   );
 }

@@ -28,6 +28,7 @@ const signClaimData = (
       data.tokenAmount,
       data.nftType,
       data.fee,
+      data.lockTxChain,
     ];
     const nftTransferDetailsTypes = [
       "uint256", // Unique ID for the NFT transfer
@@ -44,6 +45,7 @@ const signClaimData = (
       "uint256", // Number of NFTs being transferred
       "string", // Type of the NFT (could be ERC721 or ERC1155)
       "uint256", // fee that needs to be paid by the user to the bridge,
+      "string", // lockTxChain
     ];
 
     const { signature } = signer.sign(

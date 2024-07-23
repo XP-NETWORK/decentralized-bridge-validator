@@ -1,3 +1,4 @@
+import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
@@ -25,10 +26,23 @@ export async function listenEvents(
 
   const builder = eventBuilder(em);
 
+  const processEventsFailSafe = async (chain: THandler, ev: LockEvent) => {
+    let success = false;
+    while (!success) {
+      try {
+        await processEvent(chain, ev);
+        success = true;
+      } catch (e) {
+        log.error(e, "Error processing poll events");
+        log.info("Awaiting 2s");
+        await setTimeout(2 * 1000);
+      }
+    }
+  };
   async function pollEvents(chain: THandler) {
     log.info(`Polling for events on: ${chain.chainIdent}`);
     chain.pollForLockEvents(builder, async (ev) => {
-      processEvent(chain, ev);
+      processEventsFailSafe(chain, ev);
     });
   }
 
@@ -72,6 +86,7 @@ export async function listenEvents(
       tokenAmount: ev.tokenAmount,
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
+      lockTxChain: chain.chainIdent,
     };
     log.trace(inft);
 
@@ -99,7 +114,7 @@ export async function listenEvents(
               signature.signer,
             )
           ).wait(),
-          new Promise((r) => setTimeout(r, 10000)),
+          setTimeout(10 * 1000),
         ]);
         //@ts-ignore
         if (!tx?.status) throw new Error("Approve failed");
@@ -111,7 +126,7 @@ export async function listenEvents(
         ) {
           return null;
         }
-        console.log("approvalFn, avc");
+        log.error(err, "Error while approving");
         throw err;
       }
     };
@@ -132,7 +147,7 @@ export async function listenEvents(
   async function poolEvents(chain: THandler) {
     log.info(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
-      processEvent(chain, ev);
+      processEventsFailSafe(chain, ev);
     });
   }
 

@@ -183,6 +183,7 @@ export async function listenStakeEvents(
         };
       }[] = [];
       for (const sig of ev) {
+        if (await deps.storage.validators(sig.validatorAddress)) continue;
         const dc = map.get(sig.chainType);
         if (!dc) {
           throw new Error(`Unknown destination chain type: ${sig.chainType}`);
@@ -196,6 +197,7 @@ export async function listenStakeEvents(
           },
         });
       }
+      if (!signatures.length) return;
       const newEvmValidator = ev.find((item) => item.chainType === "evm");
       if (!newEvmValidator) {
         throw new Error("Unreachable State");

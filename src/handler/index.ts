@@ -174,6 +174,21 @@ export async function listenStakeEvents(
 
   async function poolEvents(chain: TStakingHandler) {
     log.info("Listening for Staking Events");
+    const currentValidatorAddress: string =
+      // @ts-ignore
+      await deps.storage.runner?.getAddress();
+    const currentValidatorEpoch = await deps.storage.validatorEpoch(
+      currentValidatorAddress,
+    );
+
+    const currentValidatorVotes = await deps.storage.validatorStatusChangeVotes(
+      currentValidatorAddress,
+      true,
+      currentValidatorEpoch,
+    );
+
+    log.info({ currentValidatorVotes });
+
     chain.listenForStakingEvents(builder, async (ev) => {
       const signatures: {
         validatorAddress: string;
@@ -187,23 +202,6 @@ export async function listenStakeEvents(
         const validatorEpoch = await deps.storage.validatorEpoch(
           sig.validatorAddress,
         );
-
-        const currentValidatorAddress: string =
-          // @ts-ignore
-          await deps.storage.runner?.getAddress();
-
-        const currentValidatorEpoch = await deps.storage.validatorEpoch(
-          sig.validatorAddress,
-        );
-
-        const currentValidatorVotes =
-          await deps.storage.validatorStatusChangeVotes(
-            currentValidatorAddress,
-            true,
-            currentValidatorEpoch,
-          );
-
-        log.info({ currentValidatorVotes });
 
         const alreadyVoted = await deps.storage.validatorVoted(
           sig.validatorAddress,

@@ -186,8 +186,9 @@ export async function listenStakeEvents(
       true,
       currentValidatorEpoch,
     );
+    const storageValidators = await deps.storage.validatorCount();
 
-    log.info({ currentValidatorVotes });
+    log.info({ currentValidatorVotes, storageValidators });
 
     chain.listenForStakingEvents(builder, async (ev) => {
       const signatures: {

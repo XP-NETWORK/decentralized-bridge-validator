@@ -1,7 +1,7 @@
-import { createHash } from "crypto";
+import { createHash } from "node:crypto";
 import * as ed from "@noble/ed25519";
 import { BCS, HexString } from "aptos";
-import { TNftTransferDetailsObject } from "xp-decentralized-sdk";
+import type { TNftTransferDetailsObject } from "../../types";
 
 const signClaimData = async (
   claimData: TNftTransferDetailsObject,
@@ -31,6 +31,7 @@ const signClaimData = async (
   serializer.serializeBytes(Buffer.from(claimData.nftType));
   serializer.serializeU64(Number(claimData.fee));
   serializer.serializeStr(claimData.symbol);
+  serializer.serializeBytes(Buffer.from(claimData.lockTxChain));
 
   const msgHash = createHash("SHA256").update(serializer.getBytes()).digest();
 
@@ -41,7 +42,7 @@ const signClaimData = async (
 
 const hexStringToUint8Array = (hexString: string): Uint8Array => {
   return new Uint8Array(
-    hexString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [],
+    hexString.match(/.{1,2}/g)?.map((byte) => Number.parseInt(byte, 16)) ?? [],
   );
 };
 

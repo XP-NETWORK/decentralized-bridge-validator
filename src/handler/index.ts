@@ -86,6 +86,7 @@ export async function listenEvents(
       tokenAmount: ev.tokenAmount,
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
+      lockTxChain: chain.chainIdent,
     };
     log.trace(inft);
 

@@ -32,6 +32,7 @@ export default async function signClaimData(
     tokenAmount,
     nftType,
     fee,
+    lockTxChain,
   } = data;
   // Mitigation if destination user address is invalid
   let destinationAddress: Address;
@@ -94,6 +95,7 @@ export default async function signClaimData(
         destination: Address.parseFriendly(royaltyReceiver).address,
       },
       transactionHash,
+      lockTxChain,
     },
   };
   const signature = `0x${sign(

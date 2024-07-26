@@ -49,6 +49,18 @@ export const bridgeTestChains = [
     lastBlock: 24014875000001,
     nativeCoinSymbol: "TON",
   },
+  {
+    blockChunks: 1000,
+    chain: "TEZOS",
+    chainType: "tezos",
+    contractAddress: "KT1UGfH2Hk2MVKt8ADqqkRqcGZussRnfpahV",
+    decimals: 9,
+    intialFund: "100000000",
+    lastBlock: 7259145,
+    nativeCoinSymbol: "TEZOS",
+    restApiURL: "https://api.ghostnet.tzkt.io",
+    rpcURL: "https://ghostnet.smartpy.io",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

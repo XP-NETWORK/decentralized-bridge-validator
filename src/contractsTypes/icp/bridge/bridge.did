@@ -1,0 +1,74 @@
+type XPBridge = 
+ service {
+   acceptCycles: () -> ();
+   add_validator: (record {
+                     text;
+                     principal;
+                   }, vec SignerAndSignature) -> ();
+   availableCycles: () -> (nat) query;
+   claim_nft: (ClaimData, vec SignerAndSignature) -> (text);
+   claim_validator_rewards: (text, vec SignerAndSignature) -> ();
+   get_claimed_data: (text) -> (opt ClaimedEvent) query;
+   get_hash_from_nonce: (nat) -> (opt text) query;
+   get_locked_data: (text) -> (opt LockedEvent) query;
+   get_nonce: () -> (nat) query;
+   get_validator: (text) -> (opt Validator) query;
+   get_validator_count: () -> (nat) query;
+   init: () -> ();
+   lock_nft: (principal, nat, text, text) -> (text);
+ };
+type Validator = 
+ record {
+   address: principal;
+   pending_rewards: nat64;
+ };
+type SignerAndSignature = 
+ record {
+   signature: text;
+   signer: text;
+ };
+type LockedEvent = 
+ record {
+   destination_chain: text;
+   destination_user_address: text;
+   nft_type: text;
+   source_chain: text;
+   source_nft_contract_address: principal;
+   token_amount: nat;
+   token_id: nat;
+ };
+type ClaimedEvent = 
+ record {
+   lock_tx_chain: text;
+   nft_contract: principal;
+   source_chain: text;
+   token_id: nat;
+   transaction_hash: text;
+ };
+type ClaimData = 
+ record {
+   destination_chain: text;
+   destination_user_address: principal;
+   fee: nat64;
+   lock_tx_chain: text;
+   metadata: text;
+   name: text;
+   nft_type: text;
+   royalty: nat;
+   royalty_receiver: principal;
+   source_chain: text;
+   source_nft_contract_address: text;
+   symbol: text;
+   token_amount: nat;
+   token_id: nat;
+   transaction_hash: text;
+ };
+service : (record {
+             chain_type: text;
+             collection_deployer: principal;
+             storage_deployer: principal;
+             validators: vec record {
+                               text;
+                               principal;
+                             };
+           }) -> XPBridge

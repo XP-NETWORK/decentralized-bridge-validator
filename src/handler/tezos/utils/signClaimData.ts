@@ -43,6 +43,7 @@ export default async function signClaimData(
     token_amount: data.tokenAmount,
     nft_type: data.nftType,
     fee: data.fee,
+    lock_tx_chain: data.lockTxChain,
   });
 
   const packedData = packDataBytes(encoded, TezosNftTransferDetailsTypes);

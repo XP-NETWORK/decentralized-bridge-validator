@@ -5,6 +5,7 @@ export const TezosNftTransferDetailsTypes = {
   prim: "pair",
   args: [
     { prim: "nat", annots: ["%token_id"] },
+    { prim: "string", annots: ["%lock_tx_chain"] },
     { prim: "string", annots: ["%source_chain"] },
     { prim: "string", annots: ["%dest_chain"] },
     { prim: "address", annots: ["%dest_address"] },

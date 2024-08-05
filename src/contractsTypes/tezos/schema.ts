@@ -5,7 +5,6 @@ export const TezosNftTransferDetailsTypes = {
   prim: "pair",
   args: [
     { prim: "nat", annots: ["%token_id"] },
-    { prim: "string", annots: ["%lock_tx_chain"] },
     { prim: "string", annots: ["%source_chain"] },
     { prim: "string", annots: ["%dest_chain"] },
     { prim: "address", annots: ["%dest_address"] },
@@ -26,6 +25,7 @@ export const TezosNftTransferDetailsTypes = {
     { prim: "nat", annots: ["%token_amount"] },
     { prim: "string", annots: ["%nft_type"] },
     { prim: "mutez", annots: ["%fee"] },
+    { prim: "string", annots: ["%lock_tx_chain"] },
   ],
   annots: ["%data"],
 } as MichelsonType;

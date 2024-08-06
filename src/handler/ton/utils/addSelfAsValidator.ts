@@ -79,7 +79,7 @@ export default async function addSelfAsValidator(
         $$type: "SignerAndSignature",
         key: signerPublicKeyBigInt,
         signature: beginCell()
-          .storeBuffer(Buffer.from(item.signature, "hex"))
+          .storeBuffer(Buffer.from(item.signature.replace("0x", ""), "hex"))
           .endCell(),
       };
       sigs.set(BigInt(index), sig);
@@ -101,7 +101,7 @@ export default async function addSelfAsValidator(
         newValidatorAddress: wallet.address,
         sigs,
         len: beginCell()
-          .storeUint(sigs.keys.length, 256)
+          .storeUint(sigs.size, 256)
           .endCell()
           .beginParse()
           .loadUintBig(256),

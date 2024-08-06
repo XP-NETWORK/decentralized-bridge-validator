@@ -36,12 +36,11 @@ const listenForLockEvents = (
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
-
+        logger.trace(
+          `From block: ${lastBlock} to: ${latestBlock}. Tx Count ${logs.length}`,
+          chainIdent,
+        );
         if (!logs.length) {
-          logger.trace(
-            `No Transactions found in chain from block: ${lastBlock} to: ${latestBlock}. Waiting for 10 Seconds before looking for new transactions`,
-            chainIdent,
-          );
           lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
@@ -64,6 +63,7 @@ const listenForLockEvents = (
             listenerChain: chainIdent,
           });
           if (found) {
+            logger.info("Transaction already processed");
             continue;
           }
           await cb(

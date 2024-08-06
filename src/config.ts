@@ -61,6 +61,19 @@ export const bridgeTestChains = [
     restApiURL: "https://api.ghostnet.tzkt.io",
     rpcURL: "https://ghostnet.smartpy.io",
   },
+  {
+    chainType: "multiversX",
+    chain: "MULTIVERSX",
+    chainID: "D",
+    contractAddress:
+      "erd1qqqqqqqqqqqqqpgqn5vhjcu3mrctgaj85zx2c5lpph32q408lwzqrl4vys",
+    decimals: 18,
+    elasticSearchURL: "https://devnet-index.multiversx.com",
+    gatewayURL: "https://devnet-gateway.multiversx.com",
+    intialFund: "50000000000000000",
+    nativeCoinSymbol: "EGLD",
+    lastBlock: 4757826,
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

@@ -38,9 +38,12 @@ const listenForStakingEvents = (
         });
         const startBlock = lastBlock;
 
+        logger.trace(
+          `${startBlock} -> ${latestBlock}: ${logs.length} TXs. Awaiting 10s`,
+        );
+
         if (!logs.length) {
-          logger.trace(`${startBlock} -> ${latestBlock}: 0 TXs. Awaiting 10s`);
-          lastBlock = latestBlock;
+          lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
             contractAddress: staker,

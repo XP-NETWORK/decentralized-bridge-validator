@@ -104,7 +104,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       intialFund: "50000000000000000",
       contractAddress: "0xE0ea24108ec2754467D2c1D9320Cb6A16276478f",
       chainType: "evm",
-      lastBlock: 41099482,
+      lastBlock: 41125140,
       decimals: 18,
       blockChunks: 1000,
     },
@@ -133,7 +133,8 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "TON",
-      rpcURL: "https://toncenter.com/api/v2/jsonRPC",
+      rpcURL:
+        "https://toncenter.com/api/v2/jsonRPC?api_key=05645d6b549f33bf80cee8822bd63df720c6781bd00020646deb7b2b2cd53b73",
       chainType: "ton",
       contractAddress: "EQBuZspBrrEBIs7NYTkJ2A1lESRZupvU63rMkdyKZeSZaJNI",
       decimals: 9,

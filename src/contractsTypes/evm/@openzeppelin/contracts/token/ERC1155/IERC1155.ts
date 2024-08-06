@@ -32,7 +32,7 @@ export interface IERC1155Interface extends Interface {
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
-      | "supportsInterface",
+      | "supportsInterface"
   ): FunctionFragment;
 
   getEvent(
@@ -40,20 +40,20 @@ export interface IERC1155Interface extends Interface {
       | "ApprovalForAll"
       | "TransferBatch"
       | "TransferSingle"
-      | "URI",
+      | "URI"
   ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [AddressLike, BigNumberish],
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
-    values: [AddressLike[], BigNumberish[]],
+    values: [AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
-    values: [AddressLike, AddressLike],
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -62,46 +62,46 @@ export interface IERC1155Interface extends Interface {
       AddressLike,
       BigNumberish[],
       BigNumberish[],
-      BytesLike,
-    ],
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike],
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
-    values: [AddressLike, boolean],
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
@@ -109,12 +109,12 @@ export namespace ApprovalForAllEvent {
   export type InputTuple = [
     account: AddressLike,
     operator: AddressLike,
-    approved: boolean,
+    approved: boolean
   ];
   export type OutputTuple = [
     account: string,
     operator: string,
-    approved: boolean,
+    approved: boolean
   ];
   export interface OutputObject {
     account: string;
@@ -133,14 +133,14 @@ export namespace TransferBatchEvent {
     from: AddressLike,
     to: AddressLike,
     ids: BigNumberish[],
-    values: BigNumberish[],
+    values: BigNumberish[]
   ];
   export type OutputTuple = [
     operator: string,
     from: string,
     to: string,
     ids: bigint[],
-    values: bigint[],
+    values: bigint[]
   ];
   export interface OutputObject {
     operator: string;
@@ -161,14 +161,14 @@ export namespace TransferSingleEvent {
     from: AddressLike,
     to: AddressLike,
     id: BigNumberish,
-    value: BigNumberish,
+    value: BigNumberish
   ];
   export type OutputTuple = [
     operator: string,
     from: string,
     to: string,
     id: bigint,
-    value: bigint,
+    value: bigint
   ];
   export interface OutputObject {
     operator: string;
@@ -205,38 +205,38 @@ export interface IERC1155 extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   balanceOf: TypedContractMethod<
@@ -263,7 +263,7 @@ export interface IERC1155 extends BaseContract {
       to: AddressLike,
       ids: BigNumberish[],
       values: BigNumberish[],
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
@@ -275,7 +275,7 @@ export interface IERC1155 extends BaseContract {
       to: AddressLike,
       id: BigNumberish,
       value: BigNumberish,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
@@ -294,90 +294,90 @@ export interface IERC1155 extends BaseContract {
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "balanceOf",
+    nameOrSignature: "balanceOf"
   ): TypedContractMethod<
     [account: AddressLike, id: BigNumberish],
     [bigint],
     "view"
   >;
   getFunction(
-    nameOrSignature: "balanceOfBatch",
+    nameOrSignature: "balanceOfBatch"
   ): TypedContractMethod<
     [accounts: AddressLike[], ids: BigNumberish[]],
     [bigint[]],
     "view"
   >;
   getFunction(
-    nameOrSignature: "isApprovedForAll",
+    nameOrSignature: "isApprovedForAll"
   ): TypedContractMethod<
     [account: AddressLike, operator: AddressLike],
     [boolean],
     "view"
   >;
   getFunction(
-    nameOrSignature: "safeBatchTransferFrom",
+    nameOrSignature: "safeBatchTransferFrom"
   ): TypedContractMethod<
     [
       from: AddressLike,
       to: AddressLike,
       ids: BigNumberish[],
       values: BigNumberish[],
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "safeTransferFrom",
+    nameOrSignature: "safeTransferFrom"
   ): TypedContractMethod<
     [
       from: AddressLike,
       to: AddressLike,
       id: BigNumberish,
       value: BigNumberish,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setApprovalForAll",
+    nameOrSignature: "setApprovalForAll"
   ): TypedContractMethod<
     [operator: AddressLike, approved: boolean],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "supportsInterface",
+    nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
 
   getEvent(
-    key: "ApprovalForAll",
+    key: "ApprovalForAll"
   ): TypedContractEvent<
     ApprovalForAllEvent.InputTuple,
     ApprovalForAllEvent.OutputTuple,
     ApprovalForAllEvent.OutputObject
   >;
   getEvent(
-    key: "TransferBatch",
+    key: "TransferBatch"
   ): TypedContractEvent<
     TransferBatchEvent.InputTuple,
     TransferBatchEvent.OutputTuple,
     TransferBatchEvent.OutputObject
   >;
   getEvent(
-    key: "TransferSingle",
+    key: "TransferSingle"
   ): TypedContractEvent<
     TransferSingleEvent.InputTuple,
     TransferSingleEvent.OutputTuple,
     TransferSingleEvent.OutputObject
   >;
   getEvent(
-    key: "URI",
+    key: "URI"
   ): TypedContractEvent<
     URIEvent.InputTuple,
     URIEvent.OutputTuple,

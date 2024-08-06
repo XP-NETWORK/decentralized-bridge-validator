@@ -38,7 +38,7 @@ export interface ERC721URIStorageInterface extends Interface {
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
-      | "transferFrom",
+      | "transferFrom"
   ): FunctionFragment;
 
   getEvent(
@@ -47,89 +47,89 @@ export interface ERC721URIStorageInterface extends Interface {
       | "ApprovalForAll"
       | "BatchMetadataUpdate"
       | "MetadataUpdate"
-      | "Transfer",
+      | "Transfer"
   ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "approve",
-    values: [AddressLike, BigNumberish],
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
-    values: [AddressLike, AddressLike],
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
-    values: [AddressLike, AddressLike, BigNumberish],
+    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    values: [AddressLike, AddressLike, BigNumberish, BytesLike],
+    values: [AddressLike, AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
-    values: [AddressLike, boolean],
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenURI",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
-    values: [AddressLike, AddressLike, BigNumberish],
+    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256)",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
@@ -137,7 +137,7 @@ export namespace ApprovalEvent {
   export type InputTuple = [
     owner: AddressLike,
     approved: AddressLike,
-    tokenId: BigNumberish,
+    tokenId: BigNumberish
   ];
   export type OutputTuple = [owner: string, approved: string, tokenId: bigint];
   export interface OutputObject {
@@ -155,12 +155,12 @@ export namespace ApprovalForAllEvent {
   export type InputTuple = [
     owner: AddressLike,
     operator: AddressLike,
-    approved: boolean,
+    approved: boolean
   ];
   export type OutputTuple = [
     owner: string,
     operator: string,
-    approved: boolean,
+    approved: boolean
   ];
   export interface OutputObject {
     owner: string;
@@ -176,7 +176,7 @@ export namespace ApprovalForAllEvent {
 export namespace BatchMetadataUpdateEvent {
   export type InputTuple = [
     _fromTokenId: BigNumberish,
-    _toTokenId: BigNumberish,
+    _toTokenId: BigNumberish
   ];
   export type OutputTuple = [_fromTokenId: bigint, _toTokenId: bigint];
   export interface OutputObject {
@@ -205,7 +205,7 @@ export namespace TransferEvent {
   export type InputTuple = [
     from: AddressLike,
     to: AddressLike,
-    tokenId: BigNumberish,
+    tokenId: BigNumberish
   ];
   export type OutputTuple = [from: string, to: string, tokenId: bigint];
   export interface OutputObject {
@@ -228,38 +228,38 @@ export interface ERC721URIStorage extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   approve: TypedContractMethod<
@@ -293,7 +293,7 @@ export interface ERC721URIStorage extends BaseContract {
       from: AddressLike,
       to: AddressLike,
       tokenId: BigNumberish,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
@@ -322,72 +322,72 @@ export interface ERC721URIStorage extends BaseContract {
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "approve",
+    nameOrSignature: "approve"
   ): TypedContractMethod<
     [to: AddressLike, tokenId: BigNumberish],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "balanceOf",
+    nameOrSignature: "balanceOf"
   ): TypedContractMethod<[owner: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getApproved",
+    nameOrSignature: "getApproved"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
   getFunction(
-    nameOrSignature: "isApprovedForAll",
+    nameOrSignature: "isApprovedForAll"
   ): TypedContractMethod<
     [owner: AddressLike, operator: AddressLike],
     [boolean],
     "view"
   >;
   getFunction(
-    nameOrSignature: "name",
+    nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "ownerOf",
+    nameOrSignature: "ownerOf"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
   getFunction(
-    nameOrSignature: "safeTransferFrom(address,address,uint256)",
+    nameOrSignature: "safeTransferFrom(address,address,uint256)"
   ): TypedContractMethod<
     [from: AddressLike, to: AddressLike, tokenId: BigNumberish],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "safeTransferFrom(address,address,uint256,bytes)",
+    nameOrSignature: "safeTransferFrom(address,address,uint256,bytes)"
   ): TypedContractMethod<
     [
       from: AddressLike,
       to: AddressLike,
       tokenId: BigNumberish,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setApprovalForAll",
+    nameOrSignature: "setApprovalForAll"
   ): TypedContractMethod<
     [operator: AddressLike, approved: boolean],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "supportsInterface",
+    nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "symbol",
+    nameOrSignature: "symbol"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "tokenURI",
+    nameOrSignature: "tokenURI"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
   getFunction(
-    nameOrSignature: "transferFrom",
+    nameOrSignature: "transferFrom"
   ): TypedContractMethod<
     [from: AddressLike, to: AddressLike, tokenId: BigNumberish],
     [void],
@@ -395,35 +395,35 @@ export interface ERC721URIStorage extends BaseContract {
   >;
 
   getEvent(
-    key: "Approval",
+    key: "Approval"
   ): TypedContractEvent<
     ApprovalEvent.InputTuple,
     ApprovalEvent.OutputTuple,
     ApprovalEvent.OutputObject
   >;
   getEvent(
-    key: "ApprovalForAll",
+    key: "ApprovalForAll"
   ): TypedContractEvent<
     ApprovalForAllEvent.InputTuple,
     ApprovalForAllEvent.OutputTuple,
     ApprovalForAllEvent.OutputObject
   >;
   getEvent(
-    key: "BatchMetadataUpdate",
+    key: "BatchMetadataUpdate"
   ): TypedContractEvent<
     BatchMetadataUpdateEvent.InputTuple,
     BatchMetadataUpdateEvent.OutputTuple,
     BatchMetadataUpdateEvent.OutputObject
   >;
   getEvent(
-    key: "MetadataUpdate",
+    key: "MetadataUpdate"
   ): TypedContractEvent<
     MetadataUpdateEvent.InputTuple,
     MetadataUpdateEvent.OutputTuple,
     MetadataUpdateEvent.OutputObject
   >;
   getEvent(
-    key: "Transfer",
+    key: "Transfer"
   ): TypedContractEvent<
     TransferEvent.InputTuple,
     TransferEvent.OutputTuple,

@@ -6,7 +6,7 @@ export default async function selfIsValidator(
   bc: BridgeContractType,
   signer: Signer,
 ) {
-  const mutez = (await bc.storage()).validators.get(
+  const mutez = await (await bc.storage()).validators.get(
     tas.address(await signer.publicKeyHash()),
   );
   return mutez !== undefined;

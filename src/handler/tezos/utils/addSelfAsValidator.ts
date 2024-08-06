@@ -20,7 +20,7 @@ export default async function addSelfAsValidator(
   try {
     let validatorsCount = (await bc.storage()).validators_count.toNumber();
     let signatureCount = Number(
-      await storage.getStakingSignaturesCount(await signer.publicKeyHash()),
+      await storage.getStakingSignaturesCount(await signer.publicKey()),
     );
 
     while (signatureCount < confirmationCountNeeded(validatorsCount)) {
@@ -45,10 +45,9 @@ export default async function addSelfAsValidator(
       };
     });
 
-    await bc.methods
-      .add_validator(
-        tas.address(await signer.publicKeyHash()),
-        stakingSignatures.map((e) => {
+    await bc.methodsObject
+      .add_validator({
+        sigs: stakingSignatures.map((e) => {
           const addr = tas.address(
             b58cencode(
               hash(
@@ -67,7 +66,8 @@ export default async function addSelfAsValidator(
             signer: tas.key(e.signerAddress),
           };
         }),
-      )
+        validator: tas.address(await signer.publicKeyHash()),
+      })
       .send();
     return "success";
   } catch (e) {

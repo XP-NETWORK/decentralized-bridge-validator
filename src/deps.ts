@@ -144,6 +144,7 @@ export async function configTezosHandler(
   });
   const provider = new TezosToolkit(conf.rpcURL);
   const signer = new InMemorySigner(tezosWallet.secretKey);
+  provider.setSignerProvider(signer);
   return tezosHandler({
     provider,
     signer,

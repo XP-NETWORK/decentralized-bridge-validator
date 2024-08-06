@@ -1,11 +1,11 @@
 import {
-  Address,
+  // Address,
   type OpenedContract,
   type Sender,
   beginCell,
   toNano,
 } from "@ton/core";
-import { Dictionary, type WalletContractV4 } from "@ton/ton";
+import { Dictionary, WalletContractV4 } from "@ton/ton";
 import TonWeb from "tonweb";
 import type { BridgeStorage } from "../../../contractsTypes/evm";
 import type {
@@ -85,6 +85,11 @@ export default async function addSelfAsValidator(
       sigs.set(BigInt(index), sig);
     });
 
+    const wallet = WalletContractV4.create({
+      publicKey: Buffer.from(publicKey, "hex"),
+      workchain: 0,
+    });
+
     await bc.send(
       walletSender,
       {
@@ -93,7 +98,7 @@ export default async function addSelfAsValidator(
       {
         $$type: "AddValidator",
         newValidatorPublicKey: newValidator,
-        newValidatorAddress: Address.parseFriendly(publicKey).address,
+        newValidatorAddress: wallet.address,
         sigs,
         len: beginCell()
           .storeUint(sigs.keys.length, 256)

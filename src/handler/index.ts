@@ -200,21 +200,6 @@ export async function listenStakeEvents(
       }[] = [];
 
       for (const sig of ev) {
-        const validatorEpoch = await deps.storage.validatorEpoch(
-          sig.validatorAddress,
-        );
-
-        const alreadyVoted = await deps.storage.validatorVoted(
-          sig.validatorAddress,
-          currentValidatorAddress,
-          validatorEpoch,
-        );
-        if (alreadyVoted) {
-          log.info(
-            `Already voted for ${sig.validatorAddress} - ${sig.chainType}`,
-          );
-          continue;
-        }
         const dc = map.get(sig.chainType);
         if (!dc) {
           throw new Error(`Unknown destination chain type: ${sig.chainType}`);

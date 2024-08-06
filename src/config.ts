@@ -124,7 +124,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       rpcURL: "https://mainnet.hashio.io/api",
       nativeCoinSymbol: "HBAR",
       intialFund: "50000000000000000000",
-      contractAddress: "0x0000000000000000000000000000000000648929",
+      contractAddress: "0x000000000000000000000000000000000064a394",
       chainType: "hedera",
       lastBlock: 66851249,
       royaltyInfoProxyAddress: "0x97fec8ed7203ea3ce58e2a4f44056fd954a35be4",

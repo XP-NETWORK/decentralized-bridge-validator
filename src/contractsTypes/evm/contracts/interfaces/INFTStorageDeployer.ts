@@ -26,30 +26,30 @@ export interface INFTStorageDeployerInterface extends Interface {
       | "deployNFT1155Storage"
       | "deployNFT721Storage"
       | "owner"
-      | "setOwner",
+      | "setOwner"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "deployNFT1155Storage",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "deployNFT721Storage",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "deployNFT1155Storage",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "deployNFT721Storage",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
@@ -64,38 +64,38 @@ export interface INFTStorageDeployer extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   deployNFT1155Storage: TypedContractMethod<
@@ -115,28 +115,28 @@ export interface INFTStorageDeployer extends BaseContract {
   setOwner: TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "deployNFT1155Storage",
+    nameOrSignature: "deployNFT1155Storage"
   ): TypedContractMethod<
     [collectionAddress: AddressLike],
     [string],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "deployNFT721Storage",
+    nameOrSignature: "deployNFT721Storage"
   ): TypedContractMethod<
     [collectionAddress: AddressLike],
     [string],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "owner",
+    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "setOwner",
+    nameOrSignature: "setOwner"
   ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
 
   filters: {};

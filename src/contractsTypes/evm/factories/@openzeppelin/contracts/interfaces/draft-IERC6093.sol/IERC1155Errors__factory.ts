@@ -120,7 +120,7 @@ export class IERC1155Errors__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC1155Errors {
     return new Contract(address, _abi, runner) as unknown as IERC1155Errors;
   }

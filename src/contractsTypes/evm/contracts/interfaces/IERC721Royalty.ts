@@ -23,27 +23,27 @@ import type {
 
 export interface IERC721RoyaltyInterface extends Interface {
   getFunction(
-    nameOrSignature: "mint" | "ownerOf" | "royaltyInfo",
+    nameOrSignature: "mint" | "ownerOf" | "royaltyInfo"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "mint",
-    values: [AddressLike, BigNumberish, BigNumberish, AddressLike, string],
+    values: [AddressLike, BigNumberish, BigNumberish, AddressLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [BigNumberish, BigNumberish],
+    values: [BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
@@ -56,38 +56,38 @@ export interface IERC721Royalty extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   mint: TypedContractMethod<
@@ -96,46 +96,46 @@ export interface IERC721Royalty extends BaseContract {
       tokenId: BigNumberish,
       royalty: BigNumberish,
       royaltyReceiver: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
   >;
 
-  ownerOf: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  ownerOf: TypedContractMethod<[tokenId: BigNumberish], [string], "nonpayable">;
 
   royaltyInfo: TypedContractMethod<
     [tokenId: BigNumberish, salePrice: BigNumberish],
     [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
-    "view"
+    "nonpayable"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "mint",
+    nameOrSignature: "mint"
   ): TypedContractMethod<
     [
       to: AddressLike,
       tokenId: BigNumberish,
       royalty: BigNumberish,
       royaltyReceiver: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "ownerOf",
-  ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+    nameOrSignature: "ownerOf"
+  ): TypedContractMethod<[tokenId: BigNumberish], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "royaltyInfo",
+    nameOrSignature: "royaltyInfo"
   ): TypedContractMethod<
     [tokenId: BigNumberish, salePrice: BigNumberish],
     [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
-    "view"
+    "nonpayable"
   >;
 
   filters: {};

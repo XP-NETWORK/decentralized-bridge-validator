@@ -45,14 +45,14 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212209d5ad6ed2f22143259927943c3c9e35e12a3ee62df229dda0d8ffa9cad2a950264736f6c63430008150033";
+  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212203d5e680e787b31787504be6b1431692bfe122f68a55af1a0738d809d4b6f5f6b64736f6c63430008150033";
 
 type ECDSAConstructorParams =
   | [signer?: Signer]
   | ConstructorParameters<typeof ContractFactory>;
 
 const isSuperArgs = (
-  xs: ECDSAConstructorParams,
+  xs: ECDSAConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
 export class ECDSA__factory extends ContractFactory {
@@ -65,7 +65,7 @@ export class ECDSA__factory extends ContractFactory {
   }
 
   override getDeployTransaction(
-    overrides?: NonPayableOverrides & { from?: string },
+    overrides?: NonPayableOverrides & { from?: string }
   ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }

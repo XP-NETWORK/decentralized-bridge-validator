@@ -1,4 +1,4 @@
-const multiversXBridgeABI = {
+export const multiversXBridgeABI = {
     buildInfo: {
         rustc: {
             version: '1.71.0-nightly',

@@ -31,6 +31,7 @@ export function evmHandler({
   chainType,
   serverLinkHandler,
   logger,
+  staking,
 }: EVMHandlerParams): THandler {
   const bc = Bridge__factory.connect(bridge, signer.connect(provider));
   return {
@@ -42,7 +43,14 @@ export function evmHandler({
     initialFunds,
     currency,
     address: signer.address,
-    addSelfAsValidator: addSelfAsValidator(bc, storage, signer),
+    addSelfAsValidator: addSelfAsValidator(
+      bc,
+      storage,
+      signer,
+      logger,
+      staking,
+      signer.address,
+    ),
     listenForLockEvents: listenForLockEvents(
       provider,
       lastBlock_,

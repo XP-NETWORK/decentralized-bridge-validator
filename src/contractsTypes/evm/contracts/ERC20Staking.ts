@@ -30,57 +30,66 @@ export type ValidatorAddressAndChainTypeStruct = {
 
 export type ValidatorAddressAndChainTypeStructOutput = [
   validatorAddress: string,
-  chainType: string,
+  chainType: string
 ] & { validatorAddress: string; chainType: string };
 
 export interface ERC20StakingInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "ERC20Token"
+      | "addNewChains"
       | "stakeERC20"
       | "stakingAmount"
-      | "stakingBalances",
+      | "stakingBalances"
   ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
 
   encodeFunctionData(
     functionFragment: "ERC20Token",
-    values?: undefined,
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addNewChains",
+    values: [ValidatorAddressAndChainTypeStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "stakeERC20",
-    values: [ValidatorAddressAndChainTypeStruct[]],
+    values: [ValidatorAddressAndChainTypeStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "stakingAmount",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "stakingBalances",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "ERC20Token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addNewChains",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stakeERC20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakingAmount",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "stakingBalances",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
 export namespace StakedEvent {
   export type InputTuple = [
     amount: BigNumberish,
-    validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[],
+    validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]
   ];
   export type OutputTuple = [
     amount: bigint,
-    validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[],
+    validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[]
   ];
   export interface OutputObject {
     amount: bigint;
@@ -101,41 +110,47 @@ export interface ERC20Staking extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   ERC20Token: TypedContractMethod<[], [string], "view">;
+
+  addNewChains: TypedContractMethod<
+    [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
+    [void],
+    "nonpayable"
+  >;
 
   stakeERC20: TypedContractMethod<
     [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
@@ -148,28 +163,35 @@ export interface ERC20Staking extends BaseContract {
   stakingBalances: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "ERC20Token",
+    nameOrSignature: "ERC20Token"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "stakeERC20",
+    nameOrSignature: "addNewChains"
   ): TypedContractMethod<
     [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "stakingAmount",
+    nameOrSignature: "stakeERC20"
+  ): TypedContractMethod<
+    [_validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "stakingAmount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "stakingBalances",
+    nameOrSignature: "stakingBalances"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   getEvent(
-    key: "Staked",
+    key: "Staked"
   ): TypedContractEvent<
     StakedEvent.InputTuple,
     StakedEvent.OutputTuple,

@@ -115,7 +115,7 @@ export class ERC1155Holder__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): ERC1155Holder {
     return new Contract(address, _abi, runner) as unknown as ERC1155Holder;
   }

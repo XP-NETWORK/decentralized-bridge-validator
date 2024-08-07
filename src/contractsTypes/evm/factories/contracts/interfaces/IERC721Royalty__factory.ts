@@ -58,7 +58,7 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -87,7 +87,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
 ] as const;
@@ -99,7 +99,7 @@ export class IERC721Royalty__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC721Royalty {
     return new Contract(address, _abi, runner) as unknown as IERC721Royalty;
   }

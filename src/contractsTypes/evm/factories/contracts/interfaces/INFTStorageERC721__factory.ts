@@ -75,7 +75,7 @@ export class INFTStorageERC721__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): INFTStorageERC721 {
     return new Contract(address, _abi, runner) as unknown as INFTStorageERC721;
   }

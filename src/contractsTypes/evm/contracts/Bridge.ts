@@ -167,11 +167,11 @@ export interface BridgeInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "lock1155",
-    values: [BigNumberish, string, string, AddressLike, BigNumberish, string]
+    values: [BigNumberish, string, string, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lock721",
-    values: [BigNumberish, string, string, AddressLike, string]
+    values: [BigNumberish, string, string, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping1155",
@@ -364,8 +364,7 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: BigNumberish,
     nftType: string,
-    sourceChain: string,
-    metaDataUri: string
+    sourceChain: string
   ];
   export type OutputTuple = [
     tokenId: bigint,
@@ -374,8 +373,7 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: bigint,
     nftType: string,
-    sourceChain: string,
-    metaDataUri: string
+    sourceChain: string
   ];
   export interface OutputObject {
     tokenId: bigint;
@@ -385,7 +383,6 @@ export namespace LockedEvent {
     tokenAmount: bigint;
     nftType: string;
     sourceChain: string;
-    metaDataUri: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -566,8 +563,7 @@ export interface Bridge extends BaseContract {
       destinationChain: string,
       destinationUserAddress: string,
       sourceNftContractAddress: AddressLike,
-      tokenAmount: BigNumberish,
-      metaDataUri: string
+      tokenAmount: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -578,8 +574,7 @@ export interface Bridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike,
-      metaDataUri: string
+      sourceNftContractAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -679,8 +674,7 @@ export interface Bridge extends BaseContract {
       destinationChain: string,
       destinationUserAddress: string,
       sourceNftContractAddress: AddressLike,
-      tokenAmount: BigNumberish,
-      metaDataUri: string
+      tokenAmount: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -692,8 +686,7 @@ export interface Bridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike,
-      metaDataUri: string
+      sourceNftContractAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -840,7 +833,7 @@ export interface Bridge extends BaseContract {
       Claimed721Event.OutputObject
     >;
 
-    "Locked(uint256,string,string,string,uint256,string,string,string)": TypedContractEvent<
+    "Locked(uint256,string,string,string,uint256,string,string)": TypedContractEvent<
       LockedEvent.InputTuple,
       LockedEvent.OutputTuple,
       LockedEvent.OutputObject

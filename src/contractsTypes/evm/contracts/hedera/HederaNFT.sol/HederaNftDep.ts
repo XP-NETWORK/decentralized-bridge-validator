@@ -21,9 +21,9 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../common";
+} from "../../../common";
 
-export interface HederaNftInterface extends Interface {
+export interface HederaNftDepInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "DEFAULT_EXPIRY"
@@ -41,7 +41,7 @@ export interface HederaNftInterface extends Interface {
       | "safeTransferFrom"
       | "transferFrom"
       | "transferFromNFT"
-      | "transferOwnership",
+      | "transferOwnership"
   ): FunctionFragment;
 
   getEvent(
@@ -49,65 +49,65 @@ export interface HederaNftInterface extends Interface {
       | "CallResponseEvent"
       | "Minted"
       | "OwnershipTransferred"
-      | "Transfer",
+      | "Transfer"
   ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_EXPIRY",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "MAX_INT", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "claimNft",
-    values: [BigNumberish, AddressLike],
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "decodeHts",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "htsToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [AddressLike, BigNumberish, BigNumberish, AddressLike, string],
+    values: [AddressLike, BigNumberish, BigNumberish, AddressLike, string]
   ): string;
   encodeFunctionData(functionFragment: "nftClaim", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [BigNumberish],
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "redirectForToken",
-    values: [AddressLike, BytesLike],
+    values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [BigNumberish, BigNumberish],
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
-    values: [AddressLike, AddressLike, BigNumberish],
+    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
-    values: [AddressLike, AddressLike, AddressLike, BigNumberish],
+    values: [AddressLike, AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferFromNFT",
-    values: [AddressLike, AddressLike, AddressLike, BigNumberish],
+    values: [AddressLike, AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_EXPIRY",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "MAX_INT", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimNft", data: BytesLike): Result;
@@ -119,31 +119,31 @@ export interface HederaNftInterface extends Interface {
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redirectForToken",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferFromNFT",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
@@ -190,7 +190,7 @@ export namespace TransferEvent {
   export type InputTuple = [
     from: AddressLike,
     to: AddressLike,
-    tokenId: BigNumberish,
+    tokenId: BigNumberish
   ];
   export type OutputTuple = [from: string, to: string, tokenId: bigint];
   export interface OutputObject {
@@ -204,47 +204,47 @@ export namespace TransferEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface HederaNft extends BaseContract {
-  connect(runner?: ContractRunner | null): HederaNft;
+export interface HederaNftDep extends BaseContract {
+  connect(runner?: ContractRunner | null): HederaNftDep;
   waitForDeployment(): Promise<this>;
 
-  interface: HederaNftInterface;
+  interface: HederaNftDepInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   DEFAULT_EXPIRY: TypedContractMethod<[], [bigint], "view">;
@@ -271,7 +271,7 @@ export interface HederaNft extends BaseContract {
       arg1: BigNumberish,
       arg2: BigNumberish,
       arg3: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
@@ -308,7 +308,7 @@ export interface HederaNft extends BaseContract {
       token: AddressLike,
       from: AddressLike,
       to: AddressLike,
-      amount: BigNumberish,
+      amount: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -319,7 +319,7 @@ export interface HederaNft extends BaseContract {
       token: AddressLike,
       from: AddressLike,
       to: AddressLike,
-      serialNumber: BigNumberish,
+      serialNumber: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -332,125 +332,125 @@ export interface HederaNft extends BaseContract {
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "DEFAULT_EXPIRY",
+    nameOrSignature: "DEFAULT_EXPIRY"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "MAX_INT",
+    nameOrSignature: "MAX_INT"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "claimNft",
+    nameOrSignature: "claimNft"
   ): TypedContractMethod<
     [serialNum: BigNumberish, token: AddressLike],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "decodeHts",
+    nameOrSignature: "decodeHts"
   ): TypedContractMethod<[data: BigNumberish], [[string, bigint]], "view">;
   getFunction(
-    nameOrSignature: "htsToken",
+    nameOrSignature: "htsToken"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "mint",
+    nameOrSignature: "mint"
   ): TypedContractMethod<
     [
       to: AddressLike,
       arg1: BigNumberish,
       arg2: BigNumberish,
       arg3: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "nftClaim",
+    nameOrSignature: "nftClaim"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "owner",
+    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "ownerOf",
+    nameOrSignature: "ownerOf"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "redirectForToken",
+    nameOrSignature: "redirectForToken"
   ): TypedContractMethod<
     [token: AddressLike, encodedFunctionSelector: BytesLike],
     [[bigint, string] & { responseCode: bigint; response: string }],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "renounceOwnership",
+    nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "royaltyInfo",
+    nameOrSignature: "royaltyInfo"
   ): TypedContractMethod<
     [tokenId: BigNumberish, salePrice: BigNumberish],
     [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "safeTransferFrom",
+    nameOrSignature: "safeTransferFrom"
   ): TypedContractMethod<
     [_from: AddressLike, _to: AddressLike, _serialNum: BigNumberish],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "transferFrom",
+    nameOrSignature: "transferFrom"
   ): TypedContractMethod<
     [
       token: AddressLike,
       from: AddressLike,
       to: AddressLike,
-      amount: BigNumberish,
+      amount: BigNumberish
     ],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "transferFromNFT",
+    nameOrSignature: "transferFromNFT"
   ): TypedContractMethod<
     [
       token: AddressLike,
       from: AddressLike,
       to: AddressLike,
-      serialNumber: BigNumberish,
+      serialNumber: BigNumberish
     ],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "transferOwnership",
+    nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
-    key: "CallResponseEvent",
+    key: "CallResponseEvent"
   ): TypedContractEvent<
     CallResponseEventEvent.InputTuple,
     CallResponseEventEvent.OutputTuple,
     CallResponseEventEvent.OutputObject
   >;
   getEvent(
-    key: "Minted",
+    key: "Minted"
   ): TypedContractEvent<
     MintedEvent.InputTuple,
     MintedEvent.OutputTuple,
     MintedEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipTransferred",
+    key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
-    key: "Transfer",
+    key: "Transfer"
   ): TypedContractEvent<
     TransferEvent.InputTuple,
     TransferEvent.OutputTuple,

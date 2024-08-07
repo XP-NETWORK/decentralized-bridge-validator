@@ -121,7 +121,7 @@ export class IERC721Errors__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC721Errors {
     return new Contract(address, _abi, runner) as unknown as IERC721Errors;
   }

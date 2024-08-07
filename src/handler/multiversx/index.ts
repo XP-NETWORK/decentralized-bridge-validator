@@ -6,7 +6,7 @@ import {
 } from "@multiversx/sdk-core/out";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
 import axios from "axios";
-import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
+import { multiversXBridgeABI } from "../../contractsTypes/multiversx/abi/multiversXBridgeABI";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";

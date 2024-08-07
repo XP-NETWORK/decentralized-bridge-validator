@@ -29,12 +29,12 @@ export interface IERC1155RoyaltyInterface extends Interface {
       | "owner"
       | "royaltyInfo"
       | "setTokenURI"
-      | "uri",
+      | "uri"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [AddressLike, BigNumberish],
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
@@ -44,17 +44,17 @@ export interface IERC1155RoyaltyInterface extends Interface {
       BigNumberish,
       BigNumberish,
       AddressLike,
-      string,
-    ],
+      string
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [BigNumberish, BigNumberish],
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenURI",
-    values: [BigNumberish, string],
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
@@ -63,11 +63,11 @@ export interface IERC1155RoyaltyInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setTokenURI",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 }
@@ -81,38 +81,38 @@ export interface IERC1155Royalty extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   balanceOf: TypedContractMethod<
@@ -128,7 +128,7 @@ export interface IERC1155Royalty extends BaseContract {
       amount: BigNumberish,
       royalty: BigNumberish,
       royaltyReceiver: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
@@ -151,18 +151,18 @@ export interface IERC1155Royalty extends BaseContract {
   uri: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "balanceOf",
+    nameOrSignature: "balanceOf"
   ): TypedContractMethod<
     [account: AddressLike, id: BigNumberish],
     [bigint],
     "view"
   >;
   getFunction(
-    nameOrSignature: "mint",
+    nameOrSignature: "mint"
   ): TypedContractMethod<
     [
       account: AddressLike,
@@ -170,30 +170,30 @@ export interface IERC1155Royalty extends BaseContract {
       amount: BigNumberish,
       royalty: BigNumberish,
       royaltyReceiver: AddressLike,
-      tokenURI: string,
+      tokenURI: string
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "owner",
+    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "royaltyInfo",
+    nameOrSignature: "royaltyInfo"
   ): TypedContractMethod<
     [tokenId: BigNumberish, salePrice: BigNumberish],
     [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
     "view"
   >;
   getFunction(
-    nameOrSignature: "setTokenURI",
+    nameOrSignature: "setTokenURI"
   ): TypedContractMethod<
     [tokenId: BigNumberish, newTokenURI: string],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "uri",
+    nameOrSignature: "uri"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
   filters: {};

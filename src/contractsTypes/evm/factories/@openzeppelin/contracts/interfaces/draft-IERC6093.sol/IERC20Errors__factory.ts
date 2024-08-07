@@ -104,7 +104,7 @@ export class IERC20Errors__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC20Errors {
     return new Contract(address, _abi, runner) as unknown as IERC20Errors;
   }

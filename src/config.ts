@@ -39,16 +39,17 @@ export const bridgeTestChains = [
     decimals: 18,
     blockChunks: 1000,
   },
-  // {
-  //   chain: "TON",
-  //   rpcURL: "https://testnet.toncenter.com/api/v2/jsonRPC",
-  //   chainType: "ton",
-  //   contractAddress: "kQCHrjSTU6W7XYUfJgwr_trmG3QL_llPJfPyXPmINYznrkh6",
-  //   decimals: 9,
-  //   intialFund: "100000000",
-  //   lastBlock: 24014875000001,
-  //   nativeCoinSymbol: "TON",
-  // },
+  {
+    chain: "TON",
+    rpcURL:
+      "https://ton.access.orbs.network/4412c0ff5Bd3F8B62C092Ab4D238bEE463E64412/1/testnet/toncenter-api-v2/jsonRPC",
+    chainType: "ton",
+    contractAddress: "kQA5kbo1FaCAzvqFtSmpCFR2h-Yg0N4I92iOMPv0Zg-UZcZd",
+    decimals: 9,
+    intialFund: "100000000",
+    lastBlock: 24014875000001,
+    nativeCoinSymbol: "TON",
+  },
   {
     blockChunks: 1000,
     chain: "TEZOS",

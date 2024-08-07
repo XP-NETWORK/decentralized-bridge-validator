@@ -1362,33 +1362,33 @@
     elliptic "^6.5.4"
     typedarray-to-buffer "^4.0.0"
 
-"@ton/core@^0.54.0":
-  version "0.54.0"
-  resolved "https://registry.yarnpkg.com/@ton/core/-/core-0.54.0.tgz#811495859102d9868ac7a412b540df14eae15795"
-  integrity sha512-ry3sCDq3jdjZuo7+egZ827/Y0/ajPbtrozvJryNMefUGfZQ/zYLVCmw9zBtxVsY2EX2zW7QhHQUs76/3y6HCwQ==
+"@ton/core@=0.56.3":
+  version "0.56.3"
+  resolved "https://registry.yarnpkg.com/@ton/core/-/core-0.56.3.tgz#1162764573abb76032eba70f8497e5cb2ea532ee"
+  integrity sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==
   dependencies:
     symbol.inspect "1.0.1"
 
-"@ton/crypto-primitives@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@ton/crypto-primitives/-/crypto-primitives-2.1.0.tgz#8c9277c250b59aae3c819e0d6bd61e44d998e9ca"
-  integrity sha512-PQesoyPgqyI6vzYtCXw4/ZzevePc4VGcJtFwf08v10OevVJHVfW238KBdpj1kEDQkxWLeuNHEpTECNFKnP6tow==
+"@ton/crypto-primitives@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ton/crypto-primitives/-/crypto-primitives-2.0.0.tgz#446256146d64fcec6e3f21d9f40b5148640329cc"
+  integrity sha512-wttiNClmGbI6Dfy/8oyNnsIV0b/qYkCJz4Gn4eP62lJZzMtVQ94Ko7nikDX1EfYHkLI1xpOitWpW+8ZuG6XtDg==
   dependencies:
     jssha "3.2.0"
 
-"@ton/crypto@^3.2.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@ton/crypto/-/crypto-3.3.0.tgz#019103df6540fbc1d8102979b4587bc85ff9779e"
-  integrity sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==
+"@ton/crypto@=3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@ton/crypto/-/crypto-3.2.0.tgz#8fcb36cc93eafd05249c847d1f4ad39cf2565e46"
+  integrity sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==
   dependencies:
-    "@ton/crypto-primitives" "2.1.0"
+    "@ton/crypto-primitives" "2.0.0"
     jssha "3.2.0"
     tweetnacl "1.0.3"
 
-"@ton/ton@^13.9.0":
-  version "13.11.2"
-  resolved "https://registry.yarnpkg.com/@ton/ton/-/ton-13.11.2.tgz#e40204df6a663fdf1b862dfe8ba2a91be3c0dddc"
-  integrity sha512-EPqW+ZTe0MmfqguJEIGMuAqTAFRKMEce95HlDx8h6CGn2y3jiMgV1/oO+WpDIOiX+1wnTu+xtajk8JTWr8nKRQ==
+"@ton/ton@=13.11.1":
+  version "13.11.1"
+  resolved "https://registry.yarnpkg.com/@ton/ton/-/ton-13.11.1.tgz#d72169a6a5bf7fce6e556126c56391139442b1e2"
+  integrity sha512-tcLdHzwhS5bmS0EGstcmfYK0ZeRrNz1AUIzUGKq/Xh0MGEwfP1qZBMloGGHLQnyZdRQ1D7Wx4g4mBKNrvG6DcQ==
   dependencies:
     axios "^1.6.7"
     dataloader "^2.0.0"
@@ -5671,9 +5671,9 @@ ws@^8.8.1:
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.0.tgz#0d7505a6eafe2b0e712d232b42279f53bc289bbc"
   integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==
 
-"xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge":
+"xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#d121a09a60576cca78f13ccc590867212884851d":
   version "1.0.0"
-  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#b97304893896efa1f337de8af41dfdff171c352f"
+  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#d121a09a60576cca78f13ccc590867212884851d"
   dependencies:
     "@aptos-labs/ts-sdk" "^1.22.2"
     "@cosmjs/amino" "^0.32.3"
@@ -5689,9 +5689,9 @@ ws@^8.8.1:
     "@taquito/taquito" "^19.0.0"
     "@taquito/tzip16" "^19.0.0"
     "@taquito/utils" "^19.0.0"
-    "@ton/core" "^0.54.0"
-    "@ton/crypto" "^3.2.0"
-    "@ton/ton" "^13.9.0"
+    "@ton/core" "=0.56.3"
+    "@ton/crypto" "=3.2.0"
+    "@ton/ton" "=13.11.1"
     "@tzkt/sdk-api" "^2.2.1"
     "@xp/cosmos-client" "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge"
     aptos "^1.21.0"

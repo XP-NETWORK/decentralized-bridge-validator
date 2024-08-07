@@ -298,6 +298,8 @@ export async function configTonHandler(
   tonWallet: ITonWallet,
   serverLinkHandler: AxiosInstance | undefined,
   tonLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const client = new TonClient({
     endpoint: conf.rpcURL,
@@ -329,6 +331,8 @@ export async function configTonHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: tonLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -405,6 +409,8 @@ export async function configDeps(
         secrets.tonWallet,
         serverLinkHandler,
         logger.getSubLogger({ name: "TON" }),
+        staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 

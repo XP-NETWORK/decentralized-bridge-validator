@@ -1,4 +1,4 @@
-import { Address } from "@ton/ton";
+import { address } from "@ton/ton";
 import TonWeb from "tonweb";
 import { Bridge } from "../../contractsTypes/ton/tonBridge";
 import pollForLockEvents from "../poller";
@@ -17,9 +17,9 @@ import {
 
 export function tonHandler({
   client,
-  provider,
   signer,
   bridge,
+  provider,
   storage,
   lastBlock_,
   walletSender,
@@ -31,11 +31,11 @@ export function tonHandler({
   chainIdent,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: TonParams): THandler {
-  const bc = client.open(
-    Bridge.fromAddress(Address.parseFriendly(bridge).address),
-  );
-  const tonweb = new TonWeb(provider);
+  const bc = client.open(Bridge.fromAddress(address(bridge)));
+  const tw = new TonWeb(provider);
   return {
     pollForLockEvents: async (builder, cb) => {
       serverLinkHandler
@@ -60,8 +60,16 @@ export function tonHandler({
     getBalance: () => getBalance(client, signer.address),
     signClaimData: (d) => signClaimData(d, secretKey, signer, logger),
     addSelfAsValidator: () =>
-      addSelfAsValidator(storage, bc, signer, walletSender, logger),
-    selfIsValidator: () => selfIsValidator(signer, tonweb, bridge),
+      addSelfAsValidator(
+        storage,
+        bc,
+        signer,
+        walletSender,
+        logger,
+        staking,
+        validatorAddress,
+      ),
+    selfIsValidator: () => selfIsValidator(signer, tw, bridge),
     nftData: (_, ctr) =>
       retry(
         () => nftData(_, ctr, client),

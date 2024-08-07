@@ -46,9 +46,9 @@
     "@taquito/signer": "^19.0.2",
     "@taquito/taquito": "^19.0.2",
     "@taquito/tzip16": "^19.0.2",
-    "@ton/core": "^0.54.0",
-    "@ton/crypto": "^3.2.0",
-    "@ton/ton": "^13.9.0",
+    "@ton/core": "=0.56.3",
+    "@ton/crypto": "=3.2.0",
+    "@ton/ton": "=13.11.1",
     "@xp/cosmos-client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "axios": "^1.6.7",
     "chalk": "4",
@@ -70,7 +70,7 @@
     "tonweb": "^0.0.62",
     "tslog": "^4.9.3",
     "web3-eth-accounts": "^4.1.1",
-    "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge",
+    "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#d121a09a60576cca78f13ccc590867212884851d",
     "zod": "^3.22.4"
   }
 }

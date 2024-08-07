@@ -260,6 +260,8 @@ export async function configMultiversXHandler(
   multiversXWallet: IMultiversXWallet,
   serverLinkHandler: AxiosInstance | undefined,
   mxLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -284,6 +286,8 @@ export async function configMultiversXHandler(
     decimals: conf.decimals,
     serverLinkHandler,
     logger: mxLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -386,6 +390,8 @@ export async function configDeps(
         secrets.multiversXWallet,
         serverLinkHandler,
         logger.getSubLogger({ name: "MULTIVERSX" }),
+        staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 

@@ -36,6 +36,8 @@ export function multiversxHandler({
   chainIdent,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -77,7 +79,16 @@ export function multiversxHandler({
     chainIdent,
     selfIsValidator: () => selfIsValidator(bc, signer, provider),
     addSelfAsValidator: () =>
-      addSelfAsValidator(bc, chainID, storage, signer, provider, logger),
+      addSelfAsValidator(
+        bc,
+        chainID,
+        storage,
+        signer,
+        provider,
+        logger,
+        staking,
+        validatorAddress,
+      ),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(
         builder,

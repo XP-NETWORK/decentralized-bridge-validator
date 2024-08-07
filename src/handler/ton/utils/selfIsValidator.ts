@@ -15,5 +15,8 @@ export default async function selfIsValidator(
   const res = await tonweb.provider.call(bridge, "Validator", [
     ["num", thisValidatorPk.toString()],
   ]);
+
+  console.log("TON selfIsValidator", !!res.stack[0][1].elements.length);
+
   return !!res.stack[0][1].elements.length;
 }

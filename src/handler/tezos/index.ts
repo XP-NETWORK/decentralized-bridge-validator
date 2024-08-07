@@ -28,6 +28,8 @@ export async function tezosHandler({
   chainIdent,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: TezosHandlerParams): Promise<THandler> {
   const bc = await provider.contract.at<BridgeContractType>(bridge);
 
@@ -68,7 +70,15 @@ export async function tezosHandler({
     signClaimData: (data) => signClaimData(data, signer),
     nftData: (tid, ctr) => nftData(tid, ctr, provider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
-    addSelfAsValidator: () => addSelfAsValidator(storage, bc, signer, logger),
+    addSelfAsValidator: () =>
+      addSelfAsValidator(
+        storage,
+        bc,
+        signer,
+        logger,
+        staking,
+        validatorAddress,
+      ),
     chainIdent: chainIdent,
     decimals: BigInt(10 ** decimals),
   };

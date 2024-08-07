@@ -143,6 +143,8 @@ export async function configTezosHandler(
   tezosWallet: ITezosWallet,
   serverLinkHandler: AxiosInstance | undefined,
   tzLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -166,6 +168,8 @@ export async function configTezosHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: tzLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -356,6 +360,8 @@ export async function configDeps(
         secrets.tezosWallet,
         serverLinkHandler,
         logger.getSubLogger({ name: "TEZOS" }),
+        staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 

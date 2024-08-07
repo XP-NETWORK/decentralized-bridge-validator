@@ -212,30 +212,25 @@ export async function listenStakeEvents(
             signerAddress: signerAndSignature.signer,
           },
         });
-      }
-      if (!signatures.length) return;
-      const newEvmValidator = ev.find((item) => item.chainType === "evm");
-      if (!newEvmValidator) {
-        throw new Error("Unreachable State");
-      }
 
-      const approvalFn = async () => {
-        const tx = await deps.storage.approveStake(
-          newEvmValidator.validatorAddress,
-          signatures,
+        const approvalFn = async () => {
+          const tx = await deps.storage.approveStake(
+            currentValidatorAddress,
+            signatures,
+          );
+          if (!(await tx.wait())?.status) throw new Error("TxFailed");
+          return tx;
+        };
+        const approved = await retry(
+          approvalFn,
+          `Approving stake ${JSON.stringify(ev, null, 2)}`,
+          log,
+          6,
         );
-        if (!(await tx.wait())?.status) throw new Error("TxFailed");
-        return tx;
-      };
-      const approved = await retry(
-        approvalFn,
-        `Approving stake ${JSON.stringify(ev, null, 2)}`,
-        log,
-        6,
-      );
-      log.info(
-        `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
-      );
+        log.info(
+          `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
+        );
+      }
     });
   }
 

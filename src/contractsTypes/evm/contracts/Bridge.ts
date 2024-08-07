@@ -90,6 +90,7 @@ export declare namespace Bridge {
 export interface BridgeInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "UPGRADE_INTERFACE_VERSION"
       | "addValidator"
       | "blackListValidator"
       | "blackListedValidators"
@@ -100,14 +101,20 @@ export interface BridgeInterface extends Interface {
       | "duplicateStorageMapping1155"
       | "duplicateStorageMapping721"
       | "duplicateToOriginalMapping"
+      | "initialize"
       | "lock1155"
       | "lock721"
       | "originalStorageMapping1155"
       | "originalStorageMapping721"
       | "originalToDuplicateMapping"
+      | "proxiableUUID"
       | "selfChain"
       | "storageDeployer"
       | "uniqueIdentifier"
+      | "uniqueImplementations"
+      | "upgrade"
+      | "upgradeToAndCall"
+      | "upgradeables"
       | "validators"
       | "validatorsCount"
   ): FunctionFragment;
@@ -118,13 +125,20 @@ export interface BridgeInterface extends Interface {
       | "BlackListValidator"
       | "Claim1155"
       | "Claimed721"
+      | "Initialized"
       | "Locked"
       | "LogHash"
       | "RewardValidator"
       | "UnLock1155"
       | "UnLock721"
+      | "Upgraded"
+      | "UpgradedContract"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addValidator",
     values: [AddressLike, SignerAndSignatureStruct[]]
@@ -166,12 +180,16 @@ export interface BridgeInterface extends Interface {
     values: [AddressLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize",
+    values: [AddressLike[], string, AddressLike, AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "lock1155",
-    values: [BigNumberish, string, string, AddressLike, BigNumberish]
+    values: [BigNumberish, string, string, AddressLike, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "lock721",
-    values: [BigNumberish, string, string, AddressLike]
+    values: [BigNumberish, string, string, AddressLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping1155",
@@ -185,6 +203,10 @@ export interface BridgeInterface extends Interface {
     functionFragment: "originalToDuplicateMapping",
     values: [string, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "selfChain", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "storageDeployer",
@@ -195,6 +217,22 @@ export interface BridgeInterface extends Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "uniqueImplementations",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgrade",
+    values: [AddressLike, SignerAndSignatureStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [AddressLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeables",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "validators",
     values: [AddressLike]
   ): string;
@@ -203,6 +241,10 @@ export interface BridgeInterface extends Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addValidator",
     data: BytesLike
@@ -243,6 +285,7 @@ export interface BridgeInterface extends Interface {
     functionFragment: "duplicateToOriginalMapping",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lock1155", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lock721", data: BytesLike): Result;
   decodeFunctionResult(
@@ -257,6 +300,10 @@ export interface BridgeInterface extends Interface {
     functionFragment: "originalToDuplicateMapping",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "selfChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storageDeployer",
@@ -264,6 +311,19 @@ export interface BridgeInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "uniqueIdentifier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "uniqueImplementations",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeables",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "validators", data: BytesLike): Result;
@@ -356,6 +416,18 @@ export namespace Claimed721Event {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace LockedEvent {
   export type InputTuple = [
     tokenId: BigNumberish,
@@ -364,7 +436,8 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: BigNumberish,
     nftType: string,
-    sourceChain: string
+    sourceChain: string,
+    metaDataUri: string
   ];
   export type OutputTuple = [
     tokenId: bigint,
@@ -373,7 +446,8 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: bigint,
     nftType: string,
-    sourceChain: string
+    sourceChain: string,
+    metaDataUri: string
   ];
   export interface OutputObject {
     tokenId: bigint;
@@ -383,6 +457,7 @@ export namespace LockedEvent {
     tokenAmount: bigint;
     nftType: string;
     sourceChain: string;
+    metaDataUri: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -458,6 +533,30 @@ export namespace UnLock721Event {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace UpgradedContractEvent {
+  export type InputTuple = [_contractAddress: AddressLike];
+  export type OutputTuple = [_contractAddress: string];
+  export interface OutputObject {
+    _contractAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export interface Bridge extends BaseContract {
   connect(runner?: ContractRunner | null): Bridge;
   waitForDeployment(): Promise<this>;
@@ -500,6 +599,8 @@ export interface Bridge extends BaseContract {
   removeAllListeners<TCEvent extends TypedContractEvent>(
     event?: TCEvent
   ): Promise<this>;
+
+  UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
 
   addValidator: TypedContractMethod<
     [_validator: AddressLike, signatures: SignerAndSignatureStruct[]],
@@ -557,13 +658,26 @@ export interface Bridge extends BaseContract {
     "view"
   >;
 
+  initialize: TypedContractMethod<
+    [
+      _validators: AddressLike[],
+      _chainType: string,
+      _collectionDeployer: AddressLike,
+      _storageDeployer: AddressLike,
+      _collectionOwner: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   lock1155: TypedContractMethod<
     [
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
       sourceNftContractAddress: AddressLike,
-      tokenAmount: BigNumberish
+      tokenAmount: BigNumberish,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -574,7 +688,8 @@ export interface Bridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike
+      sourceNftContractAddress: AddressLike,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -598,11 +713,33 @@ export interface Bridge extends BaseContract {
     "view"
   >;
 
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
+
   selfChain: TypedContractMethod<[], [string], "view">;
 
   storageDeployer: TypedContractMethod<[], [string], "view">;
 
   uniqueIdentifier: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
+
+  uniqueImplementations: TypedContractMethod<
+    [arg0: AddressLike],
+    [boolean],
+    "view"
+  >;
+
+  upgrade: TypedContractMethod<
+    [newImplementation: AddressLike, signatures: SignerAndSignatureStruct[]],
+    [void],
+    "nonpayable"
+  >;
+
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+
+  upgradeables: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
 
   validators: TypedContractMethod<
     [arg0: AddressLike],
@@ -616,6 +753,9 @@ export interface Bridge extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "UPGRADE_INTERFACE_VERSION"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "addValidator"
   ): TypedContractMethod<
@@ -667,6 +807,19 @@ export interface Bridge extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [
+      _validators: AddressLike[],
+      _chainType: string,
+      _collectionDeployer: AddressLike,
+      _storageDeployer: AddressLike,
+      _collectionOwner: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "lock1155"
   ): TypedContractMethod<
     [
@@ -674,7 +827,8 @@ export interface Bridge extends BaseContract {
       destinationChain: string,
       destinationUserAddress: string,
       sourceNftContractAddress: AddressLike,
-      tokenAmount: BigNumberish
+      tokenAmount: BigNumberish,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -686,7 +840,8 @@ export interface Bridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike
+      sourceNftContractAddress: AddressLike,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -705,6 +860,9 @@ export interface Bridge extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "proxiableUUID"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "selfChain"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -713,6 +871,26 @@ export interface Bridge extends BaseContract {
   getFunction(
     nameOrSignature: "uniqueIdentifier"
   ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "uniqueImplementations"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "upgrade"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, signatures: SignerAndSignatureStruct[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeables"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "validators"
   ): TypedContractMethod<
@@ -753,6 +931,13 @@ export interface Bridge extends BaseContract {
     Claimed721Event.OutputObject
   >;
   getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
     key: "Locked"
   ): TypedContractEvent<
     LockedEvent.InputTuple,
@@ -786,6 +971,20 @@ export interface Bridge extends BaseContract {
     UnLock721Event.InputTuple,
     UnLock721Event.OutputTuple,
     UnLock721Event.OutputObject
+  >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
+  getEvent(
+    key: "UpgradedContract"
+  ): TypedContractEvent<
+    UpgradedContractEvent.InputTuple,
+    UpgradedContractEvent.OutputTuple,
+    UpgradedContractEvent.OutputObject
   >;
 
   filters: {
@@ -833,7 +1032,18 @@ export interface Bridge extends BaseContract {
       Claimed721Event.OutputObject
     >;
 
-    "Locked(uint256,string,string,string,uint256,string,string)": TypedContractEvent<
+    "Initialized(uint64)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+
+    "Locked(uint256,string,string,string,uint256,string,string,string)": TypedContractEvent<
       LockedEvent.InputTuple,
       LockedEvent.OutputTuple,
       LockedEvent.OutputObject
@@ -886,6 +1096,28 @@ export interface Bridge extends BaseContract {
       UnLock721Event.InputTuple,
       UnLock721Event.OutputTuple,
       UnLock721Event.OutputObject
+    >;
+
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+
+    "UpgradedContract(address)": TypedContractEvent<
+      UpgradedContractEvent.InputTuple,
+      UpgradedContractEvent.OutputTuple,
+      UpgradedContractEvent.OutputObject
+    >;
+    UpgradedContract: TypedContractEvent<
+      UpgradedContractEvent.InputTuple,
+      UpgradedContractEvent.OutputTuple,
+      UpgradedContractEvent.OutputObject
     >;
   };
 }

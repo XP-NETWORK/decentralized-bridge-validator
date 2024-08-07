@@ -154,7 +154,7 @@ export interface HederaBridgeInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "lock721",
-    values: [BigNumberish, string, string, AddressLike]
+    values: [BigNumberish, string, string, AddressLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping721",
@@ -323,7 +323,8 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: BigNumberish,
     nftType: string,
-    sourceChain: string
+    sourceChain: string,
+    metaDataUri: string
   ];
   export type OutputTuple = [
     tokenId: bigint,
@@ -332,7 +333,8 @@ export namespace LockedEvent {
     sourceNftContractAddress: string,
     tokenAmount: bigint,
     nftType: string,
-    sourceChain: string
+    sourceChain: string,
+    metaDataUri: string
   ];
   export interface OutputObject {
     tokenId: bigint;
@@ -342,6 +344,7 @@ export namespace LockedEvent {
     tokenAmount: bigint;
     nftType: string;
     sourceChain: string;
+    metaDataUri: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -487,7 +490,8 @@ export interface HederaBridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike
+      sourceNftContractAddress: AddressLike,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -618,7 +622,8 @@ export interface HederaBridge extends BaseContract {
       tokenId: BigNumberish,
       destinationChain: string,
       destinationUserAddress: string,
-      sourceNftContractAddress: AddressLike
+      sourceNftContractAddress: AddressLike,
+      metaDataUri: string
     ],
     [void],
     "nonpayable"
@@ -782,7 +787,7 @@ export interface HederaBridge extends BaseContract {
       ClaimedEvent.OutputObject
     >;
 
-    "Locked(uint256,string,string,string,uint256,string,string)": TypedContractEvent<
+    "Locked(uint256,string,string,string,uint256,string,string,string)": TypedContractEvent<
       LockedEvent.InputTuple,
       LockedEvent.OutputTuple,
       LockedEvent.OutputObject

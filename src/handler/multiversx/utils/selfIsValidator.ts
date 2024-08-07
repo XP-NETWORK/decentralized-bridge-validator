@@ -23,6 +23,9 @@ export default async function selfIsValidator(
     validatorsDefinition,
   );
   let added = false;
-  if (firstValue) ({ added } = firstValue.valueOf()[0]);
+  if (firstValue) {
+    const [value] = firstValue.valueOf();
+    added = value?.added ?? false;
+  }
   return added;
 }

@@ -240,7 +240,7 @@ export class IERC20Metadata__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC20Metadata {
     return new Contract(address, _abi, runner) as unknown as IERC20Metadata;
   }

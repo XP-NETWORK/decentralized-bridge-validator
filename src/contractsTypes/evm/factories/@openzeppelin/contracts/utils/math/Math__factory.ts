@@ -23,14 +23,14 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122047aa2cc6204c3d1cfcab94664806ca09318c45bc568dd3986c5387020d2bcf9064736f6c63430008150033";
+  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220c2b4102621ba49da049aae8b30d669226ec9deb34e61340c6eeaa723040d40bd64736f6c63430008150033";
 
 type MathConstructorParams =
   | [signer?: Signer]
   | ConstructorParameters<typeof ContractFactory>;
 
 const isSuperArgs = (
-  xs: MathConstructorParams,
+  xs: MathConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
 export class Math__factory extends ContractFactory {
@@ -43,7 +43,7 @@ export class Math__factory extends ContractFactory {
   }
 
   override getDeployTransaction(
-    overrides?: NonPayableOverrides & { from?: string },
+    overrides?: NonPayableOverrides & { from?: string }
   ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }

@@ -6,7 +6,7 @@ import {
 } from "@multiversx/sdk-core/out";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
 import axios from "axios";
-import { multiversXBridgeABI } from "../../contractsTypes/evm/abi";
+import { multiversXBridgeABI } from "../../contractsTypes/multiversx/abi/multiversXBridgeABI";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
@@ -36,6 +36,8 @@ export function multiversxHandler({
   chainIdent,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: MultiversXHandlerParams): THandler {
   const multiversXBridgeAddress = new Address(bridge);
   const abiRegistry = AbiRegistry.create(multiversXBridgeABI);
@@ -77,7 +79,16 @@ export function multiversxHandler({
     chainIdent,
     selfIsValidator: () => selfIsValidator(bc, signer, provider),
     addSelfAsValidator: () =>
-      addSelfAsValidator(bc, chainID, storage, signer, provider, logger),
+      addSelfAsValidator(
+        bc,
+        chainID,
+        storage,
+        signer,
+        provider,
+        logger,
+        staking,
+        validatorAddress,
+      ),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(
         builder,

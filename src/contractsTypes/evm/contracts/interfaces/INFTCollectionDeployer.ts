@@ -26,30 +26,30 @@ export interface INFTCollectionDeployerInterface extends Interface {
       | "deployNFT1155Collection"
       | "deployNFT721Collection"
       | "owner"
-      | "setOwner",
+      | "setOwner"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "deployNFT1155Collection",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "deployNFT721Collection",
-    values: [string, string],
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [AddressLike],
+    values: [AddressLike, AddressLike]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "deployNFT1155Collection",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "deployNFT721Collection",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
@@ -64,38 +64,38 @@ export interface INFTCollectionDeployer extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   deployNFT1155Collection: TypedContractMethod<[], [string], "nonpayable">;
@@ -108,28 +108,36 @@ export interface INFTCollectionDeployer extends BaseContract {
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  setOwner: TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  setOwner: TypedContractMethod<
+    [_owner: AddressLike, _bridge: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "deployNFT1155Collection",
+    nameOrSignature: "deployNFT1155Collection"
   ): TypedContractMethod<[], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "deployNFT721Collection",
+    nameOrSignature: "deployNFT721Collection"
   ): TypedContractMethod<
     [name: string, symbol: string],
     [string],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "owner",
+    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "setOwner",
-  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<
+    [_owner: AddressLike, _bridge: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   filters: {};
 }

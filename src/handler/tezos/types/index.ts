@@ -1,8 +1,8 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { Signer, TezosToolkit } from "@taquito/taquito";
 import type { AxiosInstance } from "axios";
-import type { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type TezosHandlerParams = {
@@ -20,4 +20,6 @@ export type TezosHandlerParams = {
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
+  staking: ERC20Staking;
+  validatorAddress: string;
 };

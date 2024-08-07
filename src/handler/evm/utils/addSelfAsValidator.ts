@@ -1,5 +1,7 @@
 import type { Wallet } from "ethers";
 import type { Bridge, BridgeStorage } from "../../../contractsTypes/evm";
+import type { ERC20Staking } from "../../../contractsTypes/evm";
+import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
@@ -10,9 +12,25 @@ const addSelfAsValidator = (
   bc: Bridge,
   storage: BridgeStorage,
   signer: Wallet,
+  logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) => {
   return async (): Promise<"success" | "failure"> => {
     try {
+      const stakedAmt = await staking.stakingBalances(validatorAddress);
+      if (stakedAmt > 0n) {
+        const add = await staking.addNewChains([
+          {
+            chainType: "evm",
+            validatorAddress,
+          },
+        ]);
+        const receipt = await add.wait();
+        logger.info(
+          `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+        );
+      }
       let validatorsCount = Number(await bc.validatorsCount());
       let signatureCount = Number(
         await storage.getStakingSignaturesCount(signer.address),

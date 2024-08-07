@@ -159,7 +159,7 @@ export class IERC1155Royalty__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): IERC1155Royalty {
     return new Contract(address, _abi, runner) as unknown as IERC1155Royalty;
   }

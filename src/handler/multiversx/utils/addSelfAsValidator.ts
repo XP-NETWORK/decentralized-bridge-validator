@@ -7,7 +7,7 @@ import {
 import { AddressValue, BytesValue } from "@multiversx/sdk-core/out";
 import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import type { UserSigner } from "@multiversx/sdk-wallet/out";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
@@ -22,6 +22,8 @@ export default async function addSelfAsValidator(
   signer: UserSigner,
   provider: INetworkProvider,
   logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ): Promise<"success" | "failure"> {
   try {
     const vc = async (): Promise<bigint> => {
@@ -40,10 +42,23 @@ export default async function addSelfAsValidator(
       const count = firstValue.valueOf();
       return count;
     };
+    const stakedAmt = await staking.stakingBalances(validatorAddress);
+    if (stakedAmt > 0n) {
+      const add = await staking.addNewChains([
+        {
+          chainType: "multiversX",
+          validatorAddress: signer.getAddress().hex(),
+        },
+      ]);
+      const receipt = await add.wait();
+      logger.info(
+        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+      );
+    }
 
     let validatorCount = Number(await vc());
     let signatureCount = Number(
-      await storage.getStakingSignaturesCount(signer.getAddress().bech32()),
+      await storage.getStakingSignaturesCount(signer.getAddress().hex()),
     );
 
     while (signatureCount < confirmationCountNeeded(validatorCount)) {
@@ -54,13 +69,13 @@ export default async function addSelfAsValidator(
         )}`,
       );
       signatureCount = Number(
-        await storage.getStakingSignaturesCount(signer.getAddress().bech32()),
+        await storage.getStakingSignaturesCount(signer.getAddress().hex()),
       );
       validatorCount = Number(await vc());
     }
 
     const signatures = [
-      ...(await storage.getStakingSignatures(signer.getAddress().bech32())),
+      ...(await storage.getStakingSignatures(signer.getAddress().hex())),
     ].map((item) => {
       return {
         signerAddress: item.signerAddress,
@@ -80,7 +95,7 @@ export default async function addSelfAsValidator(
           sig: new BytesValue(
             Buffer.from(item.signature.replace("0x", ""), "hex"),
           ),
-          public_key: new AddressValue(new Address(userAddress.bech32())),
+          public_key: new AddressValue(new Address(userAddress.hex())),
         };
       }),
     ];

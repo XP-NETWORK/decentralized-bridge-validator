@@ -3,8 +3,8 @@ import type { Sender } from "@ton/core";
 import type { TonClient, WalletContractV4 } from "@ton/ton";
 import type { AxiosInstance } from "axios";
 import type { HttpProvider } from "tonweb/dist/types/providers/http-provider";
-import type { BridgeStorage } from "xp-decentralized-sdk/dist/contractsTypes/evm";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
+import type { BridgeStorage } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type TonParams = {

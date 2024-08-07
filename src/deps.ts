@@ -12,6 +12,7 @@ import type { TSupportedChainTypes, TSupportedChains } from "./config";
 import {
   type BridgeStorage,
   BridgeStorage__factory,
+  type ERC20Staking,
 } from "./contractsTypes/evm";
 import { evmHandler } from "./handler/evm";
 import { multiversxHandler } from "./handler/multiversx";
@@ -23,6 +24,7 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import axios, { type AxiosInstance } from "axios";
+import { ERC20Staking__factory } from "./contractsTypes/evm";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import type { LogInstance, THandler } from "./handler/types";
@@ -54,6 +56,7 @@ export async function configEvmHandler(
   wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   evmLogger: LogInstance,
+  staking: ERC20Staking,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -76,6 +79,7 @@ export async function configEvmHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: evmLogger,
+    staking,
   });
 }
 
@@ -86,6 +90,7 @@ export async function configHederaHandler(
   wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   hederaLogger: LogInstance,
+  staking: ERC20Staking,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -108,6 +113,7 @@ export async function configHederaHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: hederaLogger,
+    staking,
   });
 }
 export async function configStakingHandler(
@@ -137,6 +143,8 @@ export async function configTezosHandler(
   tezosWallet: ITezosWallet,
   serverLinkHandler: AxiosInstance | undefined,
   tzLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -160,6 +168,8 @@ export async function configTezosHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: tzLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -250,6 +260,8 @@ export async function configMultiversXHandler(
   multiversXWallet: IMultiversXWallet,
   serverLinkHandler: AxiosInstance | undefined,
   mxLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,
@@ -274,6 +286,8 @@ export async function configMultiversXHandler(
     decimals: conf.decimals,
     serverLinkHandler,
     logger: mxLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -328,6 +342,10 @@ export async function configDeps(
     config.storageConfig.contractAddress,
     new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
   );
+  const staking = ERC20Staking__factory.connect(
+    config.stakingConfig.contractAddress,
+    new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
+  );
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();
   const em = orm.em;
@@ -346,6 +364,8 @@ export async function configDeps(
         secrets.tezosWallet,
         serverLinkHandler,
         logger.getSubLogger({ name: "TEZOS" }),
+        staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 
@@ -370,6 +390,8 @@ export async function configDeps(
         secrets.multiversXWallet,
         serverLinkHandler,
         logger.getSubLogger({ name: "MULTIVERSX" }),
+        staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 
@@ -409,6 +431,7 @@ export async function configDeps(
               secrets.evmWallet,
               serverLinkHandler,
               logger.getSubLogger({ name: c.chain }),
+              staking,
             );
           }),
       )),
@@ -424,6 +447,7 @@ export async function configDeps(
               secrets.evmWallet,
               serverLinkHandler,
               logger.getSubLogger({ name: "HEDERA" }),
+              staking,
             );
           }),
       )),

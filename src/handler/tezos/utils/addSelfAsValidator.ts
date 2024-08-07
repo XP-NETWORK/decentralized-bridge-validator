@@ -1,7 +1,7 @@
 import { hash } from "@stablelib/blake2b";
 import type { Signer } from "@taquito/taquito";
 import { b58cdecode, b58cencode, prefix } from "@taquito/utils";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.types";
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
 import type { LogInstance } from "../../types";
@@ -16,8 +16,23 @@ export default async function addSelfAsValidator(
   bc: BridgeContractType,
   signer: Signer,
   logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ): Promise<"success" | "failure"> {
   try {
+    const stakedAmt = await staking.stakingBalances(validatorAddress);
+    if (stakedAmt > 0n) {
+      const add = await staking.addNewChains([
+        {
+          chainType: "tezos",
+          validatorAddress: await signer.publicKey(),
+        },
+      ]);
+      const receipt = await add.wait();
+      logger.info(
+        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+      );
+    }
     let validatorsCount = (await bc.storage()).validators_count.toNumber();
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(await signer.publicKey()),

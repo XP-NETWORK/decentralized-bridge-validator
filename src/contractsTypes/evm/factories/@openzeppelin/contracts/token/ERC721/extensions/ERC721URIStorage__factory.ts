@@ -483,7 +483,7 @@ export class ERC721URIStorage__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): ERC721URIStorage {
     return new Contract(address, _abi, runner) as unknown as ERC721URIStorage;
   }

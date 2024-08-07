@@ -82,12 +82,12 @@ export class INFTStorageDeployer__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): INFTStorageDeployer {
     return new Contract(
       address,
       _abi,
-      runner,
+      runner
     ) as unknown as INFTStorageDeployer;
   }
 }

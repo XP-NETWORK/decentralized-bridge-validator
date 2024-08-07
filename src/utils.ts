@@ -11,7 +11,7 @@ import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 
 import { type Interface, createInterface } from "node:readline/promises";
 
-import { ERC20Token__factory } from "xp-decentralized-sdk/dist/contractsTypes/evm";
+import { ERC20Token__factory } from "./contractsTypes/evm";
 import { ERC20Staking__factory } from "./contractsTypes/evm";
 import { getBalance } from "./handler/evm/utils";
 import { raise } from "./handler/ton";

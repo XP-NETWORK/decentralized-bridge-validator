@@ -66,6 +66,11 @@ const _abi = [
         name: "_owner",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "_bridge",
+        type: "address",
+      },
     ],
     name: "setOwner",
     outputs: [],
@@ -81,12 +86,12 @@ export class INFTCollectionDeployer__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null,
+    runner?: ContractRunner | null
   ): INFTCollectionDeployer {
     return new Contract(
       address,
       _abi,
-      runner,
+      runner
     ) as unknown as INFTCollectionDeployer;
   }
 }

@@ -149,7 +149,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       rpcURL:
         "https://toncenter.com/api/v2/jsonRPC?api_key=05645d6b549f33bf80cee8822bd63df720c6781bd00020646deb7b2b2cd53b73",
       chainType: "ton",
-      contractAddress: "EQCWc1o9GxJIkcHzjtHN24jARzkJY4x1QoWEFkZYLLAb-BY-",
+      contractAddress: "EQBdyNZ2SgmurVUQ7TGnYw_PAY40En1mE2rd0yg3iX6CuiGK",
       decimals: 9,
       intialFund: "100000000",
       lastBlock: 24014875000001,

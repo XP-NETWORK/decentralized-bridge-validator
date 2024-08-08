@@ -322,58 +322,6 @@ function dictValueParserFactoryDeploy(): DictionaryValue<FactoryDeploy> {
     }
 }
 
-export type LogEventMintRecord = {
-    $$type: 'LogEventMintRecord';
-    minter: Address;
-    item_id: bigint;
-    generate_number: bigint;
-}
-
-export function storeLogEventMintRecord(src: LogEventMintRecord) {
-    return (builder: Builder) => {
-        let b_0 = builder;
-        b_0.storeUint(2743565669, 32);
-        b_0.storeAddress(src.minter);
-        b_0.storeInt(src.item_id, 257);
-        b_0.storeInt(src.generate_number, 257);
-    };
-}
-
-export function loadLogEventMintRecord(slice: Slice) {
-    let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 2743565669) { throw Error('Invalid prefix'); }
-    let _minter = sc_0.loadAddress();
-    let _item_id = sc_0.loadIntBig(257);
-    let _generate_number = sc_0.loadIntBig(257);
-    return { $$type: 'LogEventMintRecord' as const, minter: _minter, item_id: _item_id, generate_number: _generate_number };
-}
-
-function loadTupleLogEventMintRecord(source: TupleReader) {
-    let _minter = source.readAddress();
-    let _item_id = source.readBigNumber();
-    let _generate_number = source.readBigNumber();
-    return { $$type: 'LogEventMintRecord' as const, minter: _minter, item_id: _item_id, generate_number: _generate_number };
-}
-
-function storeTupleLogEventMintRecord(source: LogEventMintRecord) {
-    let builder = new TupleBuilder();
-    builder.writeAddress(source.minter);
-    builder.writeNumber(source.item_id);
-    builder.writeNumber(source.generate_number);
-    return builder.build();
-}
-
-function dictValueParserLogEventMintRecord(): DictionaryValue<LogEventMintRecord> {
-    return {
-        serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeLogEventMintRecord(src)).endCell());
-        },
-        parse: (src) => {
-            return loadLogEventMintRecord(src.loadRef().beginParse());
-        }
-    }
-}
-
 export type GetRoyaltyParams = {
     $$type: 'GetRoyaltyParams';
     query_id: bigint;
@@ -901,12 +849,13 @@ export type HiFromDeployNFT721Storage = {
     sourceChain: string;
     nftItemAddress: Address;
     metaDataUri: Cell;
+    sender: Address;
 }
 
 export function storeHiFromDeployNFT721Storage(src: HiFromDeployNFT721Storage) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(3149664349, 32);
+        b_0.storeUint(1017107824, 32);
         b_0.storeAddress(src.sourceNftContractAddress);
         b_0.storeAddress(src.storageAddress);
         b_0.storeBit(src.isOriginal);
@@ -920,6 +869,7 @@ export function storeHiFromDeployNFT721Storage(src: HiFromDeployNFT721Storage) {
         b_2.storeStringRefTail(src.sourceChain);
         b_2.storeAddress(src.nftItemAddress);
         b_2.storeRef(src.metaDataUri);
+        b_2.storeAddress(src.sender);
         b_1.storeRef(b_2.endCell());
         b_0.storeRef(b_1.endCell());
     };
@@ -927,7 +877,7 @@ export function storeHiFromDeployNFT721Storage(src: HiFromDeployNFT721Storage) {
 
 export function loadHiFromDeployNFT721Storage(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 3149664349) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 1017107824) { throw Error('Invalid prefix'); }
     let _sourceNftContractAddress = sc_0.loadAddress();
     let _storageAddress = sc_0.loadAddress();
     let _isOriginal = sc_0.loadBit();
@@ -941,7 +891,8 @@ export function loadHiFromDeployNFT721Storage(slice: Slice) {
     let _sourceChain = sc_2.loadStringRefTail();
     let _nftItemAddress = sc_2.loadAddress();
     let _metaDataUri = sc_2.loadRef();
-    return { $$type: 'HiFromDeployNFT721Storage' as const, sourceNftContractAddress: _sourceNftContractAddress, storageAddress: _storageAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = sc_2.loadAddress();
+    return { $$type: 'HiFromDeployNFT721Storage' as const, sourceNftContractAddress: _sourceNftContractAddress, storageAddress: _storageAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function loadTupleHiFromDeployNFT721Storage(source: TupleReader) {
@@ -956,7 +907,8 @@ function loadTupleHiFromDeployNFT721Storage(source: TupleReader) {
     let _sourceChain = source.readString();
     let _nftItemAddress = source.readAddress();
     let _metaDataUri = source.readCell();
-    return { $$type: 'HiFromDeployNFT721Storage' as const, sourceNftContractAddress: _sourceNftContractAddress, storageAddress: _storageAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = source.readAddress();
+    return { $$type: 'HiFromDeployNFT721Storage' as const, sourceNftContractAddress: _sourceNftContractAddress, storageAddress: _storageAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function storeTupleHiFromDeployNFT721Storage(source: HiFromDeployNFT721Storage) {
@@ -972,6 +924,7 @@ function storeTupleHiFromDeployNFT721Storage(source: HiFromDeployNFT721Storage) 
     builder.writeString(source.sourceChain);
     builder.writeAddress(source.nftItemAddress);
     builder.writeCell(source.metaDataUri);
+    builder.writeAddress(source.sender);
     return builder.build();
 }
 
@@ -1053,43 +1006,32 @@ export type CollectionDeploy = {
     newOwner: Address;
     metadata: Cell;
     token_id: bigint;
-    bridge: Address;
-    fee: bigint;
 }
 
 export function storeCollectionDeploy(src: CollectionDeploy) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(1027458158, 32);
+        b_0.storeUint(4033579765, 32);
         b_0.storeAddress(src.newOwner);
         b_0.storeRef(src.metadata);
         b_0.storeInt(src.token_id, 257);
-        b_0.storeAddress(src.bridge);
-        let b_1 = new Builder();
-        b_1.storeInt(src.fee, 257);
-        b_0.storeRef(b_1.endCell());
     };
 }
 
 export function loadCollectionDeploy(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 1027458158) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 4033579765) { throw Error('Invalid prefix'); }
     let _newOwner = sc_0.loadAddress();
     let _metadata = sc_0.loadRef();
     let _token_id = sc_0.loadIntBig(257);
-    let _bridge = sc_0.loadAddress();
-    let sc_1 = sc_0.loadRef().beginParse();
-    let _fee = sc_1.loadIntBig(257);
-    return { $$type: 'CollectionDeploy' as const, newOwner: _newOwner, metadata: _metadata, token_id: _token_id, bridge: _bridge, fee: _fee };
+    return { $$type: 'CollectionDeploy' as const, newOwner: _newOwner, metadata: _metadata, token_id: _token_id };
 }
 
 function loadTupleCollectionDeploy(source: TupleReader) {
     let _newOwner = source.readAddress();
     let _metadata = source.readCell();
     let _token_id = source.readBigNumber();
-    let _bridge = source.readAddress();
-    let _fee = source.readBigNumber();
-    return { $$type: 'CollectionDeploy' as const, newOwner: _newOwner, metadata: _metadata, token_id: _token_id, bridge: _bridge, fee: _fee };
+    return { $$type: 'CollectionDeploy' as const, newOwner: _newOwner, metadata: _metadata, token_id: _token_id };
 }
 
 function storeTupleCollectionDeploy(source: CollectionDeploy) {
@@ -1097,8 +1039,6 @@ function storeTupleCollectionDeploy(source: CollectionDeploy) {
     builder.writeAddress(source.newOwner);
     builder.writeCell(source.metadata);
     builder.writeNumber(source.token_id);
-    builder.writeAddress(source.bridge);
-    builder.writeNumber(source.fee);
     return builder.build();
 }
 
@@ -1125,12 +1065,13 @@ export type StorageDeploy = {
     sourceChain: string;
     nftItemAddress: Address;
     metaDataUri: Cell;
+    sender: Address;
 }
 
 export function storeStorageDeploy(src: StorageDeploy) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(3539326362, 32);
+        b_0.storeUint(1498703807, 32);
         b_0.storeAddress(src.sourceNftContractAddress);
         b_0.storeBit(src.isOriginal);
         b_0.storeInt(src.key, 257);
@@ -1142,13 +1083,14 @@ export function storeStorageDeploy(src: StorageDeploy) {
         b_1.storeStringRefTail(src.sourceChain);
         b_1.storeAddress(src.nftItemAddress);
         b_1.storeRef(src.metaDataUri);
+        b_1.storeAddress(src.sender);
         b_0.storeRef(b_1.endCell());
     };
 }
 
 export function loadStorageDeploy(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 3539326362) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 1498703807) { throw Error('Invalid prefix'); }
     let _sourceNftContractAddress = sc_0.loadAddress();
     let _isOriginal = sc_0.loadBit();
     let _key = sc_0.loadIntBig(257);
@@ -1160,7 +1102,8 @@ export function loadStorageDeploy(slice: Slice) {
     let _sourceChain = sc_1.loadStringRefTail();
     let _nftItemAddress = sc_1.loadAddress();
     let _metaDataUri = sc_1.loadRef();
-    return { $$type: 'StorageDeploy' as const, sourceNftContractAddress: _sourceNftContractAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = sc_1.loadAddress();
+    return { $$type: 'StorageDeploy' as const, sourceNftContractAddress: _sourceNftContractAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function loadTupleStorageDeploy(source: TupleReader) {
@@ -1174,7 +1117,8 @@ function loadTupleStorageDeploy(source: TupleReader) {
     let _sourceChain = source.readString();
     let _nftItemAddress = source.readAddress();
     let _metaDataUri = source.readCell();
-    return { $$type: 'StorageDeploy' as const, sourceNftContractAddress: _sourceNftContractAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = source.readAddress();
+    return { $$type: 'StorageDeploy' as const, sourceNftContractAddress: _sourceNftContractAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function storeTupleStorageDeploy(source: StorageDeploy) {
@@ -1189,6 +1133,7 @@ function storeTupleStorageDeploy(source: StorageDeploy) {
     builder.writeString(source.sourceChain);
     builder.writeAddress(source.nftItemAddress);
     builder.writeCell(source.metaDataUri);
+    builder.writeAddress(source.sender);
     return builder.build();
 }
 
@@ -1215,12 +1160,13 @@ export type DeployNFT721Storage = {
     sourceChain: string;
     nftItemAddress: Address;
     metaDataUri: Cell;
+    sender: Address;
 }
 
 export function storeDeployNFT721Storage(src: DeployNFT721Storage) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(1019847713, 32);
+        b_0.storeUint(3037136312, 32);
         b_0.storeAddress(src.collectionAddress);
         b_0.storeBit(src.isOriginal);
         b_0.storeInt(src.key, 257);
@@ -1232,13 +1178,14 @@ export function storeDeployNFT721Storage(src: DeployNFT721Storage) {
         b_1.storeStringRefTail(src.sourceChain);
         b_1.storeAddress(src.nftItemAddress);
         b_1.storeRef(src.metaDataUri);
+        b_1.storeAddress(src.sender);
         b_0.storeRef(b_1.endCell());
     };
 }
 
 export function loadDeployNFT721Storage(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 1019847713) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 3037136312) { throw Error('Invalid prefix'); }
     let _collectionAddress = sc_0.loadAddress();
     let _isOriginal = sc_0.loadBit();
     let _key = sc_0.loadIntBig(257);
@@ -1250,7 +1197,8 @@ export function loadDeployNFT721Storage(slice: Slice) {
     let _sourceChain = sc_1.loadStringRefTail();
     let _nftItemAddress = sc_1.loadAddress();
     let _metaDataUri = sc_1.loadRef();
-    return { $$type: 'DeployNFT721Storage' as const, collectionAddress: _collectionAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = sc_1.loadAddress();
+    return { $$type: 'DeployNFT721Storage' as const, collectionAddress: _collectionAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function loadTupleDeployNFT721Storage(source: TupleReader) {
@@ -1264,7 +1212,8 @@ function loadTupleDeployNFT721Storage(source: TupleReader) {
     let _sourceChain = source.readString();
     let _nftItemAddress = source.readAddress();
     let _metaDataUri = source.readCell();
-    return { $$type: 'DeployNFT721Storage' as const, collectionAddress: _collectionAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri };
+    let _sender = source.readAddress();
+    return { $$type: 'DeployNFT721Storage' as const, collectionAddress: _collectionAddress, isOriginal: _isOriginal, key: _key, tokenId: _tokenId, destinationChain: _destinationChain, destinationUserAddress: _destinationUserAddress, sourceNftContractAddressLock: _sourceNftContractAddressLock, sourceChain: _sourceChain, nftItemAddress: _nftItemAddress, metaDataUri: _metaDataUri, sender: _sender };
 }
 
 function storeTupleDeployNFT721Storage(source: DeployNFT721Storage) {
@@ -1279,6 +1228,7 @@ function storeTupleDeployNFT721Storage(source: DeployNFT721Storage) {
     builder.writeString(source.sourceChain);
     builder.writeAddress(source.nftItemAddress);
     builder.writeCell(source.metaDataUri);
+    builder.writeAddress(source.sender);
     return builder.build();
 }
 
@@ -1303,13 +1253,12 @@ export type DeployNFT721Collection = {
     metadata: Cell;
     token_id: bigint;
     lockTxChain: string;
-    fee: bigint;
 }
 
 export function storeDeployNFT721Collection(src: DeployNFT721Collection) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(2501624698, 32);
+        b_0.storeUint(2399096803, 32);
         b_0.storeRef(src.collection_content);
         b_0.store(storeRoyaltyParams(src.royalty_params));
         let b_1 = new Builder();
@@ -1320,7 +1269,6 @@ export function storeDeployNFT721Collection(src: DeployNFT721Collection) {
         b_1.storeInt(src.token_id, 257);
         let b_2 = new Builder();
         b_2.storeStringRefTail(src.lockTxChain);
-        b_2.storeInt(src.fee, 257);
         b_1.storeRef(b_2.endCell());
         b_0.storeRef(b_1.endCell());
     };
@@ -1328,7 +1276,7 @@ export function storeDeployNFT721Collection(src: DeployNFT721Collection) {
 
 export function loadDeployNFT721Collection(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 2501624698) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 2399096803) { throw Error('Invalid prefix'); }
     let _collection_content = sc_0.loadRef();
     let _royalty_params = loadRoyaltyParams(sc_0);
     let sc_1 = sc_0.loadRef().beginParse();
@@ -1339,8 +1287,7 @@ export function loadDeployNFT721Collection(slice: Slice) {
     let _token_id = sc_1.loadIntBig(257);
     let sc_2 = sc_1.loadRef().beginParse();
     let _lockTxChain = sc_2.loadStringRefTail();
-    let _fee = sc_2.loadIntBig(257);
-    return { $$type: 'DeployNFT721Collection' as const, collection_content: _collection_content, royalty_params: _royalty_params, destination_user_address: _destination_user_address, source_chain: _source_chain, transaction_hash: _transaction_hash, metadata: _metadata, token_id: _token_id, lockTxChain: _lockTxChain, fee: _fee };
+    return { $$type: 'DeployNFT721Collection' as const, collection_content: _collection_content, royalty_params: _royalty_params, destination_user_address: _destination_user_address, source_chain: _source_chain, transaction_hash: _transaction_hash, metadata: _metadata, token_id: _token_id, lockTxChain: _lockTxChain };
 }
 
 function loadTupleDeployNFT721Collection(source: TupleReader) {
@@ -1352,8 +1299,7 @@ function loadTupleDeployNFT721Collection(source: TupleReader) {
     let _metadata = source.readCell();
     let _token_id = source.readBigNumber();
     let _lockTxChain = source.readString();
-    let _fee = source.readBigNumber();
-    return { $$type: 'DeployNFT721Collection' as const, collection_content: _collection_content, royalty_params: _royalty_params, destination_user_address: _destination_user_address, source_chain: _source_chain, transaction_hash: _transaction_hash, metadata: _metadata, token_id: _token_id, lockTxChain: _lockTxChain, fee: _fee };
+    return { $$type: 'DeployNFT721Collection' as const, collection_content: _collection_content, royalty_params: _royalty_params, destination_user_address: _destination_user_address, source_chain: _source_chain, transaction_hash: _transaction_hash, metadata: _metadata, token_id: _token_id, lockTxChain: _lockTxChain };
 }
 
 function storeTupleDeployNFT721Collection(source: DeployNFT721Collection) {
@@ -1366,7 +1312,6 @@ function storeTupleDeployNFT721Collection(source: DeployNFT721Collection) {
     builder.writeCell(source.metadata);
     builder.writeNumber(source.token_id);
     builder.writeString(source.lockTxChain);
-    builder.writeNumber(source.fee);
     return builder.build();
 }
 
@@ -1474,45 +1419,35 @@ export type MintOne = {
     $$type: 'MintOne';
     new_owner: Address;
     content: Cell;
-    bridge: Address;
-    fee: bigint;
 }
 
 export function storeMintOne(src: MintOne) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(2904992044, 32);
+        b_0.storeUint(3338267266, 32);
         b_0.storeAddress(src.new_owner);
         b_0.storeRef(src.content);
-        b_0.storeAddress(src.bridge);
-        b_0.storeInt(src.fee, 257);
     };
 }
 
 export function loadMintOne(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 2904992044) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 3338267266) { throw Error('Invalid prefix'); }
     let _new_owner = sc_0.loadAddress();
     let _content = sc_0.loadRef();
-    let _bridge = sc_0.loadAddress();
-    let _fee = sc_0.loadIntBig(257);
-    return { $$type: 'MintOne' as const, new_owner: _new_owner, content: _content, bridge: _bridge, fee: _fee };
+    return { $$type: 'MintOne' as const, new_owner: _new_owner, content: _content };
 }
 
 function loadTupleMintOne(source: TupleReader) {
     let _new_owner = source.readAddress();
     let _content = source.readCell();
-    let _bridge = source.readAddress();
-    let _fee = source.readBigNumber();
-    return { $$type: 'MintOne' as const, new_owner: _new_owner, content: _content, bridge: _bridge, fee: _fee };
+    return { $$type: 'MintOne' as const, new_owner: _new_owner, content: _content };
 }
 
 function storeTupleMintOne(source: MintOne) {
     let builder = new TupleBuilder();
     builder.writeAddress(source.new_owner);
     builder.writeCell(source.content);
-    builder.writeAddress(source.bridge);
-    builder.writeNumber(source.fee);
     return builder.build();
 }
 
@@ -1532,36 +1467,32 @@ export type Mint = {
     token_id: bigint;
     owner: Address;
     content: Cell;
-    fee: bigint;
 }
 
 export function storeMint(src: Mint) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(1077380115, 32);
+        b_0.storeUint(1355444520, 32);
         b_0.storeInt(src.token_id, 257);
         b_0.storeAddress(src.owner);
         b_0.storeRef(src.content);
-        b_0.storeInt(src.fee, 257);
     };
 }
 
 export function loadMint(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 1077380115) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 1355444520) { throw Error('Invalid prefix'); }
     let _token_id = sc_0.loadIntBig(257);
     let _owner = sc_0.loadAddress();
     let _content = sc_0.loadRef();
-    let _fee = sc_0.loadIntBig(257);
-    return { $$type: 'Mint' as const, token_id: _token_id, owner: _owner, content: _content, fee: _fee };
+    return { $$type: 'Mint' as const, token_id: _token_id, owner: _owner, content: _content };
 }
 
 function loadTupleMint(source: TupleReader) {
     let _token_id = source.readBigNumber();
     let _owner = source.readAddress();
     let _content = source.readCell();
-    let _fee = source.readBigNumber();
-    return { $$type: 'Mint' as const, token_id: _token_id, owner: _owner, content: _content, fee: _fee };
+    return { $$type: 'Mint' as const, token_id: _token_id, owner: _owner, content: _content };
 }
 
 function storeTupleMint(source: Mint) {
@@ -1569,7 +1500,6 @@ function storeTupleMint(source: Mint) {
     builder.writeNumber(source.token_id);
     builder.writeAddress(source.owner);
     builder.writeCell(source.content);
-    builder.writeNumber(source.fee);
     return builder.build();
 }
 
@@ -2783,8 +2713,8 @@ function initNftCollection_init_args(src: NftCollection_init_args) {
 }
 
 async function NftCollection_init(owner_address: Address, collection_content: Cell, royalty_params: RoyaltyParams) {
-    const __code = Cell.fromBase64('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');
-    const __system = Cell.fromBase64('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');
+    const __code = Cell.fromBase64('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');
+    const __system = Cell.fromBase64('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');
     let builder = beginCell();
     builder.storeRef(__system);
     builder.storeUint(0, 1);
@@ -2846,7 +2776,6 @@ const NftCollection_types: ABIType[] = [
     {"name":"Deploy","header":2490013878,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}}]},
     {"name":"DeployOk","header":2952335191,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}}]},
     {"name":"FactoryDeploy","header":1829761339,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"cashback","type":{"kind":"simple","type":"address","optional":false}}]},
-    {"name":"LogEventMintRecord","header":2743565669,"fields":[{"name":"minter","type":{"kind":"simple","type":"address","optional":false}},{"name":"item_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"generate_number","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
     {"name":"GetRoyaltyParams","header":1765620048,"fields":[{"name":"query_id","type":{"kind":"simple","type":"uint","optional":false,"format":64}}]},
     {"name":"ReportRoyaltyParams","header":2831876269,"fields":[{"name":"query_id","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"numerator","type":{"kind":"simple","type":"uint","optional":false,"format":16}},{"name":"denominator","type":{"kind":"simple","type":"uint","optional":false,"format":16}},{"name":"destination","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"CollectionData","header":null,"fields":[{"name":"next_item_index","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"owner_address","type":{"kind":"simple","type":"address","optional":false}}]},
@@ -2857,16 +2786,16 @@ const NftCollection_types: ABIType[] = [
     {"name":"GetStaticData","header":801842850,"fields":[{"name":"query_id","type":{"kind":"simple","type":"uint","optional":false,"format":64}}]},
     {"name":"ReportStaticData","header":2339837749,"fields":[{"name":"query_id","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"index_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"collection","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"GetNftData","header":null,"fields":[{"name":"is_initialized","type":{"kind":"simple","type":"bool","optional":false}},{"name":"index","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"collection_address","type":{"kind":"simple","type":"address","optional":false}},{"name":"owner_address","type":{"kind":"simple","type":"address","optional":false}},{"name":"individual_content","type":{"kind":"simple","type":"cell","optional":false}}]},
-    {"name":"HiFromDeployNFT721Storage","header":3149664349,"fields":[{"name":"sourceNftContractAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"storageAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}}]},
+    {"name":"HiFromDeployNFT721Storage","header":1017107824,"fields":[{"name":"sourceNftContractAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"storageAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sender","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"HiFromDeployNFT721Collection","header":1037677720,"fields":[{"name":"tokenId","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"newlyDeployCollection","type":{"kind":"simple","type":"address","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"transactionHash","type":{"kind":"simple","type":"string","optional":false}},{"name":"lockTxChain","type":{"kind":"simple","type":"string","optional":false}}]},
-    {"name":"CollectionDeploy","header":1027458158,"fields":[{"name":"newOwner","type":{"kind":"simple","type":"address","optional":false}},{"name":"metadata","type":{"kind":"simple","type":"cell","optional":false}},{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"bridge","type":{"kind":"simple","type":"address","optional":false}},{"name":"fee","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
-    {"name":"StorageDeploy","header":3539326362,"fields":[{"name":"sourceNftContractAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}}]},
-    {"name":"DeployNFT721Storage","header":1019847713,"fields":[{"name":"collectionAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}}]},
-    {"name":"DeployNFT721Collection","header":2501624698,"fields":[{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"royalty_params","type":{"kind":"simple","type":"RoyaltyParams","optional":false}},{"name":"destination_user_address","type":{"kind":"simple","type":"address","optional":false}},{"name":"source_chain","type":{"kind":"simple","type":"string","optional":false}},{"name":"transaction_hash","type":{"kind":"simple","type":"string","optional":false}},{"name":"metadata","type":{"kind":"simple","type":"cell","optional":false}},{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"lockTxChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"fee","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
+    {"name":"CollectionDeploy","header":4033579765,"fields":[{"name":"newOwner","type":{"kind":"simple","type":"address","optional":false}},{"name":"metadata","type":{"kind":"simple","type":"cell","optional":false}},{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
+    {"name":"StorageDeploy","header":1498703807,"fields":[{"name":"sourceNftContractAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sender","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"DeployNFT721Storage","header":3037136312,"fields":[{"name":"collectionAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"isOriginal","type":{"kind":"simple","type":"bool","optional":false}},{"name":"key","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"tokenId","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"destinationChain","type":{"kind":"simple","type":"cell","optional":false}},{"name":"destinationUserAddress","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sourceNftContractAddressLock","type":{"kind":"simple","type":"slice","optional":false}},{"name":"sourceChain","type":{"kind":"simple","type":"string","optional":false}},{"name":"nftItemAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"metaDataUri","type":{"kind":"simple","type":"cell","optional":false}},{"name":"sender","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"DeployNFT721Collection","header":2399096803,"fields":[{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"royalty_params","type":{"kind":"simple","type":"RoyaltyParams","optional":false}},{"name":"destination_user_address","type":{"kind":"simple","type":"address","optional":false}},{"name":"source_chain","type":{"kind":"simple","type":"string","optional":false}},{"name":"transaction_hash","type":{"kind":"simple","type":"string","optional":false}},{"name":"metadata","type":{"kind":"simple","type":"cell","optional":false}},{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"lockTxChain","type":{"kind":"simple","type":"string","optional":false}}]},
     {"name":"CreatedCollection","header":41705028,"fields":[{"name":"collectionAddress","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"UnlockToken","header":2585927731,"fields":[{"name":"to","type":{"kind":"simple","type":"address","optional":false}},{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
-    {"name":"MintOne","header":2904992044,"fields":[{"name":"new_owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"bridge","type":{"kind":"simple","type":"address","optional":false}},{"name":"fee","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
-    {"name":"Mint","header":1077380115,"fields":[{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"fee","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
+    {"name":"MintOne","header":3338267266,"fields":[{"name":"new_owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"content","type":{"kind":"simple","type":"cell","optional":false}}]},
+    {"name":"Mint","header":1355444520,"fields":[{"name":"token_id","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"content","type":{"kind":"simple","type":"cell","optional":false}}]},
     {"name":"Validator","header":null,"fields":[{"name":"address","type":{"kind":"simple","type":"address","optional":false}},{"name":"added","type":{"kind":"simple","type":"bool","optional":false}},{"name":"pendingRewards","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}}]},
     {"name":"SignerAndSignature","header":null,"fields":[{"name":"signature","type":{"kind":"simple","type":"slice","optional":false}},{"name":"key","type":{"kind":"simple","type":"uint","optional":false,"format":256}}]},
     {"name":"NewValidator","header":null,"fields":[{"name":"key","type":{"kind":"simple","type":"uint","optional":false,"format":256}}]},

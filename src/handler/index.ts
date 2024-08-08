@@ -120,13 +120,11 @@ export async function listenEvents(
         if (!tx?.status) throw new Error("Approve failed");
         return tx;
       } catch (err) {
-        if (
-          (err as { shortMessage: string }).shortMessage ===
-          'execution reverted: "Signature already used"'
-        ) {
+        const err_ = err as unknown as { shortMessage: string };
+        if (err_.shortMessage.includes("Signature already used")) {
           return null;
         }
-        log.error(err, "Error while approving");
+        log.error(err_.shortMessage, "Error while approving");
         throw err;
       }
     };
@@ -214,12 +212,30 @@ export async function listenStakeEvents(
         });
 
         const approvalFn = async () => {
-          const tx = await deps.storage.approveStake(
-            currentValidatorAddress,
-            signatures,
-          );
-          if (!(await tx.wait())?.status) throw new Error("TxFailed");
-          return tx;
+          try {
+            const tx = Promise.race([
+              (
+                await deps.storage.approveStake(
+                  currentValidatorAddress,
+                  signatures,
+                )
+              ).wait(),
+              setTimeout(10 * 1000),
+            ]);
+
+            // @ts-ignore
+            if (!tx?.status) throw new Error("TxFailed");
+            return tx;
+          } catch (err) {
+            const err_ = err as unknown as { shortMessage: string };
+            if (
+              err_.shortMessage.includes("Already voted for this validator")
+            ) {
+              return null;
+            }
+            log.error(err_.shortMessage, "Error while approving");
+            throw err;
+          }
         };
         const approved = await retry(
           approvalFn,
@@ -228,7 +244,9 @@ export async function listenStakeEvents(
           6,
         );
         log.info(
-          `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`,
+          approved
+            ? `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`
+            : `Already approved for ${currentValidatorAddress}`,
         );
       }
     });

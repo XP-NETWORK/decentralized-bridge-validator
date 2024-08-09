@@ -121,7 +121,7 @@ export async function listenEvents(
         return tx;
       } catch (err) {
         const err_ = err as unknown as { shortMessage: string };
-        if (err_.shortMessage.includes("Signature already used")) {
+        if (err_.shortMessage?.includes("Signature already used")) {
           return null;
         }
         log.error(err_.shortMessage, "Error while approving");

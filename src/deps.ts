@@ -338,13 +338,14 @@ export async function configDeps(
   logger: LogInstance,
 ) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
+  const stakingProvider = new JsonRpcProvider(config.stakingConfig.rpcURL);
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,
     new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
   );
   const staking = ERC20Staking__factory.connect(
     config.stakingConfig.contractAddress,
-    new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
+    new NonceManager(new Wallet(secrets.evmWallet.privateKey, stakingProvider)),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
   await orm.schema.updateSchema();

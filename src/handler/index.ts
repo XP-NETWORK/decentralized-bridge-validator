@@ -229,7 +229,7 @@ export async function listenStakeEvents(
           } catch (err) {
             const err_ = err as unknown as { shortMessage: string };
             if (
-              err_.shortMessage.includes("Already voted for this validator")
+              err_.shortMessage?.includes("Already voted for this validator")
             ) {
               return null;
             }

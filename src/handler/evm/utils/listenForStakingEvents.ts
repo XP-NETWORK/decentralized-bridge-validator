@@ -56,9 +56,10 @@ const listenForStakingEvents = (
         for (const log of logs) {
           const decoded = stakerInt.parseLog(log);
           if (!decoded) continue;
+          logger.info(`found event at ${lastBlock} - ${latestBlock}`);
           await cb(builder.staked(decoded.args.validatorAddressAndChainType));
         }
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlock;
         await em.upsert(Block, {
           chain: chainIdent,
           contractAddress: staker,

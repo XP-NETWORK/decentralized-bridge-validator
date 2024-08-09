@@ -124,7 +124,7 @@ export async function listenEvents(
         if (err_.shortMessage?.includes("Signature already used")) {
           return null;
         }
-        log.error(err_.shortMessage, "Error while approving");
+        log.error(err_, "Error while approving lock");
         throw err;
       }
     };
@@ -172,23 +172,13 @@ export async function listenStakeEvents(
 
   async function poolEvents(chain: TStakingHandler) {
     log.info("Listening for Staking Events");
-    const currentValidatorAddress: string =
-      // @ts-ignore
-      await deps.storage.runner?.getAddress();
-    const currentValidatorEpoch = await deps.storage.validatorEpoch(
-      currentValidatorAddress,
-    );
-
-    const currentValidatorVotes = await deps.storage.validatorStatusChangeVotes(
-      currentValidatorAddress,
-      true,
-      currentValidatorEpoch,
-    );
-    const storageValidators = await deps.storage.validatorCount();
-
-    log.info({ currentValidatorVotes, storageValidators });
 
     chain.listenForStakingEvents(builder, async (ev) => {
+      const stakerAddress = ev.find(
+        (item) => item.chainType === "evm",
+      )?.validatorAddress;
+      if (!stakerAddress) return;
+
       const signatures: {
         validatorAddress: string;
         signerAndSignature: {
@@ -213,12 +203,9 @@ export async function listenStakeEvents(
 
         const approvalFn = async () => {
           try {
-            const tx = Promise.race([
+            const tx = await Promise.race([
               (
-                await deps.storage.approveStake(
-                  currentValidatorAddress,
-                  signatures,
-                )
+                await deps.storage.approveStake(stakerAddress, signatures)
               ).wait(),
               setTimeout(10 * 1000),
             ]);
@@ -233,7 +220,7 @@ export async function listenStakeEvents(
             ) {
               return null;
             }
-            log.error(err_.shortMessage, "Error while approving");
+            log.error(err_, "Error while approving stake");
             throw err;
           }
         };
@@ -245,8 +232,8 @@ export async function listenStakeEvents(
         );
         log.info(
           approved
-            ? `Approved and Signed Data for Staking Chain at TX: ${approved.hash}`
-            : `Already approved for ${currentValidatorAddress}`,
+            ? `Approved and Signed Data for Staking Chain at TX: ${approved.hash} for user ${stakerAddress}`
+            : `Already approved for ${stakerAddress}`,
         );
       }
     });

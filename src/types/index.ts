@@ -56,12 +56,18 @@ type ITezosWallet = {
   secretKey: string;
 };
 
+export type IICPWallet = {
+  publicKey: string;
+  privateKey: string;
+};
+
 type IGeneratedWallets = {
   evmWallet: IEvmWallet;
   multiversXWallet: IMultiversXWallet;
   tonWallet: ITonWallet;
   secretWallet: ISecretWallet;
   tezosWallet: ITezosWallet;
+  icpWallet: IICPWallet;
 };
 
 type IConfigAndWallets = {

@@ -1,7 +1,8 @@
 import fs from "node:fs";
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { generateWallet as evmGw } from "./handler/evm/utils";
+import { generateWallet as icpGw } from "./handler/icp/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
 import { generateWallet as tzGw } from "./handler/tezos/utils";
@@ -22,45 +23,43 @@ import type {
   IStakingConfig,
 } from "./types";
 
-export const loadSecrets = async (
-  logger: LogInstance,
-): Promise<IGeneratedWallets> => {
-  if (!fs.existsSync("secrets.json")) {
-    logger.warn("Secrets Not Found. Generating new Wallets");
-    await generateAndSaveWallets();
-  }
-  let secrets: IGeneratedWallets;
-  try {
-    secrets = require("../secrets.json");
-    return secrets;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error loading secrets.json");
-  }
-};
-
-export async function generateAndSaveWallets() {
+export async function syncWallets(logger: LogInstance) {
   const rootDirPath = path.resolve(__dirname, ".."); // Adjust based on actual structure
   const secretsPath = path.join(rootDirPath, "secrets.json");
-  const wallets = {
-    evmWallet: await evmGw()(),
-    secretWallet: await secretGw(),
-    tezosWallet: await tzGw(),
-    multiversXWallet: await mxGw(),
-    tonWallet: await tonGw(),
-  };
-  return writeFile(secretsPath, JSON.stringify(wallets));
-}
-
-export async function generateWallets(): Promise<IGeneratedWallets> {
-  const wallets = {
-    evmWallet: await evmGw()(),
-    secretWallet: await secretGw(),
-    tezosWallet: await tzGw(),
-    multiversXWallet: await mxGw(),
-    tonWallet: await tonGw(),
-  };
-  return wallets;
+  if (!fs.existsSync(secretsPath)) {
+    logger.warn("Secrets Not Found. Generating new Wallets");
+    const wallets: IGeneratedWallets = {
+      evmWallet: await evmGw()(),
+      secretWallet: await secretGw(),
+      tezosWallet: await tzGw(),
+      multiversXWallet: await mxGw(),
+      tonWallet: await tonGw(),
+      icpWallet: await icpGw(),
+    };
+    return writeFile(secretsPath, JSON.stringify(wallets));
+  }
+  const sc = await readFile(secretsPath, { encoding: "utf-8" });
+  const secrets = JSON.parse(sc);
+  if (!("evmWallet" in secrets)) {
+    logger.warn("Generating new wallet for Evm");
+    secrets.evmWallet = await evmGw()();
+  } else if (!("secretWallet" in secrets)) {
+    logger.warn("Generating new wallet for Secret/Cosmwasm");
+    secrets.secretWallet = await secretGw();
+  } else if (!("tezosWallet" in secrets)) {
+    logger.warn("Generating new wallet for Tezos");
+    secrets.tezosWallet = await tzGw();
+  } else if (!("multiversXWallet" in secrets)) {
+    logger.warn("Generating new wallet for Multiversx");
+    secrets.multiversXWallet = await mxGw();
+  } else if (!("tonWallet" in secrets)) {
+    logger.warn("Generating new wallet for Ton");
+    secrets.tonWallet = await tonGw();
+  } else if (!("icpWallet" in secrets)) {
+    logger.warn("Generating new wallet for ICP");
+    secrets.icpWallet = await icpGw();
+  }
+  return writeFile(secretsPath, JSON.stringify(secrets));
 }
 
 export async function requireEnoughBalance(

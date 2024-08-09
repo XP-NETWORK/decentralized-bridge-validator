@@ -1,5 +1,8 @@
-import type { HttpAgent } from "@dfinity/agent";
-import { createActor } from "../../../contractsTypes/icp/nft";
+import { Actor, type HttpAgent } from "@dfinity/agent";
+import {
+  type _SERVICE,
+  idlFactory,
+} from "../../../contractsTypes/icp/nft/nft.types";
 import type { LogInstance } from "../../types";
 
 export default async function nftData(
@@ -8,8 +11,9 @@ export default async function nftData(
   agent: HttpAgent,
   log: LogInstance,
 ) {
-  const nft = createActor(contract, {
+  const nft = Actor.createActor<_SERVICE>(idlFactory, {
     agent,
+    canisterId: contract,
   });
   const name = await nft.icrc7_name();
   const symbol = await nft.icrc7_symbol();

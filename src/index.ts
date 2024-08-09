@@ -8,7 +8,7 @@ import { listenEvents, listenStakeEvents } from "./handler";
 import { checkOrAddSelfAsVal, retry, stakeTokens } from "./handler/utils";
 import { configureRouter } from "./http";
 import type { IBridgeConfig, IGeneratedWallets } from "./types";
-import { generateAndSaveWallets, requireEnoughBalance } from "./utils";
+import { requireEnoughBalance, syncWallets } from "./utils";
 
 async function main() {
   const logger = new Logger({
@@ -17,10 +17,8 @@ async function main() {
     stylePrettyLogs: true,
   });
   await configureValidator(logger);
-  if (!fs.existsSync("secrets.json")) {
-    logger.warn("Secrets Not Found. Generating new Wallets");
-    await generateAndSaveWallets();
-  }
+  await syncWallets(logger);
+
   const secrets: IGeneratedWallets = JSON.parse(
     fs.readFileSync("secrets.json", "utf-8"),
   );

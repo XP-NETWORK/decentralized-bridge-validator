@@ -1,4 +1,6 @@
-export const idlFactory = ({ IDL }) => {
+//@ts-nocheck generated code cope
+
+export const idlFactory = ({ IDL }: {IDL: IDL}) => {
   const ArchivedTransactionResponse = IDL.Rec();
   const Value__1 = IDL.Rec();
   const Value__2 = IDL.Rec();

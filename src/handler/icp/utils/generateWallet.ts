@@ -1,6 +1,6 @@
 import { Ed25519KeyIdentity } from "@dfinity/identity";
 
-export default function generateWallet() {
+export default function icpGw() {
   const identity = Ed25519KeyIdentity.generate();
   const wallet = identity.getKeyPair();
   // biome-ignore lint/style/noNonNullAssertion: <explanation>

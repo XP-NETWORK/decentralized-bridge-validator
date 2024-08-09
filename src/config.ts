@@ -161,7 +161,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     rpcURL: "https://optimism-mainnet.public.blastapi.io",
     nativeCoinSymbol: "OP",
     intialFund: "5000000000000000",
-    contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
+    contractAddress: "0xc6e84955ba7C354fb7ca60011883e5673Be3F629",
     chainType: "evm",
     lastBlock: 123638429,
     decimals: 18,

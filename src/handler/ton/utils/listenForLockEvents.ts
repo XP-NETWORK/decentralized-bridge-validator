@@ -59,7 +59,10 @@ export default async function listenForLockEvents(
         for (let i = 0; i < tx.outMessages.size; i++) {
           const log = tx.outMessages.get(i) ?? raise("Unreachable");
           // if its not the lock nft event we early return
-          if (log.body.asSlice().loadUint(32) !== 2105076052) {
+          if (
+            log.body.bits.length <= 0 ||
+            log.body.asSlice().loadUint(32) !== 2105076052
+          ) {
             continue;
           }
           const {

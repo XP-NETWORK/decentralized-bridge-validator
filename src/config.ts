@@ -123,7 +123,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "MATIC",
-      rpcURL: "https://polygon-pokt.nodies.app",
+      rpcURL: "https://polygon.llamarpc.com",
       nativeCoinSymbol: "MATIC",
       intialFund: "50000000000000000",
       contractAddress: "0x2011DAD5caE280243d075D12a38CcCc0Fb4412dE",

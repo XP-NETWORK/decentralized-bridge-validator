@@ -22,7 +22,7 @@ export const bridgeTestChains = [
     rpcURL: "https://rpc.api.moonbase.moonbeam.network",
     nativeCoinSymbol: "DEV",
     intialFund: "50000000000000000",
-    contractAddress: "0x2b4082b5cBe5958888d68985524939ec1c871007",
+    contractAddress: "0x4144b9255B45691E1Cc9BEdE04726b26ebd6C90A",
     chainType: "evm",
     lastBlock: 7970143,
     decimals: 18,

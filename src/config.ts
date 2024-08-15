@@ -11,7 +11,7 @@ export const bridgeTestChains = [
     rpcURL: "https://bsc-testnet-rpc.publicnode.com",
     nativeCoinSymbol: "BNB",
     intialFund: "50000000000000000",
-    contractAddress: "0xA70D9c05EB97FeDF4EA6CD52Dc426E66C0959968",
+    contractAddress: "0xA86704500C991a5C1976756Ee3f458d59240A6cE",
     chainType: "evm",
     lastBlock: 41156199,
     decimals: 18,

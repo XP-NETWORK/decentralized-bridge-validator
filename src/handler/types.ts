@@ -70,6 +70,7 @@ export type LockEvent = {
 
 export type StakeEvent = {
   validatorAddress: string;
+  caller: string;
   chainType: TSupportedChainTypes;
 }[];
 

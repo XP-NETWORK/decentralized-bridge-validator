@@ -174,10 +174,7 @@ export async function listenStakeEvents(
     log.info("Listening for Staking Events");
 
     chain.listenForStakingEvents(builder, async (ev) => {
-      const stakerAddress = ev.find(
-        (item) => item.chainType === "evm",
-      )?.validatorAddress;
-      if (!stakerAddress) return;
+      const stakerAddress = ev[0].caller;
 
       const signatures: {
         validatorAddress: string;

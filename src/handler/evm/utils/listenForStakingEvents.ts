@@ -1,7 +1,7 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { JsonRpcProvider } from "ethers";
 import type { EventBuilder } from "../..";
-import type { TSupportedChains } from "../../../config";
+import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import { ERC20Staking__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
 import type { LogInstance, StakeEventIter } from "../../types";
@@ -55,8 +55,20 @@ const listenForStakingEvents = (
         }
         for (const log of logs) {
           const decoded = stakerInt.parseLog(log);
+          const receipt = await log.getTransactionReceipt();
           if (!decoded) continue;
-          await cb(builder.staked(decoded.args.validatorAddressAndChainType));
+          await cb(
+            builder.staked(
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              decoded.args.validatorAddressAndChainType.map((e: any) => {
+                return {
+                  caller: receipt.from,
+                  chainType: e.chainType as TSupportedChainTypes,
+                  validatorAddress: e.validatorAddress,
+                };
+              }),
+            ),
+          );
         }
         lastBlock = latestBlock;
         await em.upsert(Block, {

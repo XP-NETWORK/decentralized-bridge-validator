@@ -81,7 +81,7 @@ export const storageTestnetConfig: IEvmChainConfig = {
   rpcURL: "https://testnet.skalenodes.com/v1/juicy-low-small-testnet",
   nativeCoinSymbol: "sFUEL",
   intialFund: "0",
-  contractAddress: "0x04cAEd1763B2C121D92FcaEaB41BFfe3EAB57EFC",
+  contractAddress: "0x8184bCDC0a4C24D1cB8e054E389660B5b7160186",
   chainType: "evm",
   lastBlock: 2209753,
   decimals: 18,

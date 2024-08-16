@@ -1,11 +1,19 @@
 # Stage 1: Build
 FROM node:18.12.1 AS build
 
+RUN apt update 
+RUN apt upgrade -y
+RUN apt install sqlite3 -y
+RUN npm install -g node-gyp
+RUN npm install -g sqlite3 --save
+
 WORKDIR /app
 
 # Copy package.json and yarn.lock
 ADD package.json ./
 ADD yarn.lock ./
+
+RUN npm pkg delete scripts.postinstall
 
 # Install dependencies
 RUN yarn

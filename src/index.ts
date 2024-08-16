@@ -29,9 +29,10 @@ async function main() {
 
   let config: IBridgeConfig = prodBridgeConfig;
 
-  if (process.argv.includes("--testnet")) {
+  const network = process.env.NETWORK;
+  if (network === "testnet") {
+    logger.info("Starting up testnet");
     config = testnetBridgeConfig;
-    logger.info("Setting up for testnet environment");
   }
 
   const deps = await configDeps(config, secrets, logger);

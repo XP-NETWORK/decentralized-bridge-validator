@@ -8,6 +8,7 @@ export const Env = z.object({
   TON_API_KEY: z.string().optional(),
   SERVER_PORT: z.string().optional(),
   SERVER_LINK: z.string().optional(),
+  NETWORK: z.union([z.literal("testnet"), z.literal("mainnet"), z.undefined()]),
 });
 export type Env = z.infer<typeof Env>;
 

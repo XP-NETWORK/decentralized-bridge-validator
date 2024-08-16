@@ -31,6 +31,7 @@ WORKDIR /app
 
 # Copy only the built application files
 COPY --from=build /app/dist /app/dist
+COPY --from=build /app/node_modules /app/node_modules
 
 # Declare volumes if needed
 VOLUME [ "/app/validator.db" ]

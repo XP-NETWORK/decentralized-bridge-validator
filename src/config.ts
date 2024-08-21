@@ -53,7 +53,7 @@ export const bridgeTestChains = [
     blockChunks: 1000,
     chain: "TEZOS",
     chainType: "tezos",
-    contractAddress: "KT1S9vCe85fpjfPNEnuDJ2zb453bSjcGNBH8",
+    contractAddress: "KT1UGfH2Hk2MVKt8ADqqkRqcGZussRnfpahV",
     decimals: 9,
     intialFund: "100000000",
     lastBlock: 7259145,

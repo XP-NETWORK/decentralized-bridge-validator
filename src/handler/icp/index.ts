@@ -39,7 +39,9 @@ export function icpHandler({
     canisterId: Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
   });
   return {
-    publicKey: Buffer.from(identity.getPublicKey().toRaw()).toString("hex"),
+    publicKey: `${identity.getPrincipal()},${Buffer.from(
+      identity.getPublicKey().toRaw(),
+    ).toString("hex")}`,
     pollForLockEvents: async (builder, cb) => {
       serverLinkHandler
         ? pollForLockEvents(
@@ -54,13 +56,13 @@ export function icpHandler({
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
     },
-    signData: (buf) => signData(buf, identity),
+    signData: (buf) => signData(buf, identity, bc),
     chainType,
     initialFunds: initialFunds,
     chainIdent,
     currency: "ICP",
     address: identity.getPrincipal().toString(),
-    signClaimData: (data) => signClaimData(data, identity),
+    signClaimData: (data) => signClaimData(data, identity, bc),
     selfIsValidator: () => selfIsValidator(bc, identity),
     listenForLockEvents: (cb, iter) =>
       listenForLockEvents(cb, iter, lastBlock_, bc, em, logger),

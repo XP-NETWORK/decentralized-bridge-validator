@@ -46,7 +46,10 @@ export default async function addSelfAsValidator(
     );
 
     await bridge.add_validator(
-      [publicKey, identity.getPrincipal()],
+      {
+        principal: identity.getPrincipal(),
+        public_key: newV,
+      },
       signatures.map((e) => {
         return {
           signature: e.signature,

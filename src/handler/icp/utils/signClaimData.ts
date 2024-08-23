@@ -1,52 +1,42 @@
-import { IDL } from "@dfinity/candid";
+import type { ActorSubclass } from "@dfinity/agent";
 import type { Ed25519KeyIdentity } from "@dfinity/identity";
 import { Principal } from "@dfinity/principal";
+import * as ed from "@noble/ed25519";
+import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.did";
 import type { TNftTransferDetailsObject } from "../../types";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
   identity: Ed25519KeyIdentity,
+  bc: ActorSubclass<_SERVICE>,
 ) {
-  const encoded = ClaimData.encodeValue({
-    fee: BigInt(data.fee),
-    source_chain: data.sourceChain,
-    lock_tx_chain: data.lockTxChain,
-    transaction_hash: data.transactionHash,
-    token_amount: BigInt(data.tokenAmount),
+  const encoded = await bc.encode_claim_data({
     destination_chain: data.destinationChain,
-    token_id: data.tokenId,
-    source_nft_contract_address: data.sourceNftContractAddress,
+    destination_user_address: Principal.fromText(data.destinationUserAddress),
+    fee: BigInt(data.fee),
+    lock_tx_chain: data.lockTxChain,
     metadata: data.metadata,
     name: data.name,
     nft_type: data.nftType,
     royalty: BigInt(data.royalty),
     royalty_receiver: Principal.fromText(data.royaltyReceiver),
-    destination_user_address: Principal.fromText(data.destinationUserAddress),
+    source_chain: data.sourceChain,
+    source_nft_contract_address: data.sourceNftContractAddress,
     symbol: data.symbol,
+    token_amount: BigInt(data.tokenAmount),
+    token_id: BigInt(data.tokenId),
+    transaction_hash: data.transactionHash,
   });
 
-  const signature = await identity.sign(encoded);
+  const signature = await ed.sign(
+    Buffer.from(encoded),
+    Buffer.from(identity.getKeyPair().secretKey),
+  );
 
   return {
-    signer: Buffer.from(identity.getPublicKey().toRaw()).toString("hex"),
+    signer: Buffer.from(
+      await ed.getPublicKey(Buffer.from(identity.getKeyPair().secretKey)),
+    ).toString("hex"),
     signature: `0x${Buffer.from(signature).toString("hex")}`,
   };
 }
-
-const ClaimData = IDL.Record({
-  fee: IDL.Nat64,
-  source_chain: IDL.Text,
-  lock_tx_chain: IDL.Text,
-  transaction_hash: IDL.Text,
-  token_amount: IDL.Nat,
-  destination_chain: IDL.Text,
-  token_id: IDL.Nat,
-  source_nft_contract_address: IDL.Text,
-  metadata: IDL.Text,
-  name: IDL.Text,
-  nft_type: IDL.Text,
-  royalty: IDL.Nat,
-  royalty_receiver: IDL.Principal,
-  destination_user_address: IDL.Principal,
-  symbol: IDL.Text,
-});

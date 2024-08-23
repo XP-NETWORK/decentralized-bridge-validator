@@ -1,7 +1,15 @@
 export const idlFactory = ({ IDL }) => {
+  const AddValidator = IDL.Record({
+    'principal' : IDL.Principal,
+    'public_key' : IDL.Text,
+  });
   const SignerAndSignature = IDL.Record({
     'signature' : IDL.Text,
     'signer' : IDL.Text,
+  });
+  const BlacklistValidator = IDL.Record({
+    'principal' : IDL.Principal,
+    'public_key' : IDL.Text,
   });
   const ClaimData = IDL.Record({
     'fee' : IDL.Nat64,
@@ -43,20 +51,41 @@ export const idlFactory = ({ IDL }) => {
   const XPBridge = IDL.Service({
     'acceptCycles' : IDL.Func([], [], []),
     'add_validator' : IDL.Func(
-        [IDL.Tuple(IDL.Text, IDL.Principal), IDL.Vec(SignerAndSignature)],
+        [AddValidator, IDL.Vec(SignerAndSignature)],
         [],
         [],
       ),
     'availableCycles' : IDL.Func([], [IDL.Nat], ['query']),
+    'blacklist_validator' : IDL.Func(
+        [BlacklistValidator, IDL.Vec(SignerAndSignature)],
+        [],
+        [],
+      ),
     'claim_nft' : IDL.Func(
         [ClaimData, IDL.Vec(SignerAndSignature)],
         [IDL.Text],
         [],
       ),
     'claim_validator_rewards' : IDL.Func(
-        [IDL.Text, IDL.Vec(SignerAndSignature)],
+        [IDL.Text],
+        [IDL.Nat64, IDL.Nat64],
         [],
-        [],
+      ),
+    'encode_add_validator' : IDL.Func(
+        [AddValidator],
+        [IDL.Vec(IDL.Nat8)],
+        ['query'],
+      ),
+    'encode_blacklist_validator' : IDL.Func(
+        [BlacklistValidator],
+        [IDL.Vec(IDL.Nat8)],
+        ['query'],
+      ),
+    'encode_claim_data' : IDL.Func([ClaimData], [IDL.Vec(IDL.Nat8)], ['query']),
+    'get_blacklisted_validators' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(IDL.Bool)],
+        ['query'],
       ),
     'get_claimed_data' : IDL.Func(
         [IDL.Text],

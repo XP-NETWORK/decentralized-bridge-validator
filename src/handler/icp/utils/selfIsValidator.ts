@@ -1,6 +1,6 @@
 import type { ActorSubclass } from "@dfinity/agent";
 import type { Ed25519KeyIdentity } from "@dfinity/identity";
-import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.did";
+import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 
 export default async function selfIsValidator(
   client: ActorSubclass<_SERVICE>,

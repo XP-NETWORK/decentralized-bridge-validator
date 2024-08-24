@@ -1,7 +1,8 @@
+import { setTimeout } from "node:timers/promises";
 import { Actor, type ActorSubclass } from "@dfinity/agent";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
-import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.did";
+import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
 
@@ -24,6 +25,7 @@ export default async function listenForLockEvents(
 
         if (latestBlockNumber <= lastBlock) {
           logger.trace(`0 TXs after nonce ${lastBlock}. Awaiting 10s`);
+          await setTimeout(10000);
           continue;
         }
         const newTxNonce = lastBlock + 1;
@@ -31,7 +33,7 @@ export default async function listenForLockEvents(
         if (!hash) continue;
         const [log] = await bc.get_locked_data(hash);
         if (!log) continue;
-        lastBlock = latestBlockNumber;
+        lastBlock = newTxNonce;
         const {
           destination_chain,
           destination_user_address,
@@ -63,6 +65,6 @@ export default async function listenForLockEvents(
       await em.flush();
     } catch (e) {
       logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
-      await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
+      await setTimeout(10000);
     }
 }

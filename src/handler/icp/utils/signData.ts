@@ -2,7 +2,7 @@ import type { ActorSubclass } from "@dfinity/agent";
 import type { Ed25519KeyIdentity } from "@dfinity/identity";
 import { Principal } from "@dfinity/principal";
 import * as ed from "@noble/ed25519";
-import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.did";
+import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 
 export default async function signData(
   buf: string,

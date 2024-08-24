@@ -138,6 +138,11 @@ type ICosmWasmChainConfig = {
   walletPrefix: string;
 } & IChainConfig;
 
+export type IICPChainConfig = {
+  chainType: "icp";
+  rpcURL: string;
+} & IChainConfig;
+
 type TChain =
   | IMultiversXChainConfig
   | IEvmChainConfig
@@ -145,7 +150,8 @@ type TChain =
   | ISecretChainConfig
   | ITezosChainConfig
   | IHederaChainConfig
-  | ICosmWasmChainConfig;
+  | ICosmWasmChainConfig
+  | IICPChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];

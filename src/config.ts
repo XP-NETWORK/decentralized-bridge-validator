@@ -74,6 +74,16 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "EGLD",
     lastBlock: 4757826,
   },
+  {
+    chainType: "icp",
+    chain: "ICP",
+    contractAddress: "bw4dl-smaaa-aaaaa-qaacq-cai",
+    decimals: 9,
+    intialFund: "100000000",
+    lastBlock: 0,
+    nativeCoinSymbol: "ICP",
+    rpcURL: "https://tools.xp.network/",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

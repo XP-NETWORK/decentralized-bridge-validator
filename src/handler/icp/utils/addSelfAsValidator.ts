@@ -1,7 +1,7 @@
 import type { ActorSubclass } from "@dfinity/agent";
 import type { Ed25519KeyIdentity } from "@dfinity/identity";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
-import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.did";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
+import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
@@ -14,7 +14,24 @@ export default async function addSelfAsValidator(
   bridge: ActorSubclass<_SERVICE>,
   identity: Ed25519KeyIdentity,
   logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ): Promise<"success" | "failure"> {
+  const stakedAmt = await staking.stakingBalances(validatorAddress);
+  if (stakedAmt > 0n) {
+    const add = await staking.addNewChains([
+      {
+        chainType: "icp",
+        validatorAddress: `${identity.getPrincipal()},${Buffer.from(
+          identity.getPublicKey().toRaw(),
+        ).toString("hex")}`,
+      },
+    ]);
+    const receipt = await add.wait();
+    logger.info(
+      `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+    );
+  }
   const publicKey = Buffer.from(identity.getPublicKey().toRaw()).toString(
     "hex",
   );

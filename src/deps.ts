@@ -22,11 +22,14 @@ import { raise, tonHandler } from "./handler/ton";
 
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
+import { HttpAgent } from "@dfinity/agent";
+import { Ed25519KeyIdentity } from "@dfinity/identity";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import axios, { type AxiosInstance } from "axios";
 import { ERC20Staking__factory } from "./contractsTypes/evm";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
+import { icpHandler } from "./handler/icp";
 import type { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
@@ -38,6 +41,8 @@ import type {
   IEvmWallet,
   IGeneratedWallets,
   IHederaChainConfig,
+  IICPChainConfig,
+  IICPWallet,
   IMultiversXChainConfig,
   IMultiversXWallet,
   ISecretChainConfig,
@@ -134,6 +139,46 @@ export async function configStakingHandler(
     conf.contractAddress,
     logger,
   );
+}
+
+export async function configIcpHandler(
+  conf: IICPChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  icpWallet: IICPWallet,
+  serverLinkHandler: AxiosInstance | undefined,
+  icpLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
+): Promise<THandler> {
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
+  const identity = Ed25519KeyIdentity.fromSecretKey(
+    Buffer.from(icpWallet.privateKey, "hex"),
+  );
+  const agent = await HttpAgent.create({
+    host: conf.rpcURL,
+    identity,
+  });
+  await agent.fetchRootKey();
+  return icpHandler({
+    agent,
+    bridge: conf.contractAddress,
+    chainIdent: "ICP",
+    chainType: "icp",
+    decimals: 9,
+    em: em.fork(),
+    identity,
+    initialFunds: BigInt(conf.intialFund),
+    lastBlock_: lb?.lastBlock ?? conf.lastBlock,
+    logger: icpLogger,
+    serverLinkHandler,
+    validatorAddress,
+    storage,
+    staking,
+  });
 }
 
 export async function configTezosHandler(
@@ -409,6 +454,21 @@ export async function configDeps(
       )
     : undefined;
 
+  const icpc = config.bridgeChains.find((e) => e.chainType === "icp");
+
+  const icp = icpc
+    ? await configIcpHandler(
+        icpc,
+        storage,
+        em.fork(),
+        secrets.icpWallet,
+        serverLinkHandler,
+        logger.getSubLogger({ name: "ICP" }),
+        staking,
+        secrets.evmWallet.address,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -471,6 +531,7 @@ export async function configDeps(
       scrt,
       mx,
       ton,
+      icp,
     ].filter((e) => e !== undefined) as THandler[],
   };
 }

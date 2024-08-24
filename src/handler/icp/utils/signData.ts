@@ -18,11 +18,9 @@ export default async function signData(
     Buffer.from(body),
     Buffer.from(identity.getKeyPair().secretKey),
   );
-  const signature = Buffer.from(signtureBytes).toString("hex");
+  const signature = `0x${Buffer.from(signtureBytes).toString("hex")}`;
   return {
     signature,
-    signer: Buffer.from(
-      await ed.getPublicKey(Buffer.from(identity.getPublicKey().toRaw())),
-    ).toString("hex"),
+    signer: Buffer.from(identity.getPublicKey().toRaw()).toString("hex"),
   };
 }

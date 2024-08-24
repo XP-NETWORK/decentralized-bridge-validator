@@ -6,7 +6,7 @@ import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
 
-const CHAIN_IDENT = "SECRET";
+const CHAIN_IDENT = "ICP";
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
@@ -24,16 +24,16 @@ export default async function listenForLockEvents(
         const latestBlockNumber = Number(latestBlockNumberResponse);
 
         if (latestBlockNumber <= lastBlock) {
-          logger.trace(`0 TXs after nonce ${lastBlock}. Awaiting 10s`);
+          logger.info(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
           await setTimeout(10000);
           continue;
         }
-        const newTxNonce = lastBlock + 1;
-        const [hash] = await bc.get_hash_from_nonce(BigInt(newTxNonce));
+        logger.info(`Found ${latestBlockNumber - lastBlock} new TXs`);
+        const [hash] = await bc.get_hash_from_nonce(BigInt(lastBlock));
         if (!hash) continue;
         const [log] = await bc.get_locked_data(hash);
         if (!log) continue;
-        lastBlock = newTxNonce;
+        lastBlock = lastBlock + 1;
         const {
           destination_chain,
           destination_user_address,

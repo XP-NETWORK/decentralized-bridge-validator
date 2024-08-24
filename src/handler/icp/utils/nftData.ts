@@ -1,8 +1,6 @@
 import { Actor, type HttpAgent } from "@dfinity/agent";
-import {
-  type _SERVICE,
-  idlFactory,
-} from "../../../contractsTypes/icp/nft/nft.types";
+import { idlFactory } from "../../../contractsTypes/icp/nft/nft";
+import type { _SERVICE } from "../../../contractsTypes/icp/nft/nft.types";
 import type { LogInstance } from "../../types";
 
 export default async function nftData(
@@ -36,8 +34,8 @@ export default async function nftData(
 
   return {
     metadata,
-    name,
+    name: name === "" ? "TICP" : name,
     royalty: 0n,
-    symbol,
+    symbol: symbol === "" ? "TICP" : symbol,
   };
 }

@@ -10,5 +10,6 @@ export default function icpGw() {
   return Promise.resolve({
     publicKey: Buffer.from(publicKey).toString("hex"),
     privateKey: Buffer.from(privateKey).toString("hex"),
+    principal: identity.getPrincipal().toText(),
   });
 }

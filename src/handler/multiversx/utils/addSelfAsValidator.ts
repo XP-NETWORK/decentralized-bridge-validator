@@ -3,6 +3,7 @@ import {
   Address,
   ResultsParser,
   type SmartContract,
+  TransactionWatcher,
 } from "@multiversx/sdk-core";
 import { AddressValue, BytesValue } from "@multiversx/sdk-core/out";
 import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
@@ -47,7 +48,7 @@ export default async function addSelfAsValidator(
       const add = await staking.addNewChains([
         {
           chainType: "multiversX",
-          validatorAddress: signer.getAddress().hex(),
+          validatorAddress: signer.getAddress().bech32(),
         },
       ]);
       const receipt = await add.wait();
@@ -58,7 +59,7 @@ export default async function addSelfAsValidator(
 
     let validatorCount = Number(await vc());
     let signatureCount = Number(
-      await storage.getStakingSignaturesCount(signer.getAddress().hex()),
+      await storage.getStakingSignaturesCount(signer.getAddress().bech32()),
     );
 
     while (signatureCount < confirmationCountNeeded(validatorCount)) {
@@ -95,7 +96,7 @@ export default async function addSelfAsValidator(
           sig: new BytesValue(
             Buffer.from(item.signature.replace("0x", ""), "hex"),
           ),
-          public_key: new AddressValue(new Address(userAddress.hex())),
+          public_key: new AddressValue(new Address(item.signerAddress)),
         };
       }),
     ];
@@ -110,8 +111,20 @@ export default async function addSelfAsValidator(
     transaction.applySignature(
       await signer.sign(transaction.serializeForSigning()),
     );
-    await provider.sendTransaction(transaction);
-    return "success";
+    const receipt = await provider.sendTransaction(transaction);
+    const watcher = await new TransactionWatcher(provider, {
+      patienceMilliseconds: 10000,
+      pollingIntervalMilliseconds: 100000,
+      timeoutMilliseconds: 10000,
+    }).awaitCompleted(receipt);
+    if (watcher.status.isSuccessful()) {
+      return "success";
+    }
+    throw new Error(
+      `Failed to add self as validator: ${JSON.stringify(
+        watcher.contractResults.items,
+      )}`,
+    );
   } catch (error) {
     logger.error("Failed to add self as validator: ", error);
     return "failure";

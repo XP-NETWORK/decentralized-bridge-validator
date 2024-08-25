@@ -24,7 +24,7 @@ export default async function listenForLockEvents(
         const latestBlockNumber = Number(latestBlockNumberResponse);
 
         if (latestBlockNumber <= lastBlock) {
-          logger.info(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
+          logger.trace(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
           await setTimeout(10000);
           continue;
         }

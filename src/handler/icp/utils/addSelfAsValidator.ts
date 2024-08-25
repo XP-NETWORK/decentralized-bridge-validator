@@ -39,7 +39,7 @@ export default async function addSelfAsValidator(
     async function getStakingSignatureCount() {
       return Number(await bridge.get_validator_count());
     }
-    const newV = publicKey;
+    const newV = `${identity.getPrincipal()},${publicKey}`;
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
 
@@ -61,15 +61,23 @@ export default async function addSelfAsValidator(
         };
       },
     );
+    console.log(
+      signatures.map((e) => {
+        return {
+          signature: e.signature,
+          signer: e.signerAddress,
+        };
+      }),
+    );
 
     await bridge.add_validator(
       {
         principal: identity.getPrincipal(),
-        public_key: newV,
+        public_key: publicKey,
       },
       signatures.map((e) => {
         return {
-          signature: e.signature,
+          signature: e.signature.replace("0x", ""),
           signer: e.signerAddress,
         };
       }),

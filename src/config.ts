@@ -127,7 +127,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       intialFund: "50000000000000000",
       contractAddress: "0x289FDdDce5119C41B82C969135212061D5E7Dce5",
       chainType: "evm",
-      lastBlock: 41188324,
+      lastBlock: 41731309,
       decimals: 18,
       blockChunks: 1000,
     },

@@ -16,7 +16,7 @@ export default async function nftData(
 
     const tokenMetaData = await (
       await nftContract.storage()
-    ).token_metadata.get(tas.nat(tokenId.toString()));
+    ).tokens.token_metadata.get(tas.nat(tokenId.toString()));
     const metaDataInHex = tokenMetaData.token_info.get("");
     return bytesToString(metaDataInHex);
   };

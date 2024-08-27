@@ -146,7 +146,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chain: "BASE",
       rpcURL: "https://base.llamarpc.com",
       nativeCoinSymbol: "BASE",
-      intialFund: "50000000000000000",
+      intialFund: "5000000000000000",
       contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
       chainType: "evm",
       lastBlock: 18987568,

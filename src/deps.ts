@@ -384,9 +384,12 @@ export async function configDeps(
 ) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const stakingProvider = new JsonRpcProvider(config.stakingConfig.rpcURL);
+  const storageSigner = new NonceManager(
+    new Wallet(secrets.evmWallet.privateKey, storageProvider),
+  );
   const storage = BridgeStorage__factory.connect(
     config.storageConfig.contractAddress,
-    new NonceManager(new Wallet(secrets.evmWallet.privateKey, storageProvider)),
+    storageSigner,
   );
   const staking = ERC20Staking__factory.connect(
     config.stakingConfig.contractAddress,
@@ -472,6 +475,7 @@ export async function configDeps(
   return {
     storage,
     em,
+    storageSigner,
     serverLinkHandler,
     staking: await configStakingHandler(
       em.fork(),

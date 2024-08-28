@@ -68,6 +68,7 @@ async function main() {
   listenEvents(
     deps.chains,
     deps.storage,
+    deps.storageSigner,
     deps.em.fork(),
     deps.serverLinkHandler,
     logger,

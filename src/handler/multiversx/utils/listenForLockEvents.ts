@@ -1,10 +1,15 @@
+import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import {
   type TransactionEventsParser,
+  type TransactionWatcher,
   type TransactionsConverter,
   findEventsByFirstTopic,
 } from "@multiversx/sdk-core/out";
-import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import {
+  ApiNetworkProvider,
+  type ProxyNetworkProvider,
+} from "@multiversx/sdk-network-providers/out";
 import type { Axios } from "axios";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
@@ -20,13 +25,23 @@ export default async function listenForLockEvents(
   lastBlock: number,
   bridge: string,
   gateway: Axios,
-  provider: INetworkProvider,
-  _gatewayURL: string,
+  provider: ProxyNetworkProvider,
+  gatewayURL: string,
   em: EntityManager,
   converter: TransactionsConverter,
   eventsParser: TransactionEventsParser,
   logger: LogInstance,
+  _tw: TransactionWatcher,
 ) {
+  const waitForTx = async (hash: string) => {
+    let transactionOnNetworkMultisig =
+      await provider.getTransactionStatus(hash);
+    while (!transactionOnNetworkMultisig.isExecuted()) {
+      await setTimeout(1000);
+      transactionOnNetworkMultisig = await provider.getTransactionStatus(hash);
+    }
+  };
+  const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
   while (true) {
     try {
@@ -48,7 +63,7 @@ export default async function listenForLockEvents(
           lastBlock_ = lastBlock_ + 1;
           if (lastBlock >= lastNonce) {
             // Sleep for 2 minutes
-            await new Promise<undefined>((e) => setTimeout(e, 2 * 60 * 1000));
+            await setTimeout(2 * 60 * 1000);
             continue;
           }
           await em.upsert(Block, {
@@ -57,19 +72,20 @@ export default async function listenForLockEvents(
             lastBlock: Number(lastBlock_),
           });
           await em.flush();
-          await new Promise<undefined>((e) => setTimeout(e, WAIT_TIME));
+          await setTimeout(WAIT_TIME);
           continue;
         }
+        logger.trace(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);
         for (const tx of txsForBridge) {
-          const transactionOnNetworkMultisig = await provider.getTransaction(
-            tx.hash,
-            true,
-          );
-          const otx = await provider.getTransaction(
-            transactionOnNetworkMultisig.contractResults.items[0].hash,
+          await waitForTx(tx.hash);
+          const txo = await provider.getTransaction(tx.hash);
+          const transactionOnNetworkMultisig = await apin.getTransaction(
+            txo.contractResults.items[0].hash,
           );
           const transactionOutcomeLock =
-            converter.transactionOnNetworkToOutcome(otx);
+            converter.transactionOnNetworkToOutcome(
+              transactionOnNetworkMultisig,
+            );
           const [event] = findEventsByFirstTopic(
             transactionOutcomeLock,
             "Locked",
@@ -104,7 +120,7 @@ export default async function listenForLockEvents(
       }
     } catch (e) {
       logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
-      await new Promise<undefined>((resolve) => setTimeout(resolve, WAIT_TIME));
+      await setTimeout(WAIT_TIME);
     }
   }
 }

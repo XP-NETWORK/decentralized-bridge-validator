@@ -15,20 +15,18 @@ export default async function nftData(
     nonce: number,
   ): Promise<{ royalties: number; metaData: string }> => {
     const nonceAsHex = new Nonce(nonce).hex();
-    const response = (
-      await (
-        await fetch(
-          `${gatewayURL.replace(
-            "gateway",
-            "api",
-          )}/nfts/${collection}-${nonceAsHex}`,
-        ).catch(() => undefined)
-      )
-        ?.json()
-        ?.catch(() => undefined)
-    )?.data;
+    const response = await (
+      await fetch(
+        `${gatewayURL.replace(
+          "gateway",
+          "api",
+        )}/nfts/${collection}-${nonceAsHex}`,
+      ).catch(() => undefined)
+    )
+      ?.json()
+      ?.catch(() => undefined);
     return {
-      metaData: atob(response.uris?.at(1) ?? ""),
+      metaData: atob(response.uris?.at(0) ?? ""),
       royalties: response?.royalties ?? 0,
     };
   };

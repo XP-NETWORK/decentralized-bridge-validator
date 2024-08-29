@@ -2,6 +2,7 @@ import {
   AbiRegistry,
   SmartContract,
   TransactionEventsParser,
+  TransactionWatcher,
   TransactionsConverter,
 } from "@multiversx/sdk-core/out";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
@@ -53,6 +54,7 @@ export function multiversxHandler({
   const gateway = axios.create({
     baseURL: gatewayURL,
   });
+  const tw = new TransactionWatcher(provider);
 
   return {
     pollForLockEvents: async (builder, cb) => {
@@ -102,6 +104,7 @@ export function multiversxHandler({
         converter,
         eventsParser,
         logger,
+        tw,
       ),
     nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL, logger),
     signClaimData: (data) => signClaimData(data, signer),

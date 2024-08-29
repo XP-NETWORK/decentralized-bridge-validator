@@ -64,10 +64,11 @@ export default async function listenForLockEvents(
           const transactionOnNetworkMultisig = await provider.getTransaction(
             tx.hash,
           );
+          const eventTx = await provider.getTransaction(
+            transactionOnNetworkMultisig.contractResults.items[0].hash,
+          );
           const transactionOutcomeLock =
-            converter.transactionOnNetworkToOutcome(
-              transactionOnNetworkMultisig,
-            );
+            converter.transactionOnNetworkToOutcome(eventTx);
           const [event] = findEventsByFirstTopic(
             transactionOutcomeLock,
             "Locked",

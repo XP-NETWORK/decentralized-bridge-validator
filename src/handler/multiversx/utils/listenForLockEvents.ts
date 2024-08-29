@@ -88,7 +88,8 @@ export default async function listenForLockEvents(
               tokenAmount,
               parsed.nft_type.toString("utf-8"),
               sourceChain,
-              tx.hash,
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              tx.originalTransactionHash!,
               CHAIN_IDENT,
             ),
           );

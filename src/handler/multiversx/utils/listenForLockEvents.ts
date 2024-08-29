@@ -34,11 +34,19 @@ export default async function listenForLockEvents(
   _tw: TransactionWatcher,
 ) {
   const waitForTx = async (hash: string) => {
+    let retries = 10;
     let transactionOnNetworkMultisig =
       await provider.getTransactionStatus(hash);
-    while (!transactionOnNetworkMultisig.isExecuted()) {
+    while (retries > 0) {
+      if (transactionOnNetworkMultisig.isSuccessful()) {
+        return;
+      }
+      logger.trace(
+        `TX: ${hash} status: ${transactionOnNetworkMultisig.toString()}`,
+      );
       await setTimeout(1000);
       transactionOnNetworkMultisig = await provider.getTransactionStatus(hash);
+      retries -= 1;
     }
   };
   const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
@@ -77,7 +85,11 @@ export default async function listenForLockEvents(
         }
         logger.trace(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);
         for (const tx of txsForBridge) {
+          logger.trace(`Waiting for TX Completion: ${tx.hash}`);
           await waitForTx(tx.hash);
+          logger.trace(`TX Completed: ${tx.hash}`);
+          console.log(tx);
+          if (!(tx.type === "normal")) continue;
           const txo = await provider.getTransaction(tx.hash);
           const transactionOnNetworkMultisig = await apin.getTransaction(
             txo.contractResults.items[0].hash,

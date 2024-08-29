@@ -65,10 +65,11 @@ export default async function listenForLockEvents(
             tx.hash,
             true,
           );
+          const otx = await provider.getTransaction(
+            transactionOnNetworkMultisig.contractResults.items[0].hash,
+          );
           const transactionOutcomeLock =
-            converter.transactionOnNetworkToOutcome(
-              transactionOnNetworkMultisig,
-            );
+            converter.transactionOnNetworkToOutcome(otx);
           const [event] = findEventsByFirstTopic(
             transactionOutcomeLock,
             "Locked",
@@ -88,8 +89,7 @@ export default async function listenForLockEvents(
               tokenAmount,
               parsed.nft_type.toString("utf-8"),
               sourceChain,
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              tx.originalTransactionHash!,
+              tx.hash,
               CHAIN_IDENT,
             ),
           );

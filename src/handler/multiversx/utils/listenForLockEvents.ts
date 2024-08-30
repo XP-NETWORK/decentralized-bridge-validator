@@ -19,6 +19,22 @@ import type { Root } from "../types/gateway";
 const CHAIN_IDENT = "MULTIVERSX";
 const WAIT_TIME = 10000;
 
+function generateWaitTime(num1: number, num2: number) {
+  // Calculate the absolute difference between the two numbers
+  const difference = Math.abs(num1 - num2);
+
+  // Define the maximum difference we want to consider
+  const maxDifference = 100;
+
+  // Calculate the score (inverse relationship with the difference)
+  // Scale from 1 to 10 instead of 0 to 10
+  const score =
+    7.9 * (1 - Math.min(difference, maxDifference) / maxDifference) + 2;
+
+  // Round the score to one decimal place
+  return Math.round(score * 10) / 10;
+}
+
 export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: LockEventIter,
@@ -65,13 +81,15 @@ export default async function listenForLockEvents(
         );
 
         if (!txsForBridge.length) {
-          logger.trace(`No TX Since: ${lastBlock_}. Awaiting 10s`);
           const lastestStatus = await provider.getNetworkStatus();
           const lastNonce = lastestStatus.HighestFinalNonce;
+          const wt = generateWaitTime(lastBlock_, lastNonce);
+          logger.trace(
+            `No TX Since: ${lastBlock_}. Awaiting ${Math.round(wt)}s`,
+          );
           lastBlock_ = lastBlock_ + 1;
-          if (lastBlock >= lastNonce) {
-            // Sleep for 2 minutes
-            await setTimeout(2 * 60 * 1000);
+          if (lastBlock_ >= lastNonce) {
+            await setTimeout(30 * 1000); // 30 seconds
             continue;
           }
           await em.upsert(Block, {
@@ -80,7 +98,7 @@ export default async function listenForLockEvents(
             lastBlock: Number(lastBlock_),
           });
           await em.flush();
-          await setTimeout(WAIT_TIME);
+          await setTimeout(wt * 1000);
           continue;
         }
         logger.trace(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);

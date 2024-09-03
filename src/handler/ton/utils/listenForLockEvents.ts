@@ -36,8 +36,8 @@ export default async function listenForLockEvents(
         Address.parseFriendly(bridge).address,
         {
           limit: 100,
-          lt: latestTx[0].lt.toString(),
-          to_lt: String(lastBlock),
+          lt: lastBlock.toString(),
+          to_lt: latestTx[0].lt.toString(),
           inclusive: true,
         },
       );

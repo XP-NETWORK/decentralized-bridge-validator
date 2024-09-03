@@ -1,7 +1,7 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
+import type { MutexInterface } from "async-mutex";
 import type { AxiosInstance } from "axios";
-import type { NonceManager } from "ethers";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
 import type { BridgeStorage } from "../contractsTypes/evm";
 import { LockedEvent } from "../persistence/entities/locked";
@@ -18,7 +18,7 @@ import { retry } from "./utils";
 export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
-  storageSigner: NonceManager,
+  fetchNonce: () => Promise<readonly [number, MutexInterface.Releaser]>,
   em: EntityManager,
   serverLinkHandler: AxiosInstance | undefined,
   log: LogInstance,
@@ -104,24 +104,25 @@ export async function listenEvents(
       );
       return;
     }
-    let tx_nonce: number | undefined = undefined;
-
     const approvalFn = async () => {
       try {
         const tx = await Promise.race([
           (async () => {
-            log.info(`Using nonce: ${tx_nonce}`);
-            return await (
+            const [nonce, release] = await fetchNonce();
+            log.info(`Using nonce: ${nonce}`);
+            const response = await (
               await deps.storage.approveLockNft(
                 inft.transactionHash,
                 chain.chainIdent,
                 signature.signature,
                 signature.signer,
                 {
-                  nonce: tx_nonce,
+                  nonce,
                 },
               )
             ).wait();
+            release();
+            return response;
           })(),
           setTimeout(20 * 1000),
         ]);
@@ -132,13 +133,6 @@ export async function listenEvents(
         const err_ = err as unknown as { shortMessage: string };
         if (err_.shortMessage?.includes("Signature already used")) {
           return null;
-        }
-        if (err_.shortMessage?.includes("Invalid transaction nonce")) {
-          tx_nonce = (await storageSigner.getNonce()) + 1;
-          log.warn(
-            `Invalid nonce for ${inft.transactionHash}. Incrementing nonce and retrying`,
-            tx_nonce,
-          );
         }
         log.error(err_, "Error while approving lock");
         throw err;

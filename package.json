@@ -50,6 +50,7 @@
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.9.0",
     "@xp/cosmos-client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
+    "async-mutex": "^0.5.0",
     "axios": "^1.6.7",
     "chalk": "4",
     "dotenv": "^16.4.5",

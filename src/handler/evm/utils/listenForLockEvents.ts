@@ -1,3 +1,4 @@
+import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { JsonRpcProvider } from "ethers";
 import type { EventBuilder } from "../..";
@@ -27,6 +28,10 @@ const listenForLockEvents = (
           lastBlock + blockChunks < latestBlockNumber
             ? lastBlock + blockChunks
             : latestBlockNumber;
+        if (lastBlock >= latestBlock) {
+          await setTimeout(2000); // Sleep for 2 seconds
+          continue;
+        }
 
         const logs = await provider.getLogs({
           fromBlock: lastBlock,
@@ -48,7 +53,7 @@ const listenForLockEvents = (
             lastBlock: lastBlock,
           });
           await em.flush();
-          await new Promise<undefined>((e) => setTimeout(e, 10000));
+          await setTimeout(10000);
           continue;
         }
         for (const log of logs.filter(
@@ -92,7 +97,7 @@ const listenForLockEvents = (
           `${e} while listening for lock events. Sleeping for 10 seconds`,
           chainIdent,
         );
-        await new Promise((e) => setTimeout(e, 10000));
+        await setTimeout(10000);
       }
     }
   };

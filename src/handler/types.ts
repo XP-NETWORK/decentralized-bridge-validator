@@ -25,6 +25,7 @@ export type TNftTransferDetailsObject = {
   nftType: string;
   fee: string;
   lockTxChain: string;
+  imgUri?: string;
 };
 
 export type LockEventIter = (event: LockEvent) => Promise<void>;

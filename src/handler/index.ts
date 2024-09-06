@@ -2,6 +2,7 @@ import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { MutexInterface } from "async-mutex";
 import type { AxiosInstance } from "axios";
+import axios from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
 import type { BridgeStorage } from "../contractsTypes/evm";
 import { LockedEvent } from "../persistence/entities/locked";
@@ -13,7 +14,7 @@ import type {
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { retry } from "./utils";
+import { fetchHttpOrIpfs, retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -73,6 +74,9 @@ export async function listenEvents(
       ev.destinationChain,
     );
 
+    const imgUri = (await fetchHttpOrIpfs(nftDetails.metadata, axios.create()))
+      .image;
+
     const inft: TNftTransferDetailsObject = {
       destinationChain: ev.destinationChain,
       destinationUserAddress: ev.destinationUserAddress,
@@ -89,6 +93,7 @@ export async function listenEvents(
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
       lockTxChain: chain.chainIdent,
+      imgUri: imgUri,
     };
     log.trace(inft);
 

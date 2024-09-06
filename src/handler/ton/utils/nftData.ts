@@ -1,8 +1,9 @@
 import { Address, type TonClient } from "@ton/ton";
-import axios, { type AxiosInstance } from "axios";
+import axios from "axios";
 import { raise } from "..";
 import { NftCollection } from "../../../contractsTypes/ton/tonNftCollection";
 import { NftItem } from "../../../contractsTypes/ton/tonNftContract";
+import { fetchHttpOrIpfs } from "../../utils";
 
 export default async function nftData(
   tokenId: string,
@@ -69,19 +70,4 @@ export default async function nftData(
     name: md.name ?? collection_md.name ?? "TTON",
     royalty: BigInt(royalty),
   };
-}
-
-async function fetchHttpOrIpfs(uri: string, http: AxiosInstance) {
-  const url = new URL(uri);
-  if (url.protocol === "http:" || url.protocol === "https:") {
-    const response = await http.get(uri);
-    return response.data;
-  }
-  if (url.protocol === "ipfs:") {
-    const response = await http.get(
-      `https://ipfs.io/ipfs/${uri.replace("ipfs://", "")}`,
-    );
-    return response.data;
-  }
-  throw new Error("Unsupported protocol");
 }

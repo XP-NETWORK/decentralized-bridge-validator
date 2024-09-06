@@ -1,4 +1,5 @@
 import { setTimeout } from "node:timers/promises";
+import type { AxiosInstance } from "axios";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
 import type { IGeneratedWallets, IStakingConfig } from "../types";
@@ -108,4 +109,19 @@ export async function stakeTokens(
   if (!staking || staking.status !== 1) {
     throw new Error("Failed to stake");
   }
+}
+
+export async function fetchHttpOrIpfs(uri: string, http: AxiosInstance) {
+  const url = new URL(uri);
+  if (url.protocol === "http:" || url.protocol === "https:") {
+    const response = await http.get(uri);
+    return response.data;
+  }
+  if (url.protocol === "ipfs:") {
+    const response = await http.get(
+      `https://ipfs.io/ipfs/${uri.replace("ipfs://", "")}`,
+    );
+    return response.data;
+  }
+  throw new Error("Unsupported protocol");
 }

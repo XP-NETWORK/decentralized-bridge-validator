@@ -57,6 +57,7 @@ export default async function signClaimData(
     new Field(new BytesValue(Buffer.from(buf.nftType)), "nft_type"),
     new Field(new BigUIntValue(buf.fee), "fee"),
     new Field(new BytesValue(Buffer.from(buf.lockTxChain)), "lock_tx_chain"),
+    new Field(new BytesValue(Buffer.from(buf.imgUri || "")), "img_uri"),
   ]);
 
   const data = new BinaryCodec().encodeNested(claimDataArgs);

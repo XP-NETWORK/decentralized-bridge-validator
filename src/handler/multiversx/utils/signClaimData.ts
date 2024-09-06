@@ -42,10 +42,7 @@ export default async function signClaimData(
       "source_nft_contract_address",
     ),
     new Field(new BytesValue(Buffer.from(buf.name)), "name"),
-    new Field(
-      new BytesValue(Buffer.from(`N${buf.sourceChain.toUpperCase()}`)),
-      "symbol",
-    ),
+    new Field(new BytesValue(Buffer.from(buf.symbol)), "symbol"),
     new Field(new BigUIntValue(Number(buf.royalty)), "royalty"),
     new Field(
       new AddressValue(new Address(buf.royaltyReceiver)),

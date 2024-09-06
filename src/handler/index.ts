@@ -74,8 +74,13 @@ export async function listenEvents(
       ev.destinationChain,
     );
 
-    const imgUri = (await fetchHttpOrIpfs(nftDetails.metadata, axios.create()))
-      .image;
+    let imgUri = "";
+    try {
+      imgUri = (await fetchHttpOrIpfs(nftDetails.metadata, axios.create()))
+        .image;
+    } catch (ex) {
+      imgUri = nftDetails.metadata;
+    }
 
     const inft: TNftTransferDetailsObject = {
       destinationChain: ev.destinationChain,

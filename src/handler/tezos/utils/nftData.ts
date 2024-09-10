@@ -37,7 +37,8 @@ export default async function nftData(
     const metaDataInHex = tokenMetaData.token_info.get("");
     return bytesToString(metaDataInHex);
   };
-  const tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId));
+  let tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId));
+  tokenMd = tokenMd.substring(tokenMd.indexOf("https://"));
   let name = "NTEZOS";
   try {
     provider.addExtension(new Tzip16Module());
@@ -62,7 +63,7 @@ export default async function nftData(
   }
   let royalty = 0n;
   try {
-    const metaDataOrURL = await getNftTokenMetaData(contract, BigInt(tokenId));
+    const metaDataOrURL = tokenMd;
     const isUrl = URLCanParse(metaDataOrURL);
     let metaData: {
       royalties: {

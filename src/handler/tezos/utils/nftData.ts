@@ -2,7 +2,12 @@ import type { TezosToolkit } from "@taquito/taquito";
 import { Tzip16Module, bytesToString, tzip16 } from "@taquito/tzip16";
 
 import type { NFTContractType } from "../../../contractsTypes/tezos/NFT.types";
-import { tas } from "../../../contractsTypes/tezos/type-aliases";
+import {
+  type MMap,
+  type bytes,
+  type nat,
+  tas,
+} from "../../../contractsTypes/tezos/type-aliases";
 import type { LogInstance } from "../../types";
 
 export default async function nftData(
@@ -14,9 +19,21 @@ export default async function nftData(
   const getNftTokenMetaData = async (contract: string, tokenId: bigint) => {
     const nftContract = await provider.contract.at<NFTContractType>(contract);
 
-    const tokenMetaData = await (
-      await nftContract.storage()
-    ).tokens.token_metadata.get(tas.nat(tokenId.toString()));
+    let tokenMetaData: {
+      token_id: nat;
+      token_info: MMap<string, bytes>;
+    };
+
+    try {
+      tokenMetaData = await (
+        await nftContract.storage()
+      ).tokens.token_metadata.get(tas.nat(tokenId.toString()));
+    } catch (ex) {
+      tokenMetaData = await (await nftContract.storage()).token_metadata.get(
+        tas.nat(tokenId.toString()),
+      );
+    }
+
     const metaDataInHex = tokenMetaData.token_info.get("");
     return bytesToString(metaDataInHex);
   };

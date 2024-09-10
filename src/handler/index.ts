@@ -98,7 +98,7 @@ export async function listenEvents(
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
       lockTxChain: chain.chainIdent,
-      imgUri: imgUri,
+      imgUri: imgUri.substring(imgUri.indexOf("https://")),
     };
     log.trace(inft);
 

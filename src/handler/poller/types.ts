@@ -9,4 +9,5 @@ export interface LockEventRes {
   source_chain: string;
   transaction_hash: string;
   listener_chain: string;
+  metaDataUri: string;
 }

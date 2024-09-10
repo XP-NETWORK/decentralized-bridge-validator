@@ -65,6 +65,7 @@ export default async function listenForLockEvents(
             token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
+            metadata_uri: metaDataUri,
           } = log.payload;
           await cb(
             await builder.nftLocked(
@@ -77,6 +78,7 @@ export default async function listenForLockEvents(
               sourceChain,
               log.transactionId.toString(),
               CHAIN_IDENT,
+              metaDataUri,
             ),
           );
         }

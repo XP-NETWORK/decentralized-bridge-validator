@@ -54,6 +54,7 @@ export default async function listenForLockEvents(
             source_chain,
             hash,
             CHAIN_IDENT,
+            "",
           ),
         );
       }

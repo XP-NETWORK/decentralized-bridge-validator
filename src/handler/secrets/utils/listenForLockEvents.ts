@@ -79,6 +79,7 @@ export default async function listenForLockEvents(
               sourceChain,
               log.transactionHash,
               CHAIN_IDENT,
+              "",
             ),
           );
         }

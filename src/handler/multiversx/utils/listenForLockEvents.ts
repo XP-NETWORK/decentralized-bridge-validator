@@ -137,6 +137,7 @@ export default async function listenForLockEvents(
               sourceChain,
               tx.hash,
               CHAIN_IDENT,
+              "",
             ),
           );
         }

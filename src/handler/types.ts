@@ -67,6 +67,7 @@ export type LockEvent = {
   nftType: string;
   sourceChain: string;
   transactionHash: string;
+  metaDataUri: string;
 };
 
 export type StakeEvent = {

@@ -73,6 +73,7 @@ export default async function listenForLockEvents(
             tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nftType, // Sigular or multiple ( 721 / 1155)
             sourceChain, // Source chain of NFT
+            metaDataUri,
           } = loadLockedEvent(log.body.asSlice());
 
           const getSourceNftContractAddress = () => {
@@ -97,6 +98,7 @@ export default async function listenForLockEvents(
               sourceChain,
               Buffer.from(tx.hash()).toString("base64"),
               CHAIN_IDENT,
+              metaDataUri.asSlice().loadStringRefTail(),
             ),
           );
         }

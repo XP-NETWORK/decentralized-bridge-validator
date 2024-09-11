@@ -83,6 +83,7 @@ const listenForLockEvents = (
               decoded.args.sourceChain,
               log.transactionHash,
               chainIdent,
+              decoded.args.metaDataUri,
             ),
           );
         }

@@ -14,7 +14,7 @@ import type {
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { fetchHttpOrIpfs, retry } from "./utils";
+import { checkHttpOrIpfs, fetchHttpOrIpfs, retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -82,11 +82,20 @@ export async function listenEvents(
       imgUri = nftDetails.metadata;
     }
 
+    let metadata = nftDetails.metadata;
+    if (ev.destinationChain === "TEZOS") {
+      metadata = checkHttpOrIpfs(nftDetails.metadata, ev.metaDataUri);
+
+      log.trace("CONTRACT URI", nftDetails.metadata);
+      log.trace("EVENT URI", ev.metaDataUri);
+      log.trace("RESULTANT URI", metadata);
+    }
+
     const inft: TNftTransferDetailsObject = {
       destinationChain: ev.destinationChain,
       destinationUserAddress: ev.destinationUserAddress,
       fee: fee.toString(),
-      metadata: nftDetails.metadata,
+      metadata: metadata,
       name: nftDetails.name,
       nftType: ev.nftType,
       royalty: nftDetails.royalty.toString(),
@@ -281,6 +290,7 @@ export function eventBuilder(em: EntityManager) {
       sourceChain: string,
       transactionHash: string,
       listenerChain: string,
+      metaDataUri: string,
     ) {
       const found = await em.findOne(LockedEvent, {
         transactionHash: transactionHash,
@@ -297,6 +307,7 @@ export function eventBuilder(em: EntityManager) {
           sourceChain,
           transactionHash,
           listenerChain,
+          metaDataUri,
         );
         await em.persistAndFlush(ev);
       }
@@ -309,6 +320,7 @@ export function eventBuilder(em: EntityManager) {
         nftType,
         sourceChain,
         transactionHash,
+        metaDataUri,
       };
     },
   };

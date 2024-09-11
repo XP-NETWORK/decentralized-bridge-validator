@@ -37,6 +37,9 @@ export class LockedEvent {
   @Property()
   listenerChain!: string;
 
+  @Property({ default: "" })
+  metaDataUri!: string;
+
   constructor(
     tokenId: string,
     destinationChain: string,
@@ -47,6 +50,7 @@ export class LockedEvent {
     sourceChain: string,
     transactionHash: string,
     listenerChain: string,
+    metaDataUri: string,
   ) {
     this.tokenId = BigInt(tokenId);
     this.destinationUserAddress = destinationUserAddress;
@@ -57,5 +61,6 @@ export class LockedEvent {
     this.sourceNftContractAddress = sourceNftContractAddress;
     this.destinationChain = destinationChain;
     this.listenerChain = listenerChain;
+    this.metaDataUri = metaDataUri;
   }
 }

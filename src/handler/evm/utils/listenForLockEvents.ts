@@ -32,7 +32,7 @@ const listenForLockEvents = (
           await setTimeout(2000); // Sleep for 2 seconds
           continue;
         }
-
+        const startBlock = lastBlock;
         const logs = await provider.getLogs({
           fromBlock: lastBlock,
           toBlock: latestBlock,
@@ -41,11 +41,10 @@ const listenForLockEvents = (
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
-        logger.trace(
-          `From block: ${lastBlock} to: ${latestBlock}. Tx Count ${logs.length}`,
-          chainIdent,
-        );
         if (!logs.length) {
+          logger.trace(
+            `[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`,
+          );
           lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
@@ -56,11 +55,13 @@ const listenForLockEvents = (
           await setTimeout(10000);
           continue;
         }
+        logger.trace(`[${lastBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
         for (const log of logs.filter(
           (lg, index, self) =>
             index ===
             self.findIndex((t) => t.transactionHash === lg.transactionHash),
         )) {
+          logger.trace(`Processing TX at: ${log.transactionHash}`);
           const decoded = bc.interface.parseLog(log);
           if (!decoded) continue;
           const found = await em.findOne(LockedEvent, {
@@ -68,7 +69,7 @@ const listenForLockEvents = (
             listenerChain: chainIdent,
           });
           if (found) {
-            logger.info("Transaction already processed");
+            logger.info("Transaction already processed", log.transactionHash);
             continue;
           }
           await cb(
@@ -94,8 +95,8 @@ const listenForLockEvents = (
         await em.flush();
       } catch (e) {
         logger.error(
-          `${e} while listening for lock events. Sleeping for 10 seconds`,
-          chainIdent,
+          "Error while listening for lock events. Sleeping for 10 seconds",
+          e,
         );
         await setTimeout(10000);
       }

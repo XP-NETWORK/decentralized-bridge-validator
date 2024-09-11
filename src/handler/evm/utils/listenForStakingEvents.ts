@@ -37,12 +37,10 @@ const listenForStakingEvents = (
           ],
         });
         const startBlock = lastBlock;
-
-        logger.trace(
-          `${startBlock} -> ${latestBlock}: ${logs.length} TXs. Awaiting 10s`,
-        );
-
         if (!logs.length) {
+          logger.trace(
+            `[${startBlock} -> ${latestBlock}]: 0 TXs. Awaiting 10s.`,
+          );
           lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
@@ -53,7 +51,9 @@ const listenForStakingEvents = (
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;
         }
+        logger.trace(`[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
         for (const log of logs) {
+          logger.trace(`Processing TX at: ${log.transactionHash}`);
           const decoded = stakerInt.parseLog(log);
           const receipt = await log.getTransactionReceipt();
           if (!decoded) continue;
@@ -79,8 +79,8 @@ const listenForStakingEvents = (
         await em.flush();
       } catch (e) {
         logger.error(
-          `${e} while listening for events. Sleeping for 10 seconds`,
-          chainIdent,
+          "Error while listening for events. Sleeping for 10 seconds",
+          e,
         );
         await new Promise((e) => setTimeout(e, 10000));
       }

@@ -36,7 +36,7 @@ export async function listenEvents(
         await processEvent(chain, ev);
         success = true;
       } catch (e) {
-        log.error(e, "Error processing poll events");
+        log.error("Error processing poll events", e);
         log.info("Awaiting 2s");
         await setTimeout(2 * 1000);
       }
@@ -157,7 +157,6 @@ export async function listenEvents(
     );
 
     log.info(
-      //@ts-ignore
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
   }

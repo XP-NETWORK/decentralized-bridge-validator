@@ -3,6 +3,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import { Mutex, type MutexInterface } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import axios from "axios";
+import type { JsonRpcProvider } from "ethers";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
 import type { BridgeStorage } from "../contractsTypes/evm";
 import { LockedEvent } from "../persistence/entities/locked";
@@ -19,6 +20,7 @@ import { fetchHttpOrIpfs, retry } from "./utils";
 export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
+  storageProvider: JsonRpcProvider,
   fetchNonce: () => Promise<readonly [number, MutexInterface.Releaser]>,
   em: EntityManager,
   serverLinkHandler: AxiosInstance | undefined,
@@ -132,6 +134,7 @@ export async function listenEvents(
       const approveLockTx = async () => {
         const [nonce, release] = await fetchNonce();
         const [releaseStorage, storage] = await fetchStorage();
+        const feeData = await storageProvider.getFeeData();
         log.info(`Using nonce: ${nonce}`);
         const response = await (
           await storage.approveLockNft(
@@ -141,6 +144,8 @@ export async function listenEvents(
             signature.signer,
             {
               nonce,
+              maxFeePerGas: feeData.maxFeePerGas,
+              maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
             },
           )
         ).wait();

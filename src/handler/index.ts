@@ -129,7 +129,7 @@ export async function listenEvents(
       return;
     }
     const approvalFn = async () => {
-      const approveLockRace = async () => {
+      const approveLockTx = async () => {
         const [nonce, release] = await fetchNonce();
         const [releaseStorage, storage] = await fetchStorage();
         log.info(`Using nonce: ${nonce}`);
@@ -151,17 +151,7 @@ export async function listenEvents(
       };
 
       try {
-        const tx = await Promise.race([
-          approveLockRace(),
-          setTimeout(20 * 1000),
-        ]);
-        //@ts-ignore
-        if (!tx?.status)
-          throw new Error(
-            tx
-              ? `Approve Failed ${tx.status}`
-              : "Timeout after 20 Seconds Approve failed",
-          );
+        const tx = await approveLockTx();
         return tx;
       } catch (err) {
         const err_ = err as unknown as { shortMessage: string };
@@ -248,15 +238,12 @@ export async function listenStakeEvents(
       }
 
       const approvalFn = async () => {
-        const approveStakeRace = async () =>
+        const approveStakeTx = async () =>
           await (
             await deps.storage.approveStake(stakerAddress, signatures)
           ).wait();
         try {
-          const tx = await Promise.race([
-            approveStakeRace(),
-            setTimeout(10 * 1000),
-          ]);
+          const tx = await approveStakeTx();
 
           // @ts-ignore
           if (!tx?.status) {

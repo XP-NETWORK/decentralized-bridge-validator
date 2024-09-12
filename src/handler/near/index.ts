@@ -39,7 +39,7 @@ export async function nearHandler({
   });
   const publicKey = await signer.getPublicKey(address, networkId);
   const publicKeyInHex = Buffer.from(publicKey.data).toString("hex");
-  const keypair = await signer.keyStore.getKey(networkId, address);
+  const account = await near.account(address);
   return {
     publicKey: publicKeyInHex,
     pollForLockEvents: async (builder, cb) => {
@@ -65,15 +65,18 @@ export async function nearHandler({
     signClaimData: (data) => signClaimData(data, privateKey),
     selfIsValidator: () => selfIsValidator(bc as never, publicKeyInHex),
     listenForLockEvents: (cb, iter) =>
-      listenForLockEvents(cb, iter, lastBlock_, bc, em, logger),
+      listenForLockEvents(cb, iter, near, lastBlock_, bridge, em, logger),
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,
-        bc,
-        identity,
+        address,
+        publicKeyInHex,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        bc as any,
         logger,
         staking,
         validatorAddress,
+        account,
       ),
     getBalance: () => getBalance(near, address),
     nftData: (tid, ctr) => nftData(tid, ctr, near, logger),

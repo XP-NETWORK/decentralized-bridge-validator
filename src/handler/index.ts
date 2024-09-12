@@ -139,12 +139,12 @@ export async function listenEvents(
                 },
               )
             ).wait();
-            setTimeout(5 * 1000);
+            await setTimeout(5 * 1000);
             release();
             releaseStorage();
             return response;
           })(),
-          setTimeout(20 * 1000),
+          await setTimeout(20 * 1000),
         ]);
         //@ts-ignore
         if (!tx?.status)
@@ -237,7 +237,7 @@ export async function listenStakeEvents(
         try {
           const tx = await Promise.race([
             (await deps.storage.approveStake(stakerAddress, signatures)).wait(),
-            setTimeout(10 * 1000),
+            await setTimeout(10 * 1000),
           ]);
 
           // @ts-ignore

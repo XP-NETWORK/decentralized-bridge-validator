@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { MutexInterface } from "async-mutex";
+import { Mutex, type MutexInterface } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
@@ -26,6 +26,11 @@ export async function listenEvents(
 ) {
   const map = new Map<TSupportedChains, THandler>();
   const deps = { storage };
+  const storex = new Mutex();
+  const fetchStorage = async () => {
+    const releaser = await storex.acquire();
+    return [releaser, storage] as const;
+  };
 
   const builder = eventBuilder(em);
 
@@ -119,9 +124,10 @@ export async function listenEvents(
         const tx = await Promise.race([
           (async () => {
             const [nonce, release] = await fetchNonce();
+            const [releaseStorage, storage] = await fetchStorage();
             log.info(`Using nonce: ${nonce}`);
             const response = await (
-              await deps.storage.approveLockNft(
+              await storage.approveLockNft(
                 inft.transactionHash,
                 chain.chainIdent,
                 signature.signature,
@@ -132,6 +138,7 @@ export async function listenEvents(
               )
             ).wait();
             release();
+            releaseStorage();
             return response;
           })(),
           setTimeout(20 * 1000),

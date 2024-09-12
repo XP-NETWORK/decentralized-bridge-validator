@@ -486,6 +486,7 @@ export async function configDeps(
     storage,
     em,
     storageSigner,
+    storageProvider,
     serverLinkHandler,
     fetchNonce,
     staking: await configStakingHandler(

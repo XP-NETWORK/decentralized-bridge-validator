@@ -295,6 +295,7 @@ export function eventBuilder(em: EntityManager) {
       transactionHash: string,
       listenerChain: string,
       metaDataUri: string,
+      id?: number,
     ) {
       const found = await em.findOne(LockedEvent, {
         transactionHash: transactionHash,
@@ -313,6 +314,7 @@ export function eventBuilder(em: EntityManager) {
           listenerChain,
           metaDataUri,
         );
+        if (id) ev.id = id;
         await em.persistAndFlush(ev);
       }
       return {

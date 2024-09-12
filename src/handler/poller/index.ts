@@ -67,6 +67,7 @@ export default async function pollForLockEvents(
             tx.transaction_hash,
             tx.listener_chain,
             tx.metaDataUri,
+            tx.id,
           ),
         );
       } catch (e) {

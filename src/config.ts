@@ -186,7 +186,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 6572780,
       nativeCoinSymbol: "TEZOS",
       restApiURL: "https://api.tzkt.io",
-      rpcURL: "https://mainnet.smartpy.io",
+      rpcURL: "https://mainnet.ecadinfra.com",
     },
   ],
   storageConfig: {

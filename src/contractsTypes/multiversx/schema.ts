@@ -45,9 +45,14 @@ export const MXClaimDataSchema = new StructType("ClaimData", [
   ),
   new FieldDefinition("nft_type", "attributes of the nft", new BytesType()),
   new FieldDefinition("fee", "attributes of the nft", new BigUIntType()),
-       new FieldDefinition(
-          "lock_tx_chain",
-          "Chain identifier on which nft was locked",
-          new BytesType(),
-        ),
+  new FieldDefinition(
+    "lock_tx_chain",
+    "Chain identifier on which nft was locked",
+    new BytesType(),
+  ),
+  new FieldDefinition(
+    "img_uri",
+    "image uri",
+    new BytesType(),
+  ),
 ]);

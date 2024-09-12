@@ -35,9 +35,10 @@ export default async function pollForLockEvents(
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     let fetch: AxiosResponse<LockEventRes[], any>;
     try {
-      fetch = await serverLinkHandler.get<Array<LockEventRes>>(
-        `/${identifier}?cursor=${lastId}&limit=10`,
-      );
+      const url = `/${identifier}?cursor=${lastId}&limit=10`;
+      fetch = await serverLinkHandler.get<Array<LockEventRes>>(url);
+
+      console.log({ url });
     } catch (e) {
       const error = e as Error;
       logger.error(`Error fetching data: ${error.message}`);

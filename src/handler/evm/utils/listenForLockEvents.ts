@@ -91,7 +91,7 @@ const listenForLockEvents = (
         await em.upsert(Block, {
           chain: chainIdent,
           contractAddress: await bc.getAddress(),
-          lastBlock: lastBlock,
+          lastBlock: lastBlock + 1,
         });
         await em.flush();
       } catch (e) {

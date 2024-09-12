@@ -172,7 +172,6 @@ export async function listenEvents(
       approvalFn,
       `Approving transfer ${JSON.stringify(inft, null, 2)}`,
       log,
-      3,
     );
 
     log.info(
@@ -268,7 +267,6 @@ export async function listenStakeEvents(
         approvalFn,
         `Approving stake ${JSON.stringify(ev, null, 2)}`,
         log,
-        6,
       );
       log.info(
         approved

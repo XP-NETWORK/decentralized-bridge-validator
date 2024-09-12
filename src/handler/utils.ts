@@ -45,17 +45,13 @@ export async function retry<T>(
   func: () => Promise<T>,
   ctx: string,
   log: LogInstance,
-  retries = 3,
 ): Promise<T> {
   try {
     return await func();
   } catch (err) {
-    if (retries === 0) {
-      throw err;
-    }
-    log.info(`Context: ${ctx} - Retrying ${retries} more times. Error: ${err}`);
-    await setTimeout(6000 * (3 - retries));
-    return retry(func, ctx, log, retries - 1);
+    log.info(`Context: ${ctx} - Retrying. Error:`, err);
+    await setTimeout(5000);
+    return retry(func, ctx, log);
   }
 }
 

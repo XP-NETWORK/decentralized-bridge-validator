@@ -19,7 +19,6 @@ export default async function nftData(
     },
     `Trying to fetch Nft Data for ${contract}`,
     log,
-    5,
   ).catch(() => undefined);
 
   const royalty_info = await retry(
@@ -40,7 +39,6 @@ export default async function nftData(
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,
-    5,
   ).catch(() => undefined);
   const decimal_places_in_rates = royalty_info?.decimal_places_in_rates ?? 0;
   const max_percentage = 10 ** decimal_places_in_rates;
@@ -64,7 +62,6 @@ export default async function nftData(
     },
     `Trying to fetch Nft Info for ${contract}`,
     log,
-    5,
   ).catch(() => undefined);
   const tokenURI =
     nft_info?.extension?.media[0]?.url ||

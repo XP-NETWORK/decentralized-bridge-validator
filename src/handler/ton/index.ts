@@ -67,7 +67,6 @@ export function tonHandler({
         () => nftData(_, ctr, client),
         `Trying to fetch data for ${ctr}`,
         logger,
-        5,
       ).catch(() => {
         return {
           metadata: "",

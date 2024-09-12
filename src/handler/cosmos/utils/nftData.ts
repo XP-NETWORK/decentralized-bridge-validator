@@ -18,7 +18,6 @@ export default async function nftData(
     },
     `Trying to fetch Nft Data for ${contract}`,
     log,
-    5,
   ).catch(() => undefined);
 
   const nft_info = await retry(
@@ -29,7 +28,6 @@ export default async function nftData(
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,
-    5,
   ).catch(() => undefined);
 
   const tokenURI = nft_info?.token_uri || "";

@@ -55,14 +55,12 @@ async function main() {
     () => stakeTokens(config.stakingConfig, secrets, deps.chains, logger),
     "Staking Tokens",
     logger,
-    10,
   );
 
   await retry(
     () => checkOrAddSelfAsVal(deps.chains, logger),
     "Add self as Validator",
     logger,
-    10,
   );
 
   listenEvents(

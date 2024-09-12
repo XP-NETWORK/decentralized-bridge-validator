@@ -55,6 +55,11 @@ export async function listenEvents(
   }
 
   async function processEvent(chain: THandler, ev: LockEvent) {
+    log.info(
+      "--------------------------------------",
+      ev.transactionHash,
+      "--------------------------------------",
+    );
     const sourceChain = map.get(ev.sourceChain as TSupportedChains);
     if (!sourceChain) {
       log.warn(
@@ -74,6 +79,7 @@ export async function listenEvents(
       ev.tokenId,
       ev.sourceNftContractAddress,
     );
+
     const fee = await deps.storage.chainFee(ev.destinationChain);
     const royaltyReceiver = await deps.storage.chainRoyalty(
       ev.destinationChain,
@@ -105,6 +111,7 @@ export async function listenEvents(
       lockTxChain: chain.chainIdent,
       imgUri: imgUri.substring(imgUri.indexOf("https://")),
     };
+
     log.trace(inft);
 
     const signature = await destinationChain.signClaimData(inft);
@@ -122,29 +129,31 @@ export async function listenEvents(
       return;
     }
     const approvalFn = async () => {
+      const approveLockRace = async () => {
+        const [nonce, release] = await fetchNonce();
+        const [releaseStorage, storage] = await fetchStorage();
+        log.info(`Using nonce: ${nonce}`);
+        const response = await (
+          await storage.approveLockNft(
+            inft.transactionHash,
+            chain.chainIdent,
+            signature.signature,
+            signature.signer,
+            {
+              nonce,
+            },
+          )
+        ).wait();
+        await setTimeout(5 * 1000);
+        release();
+        releaseStorage();
+        return response;
+      };
+
       try {
         const tx = await Promise.race([
-          (async () => {
-            const [nonce, release] = await fetchNonce();
-            const [releaseStorage, storage] = await fetchStorage();
-            log.info(`Using nonce: ${nonce}`);
-            const response = await (
-              await storage.approveLockNft(
-                inft.transactionHash,
-                chain.chainIdent,
-                signature.signature,
-                signature.signer,
-                {
-                  nonce,
-                },
-              )
-            ).wait();
-            await setTimeout(5 * 1000);
-            release();
-            releaseStorage();
-            return response;
-          })(),
-          await setTimeout(20 * 1000),
+          approveLockRace(),
+          setTimeout(20 * 1000),
         ]);
         //@ts-ignore
         if (!tx?.status)
@@ -173,6 +182,11 @@ export async function listenEvents(
 
     log.info(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
+    );
+    log.info(
+      "--------------------------------------",
+      ev.transactionHash,
+      "--------------------------------------",
     );
   }
 
@@ -234,10 +248,14 @@ export async function listenStakeEvents(
       }
 
       const approvalFn = async () => {
+        const approveStakeRace = async () =>
+          await (
+            await deps.storage.approveStake(stakerAddress, signatures)
+          ).wait();
         try {
           const tx = await Promise.race([
-            (await deps.storage.approveStake(stakerAddress, signatures)).wait(),
-            await setTimeout(10 * 1000),
+            approveStakeRace(),
+            setTimeout(10 * 1000),
           ]);
 
           // @ts-ignore

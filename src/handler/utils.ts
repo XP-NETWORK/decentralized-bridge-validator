@@ -46,12 +46,15 @@ export async function retry<T>(
   ctx: string,
   log: LogInstance,
 ): Promise<T> {
-  try {
-    return await func();
-  } catch (err) {
-    log.info(`Context: ${ctx} - Retrying. Error:`, err);
-    await setTimeout(5000);
-    return retry(func, ctx, log);
+  while (true) {
+    try {
+      const res = await func();
+      return res; // Only returns once the function succeeds
+    } catch (err) {
+      log.info(`Context: ${ctx} - Retrying. Error:`, err);
+      // Use a Promise-based delay
+      await setTimeout(5000);
+    }
   }
 }
 

@@ -57,11 +57,6 @@ export async function listenEvents(
   }
 
   async function processEvent(chain: THandler, ev: LockEvent) {
-    log.info(
-      "--------------------------------------",
-      ev.transactionHash,
-      "--------------------------------------",
-    );
     const sourceChain = map.get(ev.sourceChain as TSupportedChains);
     if (!sourceChain) {
       log.warn(
@@ -176,11 +171,6 @@ export async function listenEvents(
 
     log.info(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
-    );
-    log.info(
-      "--------------------------------------",
-      ev.transactionHash,
-      "--------------------------------------",
     );
   }
 

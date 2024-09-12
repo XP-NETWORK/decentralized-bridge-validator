@@ -14,7 +14,7 @@ import type {
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { checkHttpOrIpfs, fetchHttpOrIpfs, retry } from "./utils";
+import { fetchHttpOrIpfs, retry } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -82,20 +82,11 @@ export async function listenEvents(
       imgUri = nftDetails.metadata;
     }
 
-    let metadata = nftDetails.metadata;
-    if (ev.destinationChain === "TEZOS") {
-      metadata = checkHttpOrIpfs(nftDetails.metadata, ev.metaDataUri);
-
-      log.trace("CONTRACT URI", nftDetails.metadata);
-      log.trace("EVENT URI", ev.metaDataUri);
-      log.trace("RESULTANT URI", metadata);
-    }
-
     const inft: TNftTransferDetailsObject = {
       destinationChain: ev.destinationChain,
       destinationUserAddress: ev.destinationUserAddress,
       fee: fee.toString(),
-      metadata: metadata,
+      metadata: nftDetails.metadata,
       name: nftDetails.name,
       nftType: ev.nftType,
       royalty: nftDetails.royalty.toString(),

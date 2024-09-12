@@ -176,6 +176,18 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 49042809000002,
       nativeCoinSymbol: "TON",
     },
+    {
+      blockChunks: 1000,
+      chain: "TEZOS",
+      chainType: "tezos",
+      contractAddress: "KT1N3qtcfxzNMhdRMphvtDCKLEDwVLhZ8Cpq",
+      decimals: 9,
+      intialFund: "100000000",
+      lastBlock: 6572780,
+      nativeCoinSymbol: "TEZOS",
+      restApiURL: "https://api.tzkt.io",
+      rpcURL: "https://mainnet.smartpy.io",
+    },
   ],
   storageConfig: {
     chain: "OP",

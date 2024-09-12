@@ -111,7 +111,9 @@ export async function listenEvents(
 
     const alreadyProcessed = await deps.storage
       .usedSignatures(signature.signature)
-      .catch(() => false);
+      .catch((e) => {
+        throw e;
+      });
 
     if (alreadyProcessed) {
       log.warn(
@@ -137,6 +139,7 @@ export async function listenEvents(
                 },
               )
             ).wait();
+            setTimeout(5 * 1000);
             release();
             releaseStorage();
             return response;
@@ -144,7 +147,12 @@ export async function listenEvents(
           setTimeout(20 * 1000),
         ]);
         //@ts-ignore
-        if (!tx?.status) throw new Error("Approve failed");
+        if (!tx?.status)
+          throw new Error(
+            tx
+              ? `Approve Failed ${tx.status}`
+              : "Timeout after 20 Seconds Approve failed",
+          );
         return tx;
       } catch (err) {
         const err_ = err as unknown as { shortMessage: string };

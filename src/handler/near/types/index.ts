@@ -14,6 +14,8 @@ export type NearHandlerParams = {
   privateKey: string;
   storage: BridgeStorage;
   lastBlock_: number;
+  nearBlocksUrl: string;
+  nearBlocksApiKey: string;
   initialFunds: bigint;
   em: EntityManager;
   decimals: number;

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Contract } from "near-api-js";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
@@ -22,6 +23,8 @@ export async function nearHandler({
   lastBlock_,
   initialFunds,
   em,
+  nearBlocksUrl,
+  nearBlocksApiKey,
   address,
   decimals,
   chainIdent,
@@ -36,6 +39,12 @@ export async function nearHandler({
     changeMethods: [],
     viewMethods: [],
     useLocalViewExecution: true,
+  });
+  const nearBlocksApi = axios.create({
+    baseURL: nearBlocksUrl,
+    headers: {
+      Authorization: `Bearer ${nearBlocksApiKey}`,
+    },
   });
   const publicKey = await signer.getPublicKey(address, networkId);
   const publicKeyInHex = Buffer.from(publicKey.data).toString("hex");
@@ -65,7 +74,16 @@ export async function nearHandler({
     signClaimData: (data) => signClaimData(data, privateKey),
     selfIsValidator: () => selfIsValidator(bc as never, publicKeyInHex),
     listenForLockEvents: (cb, iter) =>
-      listenForLockEvents(cb, iter, near, lastBlock_, bridge, em, logger),
+      listenForLockEvents(
+        cb,
+        iter,
+        near,
+        nearBlocksApi,
+        lastBlock_,
+        bridge,
+        em,
+        logger,
+      ),
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,

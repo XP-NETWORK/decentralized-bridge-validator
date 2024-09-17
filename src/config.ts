@@ -191,7 +191,8 @@ export const prodBridgeConfig: IBridgeConfig = {
   ],
   storageConfig: {
     chain: "OP",
-    rpcURL: "https://optimism.llamarpc.com",
+    rpcURL:
+      "https://site1.moralis-nodes.com/optimism/782dc8d8a6a044138f39732619dcbfc9",
     nativeCoinSymbol: "OP",
     intialFund: "5000000000000000",
     contractAddress: "0xc6e84955ba7C354fb7ca60011883e5673Be3F629",

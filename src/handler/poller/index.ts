@@ -37,8 +37,6 @@ export default async function pollForLockEvents(
     try {
       const url = `/${identifier}?cursor=${lastId}&limit=10`;
       fetch = await serverLinkHandler.get<Array<LockEventRes>>(url);
-
-      console.log({ url });
     } catch (e) {
       const error = e as Error;
       logger.error(`Error fetching data: ${error.message}`);

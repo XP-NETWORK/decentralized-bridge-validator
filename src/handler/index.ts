@@ -130,7 +130,9 @@ export async function listenEvents(
         const [nonce, release] = await fetchNonce();
         const [releaseStorage, storage] = await fetchStorage();
         const feeData = await storageProvider.getFeeData();
-        log.info(`Using nonce: ${nonce}, txHash: ${inft.transactionHash}`);
+        log.info(
+          `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+        );
         const response = await (
           await storage.approveLockNft(
             inft.transactionHash,
@@ -144,7 +146,9 @@ export async function listenEvents(
             },
           )
         ).wait();
-        log.info(`Used nonce: ${nonce}, txHash: ${inft.transactionHash}`);
+        log.info(
+          `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+        );
         await setTimeout(5 * 1000);
         release();
         releaseStorage();

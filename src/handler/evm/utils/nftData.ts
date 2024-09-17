@@ -13,7 +13,10 @@ const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
       () => nft.name(),
       `Trying to fetch name() for ${contract}`,
       logger,
-    );
+      5,
+    ).catch(() => {
+      return "";
+    });
 
     const symbol = await retry(
       () => nft.symbol(),
@@ -24,9 +27,11 @@ const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
     const royalty = await retry(
       () => nft.royaltyInfo(tokenId, MAX_SALE_PRICE),
       `Trying to fetch royaltyInfo() for ${contract}`,
-
       logger,
-    );
+      5,
+    ).catch(() => {
+      return undefined;
+    });
 
     const metadata = await retry(
       () => nft.tokenURI(tokenId),

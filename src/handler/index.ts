@@ -75,6 +75,7 @@ export async function listenEvents(
     const nftDetails = await sourceChain.nftData(
       ev.tokenId,
       ev.sourceNftContractAddress,
+      log,
     );
 
     const fee = await deps.storage.chainFee(ev.destinationChain);

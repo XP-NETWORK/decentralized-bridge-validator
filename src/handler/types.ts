@@ -39,7 +39,11 @@ export interface THandler {
     nfto: TNftTransferDetailsObject,
   ): Promise<{ signer: string; signature: string }>;
   signData(buf: string): Promise<{ signer: string; signature: string }>;
-  nftData(tokenId: string, contract: string): Promise<TNftData>;
+  nftData(
+    tokenId: string,
+    contract: string,
+    logger: LogInstance,
+  ): Promise<TNftData>;
   chainIdent: TSupportedChains;
   selfIsValidator(): Promise<boolean>;
   getBalance(): Promise<bigint>;

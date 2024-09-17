@@ -1,38 +1,37 @@
 import type { JsonRpcProvider } from "ethers";
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
+import type { LogInstance } from "../../types";
+import { retry } from "../../utils";
 import { MAX_SALE_PRICE } from "../constants";
 
-const nftData = (provider: JsonRpcProvider) => {
+const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
   return async (tokenId: string, contract: string) => {
     const nft = ERC721Royalty__factory.connect(contract, provider);
-    const code = await provider.getCode(contract).catch(() => "");
+    // const code = await provider.getCode(contract).catch(() => "");
 
-    const name = await retryFn(
+    const name = await retry(
       () => nft.name(),
       `Trying to fetch name() for ${contract}`,
-      nft.name.fragment.selector,
-      code,
+      logger,
     );
 
-    const symbol = await retryFn(
+    const symbol = await retry(
       () => nft.symbol(),
       `Trying to fetch symbol() for ${contract}`,
-      nft.symbol.fragment.selector,
-      code,
+      logger,
     );
 
-    const royalty = await retryFn(
+    const royalty = await retry(
       () => nft.royaltyInfo(tokenId, MAX_SALE_PRICE),
       `Trying to fetch royaltyInfo() for ${contract}`,
-      nft.royaltyInfo.fragment.selector,
-      code,
+
+      logger,
     );
 
-    const metadata = await retryFn(
+    const metadata = await retry(
       () => nft.tokenURI(tokenId),
       `Trying to fetch tokenURI() for ${contract}`,
-      nft.tokenURI.fragment.selector,
-      code,
+      logger,
     );
 
     return {
@@ -46,20 +45,3 @@ const nftData = (provider: JsonRpcProvider) => {
 };
 
 export default nftData;
-
-export async function retryFn<T>(
-  func: () => Promise<T>,
-  ctx: string,
-  selector: string,
-  code: string,
-  retries = 3,
-) {
-  try {
-    return await func();
-  } catch (e) {
-    if (code.includes(selector)) {
-      return await retryFn(func, ctx, selector, code, retries - 1);
-    }
-    throw new Error(`Failed ${ctx}`);
-  }
-}

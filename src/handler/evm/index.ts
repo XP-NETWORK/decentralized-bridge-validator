@@ -65,7 +65,7 @@ export function evmHandler({
     nftData:
       royaltyProxy !== undefined
         ? nftDataForHedera(provider, royaltyProxy)
-        : nftData(provider),
+        : nftData(provider, logger),
     selfIsValidator: selfIsValidator(bc, signer),
     signClaimData: signClaimData(chainIdent, txSigner, logger),
     decimals: BigInt(10 ** decimals),

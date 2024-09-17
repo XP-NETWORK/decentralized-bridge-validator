@@ -49,7 +49,7 @@ export async function retryFn<T>(
   retries = 3,
 ) {
   if (retries === 0) {
-    return;
+    throw new Error(`Failed ${ctx}`);
   }
   try {
     return await func();

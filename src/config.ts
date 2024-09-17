@@ -122,7 +122,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   bridgeChains: [
     {
       chain: "BSC",
-      rpcURL: "https://bsc.blockpi.network/v1/rpc/public",
+      rpcURL: "https://bnb.rpc.subquery.network/public",
       nativeCoinSymbol: "BNB",
       intialFund: "50000000000000000",
       contractAddress: "0x289FDdDce5119C41B82C969135212061D5E7Dce5",

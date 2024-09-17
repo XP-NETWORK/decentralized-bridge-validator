@@ -60,6 +60,6 @@ export async function retryFn<T>(
     if (code.includes(selector)) {
       return await retryFn(func, ctx, selector, code, retries - 1);
     }
-    return undefined;
+    throw new Error(`Failed ${ctx}`);
   }
 }

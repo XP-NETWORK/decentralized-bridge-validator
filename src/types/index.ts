@@ -33,6 +33,12 @@ type ITonWallet = {
   secretKey: string;
 };
 
+type INearWallet = {
+  publicKey: string;
+  secretKey: string;
+  accountId: string;
+};
+
 type IEvmWallet = {
   address: string;
   privateKey: string;
@@ -68,6 +74,7 @@ type IGeneratedWallets = {
   secretWallet: ISecretWallet;
   tezosWallet: ITezosWallet;
   icpWallet: IICPWallet;
+  nearWallet: INearWallet;
 };
 
 type IConfigAndWallets = {
@@ -108,6 +115,13 @@ type ISecretChainConfig = {
 type ITonChainConfig = {
   chainType: "ton";
   rpcURL: string;
+} & IChainConfig;
+
+type INearChainConfig = {
+  chainType: "near";
+  rpcURL: string;
+  networkId: "testnet" | "mainnet";
+  nearBlocksUrl: string;
 } & IChainConfig;
 
 type ITezosChainConfig = {
@@ -151,7 +165,8 @@ type TChain =
   | ITezosChainConfig
   | IHederaChainConfig
   | ICosmWasmChainConfig
-  | IICPChainConfig;
+  | IICPChainConfig
+  | INearChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -184,5 +199,7 @@ export type {
   ITezosWallet,
   ITonChainConfig,
   ITonWallet,
+  INearChainConfig,
+  INearWallet,
   TChain,
 };

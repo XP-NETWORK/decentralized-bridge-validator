@@ -19,15 +19,20 @@ export default async function listenForLockEvents(
   em: EntityManager,
   logger: LogInstance,
 ) {
-  const lastBlock = lastBlock_;
+  let lastBlock = lastBlock_;
   while (true)
     try {
       const response = await nearBlocksApi.get<{
-        cursor: number;
+        cursor?: number;
         txns: unknown[];
       }>(`/account/${bridge}/txns`);
+      if (!response.data.cursor) {
+        logger.trace(`0 Txns Since: ${lastBlock}. Awaiting 10s`);
+        await setTimeout(10000);
+        continue;
+      }
 
-      if (response.data.cursor <= lastBlock) {
+      if (response.data.cursor < lastBlock) {
         logger.trace(`0 Txns Since: ${lastBlock}. Awaiting 10s`);
         await setTimeout(10000);
         continue;
@@ -35,38 +40,42 @@ export default async function listenForLockEvents(
 
       const { data } = await nearBlocksApi.get<{
         txns: Transaction[];
-      }>(`/account/${bridge}/txn?method=lock_nft&cursor=${lastBlock}`);
+      }>(`/account/${bridge}/txns?cursor=${lastBlock}`);
       const newCursor = data.txns[0].id;
 
       for (const tx of data.txns) {
         const txn = await near.connection.provider.txStatusReceipts(
           tx.transaction_hash,
           bridge,
-          "FINAL",
+          "NONE",
         );
+        //@ts-ignore
+        if (!("SuccessValue" in txn.status)) {
+          continue;
+        }
         const log = txn.receipts_outcome
           .flatMap((e) => e.outcome.logs)
           .filter((e) => e.includes("locked"))[0];
         if (!log) continue;
         const parsed = JSON.parse(log).data;
 
-        cb(
+        await cb(
           await builder.nftLocked(
             parsed.token_id,
             parsed.destination_chain,
-            parsed.destionation_address,
+            parsed.destination_user_address,
             parsed.source_nft_contract_address,
             parsed.token_amount,
             "singular",
             parsed.source_chain,
             tx.transaction_hash,
             "NEAR",
-            "",
+            parsed.metadata_uri,
             undefined,
           ),
         );
       }
-
+      lastBlock = Number(newCursor);
       await em.upsert(Block, {
         chain: CHAIN_IDENT,
         contractAddress: bridge,
@@ -74,7 +83,7 @@ export default async function listenForLockEvents(
       });
       await em.flush();
     } catch (e) {
-      logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
+      logger.error("Error while listening for events", e);
       await setTimeout(10000);
     }
 }

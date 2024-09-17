@@ -27,10 +27,17 @@ import { Ed25519KeyIdentity } from "@dfinity/identity";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import { Mutex } from "async-mutex";
 import axios, { type AxiosInstance } from "axios";
+import {
+  KeyPair,
+  InMemorySigner as NearInMemorySigner,
+  connect,
+  keyStores,
+} from "near-api-js";
 import { ERC20Staking__factory } from "./contractsTypes/evm";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import { icpHandler } from "./handler/icp";
+import { nearHandler } from "./handler/near";
 import type { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
@@ -46,6 +53,8 @@ import type {
   IICPWallet,
   IMultiversXChainConfig,
   IMultiversXWallet,
+  INearChainConfig,
+  INearWallet,
   ISecretChainConfig,
   ISecretWallet,
   IStakingConfig,
@@ -337,6 +346,53 @@ export async function configMultiversXHandler(
   });
 }
 
+export async function configNearHandler(
+  conf: INearChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  nearWallet: INearWallet,
+  serverLinkHandler: AxiosInstance | undefined,
+  nearLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
+) {
+  const near = await connect({
+    networkId: conf.networkId,
+    nodeUrl: conf.rpcURL,
+  });
+
+  const ks = new keyStores.InMemoryKeyStore();
+
+  ks.setKey(
+    conf.networkId,
+    nearWallet.accountId,
+    KeyPair.fromString(nearWallet.secretKey as never),
+  );
+
+  return nearHandler({
+    near,
+    address: nearWallet.accountId,
+    bridge: conf.contractAddress,
+    chainIdent: "NEAR",
+    chainType: "near",
+    decimals: 24,
+    em: em.fork(),
+    initialFunds: BigInt(conf.intialFund),
+    lastBlock_: conf.lastBlock,
+    logger: nearLogger,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    nearBlocksApiKey: process.env.nearBlocksApiKey!,
+    nearBlocksUrl: conf.nearBlocksUrl,
+    networkId: conf.networkId,
+    storage,
+    privateKey: nearWallet.secretKey,
+    signer: new NearInMemorySigner(ks),
+    serverLinkHandler: serverLinkHandler,
+    validatorAddress,
+    staking,
+  });
+}
+
 export async function configTonHandler(
   conf: ITonChainConfig,
   storage: BridgeStorage,
@@ -482,6 +538,21 @@ export async function configDeps(
       )
     : undefined;
 
+  const nearc = config.bridgeChains.find((e) => e.chainType === "near");
+
+  const near = nearc
+    ? await configNearHandler(
+        nearc,
+        storage,
+        em.fork(),
+        secrets.nearWallet,
+        serverLinkHandler,
+        logger.getSubLogger({ name: "NEAR" }),
+        staking,
+        secrets.evmWallet.address,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -548,6 +619,7 @@ export async function configDeps(
       mx,
       ton,
       icp,
+      near,
     ].filter((e) => e !== undefined) as THandler[],
   };
 }

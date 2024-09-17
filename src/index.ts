@@ -17,6 +17,14 @@ async function main() {
     stylePrettyLogs: true,
   });
   await configureValidator(logger);
+
+  let config: IBridgeConfig = prodBridgeConfig;
+
+  const network = process.env.NETWORK;
+  if (network === "testnet") {
+    logger.info("Starting up testnet");
+    config = testnetBridgeConfig;
+  }
   await syncWallets(logger);
 
   const secrets: IGeneratedWallets = JSON.parse(
@@ -25,14 +33,6 @@ async function main() {
   if (process.argv.includes("--help")) {
     console.info(help);
     process.exit(0);
-  }
-
-  let config: IBridgeConfig = prodBridgeConfig;
-
-  const network = process.env.NETWORK;
-  if (network === "testnet") {
-    logger.info("Starting up testnet");
-    config = testnetBridgeConfig;
   }
 
   const deps = await configDeps(config, secrets, logger);

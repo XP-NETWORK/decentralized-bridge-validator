@@ -37,8 +37,8 @@ export async function nearHandler({
 }: NearHandlerParams): Promise<THandler> {
   const bc = new Contract(near.connection, bridge, {
     changeMethods: [],
-    viewMethods: [],
-    useLocalViewExecution: true,
+    viewMethods: ["validator", "validator_count"],
+    useLocalViewExecution: false,
   });
   const nearBlocksApi = axios.create({
     baseURL: nearBlocksUrl,

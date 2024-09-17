@@ -34,7 +34,7 @@ export default async function addSelfAsValidator(
   }
   try {
     async function getStakingSignatureCount() {
-      return Number(await bridge.get_validator_count());
+      return Number(await bridge.validator_count());
     }
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(

@@ -4,6 +4,7 @@ import path from "node:path";
 import { generateWallet as evmGw } from "./handler/evm/utils";
 import { generateWallet as icpGw } from "./handler/icp/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
+import { generateWallet as nearGw } from "./handler/near/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
 import { generateWallet as tzGw } from "./handler/tezos/utils";
 import { generateWallet as tonGw } from "./handler/ton/utils";
@@ -35,6 +36,7 @@ export async function syncWallets(logger: LogInstance) {
       multiversXWallet: await mxGw(),
       tonWallet: await tonGw(),
       icpWallet: await icpGw(),
+      nearWallet: await nearGw(),
     };
     return writeFile(secretsPath, JSON.stringify(wallets));
   }
@@ -58,6 +60,9 @@ export async function syncWallets(logger: LogInstance) {
   } else if (!("icpWallet" in secrets)) {
     logger.warn("Generating new wallet for ICP");
     secrets.icpWallet = await icpGw();
+  } else if (!("nearWallet" in secrets)) {
+    logger.error("No wallet for near found, please add it to secrets.json");
+    return;
   }
   return writeFile(secretsPath, JSON.stringify(secrets));
 }

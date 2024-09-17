@@ -47,6 +47,7 @@ export async function retry<T>(
   log: LogInstance,
   retryCount?: number,
 ): Promise<T> {
+  let Count = retryCount;
   while (true) {
     try {
       const res = await func();
@@ -54,8 +55,8 @@ export async function retry<T>(
     } catch (err) {
       log.info(`Context: ${ctx} - Retrying. Error:`, err);
       // Use a Promise-based delay
-      if (retryCount) {
-        const Count = retryCount - 1;
+      if (Count) {
+        Count = Count - 1;
         if (Count <= 0) {
           throw new Error(`Failed ${ctx}`);
         }

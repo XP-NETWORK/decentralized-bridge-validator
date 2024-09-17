@@ -60,10 +60,11 @@ export async function syncWallets(logger: LogInstance) {
   } else if (!("icpWallet" in secrets)) {
     logger.warn("Generating new wallet for ICP");
     secrets.icpWallet = await icpGw();
-  } else if (!("nearWallet" in secrets)) {
-    logger.error("No wallet for near found, please add it to secrets.json");
-    return;
   }
+  // else if (!("nearWallet" in secrets)) {
+  //   logger.error("No wallet for near found, please add it to secrets.json");
+  //   return;
+  // }
   return writeFile(secretsPath, JSON.stringify(secrets));
 }
 

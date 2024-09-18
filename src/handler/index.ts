@@ -85,8 +85,8 @@ export async function listenEvents(
 
     let imgUri = "";
     try {
-      imgUri = (await fetchHttpOrIpfs(nftDetails.metadata, axios.create()))
-        .image;
+      const data = await fetchHttpOrIpfs(nftDetails.metadata, axios.create());
+      imgUri = data?.image || data?.displayUri;
     } catch (ex) {
       imgUri = nftDetails.metadata;
     }
@@ -107,7 +107,7 @@ export async function listenEvents(
       tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
       lockTxChain: chain.chainIdent,
-      imgUri: imgUri.substring(imgUri.indexOf("https://")),
+      imgUri: imgUri?.substring(imgUri?.indexOf("https://")) || "",
     };
 
     log.trace(inft);

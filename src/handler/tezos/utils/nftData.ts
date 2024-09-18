@@ -1,6 +1,6 @@
 import type { TezosToolkit } from "@taquito/taquito";
 import { Tzip16Module, bytesToString, tzip16 } from "@taquito/tzip16";
-
+import axios from "axios";
 import type { NFTContractType } from "../../../contractsTypes/tezos/NFT.types";
 import {
   type MMap,
@@ -9,6 +9,7 @@ import {
   tas,
 } from "../../../contractsTypes/tezos/type-aliases";
 import type { LogInstance } from "../../types";
+import { fetchHttpOrIpfs } from "../../utils";
 
 export default async function nftData(
   tokenId: string,
@@ -52,8 +53,9 @@ export default async function nftData(
   try {
     const isUrl = URLCanParse(tokenMd);
     if (isUrl) {
-      const metaData: { symbol?: string } = await fetch(tokenMd).then((res) =>
-        res.json(),
+      const metaData: { symbol?: string } = await fetchHttpOrIpfs(
+        tokenMd,
+        axios.create(),
       );
       symbol = metaData.symbol ?? symbol;
     }
@@ -75,7 +77,7 @@ export default async function nftData(
     };
 
     if (isUrl) {
-      metaData = await fetch(metaDataOrURL).then((res) => res.json());
+      metaData = await fetchHttpOrIpfs(metaDataOrURL, axios.create());
     } else {
       metaData = JSON.parse(metaDataOrURL);
     }

@@ -27,6 +27,43 @@ export default async function pollForLockEvents(
       })
       .getSingleResult();
 
+    const failedData = await em
+      .createQueryBuilder(LockedEvent)
+      .select("*")
+      .where({
+        listenerChain: identifier,
+        status: false,
+      })
+      .orderBy({
+        id: "desc",
+      });
+
+    for (const tx of failedData) {
+      try {
+        await cb(
+          await builder.nftLocked(
+            tx.tokenId.toString(),
+            tx.destinationChain,
+            tx.destinationUserAddress,
+            tx.sourceNftContractAddress,
+            tx.tokenAmount.toString(),
+            tx.nftType,
+            tx.sourceChain,
+            tx.transactionHash,
+            tx.listenerChain,
+            tx.metaDataUri,
+            tx.id,
+          ),
+        );
+      } catch (e) {
+        logger.error(
+          identifier,
+          `${e} while polling for events. Sleeping for 10 seconds`,
+        );
+        await setTimeout(10000);
+      }
+    }
+
     let lastId = lastEv?.id ?? 0;
     if (lastId) {
       lastId += 1;

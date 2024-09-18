@@ -63,6 +63,7 @@ export interface TStakingHandler {
 }
 
 export type LockEvent = {
+  listenerChain: string;
   tokenId: string;
   destinationChain: string;
   destinationUserAddress: string;

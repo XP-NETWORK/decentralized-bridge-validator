@@ -30,6 +30,7 @@ const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
       logger,
       5,
     ).catch(() => {
+      logger.warn("retry royalty catch");
       return undefined;
     });
 

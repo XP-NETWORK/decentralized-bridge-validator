@@ -1,5 +1,5 @@
 import { setTimeout } from "node:timers/promises";
-import type { EntityManager } from "@mikro-orm/sqlite";
+import { type EntityManager, wrap } from "@mikro-orm/sqlite";
 import { Mutex, type MutexInterface } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import axios from "axios";
@@ -124,6 +124,17 @@ export async function listenEvents(
       log.warn(
         `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
       );
+      const found = await em.findOne(LockedEvent, {
+        transactionHash: ev.transactionHash,
+        listenerChain: ev.listenerChain,
+      });
+      if (found) {
+        const to_save = wrap(found).assign({
+          status: true,
+        });
+
+        await em.persistAndFlush(to_save);
+      }
       return;
     }
     const approvalFn = async () => {
@@ -178,6 +189,17 @@ export async function listenEvents(
     log.info(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
+    const found = await em.findOne(LockedEvent, {
+      transactionHash: ev.transactionHash,
+      listenerChain: ev.listenerChain,
+    });
+    if (found) {
+      const to_save = wrap(found).assign({
+        status: true,
+      });
+
+      await em.persistAndFlush(to_save);
+    }
   }
 
   async function poolEvents(chain: THandler) {
@@ -333,6 +355,7 @@ export function eventBuilder(em: EntityManager) {
         sourceChain,
         transactionHash,
         metaDataUri,
+        listenerChain,
       };
     },
   };

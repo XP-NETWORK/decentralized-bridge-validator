@@ -40,6 +40,9 @@ export class LockedEvent {
   @Property({ default: "" })
   metaDataUri!: string;
 
+  @Property({ default: false })
+  status!: boolean;
+
   constructor(
     tokenId: string,
     destinationChain: string,

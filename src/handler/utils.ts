@@ -57,6 +57,7 @@ export async function retry<T>(
       // Use a Promise-based delay
       if (count) {
         count = count - 1;
+        console.log(`Retry count: ${count}`);
         if (count <= 0) {
           throw new Error(`Failed ${ctx}`);
         }

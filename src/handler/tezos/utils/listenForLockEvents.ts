@@ -5,6 +5,7 @@ import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
 import { TezosGetContractOperations } from "./index";
+import { TezosGetTransaction } from "./operations";
 
 const CHAIN_IDENT = "TEZOS";
 
@@ -58,6 +59,12 @@ export default async function listenForLockEvents(
             log.payload.source_nft_address,
           );
 
+          const res = await TezosGetTransaction({
+            transactionId: log.transactionId,
+            restApiURL: restApiUrl,
+          });
+          const lockedHash = res[0].hash;
+
           const {
             token_id: tokenId, // Unique ID for the NFT transfer
             dest_chain: destinationChain, // Chain to where the NFT is being transferred
@@ -76,7 +83,7 @@ export default async function listenForLockEvents(
               tokenAmount,
               nftType,
               sourceChain,
-              log.transactionId.toString(),
+              lockedHash,
               CHAIN_IDENT,
               metaDataUri,
             ),

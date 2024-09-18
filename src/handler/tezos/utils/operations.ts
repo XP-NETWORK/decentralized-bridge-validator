@@ -27,3 +27,25 @@ export default async function TezosGetContractOperations({
     console.error(error);
   }
 }
+
+export async function TezosGetTransaction({
+  transactionId,
+  restApiURL,
+}: {
+  transactionId: number;
+  restApiURL: string;
+}) {
+  try {
+    const URL = `${restApiURL}/v1/operations/transactions`;
+    const params = {
+      id: transactionId,
+    };
+    const response = await axios.get(URL, {
+      params,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}

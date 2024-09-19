@@ -163,7 +163,7 @@ export async function poolForFailEvents(
       }
     }
 
-    logger.info(`${failedData.length} Tx, wait: 1s`);
+    logger.info(`Fail ${failedData.length} Tx, wait: 1s`);
     await setTimeout(1 * 1000);
   }
 }

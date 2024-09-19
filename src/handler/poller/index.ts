@@ -7,7 +7,7 @@ import type { EventBuilder } from "../index";
 import type { LockEventIter, LogInstance } from "../types";
 import type { LockEventRes } from "./types";
 
-export default async function pollForLockEvents(
+export async function pollForLockEvents(
   identifier: string,
   builder: EventBuilder,
   cb: LockEventIter,
@@ -27,42 +27,42 @@ export default async function pollForLockEvents(
       })
       .getSingleResult();
 
-    const failedData = await em
-      .createQueryBuilder(LockedEvent)
-      .select("*")
-      .where({
-        listenerChain: identifier,
-        status: false,
-      })
-      .orderBy({
-        id: "desc",
-      });
+    // const failedData = await em
+    //   .createQueryBuilder(LockedEvent)
+    //   .select("*")
+    //   .where({
+    //     listenerChain: identifier,
+    //     status: false,
+    //   })
+    //   .orderBy({
+    //     id: "desc",
+    //   });
 
-    for (const tx of failedData) {
-      try {
-        await cb(
-          await builder.nftLocked(
-            tx.tokenId.toString(),
-            tx.destinationChain,
-            tx.destinationUserAddress,
-            tx.sourceNftContractAddress,
-            tx.tokenAmount.toString(),
-            tx.nftType,
-            tx.sourceChain,
-            tx.transactionHash,
-            tx.listenerChain,
-            tx.metaDataUri,
-            tx.id,
-          ),
-        );
-      } catch (e) {
-        logger.error(
-          identifier,
-          `${e} while polling for events. Sleeping for 10 seconds`,
-        );
-        await setTimeout(10000);
-      }
-    }
+    // for (const tx of failedData) {
+    //   try {
+    //     await cb(
+    //       await builder.nftLocked(
+    //         tx.tokenId.toString(),
+    //         tx.destinationChain,
+    //         tx.destinationUserAddress,
+    //         tx.sourceNftContractAddress,
+    //         tx.tokenAmount.toString(),
+    //         tx.nftType,
+    //         tx.sourceChain,
+    //         tx.transactionHash,
+    //         tx.listenerChain,
+    //         tx.metaDataUri,
+    //         tx.id,
+    //       ),
+    //     );
+    //   } catch (e) {
+    //     logger.error(
+    //       identifier,
+    //       `${e} while polling for events. Sleeping for 10 seconds`,
+    //     );
+    //     await setTimeout(10000);
+    //   }
+    // }
 
     let lastId = lastEv?.id ?? 0;
     if (lastId) {
@@ -114,6 +114,56 @@ export default async function pollForLockEvents(
       }
     }
     logger.info(`${fetch.data.length} Tx, lastId: ${lastId}, wait: 1s`);
+    await setTimeout(1 * 1000);
+  }
+}
+
+export async function poolForFailEvents(
+  identifier: string,
+  builder: EventBuilder,
+  cb: LockEventIter,
+  em: EntityManager,
+  logger: LogInstance,
+) {
+  while (true) {
+    const failedData = await em
+      .createQueryBuilder(LockedEvent)
+      .select("*")
+      .where({
+        listenerChain: identifier,
+        status: false,
+      })
+      .orderBy({
+        id: "desc",
+      });
+
+    for (const tx of failedData) {
+      try {
+        await cb(
+          await builder.nftLocked(
+            tx.tokenId.toString(),
+            tx.destinationChain,
+            tx.destinationUserAddress,
+            tx.sourceNftContractAddress,
+            tx.tokenAmount.toString(),
+            tx.nftType,
+            tx.sourceChain,
+            tx.transactionHash,
+            tx.listenerChain,
+            tx.metaDataUri,
+            tx.id,
+          ),
+        );
+      } catch (e) {
+        logger.error(
+          identifier,
+          `${e} while polling for events. Sleeping for 10 seconds`,
+        );
+        await setTimeout(10000);
+      }
+    }
+
+    logger.info(`${failedData.length} Tx, wait: 1s`);
     await setTimeout(1 * 1000);
   }
 }

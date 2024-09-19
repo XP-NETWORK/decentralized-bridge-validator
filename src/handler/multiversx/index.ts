@@ -8,7 +8,7 @@ import {
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
 import axios from "axios";
 import { multiversXBridgeABI } from "../../contractsTypes/multiversx/abi/multiversXBridgeABI";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { MultiversXHandlerParams } from "./types";
@@ -70,6 +70,9 @@ export function multiversxHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, signer),
     publicKey: signer.getAddress().hex(),

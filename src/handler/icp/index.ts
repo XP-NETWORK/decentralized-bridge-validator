@@ -3,7 +3,7 @@ import { LedgerCanister } from "@dfinity/ledger-icp";
 import { Principal } from "@dfinity/principal";
 import { idlFactory as BridgeIDL } from "../../contractsTypes/icp/bridge/bridge";
 import type { _SERVICE } from "../../contractsTypes/icp/bridge/bridge.types";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { ICPHandlerParams } from "./types";
@@ -64,6 +64,9 @@ export function icpHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, identity, bc),
     chainType,

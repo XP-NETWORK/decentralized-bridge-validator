@@ -1,7 +1,7 @@
 import { Address } from "@ton/ton";
 import TonWeb from "tonweb";
 import { Bridge } from "../../contractsTypes/ton/tonBridge";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import type { THandler } from "../types";
 import { retry } from "../utils";
 import type { TonParams } from "./types";
@@ -50,6 +50,9 @@ export function tonHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, Buffer.from(secretKey, "hex"), signer),
     publicKey: TonWeb.utils.bytesToHex(signer.publicKey),

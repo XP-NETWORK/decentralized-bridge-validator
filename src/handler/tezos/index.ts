@@ -1,5 +1,5 @@
 import type { BridgeContractType } from "../../contractsTypes/tezos/Bridge.types";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { TezosHandlerParams } from "./types";
@@ -47,6 +47,9 @@ export async function tezosHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, signer),
     publicKey: await signer.publicKey(),

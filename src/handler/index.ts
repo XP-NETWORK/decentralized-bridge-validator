@@ -54,6 +54,10 @@ export async function listenEvents(
     chain.pollForLockEvents(builder, async (ev) => {
       processEventsFailSafe(chain, ev);
     });
+
+    chain.poolForFailEvents(builder, async (ev) => {
+      processEventsFailSafe(chain, ev);
+    });
   }
 
   async function processEvent(chain: THandler, ev: LockEvent) {
@@ -205,6 +209,10 @@ export async function listenEvents(
   async function poolEvents(chain: THandler) {
     log.info(`Listening for events on ${chain.chainIdent}`);
     chain.listenForLockEvents(builder, async (ev) => {
+      processEventsFailSafe(chain, ev);
+    });
+
+    chain.poolForFailEvents(builder, async (ev) => {
       processEventsFailSafe(chain, ev);
     });
   }

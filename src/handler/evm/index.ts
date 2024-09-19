@@ -1,6 +1,6 @@
 import { raise } from "xp-decentralized-sdk";
 import { Bridge__factory } from "../../contractsTypes/evm";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import type { THandler } from "../types";
 import type { EVMHandlerParams } from "./types";
 import {
@@ -82,6 +82,9 @@ export function evmHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
   };
 }

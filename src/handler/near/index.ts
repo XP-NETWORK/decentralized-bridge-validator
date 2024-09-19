@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Contract } from "near-api-js";
-import pollForLockEvents from "../poller";
+import { pollForLockEvents, poolForFailEvents } from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { NearHandlerParams } from "./types";
@@ -64,6 +64,9 @@ export async function nearHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
+    },
+    poolForFailEvents: async (builder, cb) => {
+      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, privateKey),
     chainType,

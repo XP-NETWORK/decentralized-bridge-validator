@@ -26,7 +26,7 @@ export default async function nftData(
       ?.json()
       ?.catch(() => undefined);
     return {
-      metaData: atob(response.uris?.at(0) ?? ""),
+      metaData: atob(response.uris?.at(1) ?? ""),
       royalties: response?.royalties ?? 0,
     };
   };

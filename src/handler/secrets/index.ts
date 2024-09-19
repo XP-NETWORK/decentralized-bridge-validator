@@ -1,4 +1,4 @@
-import { pollForLockEvents, poolForFailEvents } from "../poller";
+import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { SecretsHandlerParams } from "./types";
@@ -45,9 +45,6 @@ export function secretsHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
-    },
-    poolForFailEvents: async (builder, cb) => {
-      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
     signData: (buf) => signData(buf, privateKey, publicKey),
     chainType,

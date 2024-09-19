@@ -1,5 +1,5 @@
 import { Bridge } from "@xp/cosmos-client";
-import { pollForLockEvents, poolForFailEvents } from "../poller/index";
+import pollForLockEvents from "../poller/index";
 import { raise } from "../ton";
 import type { THandler } from "../types";
 import type { CosmosHandlerParams } from "./types";
@@ -73,9 +73,6 @@ export async function cosmWasmHandler({
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
-    },
-    poolForFailEvents: async (builder, cb) => {
-      poolForFailEvents(chainIdent, builder, cb, em, logger);
     },
   };
 }

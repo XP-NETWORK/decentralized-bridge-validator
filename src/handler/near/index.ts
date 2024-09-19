@@ -25,6 +25,7 @@ export async function nearHandler({
   em,
   nearBlocksUrl,
   nearBlocksApiKey,
+  theGraphApiUrl,
   address,
   decimals,
   chainIdent,
@@ -46,6 +47,7 @@ export async function nearHandler({
       Authorization: `Bearer ${nearBlocksApiKey}`,
     },
   });
+  const theGraphApi = axios.create({ baseURL: theGraphApiUrl });
   const publicKey = await signer.getPublicKey(address, networkId);
   const publicKeyInHex = Buffer.from(publicKey.data).toString("hex");
   const account = await near.account(address);
@@ -77,7 +79,7 @@ export async function nearHandler({
       listenForLockEvents(
         cb,
         iter,
-        near,
+        theGraphApi,
         nearBlocksApi,
         lastBlock_,
         bridge,

@@ -122,6 +122,7 @@ type INearChainConfig = {
   rpcURL: string;
   networkId: "testnet" | "mainnet";
   nearBlocksUrl: string;
+  theGraphApiUrl: string;
 } & IChainConfig;
 
 type ITezosChainConfig = {

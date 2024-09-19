@@ -84,18 +84,20 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "ICP",
     rpcURL: "https://tools.xp.network/",
   },
-  // {
-  //   chain: "NEAR",
-  //   chainType: "near",
-  //   contractAddress: "xp-bridge-test.testnet",
-  //   decimals: 24,
-  //   intialFund: "100000000000000000000000",
-  //   lastBlock: 960126871,
-  //   nativeCoinSymbol: "NEAR",
-  //   nearBlocksUrl: "https://api-testnet.nearblocks.io/v1/",
-  //   networkId: "testnet",
-  //   rpcURL: "https://archival-rpc.testnet.near.org",
-  // },
+  {
+    chain: "NEAR",
+    chainType: "near",
+    contractAddress: "xp-bridge-test.testnet",
+    decimals: 24,
+    intialFund: "100000000000000000000000",
+    lastBlock: 0,
+    nativeCoinSymbol: "NEAR",
+    nearBlocksUrl: "https://api-testnet.nearblocks.io/v1/",
+    networkId: "testnet",
+    rpcURL: "https://archival-rpc.testnet.near.org",
+    theGraphApiUrl:
+      "https://api.studio.thegraph.com/query/89122/near-xp/version/latest",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

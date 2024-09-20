@@ -16,6 +16,7 @@ export type NearHandlerParams = {
   lastBlock_: number;
   nearBlocksUrl: string;
   nearBlocksApiKey: string;
+  theGraphApiUrl: string;
   initialFunds: bigint;
   em: EntityManager;
   decimals: number;

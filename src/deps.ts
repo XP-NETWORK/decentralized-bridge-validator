@@ -361,6 +361,11 @@ export async function configNearHandler(
     nodeUrl: conf.rpcURL,
   });
 
+  const lb = await em.findOne(Block, {
+    chain: conf.chain,
+    contractAddress: conf.contractAddress,
+  });
+
   const ks = new keyStores.InMemoryKeyStore();
 
   ks.setKey(
@@ -378,7 +383,7 @@ export async function configNearHandler(
     decimals: 24,
     em: em.fork(),
     initialFunds: BigInt(conf.intialFund),
-    lastBlock_: conf.lastBlock,
+    lastBlock_: lb?.lastBlock ?? conf.lastBlock,
     logger: nearLogger,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     nearBlocksApiKey: process.env.nearBlocksApiKey!,
@@ -387,6 +392,7 @@ export async function configNearHandler(
     storage,
     privateKey: nearWallet.secretKey,
     signer: new NearInMemorySigner(ks),
+    theGraphApiUrl: conf.theGraphApiUrl,
     serverLinkHandler: serverLinkHandler,
     validatorAddress,
     staking,

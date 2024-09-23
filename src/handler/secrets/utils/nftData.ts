@@ -1,21 +1,24 @@
-import type { SecretNetworkClient } from "secretjs";
 import type { LogInstance } from "../../types";
 import { retry } from "../../utils";
+import type { SecretProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
-  client: SecretNetworkClient,
+  fetchProvider: SecretProviderFetch,
   log: LogInstance,
 ) {
   const data = await retry(
     async () => {
-      return (
+      const [client, release] = await fetchProvider();
+      const data = (
         (await client.query.compute.queryContract({
           contract_address: contract,
           query: { contract_info: {} },
         })) as { contract_info: { name: string; symbol: string } }
       ).contract_info;
+      release();
+      return data;
     },
     `Trying to fetch Nft Data for ${contract}`,
     log,
@@ -23,7 +26,8 @@ export default async function nftData(
 
   const royalty_info = await retry(
     async () => {
-      return (
+      const [client, release] = await fetchProvider();
+      const ri = (
         (await client.query.compute.queryContract({
           contract_address: contract,
           query: { royalty_info: { token_id: tokenId.toString() } },
@@ -36,6 +40,8 @@ export default async function nftData(
           };
         }
       ).royalty_info.royalty_info;
+      release();
+      return ri;
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,
@@ -47,7 +53,8 @@ export default async function nftData(
 
   const nft_info = await retry(
     async () => {
-      return (
+      const [client, release] = await fetchProvider();
+      const nft = (
         (await client.query.compute.queryContract({
           contract_address: contract,
           query: { nft_info: { token_id: tokenId.toString() } },
@@ -59,6 +66,8 @@ export default async function nftData(
           };
         }
       ).nft_info;
+      release();
+      return nft;
     },
     `Trying to fetch Nft Info for ${contract}`,
     log,

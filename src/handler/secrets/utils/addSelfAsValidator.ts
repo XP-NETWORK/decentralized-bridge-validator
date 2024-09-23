@@ -1,8 +1,4 @@
-import {
-  type SecretNetworkClient,
-  type Wallet,
-  pubkeyToAddress,
-} from "secretjs";
+import { type Wallet, pubkeyToAddress } from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
 import type { BridgeStorage } from "../../../contractsTypes/evm";
 import type { AddValidatorType } from "../../../contractsTypes/secret/secretBridge";
@@ -12,11 +8,12 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
+import type { SecretProviderFetch } from "../types";
 
 export default async function addSelfAsValidator(
   publicKey: string,
   storage: BridgeStorage,
-  client: SecretNetworkClient,
+  fetchProvider: SecretProviderFetch,
   bridge: string,
   bridgeCodeHash: string,
   wallet: Wallet,
@@ -24,6 +21,7 @@ export default async function addSelfAsValidator(
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
+      const [client, release] = await fetchProvider();
       const res = (await client.query.compute.queryContract({
         contract_address: bridge,
         code_hash: bridgeCodeHash,
@@ -31,6 +29,7 @@ export default async function addSelfAsValidator(
           get_validators_count: {},
         },
       })) as { validator_count_response: { count: number } };
+      release();
       return res.validator_count_response.count;
     }
     const newV = Buffer.from(publicKey).toString("base64");
@@ -76,7 +75,7 @@ export default async function addSelfAsValidator(
         },
       },
     };
-
+    const [client, release] = await fetchProvider();
     await client.tx.compute.executeContract(
       {
         contract_address: bridge,
@@ -88,7 +87,7 @@ export default async function addSelfAsValidator(
         gasLimit: 200_000,
       },
     );
-
+    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

@@ -12,8 +12,8 @@ import {
   signData,
 } from "./utils";
 
-export function secretsHandler({
-  client,
+export async function secretsHandler({
+  fetchProvider,
   wallet,
   publicKey,
   privateKey,
@@ -29,7 +29,10 @@ export function secretsHandler({
   chainType,
   serverLinkHandler,
   logger,
-}: SecretsHandlerParams): THandler {
+}: SecretsHandlerParams): Promise<THandler> {
+  const [provider, release] = await fetchProvider();
+  const address = provider.address;
+  release();
   return {
     publicKey,
     pollForLockEvents: async (builder, cb) => {
@@ -51,16 +54,16 @@ export function secretsHandler({
     initialFunds: initialFunds,
     chainIdent,
     currency: "USCRT",
-    address: client.address,
+    address: address,
     signClaimData: (data) => signClaimData(data, privateKey, publicKey),
     selfIsValidator: () =>
-      selfIsValidator(client, bridge, bridgeCodeHash, publicKey),
+      selfIsValidator(fetchProvider, bridge, bridgeCodeHash, publicKey),
     listenForLockEvents: (cb, iter) =>
       listenForLockEvents(
         cb,
         iter,
         lastBlock_,
-        client,
+        fetchProvider,
         blockChunks,
         bridge,
         em,
@@ -70,14 +73,14 @@ export function secretsHandler({
       addSelfAsValidator(
         publicKey,
         storage,
-        client,
+        fetchProvider,
         bridge,
         bridgeCodeHash,
         wallet,
         logger,
       ),
-    getBalance: () => getBalance(client),
-    nftData: (tid, ctr) => nftData(tid, ctr, client, logger),
+    getBalance: () => getBalance(fetchProvider),
+    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

@@ -1,11 +1,12 @@
-import type { SecretNetworkClient } from "secretjs";
+import type { SecretProviderFetch } from "../types";
 
 export default async function selfIsValidator(
-  client: SecretNetworkClient,
+  fetchProvider: SecretProviderFetch,
   bridge: string,
   bridgeCodeHash: string,
   publicKey: string,
 ) {
+  const [client, release] = await fetchProvider();
   const res = (await client.query.compute.queryContract({
     contract_address: bridge,
     code_hash: bridgeCodeHash,
@@ -15,5 +16,6 @@ export default async function selfIsValidator(
       },
     },
   })) as { validator: { data: { added: boolean } } };
+  release();
   return res.validator.data.added && res.validator.data.added;
 }

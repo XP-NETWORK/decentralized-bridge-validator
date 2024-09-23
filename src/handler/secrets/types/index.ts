@@ -6,7 +6,7 @@ import type { BridgeStorage } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type SecretsHandlerParams = {
-  client: SecretNetworkClient;
+  fetchProvider: SecretProviderFetch;
   wallet: Wallet;
   publicKey: string;
   privateKey: string;
@@ -23,3 +23,7 @@ export type SecretsHandlerParams = {
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
 };
+
+export type SecretProviderFetch = () => Promise<
+  [SecretNetworkClient, () => void]
+>;

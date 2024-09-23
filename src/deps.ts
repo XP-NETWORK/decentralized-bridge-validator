@@ -306,8 +306,13 @@ export async function configSecretHandler(
     wallet: wallet,
     walletAddress: wallet.address,
   });
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [client, release] as [SecretNetworkClient, MutexReleaser];
+  }
   return secretsHandler({
-    client,
+    fetchProvider,
     wallet,
     publicKey: secretWallet.publicKey,
     privateKey: secretWallet.privateKey,

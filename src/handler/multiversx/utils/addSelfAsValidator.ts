@@ -6,7 +6,6 @@ import {
   TransactionWatcher,
 } from "@multiversx/sdk-core";
 import { AddressValue, BytesValue } from "@multiversx/sdk-core/out";
-import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import type { UserSigner } from "@multiversx/sdk-wallet/out";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
@@ -15,13 +14,14 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
+import type { MXProviderFetch } from "../types";
 
 export default async function addSelfAsValidator(
   bc: SmartContract,
   chainID: string,
   storage: BridgeStorage,
   signer: UserSigner,
-  provider: INetworkProvider,
+  provider: MXProviderFetch,
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
@@ -31,7 +31,9 @@ export default async function addSelfAsValidator(
       const query = bc.createQuery({
         func: "validatorsCount",
       });
-      const queryResponse = await provider.queryContract(query);
+      const [p, r] = await provider();
+      const queryResponse = await p.queryContract(query);
+      r();
       const validatorsCountDefinition = bc.getEndpoint("validatorsCount");
 
       const { firstValue } = new ResultsParser().parseQueryResponse(
@@ -86,8 +88,10 @@ export default async function addSelfAsValidator(
 
     const userAddress = new Address(signer.getAddress().bech32());
     const userAccount = new Account(userAddress);
-    const userOnNetwork = await provider.getAccount(userAddress);
+    let [p, r] = await provider();
+    const userOnNetwork = await p.getAccount(userAddress);
     userAccount.update(userOnNetwork);
+    r();
 
     const data = [
       new AddressValue(signer.getAddress()),
@@ -111,12 +115,14 @@ export default async function addSelfAsValidator(
     transaction.applySignature(
       await signer.sign(transaction.serializeForSigning()),
     );
-    const receipt = await provider.sendTransaction(transaction);
-    const watcher = await new TransactionWatcher(provider, {
+    [p, r] = await provider();
+    const receipt = await p.sendTransaction(transaction);
+    const watcher = await new TransactionWatcher(p, {
       patienceMilliseconds: 10000,
       pollingIntervalMilliseconds: 100000,
       timeoutMilliseconds: 10000,
     }).awaitCompleted(receipt);
+    r();
     if (watcher.status.isSuccessful()) {
       return "success";
     }

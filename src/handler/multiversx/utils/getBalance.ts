@@ -1,10 +1,12 @@
 import type { IAddress } from "@multiversx/sdk-core/out";
-import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
+import type { MXProviderFetch } from "../types";
 
 export default async function getBalance(
-  provider: INetworkProvider,
+  provider: MXProviderFetch,
   address: IAddress,
 ) {
-  const acc = await provider.getAccount(address);
+  const [p, r] = await provider();
+  const acc = await p.getAccount(address);
+  r();
   return BigInt(acc.balance.toString());
 }

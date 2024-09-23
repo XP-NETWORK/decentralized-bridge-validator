@@ -336,8 +336,13 @@ export async function configMultiversXHandler(
     contractAddress: conf.contractAddress,
   });
   const provider = new ProxyNetworkProvider(conf.gatewayURL);
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [provider, release] as [ProxyNetworkProvider, MutexReleaser];
+  }
   return multiversxHandler({
-    provider,
+    provider: fetchProvider,
     gatewayURL: conf.gatewayURL,
     signer: UserSigner.fromWallet(
       multiversXWallet.userWallet,

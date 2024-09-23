@@ -4,10 +4,11 @@ import type { UserSigner } from "@multiversx/sdk-wallet/out";
 import type { AxiosInstance } from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
+import type { MutexReleaser } from "../../evm/types";
 import type { LogInstance } from "../../types";
 
 export type MultiversXHandlerParams = {
-  provider: ProxyNetworkProvider;
+  provider: MXProviderFetch;
   gatewayURL: string;
   signer: UserSigner;
   chainID: string;
@@ -24,3 +25,7 @@ export type MultiversXHandlerParams = {
   staking: ERC20Staking;
   validatorAddress: string;
 };
+
+export type MXProviderFetch = () => Promise<
+  [ProxyNetworkProvider, MutexReleaser]
+>;

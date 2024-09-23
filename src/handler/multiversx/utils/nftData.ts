@@ -1,12 +1,12 @@
-import type { INetworkProvider } from "@multiversx/sdk-network-providers/out/interface";
 import { Nonce } from "@multiversx/sdk-network-providers/out/primitives";
 import type { LogInstance } from "../../types";
 import { retry } from "../../utils";
+import type { MXProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
-  provider: INetworkProvider,
+  provider: MXProviderFetch,
   gatewayURL: string,
   log: LogInstance,
 ) {
@@ -30,11 +30,13 @@ export default async function nftData(
       royalties: response?.royalties ?? 0,
     };
   };
+  const [p, r] = await provider();
   const nftDetails = await retry(
-    () => provider.getDefinitionOfTokenCollection(contract),
+    () => p.getDefinitionOfTokenCollection(contract),
     `Trying to fetch Nft Data for ${contract}`,
     log,
   ).catch(() => undefined);
+  r();
   const { royalties, metaData } = await getNonFungibleToken(
     contract,
     Number.parseInt(tokenId),

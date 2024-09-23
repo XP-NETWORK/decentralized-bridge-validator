@@ -2,18 +2,15 @@ import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import {
   type TransactionEventsParser,
-  type TransactionWatcher,
   type TransactionsConverter,
   findEventsByFirstTopic,
 } from "@multiversx/sdk-core/out";
-import {
-  ApiNetworkProvider,
-  type ProxyNetworkProvider,
-} from "@multiversx/sdk-network-providers/out";
+import { ApiNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import type { Axios } from "axios";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import type { MXProviderFetch } from "../types";
 import type { Root } from "../types/gateway";
 
 const CHAIN_IDENT = "MULTIVERSX";
@@ -41,18 +38,18 @@ export default async function listenForLockEvents(
   lastBlock: number,
   bridge: string,
   gateway: Axios,
-  provider: ProxyNetworkProvider,
+  provider: MXProviderFetch,
   gatewayURL: string,
   em: EntityManager,
   converter: TransactionsConverter,
   eventsParser: TransactionEventsParser,
   logger: LogInstance,
-  _tw: TransactionWatcher,
 ) {
   const waitForTx = async (hash: string) => {
     let retries = 10;
-    let transactionOnNetworkMultisig =
-      await provider.getTransactionStatus(hash);
+    let [p, r] = await provider();
+    let transactionOnNetworkMultisig = await p.getTransactionStatus(hash);
+    r();
     while (retries > 0) {
       if (transactionOnNetworkMultisig.isSuccessful()) {
         return;
@@ -61,7 +58,9 @@ export default async function listenForLockEvents(
         `TX: ${hash} status: ${transactionOnNetworkMultisig.toString()}`,
       );
       await setTimeout(1000);
-      transactionOnNetworkMultisig = await provider.getTransactionStatus(hash);
+      [p, r] = await provider();
+      transactionOnNetworkMultisig = await p.getTransactionStatus(hash);
+      r();
       retries -= 1;
     }
   };
@@ -81,7 +80,9 @@ export default async function listenForLockEvents(
         );
 
         if (!txsForBridge.length) {
-          const lastestStatus = await provider.getNetworkStatus();
+          const [p, r] = await provider();
+          const lastestStatus = await p.getNetworkStatus();
+          r();
           const lastNonce = lastestStatus.HighestFinalNonce;
           const wt = generateWaitTime(lastBlock_, lastNonce);
           logger.trace(
@@ -108,7 +109,9 @@ export default async function listenForLockEvents(
           logger.trace(`TX Completed: ${tx.hash}`);
           console.log(tx);
           if (!(tx.type === "normal")) continue;
-          const txo = await provider.getTransaction(tx.hash);
+          const [p, r] = await provider();
+          const txo = await p.getTransaction(tx.hash);
+          r();
           const transactionOnNetworkMultisig = await apin.getTransaction(
             txo.contractResults.items[0].hash,
           );

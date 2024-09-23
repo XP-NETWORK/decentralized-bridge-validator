@@ -8,7 +8,7 @@ import type { LogInstance } from "../../types";
 
 export type EVMHandlerParams = {
   chainIdent: TSupportedChains;
-  provider: JsonRpcProvider;
+  fetchProvider: EVMProviderFetch;
   signer: Wallet;
   bridge: string;
   storage: BridgeStorage;
@@ -25,3 +25,7 @@ export type EVMHandlerParams = {
   logger: LogInstance;
   staking: ERC20Staking;
 };
+
+export type MutexReleaser = () => void;
+
+export type EVMProviderFetch = () => Promise<[JsonRpcProvider, MutexReleaser]>;

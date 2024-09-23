@@ -1,8 +1,8 @@
 import { raise } from "xp-decentralized-sdk";
-import { Bridge__factory } from "../../contractsTypes/evm";
+import { type Bridge, Bridge__factory } from "../../contractsTypes/evm";
 import pollForLockEvents from "../poller";
 import type { THandler } from "../types";
-import type { EVMHandlerParams } from "./types";
+import type { EVMHandlerParams, MutexReleaser } from "./types";
 import {
   addSelfAsValidator,
   getBalance,
@@ -16,7 +16,7 @@ import nftDataForHedera from "./utils/nftDataForHedera";
 
 export function evmHandler({
   chainIdent,
-  provider,
+  fetchProvider,
   signer,
   bridge,
   storage,
@@ -33,12 +33,16 @@ export function evmHandler({
   logger,
   staking,
 }: EVMHandlerParams): THandler {
-  const bc = Bridge__factory.connect(bridge, signer.connect(provider));
+  const bc = async (): Promise<[Bridge, MutexReleaser]> => {
+    const [provider, release] = await fetchProvider();
+    const contract = Bridge__factory.connect(bridge, signer.connect(provider));
+    return [contract, release];
+  };
   return {
     signData: (buf) => signData(buf, txSigner),
     publicKey: signer.address,
     chainType,
-    getBalance: () => getBalance(signer, provider),
+    getBalance: () => getBalance(signer, fetchProvider),
     chainIdent,
     initialFunds,
     currency,
@@ -52,7 +56,7 @@ export function evmHandler({
       signer.address,
     ),
     listenForLockEvents: listenForLockEvents(
-      provider,
+      fetchProvider,
       lastBlock_,
       blockChunks,
       bridge,
@@ -64,8 +68,8 @@ export function evmHandler({
 
     nftData:
       royaltyProxy !== undefined
-        ? nftDataForHedera(provider, royaltyProxy, logger)
-        : nftData(provider, logger),
+        ? nftDataForHedera(fetchProvider, royaltyProxy, logger)
+        : nftData(fetchProvider, logger),
     selfIsValidator: selfIsValidator(bc, signer),
     signClaimData: signClaimData(chainIdent, txSigner, logger),
     decimals: BigInt(10 ** decimals),

@@ -36,6 +36,7 @@ import {
 import { ERC20Staking__factory } from "./contractsTypes/evm";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
+import type { MutexReleaser } from "./handler/evm/types";
 import { icpHandler } from "./handler/icp";
 import { nearHandler } from "./handler/near";
 import type { LogInstance, THandler } from "./handler/types";
@@ -77,6 +78,12 @@ export async function configEvmHandler(
     chain: conf.chain,
     contractAddress: conf.contractAddress,
   });
+  const mutex = new Mutex();
+  const provider = new JsonRpcProvider(conf.rpcURL);
+  const fetchProvider = async (): Promise<[JsonRpcProvider, MutexReleaser]> => {
+    const release = await mutex.acquire();
+    return [provider, release];
+  };
   return evmHandler({
     blockChunks: conf.blockChunks,
     bridge: conf.contractAddress,
@@ -86,7 +93,7 @@ export async function configEvmHandler(
     em: em.fork(),
     initialFunds: BigInt(conf.intialFund),
     lastBlock_: lb?.lastBlock ?? conf.lastBlock,
-    provider: new JsonRpcProvider(conf.rpcURL),
+    fetchProvider: fetchProvider,
     signer: new Wallet(wallet.privateKey),
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),
@@ -111,6 +118,12 @@ export async function configHederaHandler(
     chain: conf.chain,
     contractAddress: conf.contractAddress,
   });
+  const mutex = new Mutex();
+  const provider = new JsonRpcProvider(conf.rpcURL);
+  const fetchProvider = async (): Promise<[JsonRpcProvider, MutexReleaser]> => {
+    const release = await mutex.acquire();
+    return [provider, release];
+  };
   return evmHandler({
     blockChunks: conf.blockChunks,
     bridge: conf.contractAddress,
@@ -120,7 +133,7 @@ export async function configHederaHandler(
     em: em.fork(),
     initialFunds: BigInt(conf.intialFund),
     lastBlock_: lb?.lastBlock ?? conf.lastBlock,
-    provider: new JsonRpcProvider(conf.rpcURL),
+    fetchProvider: fetchProvider,
     signer: new Wallet(wallet.privateKey),
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),

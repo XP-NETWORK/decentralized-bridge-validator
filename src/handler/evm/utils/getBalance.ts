@@ -1,8 +1,12 @@
-import type { JsonRpcProvider, Signer } from "ethers";
+import type { Signer } from "ethers";
+import type { EVMProviderFetch } from "../types";
 
 export default async function getBalance(
   signer: Signer,
-  provider: JsonRpcProvider,
+  fetchProvider: EVMProviderFetch,
 ) {
-  return await provider.getBalance(await signer.getAddress());
+  const [provider, release] = await fetchProvider();
+  const balance = await provider.getBalance(await signer.getAddress());
+  release();
+  return balance;
 }

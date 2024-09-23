@@ -108,7 +108,9 @@ async function requireEnoughStorageChainBalance(
   while (!storageFunded) {
     const balance = await getBalance(
       new VoidSigner(secrets.evmWallet.address),
-      new JsonRpcProvider(storageConfig.rpcURL),
+      async () => {
+        return [new JsonRpcProvider(storageConfig.rpcURL), () => {}];
+      },
     );
     if (balance < BigInt(storageConfig.intialFund)) {
       log.error(

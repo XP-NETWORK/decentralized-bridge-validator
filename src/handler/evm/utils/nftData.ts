@@ -1,16 +1,27 @@
-import type { JsonRpcProvider } from "ethers";
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 import { retry } from "../../utils";
 import { MAX_SALE_PRICE } from "../constants";
+import type { EVMProviderFetch } from "../types";
 
-const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
+const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
   return async (tokenId: string, contract: string) => {
-    const nft = ERC721Royalty__factory.connect(contract, provider);
+    const nft = async () => {
+      const [provider, release] = await fetchProvider();
+      return [
+        ERC721Royalty__factory.connect(contract, provider),
+        release,
+      ] as const;
+    };
     // const code = await provider.getCode(contract).catch(() => "");
 
     const name = await retry(
-      () => nft.name(),
+      async () => {
+        const [nftContract, release] = await nft();
+        const name = await nftContract.name();
+        release();
+        return name;
+      },
       `Trying to fetch name() for ${contract}`,
       logger,
       5,
@@ -19,13 +30,26 @@ const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
     });
 
     const symbol = await retry(
-      () => nft.symbol(),
+      async () => {
+        const [nftContract, release] = await nft();
+        const symbol = await nftContract.symbol();
+        release();
+        return symbol;
+      },
       `Trying to fetch symbol() for ${contract}`,
       logger,
     );
 
     const royalty = await retry(
-      () => nft.royaltyInfo(tokenId, MAX_SALE_PRICE),
+      async () => {
+        const [nftContract, release] = await nft();
+        const royaltyInfo = await nftContract.royaltyInfo(
+          tokenId,
+          MAX_SALE_PRICE,
+        );
+        release();
+        return royaltyInfo;
+      },
       `Trying to fetch royaltyInfo() for ${contract}`,
       logger,
       5,
@@ -35,7 +59,12 @@ const nftData = (provider: JsonRpcProvider, logger: LogInstance) => {
     });
 
     const metadata = await retry(
-      () => nft.tokenURI(tokenId),
+      async () => {
+        const [nftContract, release] = await nft();
+        const tokenURI = await nftContract.tokenURI(tokenId);
+        release();
+        return tokenURI;
+      },
       `Trying to fetch tokenURI() for ${contract}`,
       logger,
     );

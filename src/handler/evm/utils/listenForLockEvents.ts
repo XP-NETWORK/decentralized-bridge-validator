@@ -1,28 +1,33 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { JsonRpcProvider } from "ethers";
 import type { EventBuilder } from "../..";
 import type { TSupportedChains } from "../../../config";
 import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
 import { LockedEvent } from "../../../persistence/entities/locked";
 import type { LockEventIter, LogInstance } from "../../types";
+import type { EVMProviderFetch, MutexReleaser } from "../types";
 
 const listenForLockEvents = (
-  provider: JsonRpcProvider,
+  fetchProvider: EVMProviderFetch,
   lastBlock_: number,
   blockChunks: number,
   bridge: string,
-  bc: Bridge,
+  bc: () => Promise<[Bridge, MutexReleaser]>,
   chainIdent: TSupportedChains,
   em: EntityManager,
   logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: LockEventIter) => {
+    const [b, release] = await bc();
+    const ifs = b.interface;
+    release();
     let lastBlock = lastBlock_;
     while (true) {
       try {
-        const latestBlockNumber = await provider.getBlockNumber();
+        let [p, r] = await fetchProvider();
+        const latestBlockNumber = await p.getBlockNumber();
+        r();
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber
@@ -33,7 +38,8 @@ const listenForLockEvents = (
           continue;
         }
         const startBlock = lastBlock;
-        const logs = await provider.getLogs({
+        [p, r] = await fetchProvider();
+        const logs = await p.getLogs({
           fromBlock: lastBlock,
           toBlock: latestBlock,
           address: bridge,
@@ -41,6 +47,7 @@ const listenForLockEvents = (
             Bridge__factory.createInterface().getEvent("Locked").topicHash,
           ],
         });
+        r();
         if (!logs.length) {
           logger.trace(
             `[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`,
@@ -48,7 +55,7 @@ const listenForLockEvents = (
           lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
-            contractAddress: await bc.getAddress(),
+            contractAddress: bridge,
             lastBlock: lastBlock,
           });
           await em.flush();
@@ -62,7 +69,7 @@ const listenForLockEvents = (
             self.findIndex((t) => t.transactionHash === lg.transactionHash),
         )) {
           logger.trace(`Processing TX at: ${log.transactionHash}`);
-          const decoded = bc.interface.parseLog(log);
+          const decoded = ifs.parseLog(log);
           if (!decoded) continue;
           const found = await em.findOne(LockedEvent, {
             transactionHash: log.transactionHash,
@@ -90,7 +97,7 @@ const listenForLockEvents = (
         lastBlock = latestBlock;
         await em.upsert(Block, {
           chain: chainIdent,
-          contractAddress: await bc.getAddress(),
+          contractAddress: bridge,
           lastBlock: lastBlock + 1,
         });
         await em.flush();

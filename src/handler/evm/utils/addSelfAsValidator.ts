@@ -7,9 +7,10 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../utils";
+import type { MutexReleaser } from "../types";
 
 const addSelfAsValidator = (
-  bc: Bridge,
+  bc: () => Promise<[Bridge, MutexReleaser]>,
   storage: BridgeStorage,
   signer: Wallet,
   logger: LogInstance,
@@ -31,7 +32,9 @@ const addSelfAsValidator = (
           `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
         );
       }
-      let validatorsCount = Number(await bc.validatorsCount());
+      let [bridgeContract, release] = await bc();
+      let validatorsCount = Number(await bridgeContract.validatorsCount());
+      release();
       let signatureCount = Number(
         await storage.getStakingSignaturesCount(signer.address),
       );
@@ -46,7 +49,9 @@ const addSelfAsValidator = (
         signatureCount = Number(
           await storage.getStakingSignaturesCount(signer.address),
         );
-        validatorsCount = Number(await bc.validatorsCount());
+        [bridgeContract, release] = await bc();
+        validatorsCount = Number(await bridgeContract.validatorsCount());
+        release();
       }
 
       const stakingSignatures = [
@@ -57,9 +62,10 @@ const addSelfAsValidator = (
           signature: item.signature,
         };
       });
-
-      const added = await bc.addValidator(signer.address, stakingSignatures);
+      const [bC, r] = await bc();
+      const added = await bC.addValidator(signer.address, stakingSignatures);
       await added.wait();
+      r();
       return "success";
     } catch (e) {
       return "failure";

@@ -221,8 +221,13 @@ export async function configTezosHandler(
   const provider = new TezosToolkit(conf.rpcURL);
   const signer = new InMemorySigner(tezosWallet.secretKey);
   provider.setSignerProvider(signer);
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [provider, release] as [TezosToolkit, MutexReleaser];
+  }
   return tezosHandler({
-    provider,
+    fetchProvider: fetchProvider,
     signer,
     bridge: conf.contractAddress,
     storage,

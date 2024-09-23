@@ -10,14 +10,19 @@ import {
 } from "../../../contractsTypes/tezos/type-aliases";
 import type { LogInstance } from "../../types";
 import { fetchHttpOrIpfs } from "../../utils";
+import type { TezosProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
-  provider: TezosToolkit,
+  fetchProvider: TezosProviderFetch,
   logger: LogInstance,
 ) {
-  const getNftTokenMetaData = async (contract: string, tokenId: bigint) => {
+  const getNftTokenMetaData = async (
+    contract: string,
+    tokenId: bigint,
+    provider: TezosToolkit,
+  ) => {
     const nftContract = await provider.contract.at<NFTContractType>(contract);
 
     let tokenMetaData: {
@@ -38,9 +43,12 @@ export default async function nftData(
     const metaDataInHex = tokenMetaData.token_info.get("");
     return bytesToString(metaDataInHex);
   };
-  let tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId));
+  let [provider, release] = await fetchProvider();
+  let tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId), provider);
+  release();
   tokenMd = tokenMd.substring(tokenMd.indexOf("https://"));
   let name = "NTEZOS";
+  [provider, release] = await fetchProvider();
   try {
     provider.addExtension(new Tzip16Module());
     const nftContract = await provider.contract.at(contract, tzip16);
@@ -48,8 +56,11 @@ export default async function nftData(
     name = (await md.metadataName()) ?? name;
   } catch (e) {
     logger.error("error getting name Tezos");
+  } finally {
+    release();
   }
   let symbol = "NTEZOS";
+  [provider, release] = await fetchProvider();
   try {
     const isUrl = URLCanParse(tokenMd);
     if (isUrl) {
@@ -62,8 +73,11 @@ export default async function nftData(
     symbol = JSON.parse(tokenMd).symbol ?? symbol;
   } catch (e) {
     logger.error("error getting symbol Tezos", e);
+  } finally {
+    release();
   }
   let royalty = 0n;
+  [provider, release] = await fetchProvider();
   try {
     const metaDataOrURL = tokenMd;
     const isUrl = URLCanParse(metaDataOrURL);
@@ -87,6 +101,8 @@ export default async function nftData(
     royalty = BigInt((rate / max_percentage) * 10000);
   } catch (e) {
     logger.error("Error getting royalty Tezos");
+  } finally {
+    release();
   }
   return {
     metadata: tokenMd,

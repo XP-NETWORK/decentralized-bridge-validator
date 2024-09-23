@@ -13,7 +13,7 @@ import {
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
-  bc: BridgeContractType,
+  bc: () => Promise<readonly [BridgeContractType, () => void]>,
   signer: Signer,
   logger: LogInstance,
   staking: ERC20Staking,
@@ -33,7 +33,9 @@ export default async function addSelfAsValidator(
         `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
       );
     }
-    let validatorsCount = (await bc.storage()).validators_count.toNumber();
+    let [bridge, release] = await bc();
+    let validatorsCount = (await bridge.storage()).validators_count.toNumber();
+    release();
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(await signer.publicKey()),
     );
@@ -48,7 +50,9 @@ export default async function addSelfAsValidator(
       signatureCount = Number(
         await storage.getStakingSignaturesCount(await signer.publicKeyHash()),
       );
-      validatorsCount = (await bc.storage()).validators_count.toNumber();
+      [bridge, release] = await bc();
+      validatorsCount = (await bridge.storage()).validators_count.toNumber();
+      release();
     }
 
     const stakingSignatures = [
@@ -59,8 +63,8 @@ export default async function addSelfAsValidator(
         signature: item.signature,
       };
     });
-
-    await bc.methodsObject
+    [bridge, release] = await bc();
+    await bridge.methodsObject
       .add_validator({
         sigs: stakingSignatures.map((e) => {
           const addr = tas.address(
@@ -84,6 +88,7 @@ export default async function addSelfAsValidator(
         validator: tas.address(await signer.publicKeyHash()),
       })
       .send();
+    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

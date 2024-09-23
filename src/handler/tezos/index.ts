@@ -14,7 +14,7 @@ import {
 } from "./utils";
 
 export async function tezosHandler({
-  provider,
+  fetchProvider,
   signer,
   bridge,
   storage,
@@ -31,7 +31,11 @@ export async function tezosHandler({
   staking,
   validatorAddress,
 }: TezosHandlerParams): Promise<THandler> {
-  const bc = await provider.contract.at<BridgeContractType>(bridge);
+  const bc = async () => {
+    const [provider, release] = await fetchProvider();
+    const bc = await provider.contract.at<BridgeContractType>(bridge);
+    return [bc, release] as const;
+  };
 
   return {
     pollForLockEvents: async (builder, cb) => {
@@ -54,21 +58,22 @@ export async function tezosHandler({
     initialFunds: initialFunds,
     address: await signer.publicKeyHash(),
     currency: "XTZ",
-    getBalance: async () => getBalance(provider, await signer.publicKeyHash()),
+    getBalance: async () =>
+      getBalance(fetchProvider, await signer.publicKeyHash()),
     listenForLockEvents: (builder, cb) =>
       listenForLockEvents(
         builder,
         cb,
         lastBlock_,
         blockChunks,
-        provider,
+        fetchProvider,
         bridge,
         restApiUrl,
         em,
         logger,
       ),
     signClaimData: (data) => signClaimData(data, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, provider, logger),
+    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
     addSelfAsValidator: () =>
       addSelfAsValidator(

@@ -1,9 +1,8 @@
-import type { TezosToolkit } from "@taquito/taquito";
-
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import type { TezosProviderFetch } from "../types";
 import { TezosGetContractOperations } from "./index";
 import { TezosGetTransaction } from "./operations";
 
@@ -14,7 +13,7 @@ export default async function listenForLockEvents(
   cb: LockEventIter,
   lastBlock_: number,
   blockChunks: number,
-  provider: TezosToolkit,
+  fetchProvider: TezosProviderFetch,
   bridge: string,
   restApiUrl: string,
   em: EntityManager,
@@ -24,7 +23,9 @@ export default async function listenForLockEvents(
   while (true) {
     try {
       {
+        const [provider, release] = await fetchProvider();
         const latestBlockNumber = (await provider.rpc.getBlockHeader()).level;
+        release();
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber

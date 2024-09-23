@@ -3,11 +3,13 @@ import type { BridgeContractType } from "../../../contractsTypes/tezos/Bridge.ty
 import { tas } from "../../../contractsTypes/tezos/type-aliases";
 
 export default async function selfIsValidator(
-  bc: BridgeContractType,
+  bc: () => Promise<readonly [BridgeContractType, () => void]>,
   signer: Signer,
 ) {
-  const mutez = await (await bc.storage()).validators.get(
+  const [bridge, release] = await bc();
+  const mutez = await (await bridge.storage()).validators.get(
     tas.address(await signer.publicKeyHash()),
   );
+  release();
   return mutez !== undefined;
 }

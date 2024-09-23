@@ -1,8 +1,11 @@
-import type { TezosToolkit } from "@taquito/taquito";
+import type { TezosProviderFetch } from "../types";
 
 export default async function getBalance(
-  provider: TezosToolkit,
+  fetchProvider: TezosProviderFetch,
   address: string,
 ) {
-  return BigInt((await provider.rpc.getBalance(address)).toString());
+  const [provider, release] = await fetchProvider();
+  const bal = BigInt((await provider.rpc.getBalance(address)).toString());
+  release();
+  return bal;
 }

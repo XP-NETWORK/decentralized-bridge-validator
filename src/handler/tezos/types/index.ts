@@ -3,10 +3,11 @@ import type { Signer, TezosToolkit } from "@taquito/taquito";
 import type { AxiosInstance } from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
+import type { MutexReleaser } from "../../evm/types";
 import type { LogInstance } from "../../types";
 
 export type TezosHandlerParams = {
-  provider: TezosToolkit;
+  fetchProvider: () => Promise<[TezosToolkit, MutexReleaser]>;
   signer: Signer;
   bridge: string;
   storage: BridgeStorage;
@@ -23,3 +24,5 @@ export type TezosHandlerParams = {
   staking: ERC20Staking;
   validatorAddress: string;
 };
+
+export type TezosProviderFetch = () => Promise<[TezosToolkit, MutexReleaser]>;

@@ -15,7 +15,7 @@ import {
 
 export async function cosmWasmHandler({
   chainIdent,
-  client,
+  fetchProvider,
   wallet,
   privateKey,
   publicKey,
@@ -32,7 +32,11 @@ export async function cosmWasmHandler({
   logger,
 }: CosmosHandlerParams): Promise<THandler> {
   const sender = (await wallet.getAccounts())[0];
-  const bc = new Bridge.BridgeClient(client, sender.address, bridge);
+  const bc = async () => {
+    const [client, release] = await fetchProvider();
+    const bc = new Bridge.BridgeClient(client, sender.address, bridge);
+    return [bc, release] as const;
+  };
   return {
     publicKey: Buffer.from(sender.pubkey).toString("hex"),
     signData: (buf) => signData(buf, privateKey, publicKey),
@@ -49,7 +53,7 @@ export async function cosmWasmHandler({
         cb,
         iter,
         lastBlock_,
-        client,
+        fetchProvider,
         blockChunks,
         bridge,
         em,
@@ -57,8 +61,8 @@ export async function cosmWasmHandler({
       ),
     addSelfAsValidator: () =>
       addSelfAsValidator(chainIdent, storage, bc, sender, logger),
-    getBalance: () => getBalance(client, sender),
-    nftData: (tid, ctr) => nftData(tid, ctr, client, sender, logger),
+    getBalance: () => getBalance(fetchProvider, sender),
+    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, sender, logger),
     decimals: BigInt(10 ** decimals),
     pollForLockEvents: async (builder, cb) => {
       serverLinkHandler

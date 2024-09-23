@@ -1,10 +1,12 @@
 import type { AccountData } from "@cosmjs/amino";
-import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import type { CosmWasmFetchProvider } from "../types";
 
 export default async function getBalance(
-  client: SigningCosmWasmClient,
+  fetchProvider: CosmWasmFetchProvider,
   sender: AccountData,
 ) {
-  const balance = await client.getBalance(sender.address, "uatom");
+  const [provider, release] = await fetchProvider();
+  const balance = await provider.getBalance(sender.address, "uatom");
+  release();
   return BigInt(balance?.amount ?? 0);
 }

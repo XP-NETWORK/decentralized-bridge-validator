@@ -1,16 +1,15 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
-
-import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import type { CosmWasmFetchProvider } from "../types";
 
 export default async function listenForLockEvents(
   identifier: string,
   builder: EventBuilder,
   cb: LockEventIter,
   lastBlock_: number,
-  client: SigningCosmWasmClient,
+  fetchProvider: CosmWasmFetchProvider,
   blockChunks: number,
   bridge: string,
   em: EntityManager,
@@ -20,7 +19,9 @@ export default async function listenForLockEvents(
   while (true)
     try {
       {
-        const latestBlockNumber = await client.getHeight();
+        let [provider, release] = await fetchProvider();
+        const latestBlockNumber = await provider.getHeight();
+        release();
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber
@@ -28,7 +29,9 @@ export default async function listenForLockEvents(
             : latestBlockNumber;
 
         const query = `execute._contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
-        const logs = await client.searchTx(query);
+        [provider, release] = await fetchProvider();
+        const logs = await provider.searchTx(query);
+        release();
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {

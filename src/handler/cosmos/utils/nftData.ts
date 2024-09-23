@@ -1,20 +1,27 @@
 import type { AccountData } from "@cosmjs/amino";
-import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { CosmNft } from "@xp/cosmos-client";
 import type { LogInstance } from "../../types";
 import { retry } from "../../utils";
+import type { CosmWasmFetchProvider } from "../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
-  client: SigningCosmWasmClient,
+  fetchProvider: CosmWasmFetchProvider,
   sender: AccountData,
   log: LogInstance,
 ) {
-  const nftC = new CosmNft.CosmosNftClient(client, sender.address, contract);
+  const nftC = async () => {
+    const [client, release] = await fetchProvider();
+    const nft = new CosmNft.CosmosNftClient(client, sender.address, contract);
+    return [nft, release] as const;
+  };
   const data = await retry(
     async () => {
-      return await nftC.contractInfo();
+      const [nft, release] = await nftC();
+      const ci = await nft.contractInfo();
+      release();
+      return ci;
     },
     `Trying to fetch Nft Data for ${contract}`,
     log,
@@ -22,9 +29,12 @@ export default async function nftData(
 
   const nft_info = await retry(
     async () => {
-      return await nftC.nftInfo({
+      const [nft, release] = await nftC();
+      const nftInfo = await nft.nftInfo({
         tokenId: tokenId,
       });
+      release();
+      return nftInfo;
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,

@@ -13,13 +13,15 @@ import {
 export default async function addSelfAsValidator(
   identifier: string,
   storage: BridgeStorage,
-  bridge: Bridge.BridgeClient,
+  bc: () => Promise<readonly [Bridge.BridgeClient, () => void]>,
   wallet: AccountData,
   logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
+      const [bridge, release] = await bc();
       const res = await bridge.getValidatorsCount();
+      release();
       return res.count;
     }
     const newV = Buffer.from(wallet.pubkey).toString("base64");
@@ -46,8 +48,8 @@ export default async function addSelfAsValidator(
     );
 
     const validatorToAddPublicKeyUint8 = Buffer.from(wallet.address, "hex");
-
-    await bridge.addValidator({
+    const [bridge, release] = await bc();
+    const result = await bridge.addValidator({
       data: {
         validator: [
           encodeSecp256k1Pubkey(validatorToAddPublicKeyUint8).value,
@@ -64,6 +66,8 @@ export default async function addSelfAsValidator(
         }),
       },
     });
+    logger.info(`Added self as validator at ${result.transactionHash}`);
+    release();
     return "success";
   } catch (e) {
     logger.error(identifier, "Failed to add self as validator: ", e);

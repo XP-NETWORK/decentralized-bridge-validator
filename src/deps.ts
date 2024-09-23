@@ -262,11 +262,16 @@ export async function configCosmWasmChainHandler(
     conf.rpcURL,
     directWallet,
   );
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [client, release] as [SigningCosmWasmClient, MutexReleaser];
+  }
   return cosmWasmHandler({
     chainIdent: conf.chain as TSupportedChains,
     blockChunks: conf.blockChunks,
     bridge: conf.contractAddress,
-    client: client,
+    fetchProvider,
     currency: conf.nativeCoinSymbol,
     decimals: conf.decimals,
     em: em.fork(),

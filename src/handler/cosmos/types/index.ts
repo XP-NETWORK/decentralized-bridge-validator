@@ -4,11 +4,12 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { MutexReleaser } from "../../evm/types";
 import type { LogInstance } from "../../types";
 
 export type CosmosHandlerParams = {
   chainIdent: TSupportedChains;
-  client: SigningCosmWasmClient;
+  fetchProvider: CosmWasmFetchProvider;
   wallet: DirectSecp256k1Wallet;
   publicKey: string;
   privateKey: string;
@@ -24,3 +25,7 @@ export type CosmosHandlerParams = {
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
 };
+
+export type CosmWasmFetchProvider = () => Promise<
+  [SigningCosmWasmClient, MutexReleaser]
+>;

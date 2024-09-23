@@ -29,6 +29,7 @@ import { Mutex } from "async-mutex";
 import axios, { type AxiosInstance } from "axios";
 import {
   KeyPair,
+  type Near,
   InMemorySigner as NearInMemorySigner,
   connect,
   keyStores,
@@ -406,9 +407,13 @@ export async function configNearHandler(
     nearWallet.accountId,
     KeyPair.fromString(nearWallet.secretKey as never),
   );
-
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [near, release] as [Near, MutexReleaser];
+  }
   return nearHandler({
-    near,
+    fetchProvider,
     address: nearWallet.accountId,
     bridge: conf.contractAddress,
     chainIdent: "NEAR",

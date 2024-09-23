@@ -1,12 +1,14 @@
-import { Contract, type Near } from "near-api-js";
+import { Contract } from "near-api-js";
 import type { LogInstance } from "../../types";
+import type { NearProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
   collection: string,
-  provider: Near,
+  fetchProvider: NearProviderFetch,
   _log: LogInstance,
 ) {
+  const [provider, release] = await fetchProvider();
   const contract = new Contract(provider.connection, collection, {
     viewMethods: ["nft_token", "nft_metadata"],
     changeMethods: [],
@@ -16,6 +18,7 @@ export default async function nftData(
   const nft_metadata = await contract.nft_token({ token_id: tokenId });
   //@ts-ignore ik it works.
   const collection_metadata = await contract.nft_metadata();
+  release();
   return {
     name: nft_metadata.metadata.title,
     symbol: collection_metadata.symbol,

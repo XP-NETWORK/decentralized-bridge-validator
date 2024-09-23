@@ -15,7 +15,7 @@ import {
 } from "./utils";
 
 export async function nearHandler({
-  near,
+  fetchProvider,
   signer,
   bridge,
   privateKey,
@@ -36,11 +36,15 @@ export async function nearHandler({
   networkId,
   validatorAddress,
 }: NearHandlerParams): Promise<THandler> {
-  const bc = new Contract(near.connection, bridge, {
-    changeMethods: [],
-    viewMethods: ["validator", "validator_count"],
-    useLocalViewExecution: false,
-  });
+  const bc = async () => {
+    const [near, release] = await fetchProvider();
+    const contract = new Contract(near.connection, bridge, {
+      changeMethods: [],
+      viewMethods: ["validator", "validator_count"],
+      useLocalViewExecution: false,
+    });
+    return [contract, release] as const;
+  };
   const nearBlocksApi = axios.create({
     baseURL: nearBlocksUrl,
     headers: {
@@ -50,7 +54,9 @@ export async function nearHandler({
   const theGraphApi = axios.create({ baseURL: theGraphApiUrl });
   const publicKey = await signer.getPublicKey(address, networkId);
   const publicKeyInHex = Buffer.from(publicKey.data).toString("hex");
-  const account = await near.account(address);
+  const [provider, release] = await fetchProvider();
+  const account = await provider.account(address);
+  release();
   return {
     publicKey: publicKeyInHex,
     pollForLockEvents: async (builder, cb) => {
@@ -98,8 +104,8 @@ export async function nearHandler({
         validatorAddress,
         account,
       ),
-    getBalance: () => getBalance(near, address),
-    nftData: (tid, ctr) => nftData(tid, ctr, near, logger),
+    getBalance: () => getBalance(fetchProvider, address),
+    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

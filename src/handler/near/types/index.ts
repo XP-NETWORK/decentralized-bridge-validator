@@ -6,7 +6,7 @@ import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type NearHandlerParams = {
-  near: Near;
+  fetchProvider: NearProviderFetch;
   signer: InMemorySigner;
   bridge: string;
   address: string;
@@ -27,3 +27,4 @@ export type NearHandlerParams = {
   staking: ERC20Staking;
   validatorAddress: string;
 };
+export type NearProviderFetch = () => Promise<[Near, () => void]>;

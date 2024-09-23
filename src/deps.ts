@@ -447,8 +447,13 @@ export async function configTonHandler(
     chain: conf.chain,
     contractAddress: conf.contractAddress,
   });
+  const mutex = new Mutex();
+  async function fetchClient() {
+    const release = await mutex.acquire();
+    return [client, release] as [TonClient, MutexReleaser];
+  }
   return tonHandler({
-    client,
+    fetchClient,
     provider: new TonWeb.HttpProvider(conf.rpcURL),
     signer,
     bridge: conf.contractAddress,

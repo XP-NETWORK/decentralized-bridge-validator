@@ -1,21 +1,27 @@
-import { Address, type TonClient } from "@ton/ton";
+import { Address } from "@ton/ton";
 import axios from "axios";
 import { raise } from "..";
 import { NftCollection } from "../../../contractsTypes/ton/tonNftCollection";
 import { NftItem } from "../../../contractsTypes/ton/tonNftContract";
 import { fetchHttpOrIpfs } from "../../utils";
+import type { TONProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
   contract: string,
-  client: TonClient,
+  client: TONProviderFetch,
 ) {
   const http = axios.create();
 
-  const collection = client.open(
-    NftCollection.fromAddress(Address.parse(contract)),
-  );
-  const royaltyParams = await collection.getRoyaltyParams().catch((_) => {
+  const collection = async () => {
+    const [provider, release] = await client();
+    const coll = provider.open(
+      NftCollection.fromAddress(Address.parse(contract)),
+    );
+    return [coll, release] as const;
+  };
+  let [c, r] = await collection();
+  const royaltyParams = await c.getRoyaltyParams().catch((_) => {
     return {
       $$type: "RoyaltyParams" as const,
       numerator: 0n,
@@ -23,11 +29,14 @@ export default async function nftData(
       destination: Address.parse(contract),
     };
   });
+  r();
   const denom = 10000 / Number(royaltyParams.denominator);
   const royalty = Number(royaltyParams.numerator) * denom;
+  [c, r] = await collection();
   const collection_md_slice = (
-    await collection.getGetCollectionData()
+    await c.getGetCollectionData()
   ).collection_content.asSlice();
+  r();
   collection_md_slice.loadInt(8);
   const collection_md_uri = collection_md_slice.loadStringTail();
 
@@ -40,13 +49,19 @@ export default async function nftData(
     },
   );
 
-  const nftItem = client.open(
-    NftItem.fromAddress(
-      (await collection.getGetNftAddressByIndex(BigInt(tokenId))) ??
-        raise("NFT Does not exist."),
-    ),
-  );
-  const nftData = await nftItem.getGetNftData();
+  const nftItem = async () => {
+    const [provider, release] = await client();
+    const item = provider.open(
+      NftItem.fromAddress(
+        (await c.getGetNftAddressByIndex(BigInt(tokenId))) ??
+          raise("NFT Does not exist."),
+      ),
+    );
+    return [item, release] as const;
+  };
+  const [item, release] = await nftItem();
+  const nftData = await item.getGetNftData();
+  release();
   const content = nftData.individual_content.asSlice();
   const firstBit = content.preloadBits(8).toString();
   if (firstBit === "01" || firstBit === "00") {

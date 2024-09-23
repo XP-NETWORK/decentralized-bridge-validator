@@ -16,7 +16,7 @@ import {
 } from "./utils";
 
 export function tonHandler({
-  client,
+  fetchClient,
   provider,
   signer,
   bridge,
@@ -32,9 +32,13 @@ export function tonHandler({
   serverLinkHandler,
   logger,
 }: TonParams): THandler {
-  const bc = client.open(
-    Bridge.fromAddress(Address.parseFriendly(bridge).address),
-  );
+  const bc = async () => {
+    const [client, release] = await fetchClient();
+    const bc = client.open(
+      Bridge.fromAddress(Address.parseFriendly(bridge).address),
+    );
+    return [bc, release] as const;
+  };
   const tonweb = new TonWeb(provider);
   return {
     pollForLockEvents: async (builder, cb) => {
@@ -57,14 +61,14 @@ export function tonHandler({
     initialFunds: initialFunds,
     currency: "TON",
     address: signer.address.toString(),
-    getBalance: () => getBalance(client, signer.address),
+    getBalance: () => getBalance(fetchClient, signer.address),
     signClaimData: (d) => signClaimData(d, secretKey, signer, logger),
     addSelfAsValidator: () =>
       addSelfAsValidator(storage, bc, signer, walletSender, logger),
     selfIsValidator: () => selfIsValidator(signer, tonweb, bridge),
     nftData: (_, ctr) =>
       retry(
-        () => nftData(_, ctr, client),
+        () => nftData(_, ctr, fetchClient),
         `Trying to fetch data for ${ctr}`,
         logger,
       ).catch(() => {
@@ -77,7 +81,15 @@ export function tonHandler({
       }),
     chainIdent: chainIdent,
     listenForLockEvents: (builder, cb) =>
-      listenForLockEvents(builder, cb, lastBlock_, client, bridge, em, logger),
+      listenForLockEvents(
+        builder,
+        cb,
+        lastBlock_,
+        fetchClient,
+        bridge,
+        em,
+        logger,
+      ),
     decimals: BigInt(10 ** decimals),
   };
 }

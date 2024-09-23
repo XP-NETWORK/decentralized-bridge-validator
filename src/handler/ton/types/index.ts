@@ -8,7 +8,7 @@ import type { BridgeStorage } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type TonParams = {
-  client: TonClient;
+  fetchClient: TONProviderFetch;
   provider: HttpProvider;
   signer: WalletContractV4;
   bridge: string;
@@ -24,3 +24,5 @@ export type TonParams = {
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
 };
+
+export type TONProviderFetch = () => Promise<[TonClient, () => void]>;

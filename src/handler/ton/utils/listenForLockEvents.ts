@@ -1,10 +1,11 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
-import { Address, type TonClient } from "@ton/ton";
+import { Address } from "@ton/ton";
 import { raise } from "..";
 import type { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import type { TONProviderFetch } from "../types";
 
 const CHAIN_IDENT = "TON";
 
@@ -12,7 +13,7 @@ export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: LockEventIter,
   lastBlock_: number,
-  client: TonClient,
+  fetchClient: TONProviderFetch,
   bridge: string,
   em: EntityManager,
   logger: LogInstance,
@@ -20,10 +21,12 @@ export default async function listenForLockEvents(
   let lastBlock = Number(lastBlock_);
   while (true) {
     try {
-      const latestTx = await client.getTransactions(
+      let [provider, release] = await fetchClient();
+      const latestTx = await provider.getTransactions(
         Address.parseFriendly(bridge).address,
         { limit: 1 },
       );
+      release();
       if (Number(latestTx[0].lt) === lastBlock) {
         logger.trace(
           `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
@@ -31,8 +34,8 @@ export default async function listenForLockEvents(
         await new Promise<undefined>((e) => setTimeout(e, 10000));
         continue;
       }
-
-      const transactions = await client.getTransactions(
+      [provider, release] = await fetchClient();
+      const transactions = await provider.getTransactions(
         Address.parseFriendly(bridge).address,
         {
           limit: 100,
@@ -41,6 +44,7 @@ export default async function listenForLockEvents(
           inclusive: true,
         },
       );
+      release();
 
       if (!transactions.length) {
         logger.trace(

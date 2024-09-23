@@ -22,14 +22,16 @@ import {
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
-  bc: OpenedContract<Bridge>,
+  bc: () => Promise<readonly [OpenedContract<Bridge>, () => void]>,
   signer: WalletContractV4,
   walletSender: Sender,
   logger: LogInstance,
 ): Promise<"success" | "failure"> {
   try {
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
-    let validatorsCount = Number(await bc.getValidatorsCount());
+    let [bridge, release] = await bc();
+    let validatorsCount = Number(await bridge.getValidatorsCount());
+    release();
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(publicKey),
     );
@@ -44,7 +46,9 @@ export default async function addSelfAsValidator(
       signatureCount = Number(
         await storage.getStakingSignaturesCount(publicKey),
       );
-      validatorsCount = Number(await bc.getValidatorsCount());
+      [bridge, release] = await bc();
+      validatorsCount = Number(await bridge.getValidatorsCount());
+      release();
     }
 
     const stakingSignatures = [
@@ -89,8 +93,8 @@ export default async function addSelfAsValidator(
       publicKey: Buffer.from(publicKey, "hex"),
       workchain: 0,
     });
-
-    await bc.send(
+    [bridge, release] = await bc();
+    await bridge.send(
       walletSender,
       {
         value: toNano("0.05"),
@@ -107,6 +111,7 @@ export default async function addSelfAsValidator(
           .loadUintBig(256),
       },
     );
+    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

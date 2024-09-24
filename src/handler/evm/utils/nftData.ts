@@ -15,9 +15,9 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
     };
     // const code = await provider.getCode(contract).catch(() => "");
 
+    let [nftContract, release] = await nft();
     const name = await retry(
       async () => {
-        const [nftContract, release] = await nft();
         const name = await nftContract.name();
         release();
         return name;
@@ -25,24 +25,30 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
       `Trying to fetch name() for ${contract}`,
       logger,
       5,
-    ).catch(() => {
-      return "";
-    });
+    )
+      .catch(() => {
+        return "";
+      })
+      .finally(() => {
+        release();
+      });
 
+    [nftContract, release] = await nft();
     const symbol = await retry(
       async () => {
-        const [nftContract, release] = await nft();
         const symbol = await nftContract.symbol();
         release();
         return symbol;
       },
       `Trying to fetch symbol() for ${contract}`,
       logger,
-    );
+    ).finally(() => {
+      release();
+    });
 
+    [nftContract, release] = await nft();
     const royalty = await retry(
       async () => {
-        const [nftContract, release] = await nft();
         const royaltyInfo = await nftContract.royaltyInfo(
           tokenId,
           MAX_SALE_PRICE,
@@ -53,11 +59,15 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
       `Trying to fetch royaltyInfo() for ${contract}`,
       logger,
       5,
-    ).catch(() => {
-      logger.warn("retry royalty catch");
-      return undefined;
-    });
-
+    )
+      .catch(() => {
+        logger.warn("retry royalty catch");
+        return undefined;
+      })
+      .finally(() => {
+        release();
+      });
+    [nftContract, release] = await nft();
     const metadata = await retry(
       async () => {
         const [nftContract, release] = await nft();
@@ -67,7 +77,9 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
       },
       `Trying to fetch tokenURI() for ${contract}`,
       logger,
-    );
+    ).finally(() => {
+      release();
+    });
 
     return {
       name: name || "XP Wrapped Nft",

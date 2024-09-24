@@ -17,7 +17,7 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
 
     const name = await retry(
       async () => {
-        useMutexAndRelease(nft, async (ctr) => {
+        return useMutexAndRelease(nft, async (ctr) => {
           return ctr.name();
         });
       },

@@ -1,5 +1,6 @@
 import type { Wallet } from "ethers";
 import type { Bridge } from "../../../contractsTypes/evm";
+import { useMutexAndRelease } from "../../utils";
 import type { MutexReleaser } from "../types";
 
 const selfIsValidator = (
@@ -7,10 +8,10 @@ const selfIsValidator = (
   signer: Wallet,
 ) => {
   return async () => {
-    const [bridge, release] = await bc();
-    const validator = await bridge.validators(signer.address);
-    release();
-    return validator[0];
+    return useMutexAndRelease(bc, async (bridge) => {
+      const v = await bridge.validators(signer.address);
+      return v.added;
+    });
   };
 };
 

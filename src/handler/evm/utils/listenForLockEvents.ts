@@ -6,6 +6,7 @@ import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
 import { LockedEvent } from "../../../persistence/entities/locked";
 import type { LockEventIter, LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 import type { EVMProviderFetch, MutexReleaser } from "../types";
 
 const listenForLockEvents = (
@@ -19,15 +20,16 @@ const listenForLockEvents = (
   logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: LockEventIter) => {
-    const [b, release] = await bc();
-    const ifs = b.interface;
-    release();
+    const ifs = await useMutexAndRelease(bc, (bridge) =>
+      Promise.resolve(bridge.interface),
+    );
     let lastBlock = lastBlock_;
     while (true) {
       try {
-        let [p, r] = await fetchProvider();
-        const latestBlockNumber = await p.getBlockNumber();
-        r();
+        const latestBlockNumber = await useMutexAndRelease(
+          fetchProvider,
+          async (p) => p.getBlockNumber(),
+        );
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber
@@ -38,16 +40,16 @@ const listenForLockEvents = (
           continue;
         }
         const startBlock = lastBlock;
-        [p, r] = await fetchProvider();
-        const logs = await p.getLogs({
-          fromBlock: lastBlock,
-          toBlock: latestBlock,
-          address: bridge,
-          topics: [
-            Bridge__factory.createInterface().getEvent("Locked").topicHash,
-          ],
+        const logs = await useMutexAndRelease(fetchProvider, async (p) => {
+          return await p.getLogs({
+            fromBlock: lastBlock,
+            toBlock: latestBlock,
+            address: bridge,
+            topics: [
+              Bridge__factory.createInterface().getEvent("Locked").topicHash,
+            ],
+          });
         });
-        r();
         if (!logs.length) {
           logger.trace(
             `[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`,

@@ -5,6 +5,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 import type { MutexReleaser } from "../types";
@@ -32,9 +33,11 @@ const addSelfAsValidator = (
           `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
         );
       }
-      let [bridgeContract, release] = await bc();
-      let validatorsCount = Number(await bridgeContract.validatorsCount());
-      release();
+      let validatorsCount = Number(
+        await useMutexAndRelease(bc, async (bridge) => {
+          return bridge.validatorsCount();
+        }),
+      );
       let signatureCount = Number(
         await storage.getStakingSignaturesCount(signer.address),
       );
@@ -49,9 +52,11 @@ const addSelfAsValidator = (
         signatureCount = Number(
           await storage.getStakingSignaturesCount(signer.address),
         );
-        [bridgeContract, release] = await bc();
-        validatorsCount = Number(await bridgeContract.validatorsCount());
-        release();
+        validatorsCount = Number(
+          await useMutexAndRelease(bc, async (bridge) =>
+            bridge.validatorsCount(),
+          ),
+        );
       }
 
       const stakingSignatures = [

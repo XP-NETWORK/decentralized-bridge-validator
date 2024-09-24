@@ -1,7 +1,7 @@
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 import { RoyaltyInfoProxy__factory } from "../../../contractsTypes/hedera/RoyaltyInfoProxy__factory";
 import type { LogInstance } from "../../types";
-import { retry } from "../../utils";
+import { retry, useMutexAndRelease } from "../../utils";
 import type { EVMProviderFetch } from "../types";
 
 const nftDataForHedera = (
@@ -23,10 +23,9 @@ const nftDataForHedera = (
 
     const name = await retry(
       async () => {
-        const [nftContract, release] = await nft();
-        const name = nftContract.name();
-        release();
-        return name;
+        return useMutexAndRelease(nft, async (ctr) => {
+          return ctr.name();
+        });
       },
       `Trying to fetch name() for ${contract}`,
       logger,
@@ -34,10 +33,9 @@ const nftDataForHedera = (
 
     const symbol = await retry(
       async () => {
-        const [nftContract, release] = await nft();
-        const symbol = nftContract.symbol();
-        release();
-        return symbol;
+        return useMutexAndRelease(nft, async (ctr) => {
+          return ctr.symbol();
+        });
       },
       `Trying to fetch symbol() for ${contract}`,
       logger,
@@ -45,10 +43,10 @@ const nftDataForHedera = (
 
     const tokenInfo = await retry(
       async () => {
-        const [rip, release] = await proxy();
-        const rinfo = await rip.royaltyInfo.staticCall(contract, tokenId);
-        release();
-        return rinfo;
+        return useMutexAndRelease(
+          proxy,
+          async (rip) => await rip.royaltyInfo.staticCall(contract, tokenId),
+        );
       },
       `Trying to fetch royaltyInfo() for ${contract}`,
       logger,
@@ -60,10 +58,9 @@ const nftDataForHedera = (
 
     const metadata = await retry(
       async () => {
-        const [nftContract, release] = await nft();
-        const tokenURI = nftContract.tokenURI(tokenId);
-        release();
-        return tokenURI;
+        return useMutexAndRelease(nft, async (ctr) => {
+          return ctr.tokenURI(tokenId);
+        });
       },
       `Trying to fetch tokenURI() for ${contract}`,
       logger,

@@ -1,6 +1,6 @@
 import { ERC721Royalty__factory } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
-import { retry } from "../../utils";
+import { retry, useMutexAndRelease } from "../../utils";
 import { MAX_SALE_PRICE } from "../constants";
 import type { EVMProviderFetch } from "../types";
 
@@ -15,71 +15,53 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
     };
     // const code = await provider.getCode(contract).catch(() => "");
 
-    let [nftContract, release] = await nft();
     const name = await retry(
       async () => {
-        const name = await nftContract.name();
-        release();
-        return name;
+        useMutexAndRelease(nft, async (ctr) => {
+          return ctr.name();
+        });
       },
       `Trying to fetch name() for ${contract}`,
       logger,
       5,
-    )
-      .catch(() => {
-        return "";
-      })
-      .finally(() => {
-        release();
-      });
+    ).catch(() => {
+      return "";
+    });
 
-    [nftContract, release] = await nft();
     const symbol = await retry(
       async () => {
-        const symbol = await nftContract.symbol();
-        release();
-        return symbol;
+        return useMutexAndRelease(nft, async (ctr) => {
+          return ctr.symbol();
+        });
       },
       `Trying to fetch symbol() for ${contract}`,
       logger,
-    ).finally(() => {
-      release();
-    });
+    );
 
-    [nftContract, release] = await nft();
     const royalty = await retry(
       async () => {
-        const royaltyInfo = await nftContract.royaltyInfo(
-          tokenId,
-          MAX_SALE_PRICE,
-        );
-        release();
-        return royaltyInfo;
+        return useMutexAndRelease(nft, async (ctr) => {
+          return ctr.royaltyInfo(tokenId, MAX_SALE_PRICE);
+        });
       },
       `Trying to fetch royaltyInfo() for ${contract}`,
       logger,
       5,
-    )
-      .catch(() => {
-        logger.warn("retry royalty catch");
-        return undefined;
-      })
-      .finally(() => {
-        release();
-      });
-    [nftContract, release] = await nft();
+    ).catch(() => {
+      logger.warn("retry royalty catch");
+      return undefined;
+    });
+
     const metadata = await retry(
       async () => {
-        const [nftContract, release] = await nft();
-        const tokenURI = await nftContract.tokenURI(tokenId);
-        release();
-        return tokenURI;
+        const result = useMutexAndRelease(nft, async (ctr) => {
+          return ctr.tokenURI(tokenId);
+        });
+        return result;
       },
       `Trying to fetch tokenURI() for ${contract}`,
       logger,
-    ).finally(() => {
-      release();
-    });
+    );
 
     return {
       name: name || "XP Wrapped Nft",

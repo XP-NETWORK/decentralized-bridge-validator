@@ -1,5 +1,5 @@
 import { field, serialize } from "@dao-xyz/borsh";
-import * as ed from "@noble/ed25519";
+import type { KeyPairEd25519 } from "near-api-js/lib/utils";
 
 export class AddValidator {
   @field({ type: "string" })
@@ -81,15 +81,14 @@ export class ClaimData {
   }
 }
 
-export default async function signData(buf: string, privateKey: string) {
+export default async function signData(buf: string, kp: KeyPairEd25519) {
   const [account_id, public_key] = buf.split("|");
   const av = new AddValidator(account_id, public_key);
   const encoded = serialize(av);
-
-  const signtureBytes = await ed.sign(encoded, privateKey);
-  const signature = `0x${Buffer.from(signtureBytes).toString("hex")}`;
+  const { signature, publicKey } = kp.sign(encoded);
+  const sig = `0x${Buffer.from(signature).toString("hex")}`;
   return {
-    signature,
-    signer: Buffer.from(await ed.getPublicKey(privateKey)).toString("hex"),
+    signature: sig,
+    signer: Buffer.from(publicKey.data).toString("hex"),
   };
 }

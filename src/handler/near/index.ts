@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Contract } from "near-api-js";
+import type { KeyPairEd25519 } from "near-api-js/lib/utils";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
@@ -18,7 +19,6 @@ export async function nearHandler({
   fetchProvider,
   signer,
   bridge,
-  privateKey,
   storage,
   lastBlock_,
   initialFunds,
@@ -53,6 +53,11 @@ export async function nearHandler({
   });
   const theGraphApi = axios.create({ baseURL: theGraphApiUrl });
   const publicKey = await signer.getPublicKey(address, networkId);
+  const kp = (await signer.keyStore.getKey(
+    networkId,
+    address,
+  )) as KeyPairEd25519;
+
   const publicKeyInHex = Buffer.from(publicKey.data).toString("hex");
   const [provider, release] = await fetchProvider();
   const account = await provider.account(address);
@@ -73,13 +78,13 @@ export async function nearHandler({
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
     },
-    signData: (buf) => signData(buf, privateKey),
+    signData: (buf) => signData(buf, kp),
     chainType,
     initialFunds: initialFunds,
     chainIdent,
     currency: "NEAR",
     address,
-    signClaimData: (data) => signClaimData(data, privateKey),
+    signClaimData: (data) => signClaimData(data, kp),
     selfIsValidator: () => selfIsValidator(bc as never, publicKeyInHex),
     listenForLockEvents: (cb, iter) =>
       listenForLockEvents(

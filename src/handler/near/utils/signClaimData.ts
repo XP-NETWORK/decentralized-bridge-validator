@@ -1,11 +1,11 @@
 import { serialize } from "@dao-xyz/borsh";
-import * as ed from "@noble/ed25519";
+import type { KeyPairEd25519 } from "near-api-js/lib/utils";
 import type { TNftTransferDetailsObject } from "../../types";
 import { ClaimData } from "./signData";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
-  privateKey: string,
+  kp: KeyPairEd25519,
 ) {
   const cd = new ClaimData(
     data.tokenId,
@@ -25,10 +25,10 @@ export default async function signClaimData(
     data.lockTxChain,
   );
   const encoded = serialize(cd);
-  const signature = await ed.sign(Buffer.from(encoded), privateKey);
+  const { publicKey, signature } = kp.sign(encoded);
 
   return {
-    signer: Buffer.from(await ed.getPublicKey(privateKey)).toString("hex"),
+    signer: Buffer.from(publicKey.data).toString("hex"),
     signature: `0x${Buffer.from(signature).toString("hex")}`,
   };
 }

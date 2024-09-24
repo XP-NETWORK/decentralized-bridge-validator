@@ -12,7 +12,10 @@ export default async function addSelfAsValidator(
   storage: BridgeStorage,
   accountId: string,
   publicKey: string,
-  bridge: Record<string, CallableFunction> & Contract,
+  fetchBridge: () => Promise<
+    readonly [Contract & Record<string, CallableFunction>, () => void]
+  >,
+  bridgeContractId: string,
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
@@ -34,7 +37,10 @@ export default async function addSelfAsValidator(
   }
   try {
     async function getStakingSignatureCount() {
-      return Number(await bridge.validator_count());
+      const [bridge, release] = await fetchBridge();
+      const vc = Number(await bridge.validator_count());
+      release();
+      return vc;
     }
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(
@@ -54,7 +60,7 @@ export default async function addSelfAsValidator(
     const signatures = [...(await storage.getStakingSignatures(payload))];
 
     const av = await signer.functionCall({
-      contractId: bridge.contractId,
+      contractId: bridgeContractId,
       methodName: "add_validator",
       args: {
         validator: {

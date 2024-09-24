@@ -97,8 +97,8 @@ export async function nearHandler({
         storage,
         address,
         publicKeyInHex,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        bc as any,
+        bc as never,
+        bridge,
         logger,
         staking,
         validatorAddress,

@@ -2,11 +2,15 @@ import type { Identity } from "@dfinity/agent";
 import { AccountIdentifier, type LedgerCanister } from "@dfinity/ledger-icp";
 
 export default async function getBalance(
-  actor: LedgerCanister,
+  fetchLedger: () => Promise<readonly [LedgerCanister, () => void]>,
   identity: Identity,
 ) {
   const aid = AccountIdentifier.fromPrincipal({
     principal: identity.getPrincipal(),
   });
-  return actor.accountBalance({ accountIdentifier: aid });
+  const [ledger, release] = await fetchLedger();
+
+  const balance = await ledger.accountBalance({ accountIdentifier: aid });
+  release();
+  return balance;
 }

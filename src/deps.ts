@@ -187,8 +187,13 @@ export async function configIcpHandler(
     identity,
   });
   await agent.fetchRootKey();
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [agent, release] as [HttpAgent, MutexReleaser];
+  }
   return icpHandler({
-    agent,
+    fetchProvider,
     bridge: conf.contractAddress,
     chainIdent: "ICP",
     chainType: "icp",

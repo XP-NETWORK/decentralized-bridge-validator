@@ -8,8 +8,9 @@ import type { TNftTransferDetailsObject } from "../../types";
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
   identity: Ed25519KeyIdentity,
-  bc: ActorSubclass<_SERVICE>,
+  fetchBridge: () => Promise<readonly [ActorSubclass<_SERVICE>, () => void]>,
 ) {
+  const [bc, release] = await fetchBridge();
   const encoded = await bc.encode_claim_data({
     destination_chain: data.destinationChain,
     destination_user_address: Principal.fromText(data.destinationUserAddress),
@@ -27,6 +28,7 @@ export default async function signClaimData(
     token_id: BigInt(data.tokenId),
     transaction_hash: data.transactionHash,
   });
+  release();
 
   const signature = await ed.sign(
     Buffer.from(encoded),

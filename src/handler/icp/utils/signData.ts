@@ -7,13 +7,15 @@ import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 export default async function signData(
   buf: string,
   identity: Ed25519KeyIdentity,
-  bc: ActorSubclass<_SERVICE>,
+  fetchBridge: () => Promise<readonly [ActorSubclass<_SERVICE>, () => void]>,
 ) {
   const [principal, pubk] = buf.split(",");
+  const [bc, release] = await fetchBridge();
   const body = await bc.encode_add_validator({
     principal: Principal.fromText(principal),
     public_key: pubk,
   });
+  release();
   const signtureBytes = await ed.sign(
     Buffer.from(body),
     Buffer.from(identity.getKeyPair().secretKey),

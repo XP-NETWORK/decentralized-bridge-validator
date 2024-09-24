@@ -11,7 +11,7 @@ import {
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
-  bridge: ActorSubclass<_SERVICE>,
+  fetchBridge: () => Promise<readonly [ActorSubclass<_SERVICE>, () => void]>,
   identity: Ed25519KeyIdentity,
   logger: LogInstance,
   staking: ERC20Staking,
@@ -36,9 +36,11 @@ export default async function addSelfAsValidator(
     "hex",
   );
   try {
+    let [bridge, release] = await fetchBridge();
     async function getStakingSignatureCount() {
       return Number(await bridge.get_validator_count());
     }
+    release();
     const newV = `${identity.getPrincipal()},${publicKey}`;
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
@@ -69,7 +71,7 @@ export default async function addSelfAsValidator(
         };
       }),
     );
-
+    [bridge, release] = await fetchBridge();
     await bridge.add_validator(
       {
         principal: identity.getPrincipal(),
@@ -82,6 +84,7 @@ export default async function addSelfAsValidator(
         };
       }),
     );
+    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

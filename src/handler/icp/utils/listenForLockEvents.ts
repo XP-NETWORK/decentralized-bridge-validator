@@ -1,5 +1,5 @@
 import { setTimeout } from "node:timers/promises";
-import { Actor, type ActorSubclass } from "@dfinity/agent";
+import type { ActorSubclass } from "@dfinity/agent";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
@@ -12,7 +12,8 @@ export default async function listenForLockEvents(
   builder: EventBuilder,
   cb: LockEventIter,
   lastBlock_: number,
-  bc: ActorSubclass<_SERVICE>,
+  fetchBridge: () => Promise<readonly [ActorSubclass<_SERVICE>, () => void]>,
+  bc: string,
   em: EntityManager,
   logger: LogInstance,
 ) {
@@ -20,7 +21,9 @@ export default async function listenForLockEvents(
   while (true)
     try {
       {
-        const latestBlockNumberResponse = await bc.get_nonce();
+        let [bridge, release] = await fetchBridge();
+        const latestBlockNumberResponse = await bridge.get_nonce();
+        release();
         const latestBlockNumber = Number(latestBlockNumberResponse);
 
         if (latestBlockNumber <= lastBlock) {
@@ -29,9 +32,13 @@ export default async function listenForLockEvents(
           continue;
         }
         logger.info(`Found ${latestBlockNumber - lastBlock} new TXs`);
-        const [hash] = await bc.get_hash_from_nonce(BigInt(lastBlock));
+        [bridge, release] = await fetchBridge();
+        const [hash] = await bridge.get_hash_from_nonce(BigInt(lastBlock));
+        release();
         if (!hash) continue;
-        const [log] = await bc.get_locked_data(hash);
+        [bridge, release] = await fetchBridge();
+        const [log] = await bridge.get_locked_data(hash);
+        release();
         if (!log) continue;
         lastBlock = lastBlock + 1;
         const {
@@ -60,7 +67,7 @@ export default async function listenForLockEvents(
       }
       await em.upsert(Block, {
         chain: CHAIN_IDENT,
-        contractAddress: Actor.canisterIdOf(bc).toString(),
+        contractAddress: bc,
         lastBlock: lastBlock,
       });
       await em.flush();

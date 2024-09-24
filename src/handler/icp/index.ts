@@ -18,7 +18,7 @@ import {
 } from "./utils";
 
 export function icpHandler({
-  agent,
+  fetchProvider,
   bridge,
   storage,
   lastBlock_,
@@ -33,20 +33,28 @@ export function icpHandler({
   staking,
   validatorAddress,
 }: ICPHandlerParams): THandler {
-  const bc = Actor.createActorWithExtendedDetails<_SERVICE>(
-    BridgeIDL,
-    {
-      canisterId: bridge,
+  const bc = async () => {
+    const [agent, release] = await fetchProvider();
+    const actor = Actor.createActorWithExtendedDetails<_SERVICE>(
+      BridgeIDL,
+      {
+        canisterId: bridge,
+        agent,
+      },
+      {
+        certificate: false,
+      },
+    ) as ActorSubclass<_SERVICE>;
+    return [actor, release] as const;
+  };
+  const lc = async () => {
+    const [agent, release] = await fetchProvider();
+    const canister = LedgerCanister.create({
       agent,
-    },
-    {
-      certificate: false,
-    },
-  ) as ActorSubclass<_SERVICE>;
-  const lc = LedgerCanister.create({
-    agent,
-    canisterId: Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
-  });
+      canisterId: Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
+    });
+    return [canister, release] as const;
+  };
   return {
     publicKey: `${identity.getPrincipal()},${Buffer.from(
       identity.getPublicKey().toRaw(),
@@ -74,7 +82,7 @@ export function icpHandler({
     signClaimData: (data) => signClaimData(data, identity, bc),
     selfIsValidator: () => selfIsValidator(bc, identity),
     listenForLockEvents: (cb, iter) =>
-      listenForLockEvents(cb, iter, lastBlock_, bc, em, logger),
+      listenForLockEvents(cb, iter, lastBlock_, bc, bridge, em, logger),
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,
@@ -85,7 +93,7 @@ export function icpHandler({
         validatorAddress,
       ),
     getBalance: () => getBalance(lc, identity),
-    nftData: (tid, ctr) => nftData(tid, ctr, agent, logger),
+    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
     decimals: BigInt(10 ** decimals),
   };
 }

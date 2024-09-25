@@ -1,6 +1,7 @@
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
+import { useMutexAndRelease } from "../utils";
 import type { SecretsHandlerParams } from "./types";
 import {
   addSelfAsValidator,
@@ -30,9 +31,10 @@ export async function secretsHandler({
   serverLinkHandler,
   logger,
 }: SecretsHandlerParams): Promise<THandler> {
-  const [provider, release] = await fetchProvider();
-  const address = provider.address;
-  release();
+  const address = await useMutexAndRelease(
+    fetchProvider,
+    async (provider) => provider.address,
+  );
   return {
     publicKey,
     pollForLockEvents: async (builder, cb) => {

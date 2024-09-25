@@ -2,6 +2,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 import type { SecretProviderFetch } from "../types";
 
 const CHAIN_IDENT = "SECRET";
@@ -19,14 +20,16 @@ export default async function listenForLockEvents(
   let lastBlock = lastBlock_;
   while (true)
     try {
-      let [c, release] = await fetchProvider();
+      // let [c, release] = await fetchProvider();
       {
-        const latestBlockNumberResponse =
-          await c.query.tendermint.getLatestBlock({});
+        const latestBlockNumberResponse = await useMutexAndRelease(
+          fetchProvider,
+          async (c) => await c.query.tendermint.getLatestBlock({}),
+        );
         const latestBlockNumber = Number(
           latestBlockNumberResponse.block?.header?.height,
         );
-        release();
+        // release();
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber
@@ -34,9 +37,10 @@ export default async function listenForLockEvents(
             : latestBlockNumber;
 
         const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
-        [c, release] = await fetchProvider();
-        const logs = await c.query.txsQuery(query);
-        release();
+        const logs = await useMutexAndRelease(
+          fetchProvider,
+          async (c) => await c.query.txsQuery(query),
+        );
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {

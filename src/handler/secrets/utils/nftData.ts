@@ -1,5 +1,5 @@
 import type { LogInstance } from "../../types";
-import { retry } from "../../utils";
+import { retry, useMutexAndRelease } from "../../utils";
 import type { SecretProviderFetch } from "../types";
 
 export default async function nftData(
@@ -10,15 +10,14 @@ export default async function nftData(
 ) {
   const data = await retry(
     async () => {
-      const [client, release] = await fetchProvider();
-      const data = (
-        (await client.query.compute.queryContract({
-          contract_address: contract,
-          query: { contract_info: {} },
-        })) as { contract_info: { name: string; symbol: string } }
-      ).contract_info;
-      release();
-      return data;
+      return useMutexAndRelease(fetchProvider, async (client) => {
+        return (
+          (await client.query.compute.queryContract({
+            contract_address: contract,
+            query: { contract_info: {} },
+          })) as { contract_info: { name: string; symbol: string } }
+        ).contract_info;
+      });
     },
     `Trying to fetch Nft Data for ${contract}`,
     log,
@@ -26,22 +25,22 @@ export default async function nftData(
 
   const royalty_info = await retry(
     async () => {
-      const [client, release] = await fetchProvider();
-      const ri = (
-        (await client.query.compute.queryContract({
-          contract_address: contract,
-          query: { royalty_info: { token_id: tokenId.toString() } },
-        })) as {
-          royalty_info: {
+      return useMutexAndRelease(fetchProvider, async (client) => {
+        const ri = (
+          (await client.query.compute.queryContract({
+            contract_address: contract,
+            query: { royalty_info: { token_id: tokenId.toString() } },
+          })) as {
             royalty_info: {
-              decimal_places_in_rates: number;
-              royalties: [{ recipient: string; rate: number }];
+              royalty_info: {
+                decimal_places_in_rates: number;
+                royalties: [{ recipient: string; rate: number }];
+              };
             };
-          };
-        }
-      ).royalty_info.royalty_info;
-      release();
-      return ri;
+          }
+        ).royalty_info.royalty_info;
+        return ri;
+      });
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,
@@ -53,21 +52,21 @@ export default async function nftData(
 
   const nft_info = await retry(
     async () => {
-      const [client, release] = await fetchProvider();
-      const nft = (
-        (await client.query.compute.queryContract({
-          contract_address: contract,
-          query: { nft_info: { token_id: tokenId.toString() } },
-        })) as {
-          nft_info: {
-            extension: {
-              media: [{ url: string }];
+      return useMutexAndRelease(fetchProvider, async (client) => {
+        const nft = (
+          (await client.query.compute.queryContract({
+            contract_address: contract,
+            query: { nft_info: { token_id: tokenId.toString() } },
+          })) as {
+            nft_info: {
+              extension: {
+                media: [{ url: string }];
+              };
             };
-          };
-        }
-      ).nft_info;
-      release();
-      return nft;
+          }
+        ).nft_info;
+        return nft;
+      });
     },
     `Trying to fetch Nft Info for ${contract}`,
     log,

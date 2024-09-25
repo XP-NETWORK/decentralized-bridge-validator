@@ -6,6 +6,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 import type { SecretProviderFetch } from "../types";
@@ -21,15 +22,17 @@ export default async function addSelfAsValidator(
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
-      const [client, release] = await fetchProvider();
-      const res = (await client.query.compute.queryContract({
-        contract_address: bridge,
-        code_hash: bridgeCodeHash,
-        query: {
-          get_validators_count: {},
-        },
-      })) as { validator_count_response: { count: number } };
-      release();
+      const res = await useMutexAndRelease(
+        fetchProvider,
+        async (client) =>
+          (await client.query.compute.queryContract({
+            contract_address: bridge,
+            code_hash: bridgeCodeHash,
+            query: {
+              get_validators_count: {},
+            },
+          })) as { validator_count_response: { count: number } },
+      );
       return res.validator_count_response.count;
     }
     const newV = Buffer.from(publicKey).toString("base64");
@@ -75,19 +78,21 @@ export default async function addSelfAsValidator(
         },
       },
     };
-    const [client, release] = await fetchProvider();
-    await client.tx.compute.executeContract(
-      {
-        contract_address: bridge,
-        msg,
-        code_hash: bridgeCodeHash,
-        sender: pubkeyToAddress(Buffer.from(wallet.publicKey)),
-      },
-      {
-        gasLimit: 200_000,
-      },
+    await useMutexAndRelease(
+      fetchProvider,
+      async (client) =>
+        await client.tx.compute.executeContract(
+          {
+            contract_address: bridge,
+            msg,
+            code_hash: bridgeCodeHash,
+            sender: pubkeyToAddress(Buffer.from(wallet.publicKey)),
+          },
+          {
+            gasLimit: 200_000,
+          },
+        ),
     );
-    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

@@ -1,3 +1,4 @@
+import { useMutexAndRelease } from "../../utils";
 import type { SecretProviderFetch } from "../types";
 
 export default async function selfIsValidator(
@@ -6,16 +7,16 @@ export default async function selfIsValidator(
   bridgeCodeHash: string,
   publicKey: string,
 ) {
-  const [client, release] = await fetchProvider();
-  const res = (await client.query.compute.queryContract({
-    contract_address: bridge,
-    code_hash: bridgeCodeHash,
-    query: {
-      get_validator: {
-        address: Buffer.from(publicKey, "hex").toString("base64"),
+  const res = await useMutexAndRelease(fetchProvider, async (client) => {
+    return (await client.query.compute.queryContract({
+      contract_address: bridge,
+      code_hash: bridgeCodeHash,
+      query: {
+        get_validator: {
+          address: Buffer.from(publicKey, "hex").toString("base64"),
+        },
       },
-    },
-  })) as { validator: { data: { added: boolean } } };
-  release();
+    })) as { validator: { data: { added: boolean } } };
+  });
   return res.validator.data.added && res.validator.data.added;
 }

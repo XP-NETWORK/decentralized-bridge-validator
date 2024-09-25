@@ -17,6 +17,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 
@@ -29,9 +30,11 @@ export default async function addSelfAsValidator(
 ): Promise<"success" | "failure"> {
   try {
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
-    let [bridge, release] = await bc();
-    let validatorsCount = Number(await bridge.getValidatorsCount());
-    release();
+    // let [bridge, release] = await bc();
+    let validatorsCount = await useMutexAndRelease(bc, async (bridge) =>
+      Number(await bridge.getValidatorsCount()),
+    );
+    // release();
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(publicKey),
     );
@@ -46,9 +49,9 @@ export default async function addSelfAsValidator(
       signatureCount = Number(
         await storage.getStakingSignaturesCount(publicKey),
       );
-      [bridge, release] = await bc();
-      validatorsCount = Number(await bridge.getValidatorsCount());
-      release();
+      validatorsCount = await useMutexAndRelease(bc, async (bridge) =>
+        Number(await bridge.getValidatorsCount()),
+      );
     }
 
     const stakingSignatures = [
@@ -93,25 +96,25 @@ export default async function addSelfAsValidator(
       publicKey: Buffer.from(publicKey, "hex"),
       workchain: 0,
     });
-    [bridge, release] = await bc();
-    await bridge.send(
-      walletSender,
-      {
-        value: toNano("0.05"),
-      },
-      {
-        $$type: "AddValidator",
-        newValidatorPublicKey: newValidator,
-        newValidatorAddress: wallet.address,
-        sigs,
-        len: beginCell()
-          .storeUint(sigs.size, 256)
-          .endCell()
-          .beginParse()
-          .loadUintBig(256),
-      },
-    );
-    release();
+    await useMutexAndRelease(bc, async (bridge) => {
+      await bridge.send(
+        walletSender,
+        {
+          value: toNano("0.05"),
+        },
+        {
+          $$type: "AddValidator",
+          newValidatorPublicKey: newValidator,
+          newValidatorAddress: wallet.address,
+          sigs,
+          len: beginCell()
+            .storeUint(sigs.size, 256)
+            .endCell()
+            .beginParse()
+            .loadUintBig(256),
+        },
+      );
+    });
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

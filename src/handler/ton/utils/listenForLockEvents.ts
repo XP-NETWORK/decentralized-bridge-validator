@@ -5,6 +5,7 @@ import type { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 import type { TONProviderFetch } from "../types";
 
 const CHAIN_IDENT = "TON";
@@ -21,12 +22,13 @@ export default async function listenForLockEvents(
   let lastBlock = Number(lastBlock_);
   while (true) {
     try {
-      let [provider, release] = await fetchClient();
-      const latestTx = await provider.getTransactions(
-        Address.parseFriendly(bridge).address,
-        { limit: 1 },
+      const latestTx = await useMutexAndRelease(
+        fetchClient,
+        async (p) =>
+          await p.getTransactions(Address.parseFriendly(bridge).address, {
+            limit: 1,
+          }),
       );
-      release();
       if (Number(latestTx[0].lt) === lastBlock) {
         logger.trace(
           `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
@@ -34,17 +36,16 @@ export default async function listenForLockEvents(
         await new Promise<undefined>((e) => setTimeout(e, 10000));
         continue;
       }
-      [provider, release] = await fetchClient();
-      const transactions = await provider.getTransactions(
-        Address.parseFriendly(bridge).address,
-        {
-          limit: 100,
-          lt: lastBlock.toString(),
-          to_lt: latestTx[0].lt.toString(),
-          inclusive: true,
-        },
+      const transactions = await useMutexAndRelease(
+        fetchClient,
+        async (p) =>
+          await p.getTransactions(Address.parseFriendly(bridge).address, {
+            limit: 100,
+            lt: lastBlock.toString(),
+            to_lt: latestTx[0].lt.toString(),
+            inclusive: true,
+          }),
       );
-      release();
 
       if (!transactions.length) {
         logger.trace(

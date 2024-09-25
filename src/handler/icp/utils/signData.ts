@@ -3,6 +3,7 @@ import type { Ed25519KeyIdentity } from "@dfinity/identity";
 import { Principal } from "@dfinity/principal";
 import * as ed from "@noble/ed25519";
 import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
+import { useMutexAndRelease } from "../../utils";
 
 export default async function signData(
   buf: string,
@@ -10,12 +11,14 @@ export default async function signData(
   fetchBridge: () => Promise<readonly [ActorSubclass<_SERVICE>, () => void]>,
 ) {
   const [principal, pubk] = buf.split(",");
-  const [bc, release] = await fetchBridge();
-  const body = await bc.encode_add_validator({
-    principal: Principal.fromText(principal),
-    public_key: pubk,
-  });
-  release();
+  const body = await useMutexAndRelease(
+    fetchBridge,
+    async (bc) =>
+      await bc.encode_add_validator({
+        principal: Principal.fromText(principal),
+        public_key: pubk,
+      }),
+  );
   const signtureBytes = await ed.sign(
     Buffer.from(body),
     Buffer.from(identity.getKeyPair().secretKey),

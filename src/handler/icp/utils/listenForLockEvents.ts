@@ -5,6 +5,7 @@ import type { EventBuilder } from "../..";
 import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 
 const CHAIN_IDENT = "ICP";
 
@@ -21,9 +22,12 @@ export default async function listenForLockEvents(
   while (true)
     try {
       {
-        let [bridge, release] = await fetchBridge();
-        const latestBlockNumberResponse = await bridge.get_nonce();
-        release();
+        // let [bridge, release] = await fetchBridge();
+        const latestBlockNumberResponse = useMutexAndRelease(
+          fetchBridge,
+          async (bridge) => await bridge.get_nonce(),
+        );
+        // release();
         const latestBlockNumber = Number(latestBlockNumberResponse);
 
         if (latestBlockNumber <= lastBlock) {
@@ -32,13 +36,14 @@ export default async function listenForLockEvents(
           continue;
         }
         logger.info(`Found ${latestBlockNumber - lastBlock} new TXs`);
-        [bridge, release] = await fetchBridge();
-        const [hash] = await bridge.get_hash_from_nonce(BigInt(lastBlock));
-        release();
+        const [hash] = await useMutexAndRelease(fetchBridge, async (bridge) => {
+          return await bridge.get_hash_from_nonce(BigInt(lastBlock));
+        });
         if (!hash) continue;
-        [bridge, release] = await fetchBridge();
-        const [log] = await bridge.get_locked_data(hash);
-        release();
+        const [log] = await useMutexAndRelease(
+          fetchBridge,
+          async (bridge) => await bridge.get_locked_data(hash),
+        );
         if (!log) continue;
         lastBlock = lastBlock + 1;
         const {

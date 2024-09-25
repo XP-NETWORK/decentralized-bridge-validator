@@ -6,6 +6,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 
@@ -36,11 +37,16 @@ export default async function addSelfAsValidator(
     "hex",
   );
   try {
-    let [bridge, release] = await fetchBridge();
+    // let [bridge, release] = await fetchBridge();
     async function getStakingSignatureCount() {
-      return Number(await bridge.get_validator_count());
+      return Number(
+        useMutexAndRelease(
+          fetchBridge,
+          async (bridge) => await bridge.get_validator_count(),
+        ),
+      );
     }
-    release();
+    // release();
     const newV = `${identity.getPrincipal()},${publicKey}`;
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
@@ -71,20 +77,22 @@ export default async function addSelfAsValidator(
         };
       }),
     );
-    [bridge, release] = await fetchBridge();
-    await bridge.add_validator(
-      {
-        principal: identity.getPrincipal(),
-        public_key: publicKey,
-      },
-      signatures.map((e) => {
-        return {
-          signature: e.signature.replace("0x", ""),
-          signer: e.signerAddress,
-        };
-      }),
+    await useMutexAndRelease(
+      fetchBridge,
+      async (bridge) =>
+        await bridge.add_validator(
+          {
+            principal: identity.getPrincipal(),
+            public_key: publicKey,
+          },
+          signatures.map((e) => {
+            return {
+              signature: e.signature.replace("0x", ""),
+              signer: e.signerAddress,
+            };
+          }),
+        ),
     );
-    release();
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

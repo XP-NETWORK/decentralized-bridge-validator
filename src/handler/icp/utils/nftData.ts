@@ -2,6 +2,7 @@ import { Actor } from "@dfinity/agent";
 import { idlFactory } from "../../../contractsTypes/icp/nft/nft";
 import type { _SERVICE } from "../../../contractsTypes/icp/nft/nft.types";
 import type { LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 import type { ICPProviderFetch } from "../types";
 
 export default async function nftData(
@@ -18,16 +19,22 @@ export default async function nftData(
     });
     return [canister, release] as const;
   };
-  const [nft, release] = await fetchNft();
-  const name = await nft.icrc7_name();
-  const symbol = await nft.icrc7_symbol();
-  release();
+  const name = await useMutexAndRelease(
+    fetchNft,
+    async (nft) => await nft.icrc7_name(),
+  );
+  const symbol = await useMutexAndRelease(
+    fetchNft,
+    async (nft) => await nft.icrc7_symbol(),
+  );
 
   let metadata = "";
   try {
-    const [nft, release] = await fetchNft();
-    const [[md]] = await nft.icrc7_token_metadata([BigInt(tokenId)]);
-    release();
+    const [[md]] = await useMutexAndRelease(
+      fetchNft,
+      async (nft) => await nft.icrc7_token_metadata([BigInt(tokenId)]),
+    );
+
     if (!md)
       throw new Error("No metadata found for this token id and contract");
     const [, value] = md[0];

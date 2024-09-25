@@ -2,6 +2,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
 import type { LockEventIter, LogInstance } from "../../types";
+import { useMutexAndRelease } from "../../utils";
 import type { CosmWasmFetchProvider } from "../types";
 
 export default async function listenForLockEvents(
@@ -19,9 +20,10 @@ export default async function listenForLockEvents(
   while (true)
     try {
       {
-        let [provider, release] = await fetchProvider();
-        const latestBlockNumber = await provider.getHeight();
-        release();
+        const latestBlockNumber = await useMutexAndRelease(
+          fetchProvider,
+          async (provider) => await provider.getHeight(),
+        );
 
         const latestBlock =
           lastBlock + blockChunks < latestBlockNumber
@@ -29,9 +31,10 @@ export default async function listenForLockEvents(
             : latestBlockNumber;
 
         const query = `execute._contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
-        [provider, release] = await fetchProvider();
-        const logs = await provider.searchTx(query);
-        release();
+        const logs = await useMutexAndRelease(
+          fetchProvider,
+          async (provider) => await provider.searchTx(query),
+        );
         const startBlock = lastBlock;
         lastBlock = latestBlockNumber;
         if (!logs.length) {

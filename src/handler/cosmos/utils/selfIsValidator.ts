@@ -1,13 +1,16 @@
 import type { Bridge } from "@xp/cosmos-client";
+import { useMutexAndRelease } from "../../utils";
 
 export default async function selfIsValidator(
   client: () => Promise<readonly [Bridge.BridgeClient, () => void]>,
   publicKey: Buffer,
 ) {
-  const [bc, release] = await client();
-  const { data } = await bc.getValidator({
-    address: publicKey.toString("base64"),
-  });
-  release();
+  const { data } = await useMutexAndRelease(
+    client,
+    async (bridge) =>
+      await bridge.getValidator({
+        address: publicKey.toString("base64"),
+      }),
+  );
   return data?.added || false;
 }

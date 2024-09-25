@@ -7,6 +7,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 
@@ -19,9 +20,10 @@ export default async function addSelfAsValidator(
 ): Promise<"success" | "failure"> {
   try {
     async function getStakingSignatureCount() {
-      const [bridge, release] = await bc();
-      const res = await bridge.getValidatorsCount();
-      release();
+      const res = await useMutexAndRelease(
+        bc,
+        async (bridge) => await bridge.getValidatorsCount(),
+      );
       return res.count;
     }
     const newV = Buffer.from(wallet.pubkey).toString("base64");
@@ -48,26 +50,28 @@ export default async function addSelfAsValidator(
     );
 
     const validatorToAddPublicKeyUint8 = Buffer.from(wallet.address, "hex");
-    const [bridge, release] = await bc();
-    const result = await bridge.addValidator({
-      data: {
-        validator: [
-          encodeSecp256k1Pubkey(validatorToAddPublicKeyUint8).value,
-          pubkeyToAddress(validatorToAddPublicKeyUint8),
-        ],
-        signatures: signatures.map((item) => {
-          return {
-            signature: Buffer.from(
-              item.signature.replace("0x", ""),
-              "hex",
-            ).toString("base64"),
-            signer_address: item.signerAddress,
-          };
+    const result = await useMutexAndRelease(
+      bc,
+      async (bridge) =>
+        await bridge.addValidator({
+          data: {
+            validator: [
+              encodeSecp256k1Pubkey(validatorToAddPublicKeyUint8).value,
+              pubkeyToAddress(validatorToAddPublicKeyUint8),
+            ],
+            signatures: signatures.map((item) => {
+              return {
+                signature: Buffer.from(
+                  item.signature.replace("0x", ""),
+                  "hex",
+                ).toString("base64"),
+                signer_address: item.signerAddress,
+              };
+            }),
+          },
         }),
-      },
-    });
+    );
     logger.info(`Added self as validator at ${result.transactionHash}`);
-    release();
     return "success";
   } catch (e) {
     logger.error(identifier, "Failed to add self as validator: ", e);

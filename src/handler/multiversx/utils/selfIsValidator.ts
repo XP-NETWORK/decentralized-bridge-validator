@@ -4,6 +4,7 @@ import {
   type SmartContract,
 } from "@multiversx/sdk-core/out";
 import type { UserSigner } from "@multiversx/sdk-wallet/out";
+import { useMutexAndRelease } from "../../utils";
 import type { MXProviderFetch } from "../types";
 
 export default async function selfIsValidator(
@@ -15,9 +16,10 @@ export default async function selfIsValidator(
     func: "validators",
     args: [new BytesValue(Buffer.from(signer.getAddress().hex(), "hex"))],
   });
-  const [p, r] = await provider();
-  const queryResponse = await p.queryContract(query);
-  r();
+  const queryResponse = await useMutexAndRelease(
+    provider,
+    async (p) => await p.queryContract(query),
+  );
   const validatorsDefinition = bc.getEndpoint("validators");
   const resultsParser = new ResultsParser();
   const { firstValue } = resultsParser.parseQueryResponse(

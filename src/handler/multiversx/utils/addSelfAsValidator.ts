@@ -12,6 +12,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 import type { MXProviderFetch } from "../types";
@@ -31,9 +32,10 @@ export default async function addSelfAsValidator(
       const query = bc.createQuery({
         func: "validatorsCount",
       });
-      const [p, r] = await provider();
-      const queryResponse = await p.queryContract(query);
-      r();
+      const queryResponse = await useMutexAndRelease(
+        provider,
+        async (p) => await p.queryContract(query),
+      );
       const validatorsCountDefinition = bc.getEndpoint("validatorsCount");
 
       const { firstValue } = new ResultsParser().parseQueryResponse(
@@ -88,10 +90,12 @@ export default async function addSelfAsValidator(
 
     const userAddress = new Address(signer.getAddress().bech32());
     const userAccount = new Account(userAddress);
-    let [p, r] = await provider();
-    const userOnNetwork = await p.getAccount(userAddress);
+
+    const userOnNetwork = await useMutexAndRelease(
+      provider,
+      async (p) => await p.getAccount(userAddress),
+    );
     userAccount.update(userOnNetwork);
-    r();
 
     const data = [
       new AddressValue(signer.getAddress()),
@@ -115,14 +119,21 @@ export default async function addSelfAsValidator(
     transaction.applySignature(
       await signer.sign(transaction.serializeForSigning()),
     );
-    [p, r] = await provider();
-    const receipt = await p.sendTransaction(transaction);
-    const watcher = await new TransactionWatcher(p, {
-      patienceMilliseconds: 10000,
-      pollingIntervalMilliseconds: 100000,
-      timeoutMilliseconds: 10000,
-    }).awaitCompleted(receipt);
-    r();
+    // [p, r] = await provider();
+
+    const receipt = await useMutexAndRelease(
+      provider,
+      async (p) => await p.sendTransaction(transaction),
+    );
+    const watcher = await useMutexAndRelease(
+      provider,
+      async (p) =>
+        await new TransactionWatcher(p, {
+          patienceMilliseconds: 10000,
+          pollingIntervalMilliseconds: 100000,
+          timeoutMilliseconds: 10000,
+        }).awaitCompleted(receipt),
+    );
     if (watcher.status.isSuccessful()) {
       return "success";
     }

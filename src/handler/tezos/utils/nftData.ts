@@ -9,7 +9,7 @@ import {
   tas,
 } from "../../../contractsTypes/tezos/type-aliases";
 import type { LogInstance } from "../../types";
-import { fetchHttpOrIpfs } from "../../utils";
+import { fetchHttpOrIpfs, useMutexAndRelease } from "../../utils";
 import type { TezosProviderFetch } from "../types";
 
 export default async function nftData(
@@ -43,12 +43,16 @@ export default async function nftData(
     const metaDataInHex = tokenMetaData.token_info.get("");
     return bytesToString(metaDataInHex);
   };
-  let [provider, release] = await fetchProvider();
-  let tokenMd = await getNftTokenMetaData(contract, BigInt(tokenId), provider);
-  release();
+  // let [provider, release] = await fetchProvider();
+  let tokenMd = await useMutexAndRelease(
+    fetchProvider,
+    async (provider) =>
+      await getNftTokenMetaData(contract, BigInt(tokenId), provider),
+  );
+  // release();
   tokenMd = tokenMd.substring(tokenMd.indexOf("https://"));
   let name = "NTEZOS";
-  [provider, release] = await fetchProvider();
+  let [provider, release] = await fetchProvider();
   try {
     provider.addExtension(new Tzip16Module());
     const nftContract = await provider.contract.at(contract, tzip16);

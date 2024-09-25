@@ -8,6 +8,7 @@ import type { LogInstance } from "../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../utils";
 
@@ -33,9 +34,10 @@ export default async function addSelfAsValidator(
         `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
       );
     }
-    let [bridge, release] = await bc();
-    let validatorsCount = (await bridge.storage()).validators_count.toNumber();
-    release();
+
+    let validatorsCount = await useMutexAndRelease(bc, async (bridge) =>
+      (await bridge.storage()).validators_count.toNumber(),
+    );
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(await signer.publicKey()),
     );
@@ -50,9 +52,9 @@ export default async function addSelfAsValidator(
       signatureCount = Number(
         await storage.getStakingSignaturesCount(await signer.publicKeyHash()),
       );
-      [bridge, release] = await bc();
-      validatorsCount = (await bridge.storage()).validators_count.toNumber();
-      release();
+      validatorsCount = await useMutexAndRelease(bc, async (bridge) =>
+        (await bridge.storage()).validators_count.toNumber(),
+      );
     }
 
     const stakingSignatures = [
@@ -63,32 +65,33 @@ export default async function addSelfAsValidator(
         signature: item.signature,
       };
     });
-    [bridge, release] = await bc();
-    await bridge.methodsObject
-      .add_validator({
-        sigs: stakingSignatures.map((e) => {
-          const addr = tas.address(
-            b58cencode(
-              hash(
-                new Uint8Array(b58cdecode(e.signerAddress, prefix.edpk)),
-                20,
+    await useMutexAndRelease(bc, async (bridge) => {
+      await bridge.methodsObject
+        .add_validator({
+          sigs: stakingSignatures.map((e) => {
+            const addr = tas.address(
+              b58cencode(
+                hash(
+                  new Uint8Array(b58cdecode(e.signerAddress, prefix.edpk)),
+                  20,
+                ),
+                prefix.tz1,
               ),
-              prefix.tz1,
-            ),
-          );
-          const sig = tas.signature(
-            Buffer.from(e.signature.replace("0x", ""), "hex").toString(),
-          );
-          return {
-            addr,
-            sig,
-            signer: tas.key(e.signerAddress),
-          };
-        }),
-        validator: tas.address(await signer.publicKeyHash()),
-      })
-      .send();
-    release();
+            );
+            const sig = tas.signature(
+              Buffer.from(e.signature.replace("0x", ""), "hex").toString(),
+            );
+            return {
+              addr,
+              sig,
+              signer: tas.key(e.signerAddress),
+            };
+          }),
+          validator: tas.address(await signer.publicKeyHash()),
+        })
+        .send();
+    });
+
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

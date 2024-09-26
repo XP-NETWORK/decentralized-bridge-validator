@@ -24,6 +24,7 @@ export default async function signClaimData(
       data.tokenAmount,
       data.nftType,
       data.fee,
+      data.lockTxChain,
     ].join(""),
   );
 

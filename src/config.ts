@@ -50,6 +50,18 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "TON",
   },
   {
+    chain: "SECRET",
+    blockChunks: 1000,
+    chainType: "scrt",
+    chainId: "pulsar-3",
+    contractAddress: "secret1evanrnzez3cwhuwgevmjmd8jl8k4jfhkfgt3x2",
+    decimals: 6,
+    intialFund: "100000000",
+    lastBlock: 6949981,
+    nativeCoinSymbol: "SCRT",
+    rpcURL: "https://api.pulsar.scrttestnet.com",
+  },
+  {
     blockChunks: 1000,
     chain: "TEZOS",
     chainType: "tezos",

@@ -23,7 +23,7 @@ export default async function listenForLockEvents(
     try {
       {
         // let [bridge, release] = await fetchBridge();
-        const latestBlockNumberResponse = useMutexAndRelease(
+        const latestBlockNumberResponse = await useMutexAndRelease(
           fetchBridge,
           async (bridge) => await bridge.get_nonce(),
         );

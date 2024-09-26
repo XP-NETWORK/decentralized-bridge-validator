@@ -18,18 +18,10 @@ const CHAIN_IDENT = "MULTIVERSX";
 const WAIT_TIME = 10000;
 
 function generateWaitTime(num1: number, num2: number) {
-  // Calculate the absolute difference between the two numbers
   const difference = Math.abs(num1 - num2);
-
-  // Define the maximum difference we want to consider
-  const maxDifference = 100;
-
-  // Calculate the score (inverse relationship with the difference)
-  // Scale from 1 to 10 instead of 0 to 10
+  const maxDifference = 1000;
   const score =
-    7.9 * (1 - Math.min(difference, maxDifference) / maxDifference) + 2;
-
-  // Round the score to one decimal place
+    3 * (1 - Math.min(difference, maxDifference) / maxDifference) + 1;
   return Math.round(score * 10) / 10;
 }
 

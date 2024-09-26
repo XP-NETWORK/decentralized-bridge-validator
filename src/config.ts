@@ -54,7 +54,7 @@ export const bridgeTestChains = [
     blockChunks: 1000,
     chainType: "scrt",
     chainId: "pulsar-3",
-    contractAddress: "secret1evanrnzez3cwhuwgevmjmd8jl8k4jfhkfgt3x2",
+    contractAddress: "secret1grl2nduhjkvags56ewgcn80ymmmke8tfrm9zg9",
     decimals: 6,
     intialFund: "100000000",
     lastBlock: 6949981,

@@ -64,6 +64,7 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
       royaltyInfoSelector,
       `Trying to fetch royaltyInfo() for ${contract}`,
       logger,
+      5,
     ).catch(() => {
       logger.warn("retry royalty catch");
       return undefined;
@@ -100,7 +101,7 @@ async function evmRetryIfFunctionExistsElse<Ret>(
   selector: string,
   ctx: string,
   logger: LogInstance,
-  retryCount = 5,
+  retryCount?: number,
 ) {
   if (code.includes(selector)) {
     return await retry(fn, ctx, logger, retryCount);

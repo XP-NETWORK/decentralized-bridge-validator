@@ -44,6 +44,7 @@ export default async function nftData(
     },
     `Trying to fetch Royalty Info for ${contract}`,
     log,
+    5,
   ).catch(() => undefined);
   const decimal_places_in_rates = royalty_info?.decimal_places_in_rates ?? 0;
   const max_percentage = 10 ** decimal_places_in_rates;

@@ -4,7 +4,6 @@ import type { EventBuilder } from "../..";
 import type { TSupportedChains } from "../../../config";
 import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import { LockedEvent } from "../../../persistence/entities/locked";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { EVMProviderFetch, MutexReleaser } from "../types";
@@ -73,14 +72,6 @@ const listenForLockEvents = (
           logger.trace(`Processing TX at: ${log.transactionHash}`);
           const decoded = ifs.parseLog(log);
           if (!decoded) continue;
-          const found = await em.findOne(LockedEvent, {
-            transactionHash: log.transactionHash,
-            listenerChain: chainIdent,
-          });
-          if (found) {
-            logger.info("Transaction already processed", log.transactionHash);
-            continue;
-          }
           await cb(
             await builder.nftLocked(
               decoded.args.tokenId.toString(),

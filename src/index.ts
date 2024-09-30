@@ -15,6 +15,7 @@ async function main() {
     type: "pretty",
     name: "Validator",
     stylePrettyLogs: true,
+    minLevel: Number.parseInt(process.env.LOG_LEVEL || "3"),
   });
   await configureValidator(logger);
 

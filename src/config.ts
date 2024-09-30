@@ -148,7 +148,8 @@ export const prodBridgeConfig: IBridgeConfig = {
   bridgeChains: [
     {
       chain: "BSC",
-      rpcURL: "https://bsc-pokt.nodies.app",
+      rpcURL:
+        "https://bsc-mainnet.core.chainstack.com/0326b21cda5f10887357c4c0ae08ed9d",
       nativeCoinSymbol: "BNB",
       intialFund: "50000000000000000",
       contractAddress: "0x289FDdDce5119C41B82C969135212061D5E7Dce5",
@@ -159,7 +160,8 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "MATIC",
-      rpcURL: "https://polygon.llamarpc.com",
+      rpcURL:
+        "https://polygon-mainnet.core.chainstack.com/56a6be3b396d25f24ceab02d4aaf54d0",
       nativeCoinSymbol: "MATIC",
       intialFund: "50000000000000000",
       contractAddress: "0x2011DAD5caE280243d075D12a38CcCc0Fb4412dE",
@@ -170,7 +172,8 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "BASE",
-      rpcURL: "https://base.llamarpc.com",
+      rpcURL:
+        "https://base-mainnet.core.chainstack.com/723e09b9165bbbe48f42ccab919e33c6",
       nativeCoinSymbol: "BASE",
       intialFund: "5000000000000000",
       contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
@@ -194,7 +197,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "TON",
       rpcURL:
-        "https://toncenter.com/api/v2/jsonRPC?api_key=78b6f2e7cbe2900dd39ab51a3f8fe3090154973343929991ed9b4f63fbeb45a5",
+        "https://ton-mainnet.core.chainstack.com/27a2fee278535648c4a96897849889a1/api/v2",
       chainType: "ton",
       contractAddress: "EQDn9dWuVp18AMnFc7yrEx6TxDwrbFI8FZYElkY7Exe1QcQO",
       decimals: 9,
@@ -212,22 +215,24 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 6625053,
       nativeCoinSymbol: "TEZOS",
       restApiURL: "https://api.tzkt.io",
-      rpcURL: "https://mainnet.ecadinfra.com",
+      rpcURL:
+        "https://nd-207-267-961.p2pify.com/d026453c73c8efe250c01525d0f24ead",
     },
-    {
-      chainType: "icp",
-      chain: "ICP",
-      contractAddress: "6gfde-pqaaa-aaaal-al76q-cai",
-      decimals: 8,
-      intialFund: "10000000",
-      lastBlock: 0,
-      nativeCoinSymbol: "ICP",
-      rpcURL: "https://ic0.app",
-    },
+    // {
+    //   chainType: "icp",
+    //   chain: "ICP",
+    //   contractAddress: "6gfde-pqaaa-aaaal-al76q-cai",
+    //   decimals: 8,
+    //   intialFund: "10000000",
+    //   lastBlock: 0,
+    //   nativeCoinSymbol: "ICP",
+    //   rpcURL: "https://ic0.app",
+    // },
   ],
   storageConfig: {
     chain: "OP",
-    rpcURL: "https://optimism.llamarpc.com",
+    rpcURL:
+      "https://optimism-mainnet.core.chainstack.com/eb8e1f7806a102e3bd7313c67dcf9f18",
     nativeCoinSymbol: "OP",
     intialFund: "5000000000000000",
     contractAddress: "0xc6e84955ba7C354fb7ca60011883e5673Be3F629",
@@ -238,7 +243,8 @@ export const prodBridgeConfig: IBridgeConfig = {
   },
   stakingConfig: {
     chain: "BSC",
-    rpcURL: "https://bsc.blockpi.network/v1/rpc/public",
+    rpcURL:
+      "https://bsc-mainnet.core.chainstack.com/0326b21cda5f10887357c4c0ae08ed9d",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: "evm",

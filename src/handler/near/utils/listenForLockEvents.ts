@@ -21,7 +21,7 @@ export default async function listenForLockEvents(
   let lastBlock = lastBlock_;
   while (true)
     try {
-      await tryRerunningFailed(CHAIN_IDENT, em, cb, logger);
+      await tryRerunningFailed(CHAIN_IDENT, em, builder, cb, logger);
       const response = await theGraphApi.post<{
         data: {
           lockedEvents: {

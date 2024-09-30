@@ -134,11 +134,10 @@ export async function listenEvents(
         listenerChain: ev.listenerChain,
       });
       if (found) {
-        const to_save = wrap(found).assign({
+        wrap(found).assign({
           status: true,
         });
-
-        await em.persistAndFlush(to_save);
+        await em.flush();
       }
       return;
     }
@@ -199,11 +198,10 @@ export async function listenEvents(
       listenerChain: ev.listenerChain,
     });
     if (found) {
-      const to_save = wrap(found).assign({
+      wrap(found).assign({
         status: true,
       });
-
-      await em.persistAndFlush(to_save);
+      await em.flush();
     }
   }
 

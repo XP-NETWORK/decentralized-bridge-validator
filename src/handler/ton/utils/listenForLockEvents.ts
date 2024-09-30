@@ -23,7 +23,7 @@ export default async function listenForLockEvents(
   let lastBlock = Number(lastBlock_);
   while (true) {
     try {
-      await tryRerunningFailed(CHAIN_IDENT, em, cb, logger);
+      await tryRerunningFailed(CHAIN_IDENT, em, builder, cb, logger);
       const latestTx = await useMutexAndRelease(
         fetchClient,
         async (p) =>

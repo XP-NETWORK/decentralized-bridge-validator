@@ -25,7 +25,7 @@ const listenForLockEvents = (
     );
     let lastBlock = lastBlock_;
     while (true) {
-      await tryRerunningFailed(chainIdent, em, cb, logger);
+      await tryRerunningFailed(chainIdent, em, builder, cb, logger);
       try {
         const latestBlockNumber = await useMutexAndRelease(
           fetchProvider,

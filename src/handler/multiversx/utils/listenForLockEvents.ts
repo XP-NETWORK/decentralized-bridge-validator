@@ -63,7 +63,7 @@ export default async function listenForLockEvents(
   const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
   while (true) {
-    await tryRerunningFailed(CHAIN_IDENT, em, cb, logger);
+    await tryRerunningFailed(CHAIN_IDENT, em, builder, cb, logger);
     try {
       {
         const txs = (

@@ -25,6 +25,7 @@ import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { HttpAgent } from "@dfinity/agent";
 import { Ed25519KeyIdentity } from "@dfinity/identity";
 import type { EntityManager } from "@mikro-orm/sqlite";
+import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { Mutex } from "async-mutex";
 import axios, { type AxiosInstance } from "axios";
 import {
@@ -450,9 +451,9 @@ export async function configTonHandler(
   serverLinkHandler: AxiosInstance | undefined,
   tonLogger: LogInstance,
 ) {
+  const endpoint = await getHttpEndpoint(); // get the decentralized RPC endpoint
   const client = new TonClient({
-    endpoint: conf.rpcURL,
-    apiKey: process.env.TON_API_KEY,
+    endpoint: endpoint,
   });
   const signer = WalletContractV4.create({
     publicKey: Buffer.from(tonWallet.publicKey, "hex"),
@@ -469,7 +470,7 @@ export async function configTonHandler(
   }
   return tonHandler({
     fetchClient,
-    provider: new TonWeb.HttpProvider(conf.rpcURL),
+    provider: new TonWeb.HttpProvider(endpoint),
     signer,
     bridge: conf.contractAddress,
     storage,

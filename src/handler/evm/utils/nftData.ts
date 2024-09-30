@@ -103,7 +103,7 @@ async function evmRetryIfFunctionExistsElse<Ret>(
   logger: LogInstance,
   retryCount?: number,
 ) {
-  if (code.includes(selector)) {
+  if (code.includes(selector.replace("0x", ""))) {
     return await retry(fn, ctx, logger, retryCount);
   }
   return undefined;

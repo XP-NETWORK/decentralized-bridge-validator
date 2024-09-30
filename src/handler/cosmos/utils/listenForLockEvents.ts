@@ -17,18 +17,10 @@ export default async function listenForLockEvents(
   em: EntityManager,
   log: LogInstance,
 ) {
-  try {
-    await tryRerunningFailed(identifier, em, cb);
-  } catch (e) {
-    log.info(
-      "Error While trying to process previous failed events. Sleeping for 10 seconds",
-      e,
-    );
-  }
   let lastBlock = lastBlock_;
-
   while (true)
     try {
+      await tryRerunningFailed(identifier, em, cb, log);
       {
         const latestBlockNumber = await useMutexAndRelease(
           fetchProvider,

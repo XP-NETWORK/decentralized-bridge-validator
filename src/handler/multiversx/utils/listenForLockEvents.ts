@@ -62,15 +62,8 @@ export default async function listenForLockEvents(
   };
   const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
-  try {
-    await tryRerunningFailed(CHAIN_IDENT, em, cb);
-  } catch (e) {
-    logger.info(
-      "Error While trying to process previous failed events. Sleeping for 10 seconds",
-      e,
-    );
-  }
   while (true) {
+    await tryRerunningFailed(CHAIN_IDENT, em, cb, logger);
     try {
       {
         const txs = (

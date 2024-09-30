@@ -20,19 +20,12 @@ const listenForLockEvents = (
   logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: LockEventIter) => {
-    try {
-      await tryRerunningFailed(chainIdent, em, cb);
-    } catch (e) {
-      logger.info(
-        "Error While trying to process previous failed events. Sleeping for 10 seconds",
-        e,
-      );
-    }
     const ifs = await useMutexAndRelease(bc, (bridge) =>
       Promise.resolve(bridge.interface),
     );
     let lastBlock = lastBlock_;
     while (true) {
+      await tryRerunningFailed(chainIdent, em, cb, logger);
       try {
         const latestBlockNumber = await useMutexAndRelease(
           fetchProvider,

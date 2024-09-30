@@ -19,66 +19,55 @@ export default async function listenForLockEvents(
   em: EntityManager,
   logger: LogInstance,
 ) {
-  try {
-    await tryRerunningFailed(CHAIN_IDENT, em, cb);
-  } catch (e) {
-    logger.info(
-      "Error While trying to process previous failed events. Sleeping for 10 seconds",
-      e,
-    );
-  }
   let lastBlock = lastBlock_;
   while (true)
     try {
-      {
-        // let [bridge, release] = await fetchBridge();
-        const latestBlockNumberResponse = await useMutexAndRelease(
-          fetchBridge,
-          async (bridge) => await bridge.get_nonce(),
-        );
-        // release();
-        const latestBlockNumber = Number(latestBlockNumberResponse);
+      await tryRerunningFailed(CHAIN_IDENT, em, cb, logger);
+      const latestBlockNumberResponse = await useMutexAndRelease(
+        fetchBridge,
+        async (bridge) => await bridge.get_nonce(),
+      );
+      const latestBlockNumber = Number(latestBlockNumberResponse);
 
-        if (latestBlockNumber <= lastBlock) {
-          logger.trace(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
-          await setTimeout(10000);
-          continue;
-        }
-        logger.info(`Found ${latestBlockNumber - lastBlock} new TXs`);
-        const [hash] = await useMutexAndRelease(fetchBridge, async (bridge) => {
-          return await bridge.get_hash_from_nonce(BigInt(lastBlock));
-        });
-        if (!hash) continue;
-        const [log] = await useMutexAndRelease(
-          fetchBridge,
-          async (bridge) => await bridge.get_locked_data(hash),
-        );
-        if (!log) continue;
-        lastBlock = lastBlock + 1;
-        const {
+      if (latestBlockNumber <= lastBlock) {
+        logger.trace(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
+        await setTimeout(10000);
+        continue;
+      }
+      logger.info(`Found ${latestBlockNumber - lastBlock} new TXs`);
+      const [hash] = await useMutexAndRelease(fetchBridge, async (bridge) => {
+        return await bridge.get_hash_from_nonce(BigInt(lastBlock));
+      });
+      if (!hash) continue;
+      const [log] = await useMutexAndRelease(
+        fetchBridge,
+        async (bridge) => await bridge.get_locked_data(hash),
+      );
+      if (!log) continue;
+      lastBlock = lastBlock + 1;
+      const {
+        destination_chain,
+        destination_user_address,
+        nft_type,
+        source_chain,
+        source_nft_contract_address,
+        token_amount,
+        token_id,
+      } = log;
+      await cb(
+        await builder.nftLocked(
+          token_id.toString(),
           destination_chain,
           destination_user_address,
+          source_nft_contract_address.toString(),
+          token_amount.toString(),
           nft_type,
           source_chain,
-          source_nft_contract_address,
-          token_amount,
-          token_id,
-        } = log;
-        await cb(
-          await builder.nftLocked(
-            token_id.toString(),
-            destination_chain,
-            destination_user_address,
-            source_nft_contract_address.toString(),
-            token_amount.toString(),
-            nft_type,
-            source_chain,
-            hash,
-            CHAIN_IDENT,
-            "",
-          ),
-        );
-      }
+          hash,
+          CHAIN_IDENT,
+          "",
+        ),
+      );
       await em.upsert(Block, {
         chain: CHAIN_IDENT,
         contractAddress: bc,

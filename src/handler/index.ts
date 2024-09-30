@@ -15,7 +15,7 @@ import type {
   TNftTransferDetailsObject,
   TStakingHandler,
 } from "./types";
-import { fetchHttpOrIpfs, retry } from "./utils";
+import { fetchHttpOrIpfs, retry, useMutexAndRelease } from "./utils";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -31,7 +31,7 @@ export async function listenEvents(
   const storex = new Mutex();
   const fetchStorage = async () => {
     const releaser = await storex.acquire();
-    return [releaser, storage] as const;
+    return [storage, releaser] as const;
   };
 
   const builder = eventBuilder(em);
@@ -142,35 +142,36 @@ export async function listenEvents(
       return;
     }
     const approvalFn = async () => {
-      const approveLockTx = async () => {
-        log.trace("Approving Lock");
+      log.trace("Approving Lock");
 
-        const [nonce, release] = await fetchNonce();
-        const [releaseStorage, storage] = await fetchStorage();
-        const feeData = await storageProvider.getFeeData();
-        log.info(
-          `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
-        );
-        const response = await (
-          await storage.approveLockNft(
-            inft.transactionHash,
-            chain.chainIdent,
-            signature.signature,
-            signature.signer,
-            {
-              nonce,
-              maxFeePerGas: feeData.maxFeePerGas,
-              maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
-            },
-          )
-        ).wait();
-        log.info(
-          `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
-        );
-        await setTimeout(5 * 1000);
-        release();
-        releaseStorage();
-        return response;
+      const approveLockTx = async () => {
+        const nonce = await useMutexAndRelease(fetchNonce, async (nonce) => {
+          return nonce;
+        });
+        return await useMutexAndRelease(fetchStorage, async (storage) => {
+          const feeData = await storageProvider.getFeeData();
+          log.info(
+            `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+          );
+          const response = await (
+            await storage.approveLockNft(
+              inft.transactionHash,
+              chain.chainIdent,
+              signature.signature,
+              signature.signer,
+              {
+                nonce,
+                maxFeePerGas: feeData.maxFeePerGas,
+                maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+              },
+            )
+          ).wait();
+          log.info(
+            `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+          );
+          await setTimeout(5 * 1000);
+          return response;
+        });
       };
 
       try {

@@ -149,14 +149,14 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "BSC",
       rpcURL:
-        "https://bsc-mainnet.core.chainstack.com/0326b21cda5f10887357c4c0ae08ed9d",
+        "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
       nativeCoinSymbol: "BNB",
       intialFund: "50000000000000000",
       contractAddress: "0x289FDdDce5119C41B82C969135212061D5E7Dce5",
       chainType: "evm",
       lastBlock: 42329114,
       decimals: 18,
-      blockChunks: 1000,
+      blockChunks: 100,
     },
     {
       chain: "MATIC",
@@ -168,7 +168,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chainType: "evm",
       lastBlock: 59709068,
       decimals: 18,
-      blockChunks: 1000,
+      blockChunks: 100,
     },
     {
       chain: "BASE",
@@ -180,7 +180,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chainType: "evm",
       lastBlock: 18987568,
       decimals: 18,
-      blockChunks: 1000,
+      blockChunks: 100,
     },
     {
       chain: "HEDERA",
@@ -197,7 +197,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "TON",
       rpcURL:
-        "https://ton-mainnet.core.chainstack.com/27a2fee278535648c4a96897849889a1/api/v2",
+        "https://toncenter.com/api/v2/jsonRPC?api_key=78b6f2e7cbe2900dd39ab51a3f8fe3090154973343929991ed9b4f63fbeb45a5",
       chainType: "ton",
       contractAddress: "EQDn9dWuVp18AMnFc7yrEx6TxDwrbFI8FZYElkY7Exe1QcQO",
       decimals: 9,
@@ -215,8 +215,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 6625053,
       nativeCoinSymbol: "TEZOS",
       restApiURL: "https://api.tzkt.io",
-      rpcURL:
-        "https://nd-207-267-961.p2pify.com/d026453c73c8efe250c01525d0f24ead",
+      rpcURL: "https://mainnet.ecadinfra.com",
     },
     // {
     //   chainType: "icp",
@@ -239,12 +238,12 @@ export const prodBridgeConfig: IBridgeConfig = {
     chainType: "evm",
     lastBlock: 123638429,
     decimals: 18,
-    blockChunks: 1000,
+    blockChunks: 100,
   },
   stakingConfig: {
     chain: "BSC",
     rpcURL:
-      "https://bsc-mainnet.core.chainstack.com/0326b21cda5f10887357c4c0ae08ed9d",
+      "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: "evm",
@@ -253,7 +252,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     intialFund: "0",
     lastBlock: 41099482,
     decimals: 18,
-    blockChunks: 1000,
+    blockChunks: 100,
   },
 };
 

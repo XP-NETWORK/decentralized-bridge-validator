@@ -50,6 +50,7 @@ export async function retry<T>(
   let count = retryCount;
   while (true) {
     try {
+      log.info(`Context: ${ctx} - Retrying:`);
       const res = await func();
       log.trace("RESULT", res);
       return res; // Only returns once the function succeeds

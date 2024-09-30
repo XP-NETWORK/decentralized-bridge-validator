@@ -143,6 +143,8 @@ export async function listenEvents(
     }
     const approvalFn = async () => {
       const approveLockTx = async () => {
+        log.trace("Approving Lock");
+
         const [nonce, release] = await fetchNonce();
         const [releaseStorage, storage] = await fetchStorage();
         const feeData = await storageProvider.getFeeData();

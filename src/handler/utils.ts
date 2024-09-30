@@ -51,6 +51,7 @@ export async function retry<T>(
   while (true) {
     try {
       const res = await func();
+      log.info("RESULT", res);
       return res; // Only returns once the function succeeds
     } catch (err) {
       log.info(`Context: ${ctx} - Retrying. Error:`, err);

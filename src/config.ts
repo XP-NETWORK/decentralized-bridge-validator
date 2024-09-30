@@ -5,6 +5,10 @@ import type {
   TChain,
 } from "./types";
 
+import { config } from "dotenv";
+
+config();
+
 export const bridgeTestChains = [
   {
     chain: "BSC",
@@ -143,7 +147,6 @@ export const testnetBridgeConfig: IBridgeConfig = {
   storageConfig: storageTestnetConfig,
   stakingConfig: stakingTestChain,
 };
-
 export const prodBridgeConfig: IBridgeConfig = {
   bridgeChains: [
     {

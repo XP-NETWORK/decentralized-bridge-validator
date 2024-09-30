@@ -114,16 +114,16 @@ export async function listenEvents(
 
     const signature = await destinationChain.signClaimData(inft);
 
-    log.info("SIGN DATA", signature);
+    log.trace("Signatures: ", signature);
 
     const alreadyProcessed = await deps.storage
       .usedSignatures(signature.signature)
       .catch((e) => {
-        log.info("USED SIGN ERROR", e);
+        log.trace("USED SIGN ERROR", e);
         throw e;
       });
 
-    log.info("IS ALREADY PROCESSED", alreadyProcessed);
+    log.trace("Tx Already Processed?", alreadyProcessed);
 
     if (alreadyProcessed) {
       log.warn(

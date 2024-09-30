@@ -42,10 +42,11 @@ export default async function listenForLockEvents(
       });
 
       if (response.data.data.lockedEvents.length === 0) {
-        logger.trace(`0 Txns Since: ${lastBlock}. Awaiting 10s`);
+        logger.info(`0 Txns Since: ${lastBlock}. Awaiting 10s`);
         await setTimeout(10000);
         continue;
       }
+      logger.info(`Found ${response.data.data.lockedEvents.length} new TXs`);
 
       for (const tx of response.data.data.lockedEvents) {
         lastBlock += 1;

@@ -33,8 +33,8 @@ export default async function listenForLockEvents(
           }),
       );
       if (Number(latestTx[0].lt) === lastBlock) {
-        logger.trace(
-          `No New Transaction found since ${lastBlock}. Waiting for 10 Seconds before looking for new transactions`,
+        logger.info(
+          ` ${lastBlock} -> ${latestTx[0].lt.toString()}: 0 TXs. Awaiting 10s`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));
         continue;
@@ -51,7 +51,7 @@ export default async function listenForLockEvents(
       );
 
       if (!transactions.length) {
-        logger.trace(
+        logger.info(
           ` ${lastBlock} -> ${latestTx[0].lt.toString()}: 0 TXs. Awaiting 10s`,
         );
         await new Promise<undefined>((e) => setTimeout(e, 10000));

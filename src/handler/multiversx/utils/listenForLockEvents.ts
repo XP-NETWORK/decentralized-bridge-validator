@@ -83,7 +83,7 @@ export default async function listenForLockEvents(
           );
           const lastNonce = lastestStatus.HighestFinalNonce;
           const wt = generateWaitTime(lastBlock_, lastNonce);
-          logger.trace(
+          logger.info(
             `No TX Since: ${lastBlock_}. Awaiting ${Math.round(wt)}s`,
           );
           lastBlock_ = lastBlock_ + 1;
@@ -100,12 +100,11 @@ export default async function listenForLockEvents(
           await setTimeout(wt * 1000);
           continue;
         }
-        logger.trace(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);
+        logger.info(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);
         for (const tx of txsForBridge) {
           logger.trace(`Waiting for TX Completion: ${tx.hash}`);
           await waitForTx(tx.hash);
           logger.trace(`TX Completed: ${tx.hash}`);
-          console.log(tx);
           if (!(tx.type === "normal")) continue;
           const txo = await useMutexAndRelease(
             provider,

@@ -30,7 +30,7 @@ export default async function listenForLockEvents(
       const latestBlockNumber = Number(latestBlockNumberResponse);
 
       if (latestBlockNumber <= lastBlock) {
-        logger.trace(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
+        logger.info(`0 TXs since Last Nonce: ${lastBlock}. Awaiting 10s`);
         await setTimeout(10000);
         continue;
       }

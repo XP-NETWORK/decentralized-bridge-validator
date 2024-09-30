@@ -44,7 +44,7 @@ export default async function listenForLockEvents(
         });
         const startBlock = lastBlock;
         if (!logs.length) {
-          logger.trace(
+          logger.info(
             ` ${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
           lastBlock = latestBlockNumber;

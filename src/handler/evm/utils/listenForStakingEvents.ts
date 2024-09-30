@@ -38,7 +38,7 @@ const listenForStakingEvents = (
         });
         const startBlock = lastBlock;
         if (!logs.length) {
-          logger.trace(
+          logger.info(
             `[${startBlock} -> ${latestBlock}]: 0 TXs. Awaiting 10s.`,
           );
           lastBlock = latestBlock + 1;
@@ -51,9 +51,9 @@ const listenForStakingEvents = (
           await new Promise<undefined>((e) => setTimeout(e, 10000));
           continue;
         }
-        logger.trace(`[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
+        logger.info(`[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
         for (const log of logs) {
-          logger.trace(`Processing TX at: ${log.transactionHash}`);
+          logger.info(`Processing TX at: ${log.transactionHash}`);
           const decoded = stakerInt.parseLog(log);
           const receipt = await log.getTransactionReceipt();
           if (!decoded) continue;

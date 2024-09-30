@@ -1,5 +1,6 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import { Address } from "@ton/ton";
+import { isAxiosError } from "axios";
 import { raise } from "..";
 import type { EventBuilder } from "../..";
 import { loadLockedEvent } from "../../../contractsTypes/ton/tonBridge";
@@ -117,9 +118,18 @@ export default async function listenForLockEvents(
         lastBlock: lastBlock,
       });
     } catch (e) {
-      logger.error(
-        `${e} while listening for ton events. Sleeping for 10 seconds`,
-      );
+      if (isAxiosError(e)) {
+        logger.error(
+          "Error while listening for ton events. Sleeping for 10 seconds. Reason:",
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          e.response!.data.error,
+        );
+      } else {
+        logger.error(
+          "While listening for ton events. Sleeping for 10 seconds",
+          e,
+        );
+      }
       await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
     }
   }

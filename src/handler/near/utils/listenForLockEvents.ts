@@ -3,6 +3,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
+import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 
 const CHAIN_IDENT = "NEAR";
@@ -17,6 +18,14 @@ export default async function listenForLockEvents(
   em: EntityManager,
   logger: LogInstance,
 ) {
+  try {
+    await tryRerunningFailed(CHAIN_IDENT, em, cb);
+  } catch (e) {
+    logger.info(
+      "Error While trying to process previous failed events. Sleeping for 10 seconds",
+      e,
+    );
+  }
   let lastBlock = lastBlock_;
   while (true)
     try {

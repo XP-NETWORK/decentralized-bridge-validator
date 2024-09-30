@@ -9,6 +9,7 @@ import { ApiNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import type { Axios } from "axios";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
+import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { MXProviderFetch } from "../types";
@@ -61,6 +62,14 @@ export default async function listenForLockEvents(
   };
   const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
+  try {
+    await tryRerunningFailed(CHAIN_IDENT, em, cb);
+  } catch (e) {
+    logger.info(
+      "Error While trying to process previous failed events. Sleeping for 10 seconds",
+      e,
+    );
+  }
   while (true) {
     try {
       {

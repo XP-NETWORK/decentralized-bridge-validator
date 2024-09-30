@@ -1,6 +1,7 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
+import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { CosmWasmFetchProvider } from "../types";
@@ -16,7 +17,16 @@ export default async function listenForLockEvents(
   em: EntityManager,
   log: LogInstance,
 ) {
+  try {
+    await tryRerunningFailed(identifier, em, cb);
+  } catch (e) {
+    log.info(
+      "Error While trying to process previous failed events. Sleeping for 10 seconds",
+      e,
+    );
+  }
   let lastBlock = lastBlock_;
+
   while (true)
     try {
       {

@@ -4,6 +4,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { EventBuilder } from "../..";
 import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import { Block } from "../../../persistence/entities/block";
+import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 
@@ -18,6 +19,14 @@ export default async function listenForLockEvents(
   em: EntityManager,
   logger: LogInstance,
 ) {
+  try {
+    await tryRerunningFailed(CHAIN_IDENT, em, cb);
+  } catch (e) {
+    logger.info(
+      "Error While trying to process previous failed events. Sleeping for 10 seconds",
+      e,
+    );
+  }
   let lastBlock = lastBlock_;
   while (true)
     try {

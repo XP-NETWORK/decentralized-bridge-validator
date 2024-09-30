@@ -4,6 +4,7 @@ import type { EventBuilder } from "../..";
 import type { TSupportedChains } from "../../../config";
 import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
+import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { EVMProviderFetch, MutexReleaser } from "../types";
@@ -19,6 +20,14 @@ const listenForLockEvents = (
   logger: LogInstance,
 ) => {
   return async (builder: EventBuilder, cb: LockEventIter) => {
+    try {
+      await tryRerunningFailed(chainIdent, em, cb);
+    } catch (e) {
+      logger.info(
+        "Error While trying to process previous failed events. Sleeping for 10 seconds",
+        e,
+      );
+    }
     const ifs = await useMutexAndRelease(bc, (bridge) =>
       Promise.resolve(bridge.interface),
     );

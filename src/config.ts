@@ -1,3 +1,4 @@
+import { Env } from "./environment";
 import type {
   IBridgeConfig,
   IEvmChainConfig,
@@ -149,6 +150,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "BSC",
       rpcURL:
+        process.env.BSC_RPC ||
         "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
       nativeCoinSymbol: "BNB",
       intialFund: "50000000000000000",
@@ -161,6 +163,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "MATIC",
       rpcURL:
+        process.env.MATIC_RPC ||
         "https://polygon-mainnet.core.chainstack.com/56a6be3b396d25f24ceab02d4aaf54d0",
       nativeCoinSymbol: "MATIC",
       intialFund: "50000000000000000",
@@ -173,6 +176,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "BASE",
       rpcURL:
+        process.env.BASE_RPC ||
         "https://base-mainnet.core.chainstack.com/723e09b9165bbbe48f42ccab919e33c6",
       nativeCoinSymbol: "BASE",
       intialFund: "5000000000000000",
@@ -184,7 +188,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "HEDERA",
-      rpcURL: "https://mainnet.hashio.io/api",
+      rpcURL: process.env.HEDERA_RPC || "https://mainnet.hashio.io/api",
       nativeCoinSymbol: "HBAR",
       intialFund: "50000000000000000000",
       contractAddress: "0x00000000000000000000000000000000006bc585",
@@ -197,6 +201,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     {
       chain: "TON",
       rpcURL:
+        process.env.TON_RPC ||
         "https://toncenter.com/api/v2/jsonRPC?api_key=78b6f2e7cbe2900dd39ab51a3f8fe3090154973343929991ed9b4f63fbeb45a5",
       chainType: "ton",
       contractAddress: "EQDn9dWuVp18AMnFc7yrEx6TxDwrbFI8FZYElkY7Exe1QcQO",
@@ -215,7 +220,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 6625053,
       nativeCoinSymbol: "TEZOS",
       restApiURL: "https://api.tzkt.io",
-      rpcURL: "https://mainnet.ecadinfra.com",
+      rpcURL: process.env.TEZOS_RPC || "https://mainnet.ecadinfra.com",
     },
     // {
     //   chainType: "icp",
@@ -231,6 +236,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   storageConfig: {
     chain: "OP",
     rpcURL:
+      process.env.OPT_RPC ||
       "https://optimism-mainnet.core.chainstack.com/eb8e1f7806a102e3bd7313c67dcf9f18",
     nativeCoinSymbol: "OP",
     intialFund: "5000000000000000",
@@ -243,6 +249,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   stakingConfig: {
     chain: "BSC",
     rpcURL:
+      process.env.BSC_RPC ||
       "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",

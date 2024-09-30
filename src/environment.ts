@@ -10,6 +10,13 @@ export const Env = z.object({
   SERVER_PORT: z.string().optional(),
   SERVER_LINK: z.string().optional(),
   NETWORK: z.union([z.literal("testnet"), z.literal("mainnet"), z.undefined()]),
+  OPT_RPC: z.string().optional(),
+  BSC_RPC: z.string().optional(),
+  BASE_RPC: z.string().optional(),
+  MATIC_RPC: z.string().optional(),
+  HEDERA_RPC: z.string().optional(),
+  TON_RPC: z.string().optional(),
+  TEZOS_RPC: z.string().optional(),
 });
 export type Env = z.infer<typeof Env>;
 

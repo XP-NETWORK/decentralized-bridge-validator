@@ -1,4 +1,3 @@
-import { Env } from "./environment";
 import type {
   IBridgeConfig,
   IEvmChainConfig,

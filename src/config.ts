@@ -157,7 +157,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chainType: "evm",
       lastBlock: 42329114,
       decimals: 18,
-      blockChunks: 100,
+      blockChunks: 1000,
     },
     {
       chain: "MATIC",
@@ -170,7 +170,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chainType: "evm",
       lastBlock: 59709068,
       decimals: 18,
-      blockChunks: 100,
+      blockChunks: 1000,
     },
     {
       chain: "BASE",
@@ -183,7 +183,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chainType: "evm",
       lastBlock: 18987568,
       decimals: 18,
-      blockChunks: 100,
+      blockChunks: 1000,
     },
     {
       chain: "HEDERA",
@@ -243,7 +243,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     chainType: "evm",
     lastBlock: 123638429,
     decimals: 18,
-    blockChunks: 100,
+    blockChunks: 1000,
   },
   stakingConfig: {
     chain: "BSC",
@@ -258,7 +258,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     intialFund: "0",
     lastBlock: 41099482,
     decimals: 18,
-    blockChunks: 100,
+    blockChunks: 1000,
   },
 };
 

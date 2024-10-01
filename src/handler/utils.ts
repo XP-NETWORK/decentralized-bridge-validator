@@ -141,14 +141,10 @@ export async function useMutexAndRelease<Lock, Return>(
   func: (t: Lock) => Promise<Return>,
 ) {
   const [resource, release] = await lock();
-  console.log("RESOURCE START!!");
   try {
     const res = await func(resource);
-    console.log("RESOURCE TRY!!");
-
     return res;
   } finally {
-    console.log("RESOURCE FINALLY!!");
     release();
   }
 }

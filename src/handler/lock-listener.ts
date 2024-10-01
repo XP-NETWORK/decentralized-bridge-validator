@@ -225,7 +225,7 @@ const processEventsFailSafe = async (
       await processEvent(chain, ev);
       success = true;
     } catch (e) {
-      log.error("Error processing poll events", e);
+      log.error("Error processing poll events", ev, e);
       log.info("Awaiting 2s");
       await setTimeout(2 * 1000);
     }

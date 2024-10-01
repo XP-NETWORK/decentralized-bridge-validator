@@ -1,9 +1,9 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { JsonRpcProvider } from "ethers";
-import type { EventBuilder } from "../..";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import { ERC20Staking__factory } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
+import type { EventBuilder } from "../../event-builder";
 import type { LogInstance, StakeEventIter } from "../../types";
 
 const listenForStakingEvents = (

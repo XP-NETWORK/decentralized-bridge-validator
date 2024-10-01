@@ -1,8 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
-import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
+import type { EventBuilder } from "../../event-builder";
 import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 

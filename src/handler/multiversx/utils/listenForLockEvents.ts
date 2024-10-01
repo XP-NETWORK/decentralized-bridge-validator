@@ -7,8 +7,8 @@ import {
 } from "@multiversx/sdk-core/out";
 import { ApiNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import type { Axios } from "axios";
-import type { EventBuilder } from "../..";
 import { Block } from "../../../persistence/entities/block";
+import type { EventBuilder } from "../../event-builder";
 import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";

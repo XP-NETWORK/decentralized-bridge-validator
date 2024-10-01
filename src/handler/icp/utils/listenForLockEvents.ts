@@ -1,9 +1,9 @@
 import { setTimeout } from "node:timers/promises";
 import type { ActorSubclass } from "@dfinity/agent";
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { EventBuilder } from "../..";
 import type { _SERVICE } from "../../../contractsTypes/icp/bridge/bridge.types";
 import { Block } from "../../../persistence/entities/block";
+import type { EventBuilder } from "../../event-builder";
 import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";

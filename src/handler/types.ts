@@ -1,6 +1,6 @@
 import type { Logger } from "tslog";
 import type { TSupportedChainTypes, TSupportedChains } from "../config";
-import type { EventBuilder } from "../handler";
+import type { EventBuilder } from "./event-builder";
 
 export type TNftData = {
   name: string;

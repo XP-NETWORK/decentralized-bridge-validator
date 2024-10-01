@@ -3,7 +3,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import { setTimeout } from "node:timers/promises";
 import type { AxiosInstance, AxiosResponse } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
-import type { EventBuilder } from "../index";
+import type { EventBuilder } from "../event-builder";
 import type { LockEventIter, LogInstance } from "../types";
 import type { LockEventRes } from "./types";
 

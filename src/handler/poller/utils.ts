@@ -1,7 +1,7 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { EventBuilder } from "..";
 import { LockedEvent } from "../../persistence/entities/locked";
+import type { EventBuilder } from "../event-builder";
 import type { LockEventIter, LogInstance } from "../types";
 
 export async function tryRerunningFailed(

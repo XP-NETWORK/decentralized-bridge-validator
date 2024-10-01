@@ -451,7 +451,10 @@ export async function configTonHandler(
   serverLinkHandler: AxiosInstance | undefined,
   tonLogger: LogInstance,
 ) {
-  const endpoint = await getHttpEndpoint(); // get the decentralized RPC endpoint
+  const endpoint = await getHttpEndpoint({
+    network: conf.network,
+  }); // get the decentralized RPC endpoint
+  console.log(endpoint);
   const client = new TonClient({
     endpoint: endpoint,
   });

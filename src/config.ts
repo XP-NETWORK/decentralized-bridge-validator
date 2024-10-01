@@ -52,6 +52,7 @@ export const bridgeTestChains = [
     intialFund: "100000000",
     lastBlock: 24014875000001,
     nativeCoinSymbol: "TON",
+    network: "testnet",
   },
   {
     chain: "SECRET",
@@ -211,6 +212,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       intialFund: "100000000",
       lastBlock: 49042809000002,
       nativeCoinSymbol: "TON",
+      network: "mainnet",
     },
     {
       blockChunks: 1000,

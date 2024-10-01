@@ -115,6 +115,7 @@ type ISecretChainConfig = {
 type ITonChainConfig = {
   chainType: "ton";
   rpcURL: string;
+  network: "testnet" | "mainnet";
 } & IChainConfig;
 
 type INearChainConfig = {

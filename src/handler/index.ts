@@ -145,9 +145,12 @@ export async function listenEvents(
       log.trace("Approving Lock");
 
       const approveLockTx = async () => {
+        log.trace("Getting Nonce");
         const nonce = await useMutexAndRelease(fetchNonce, async (nonce) => {
           return nonce;
         });
+        log.trace("Nonce", nonce);
+
         return await useMutexAndRelease(fetchStorage, async (storage) => {
           const feeData = await storageProvider.getFeeData();
           log.info(

@@ -17,7 +17,7 @@ export const bridgeTestChains = [
     intialFund: "50000000000000000",
     contractAddress: "0xA86704500C991a5C1976756Ee3f458d59240A6cE",
     chainType: "evm",
-    lastBlock: 43000496,
+    lastBlock: 44352352,
     decimals: 18,
     blockChunks: 1000,
   },

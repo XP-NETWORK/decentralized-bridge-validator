@@ -52,9 +52,7 @@ const listenForLockEvents = (
           });
         });
         if (!logs.length) {
-          logger.trace(
-            `[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`,
-          );
+          logger.info(`[${startBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
           lastBlock = latestBlock + 1;
           await em.upsert(Block, {
             chain: chainIdent,
@@ -65,7 +63,7 @@ const listenForLockEvents = (
           await setTimeout(10000);
           continue;
         }
-        logger.trace(`[${lastBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
+        logger.info(`[${lastBlock} -> ${latestBlock}]: ${logs.length} TXs.`);
         for (const log of logs.filter(
           (lg, index, self) =>
             index ===

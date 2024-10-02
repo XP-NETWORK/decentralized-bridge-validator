@@ -1,5 +1,5 @@
 import { setTimeout } from "node:timers/promises";
-import type { AxiosInstance, AxiosResponse } from "axios";
+import type { AxiosInstance } from "axios";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
 import type { IGeneratedWallets, IStakingConfig } from "../types";

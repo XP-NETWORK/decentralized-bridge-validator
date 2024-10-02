@@ -1,5 +1,6 @@
 import {
   DeployCollection,
+  DeployNFTCollection,
   MetaMap,
   MintNft,
   ReadClaimed721Event,
@@ -14,7 +15,7 @@ import { waitForMSWithMsg } from "../../handler/utils";
 type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, any, any> ? R : never;
 type InferDeployArgs<FC extends keyof MetaMap> =
-  TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;
+  TInferChainH<FC> extends DeployNFTCollection<any, infer R, any, any> ? R : never;
 
 type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
   any,
@@ -78,7 +79,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     console.log(`Transferring from ${tx.fromChain} to ${tx.toChain}`);
     const chain = await factory.inner(tx.fromChain);
 
-    const contract = await chain.deployCollection(
+    const contract = await chain.deployNftCollection(
       tx.signer as any,
       tx.deployArgs as any
     );
@@ -147,7 +148,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tx.toChain,
           tx.receiver,
           BigInt(tx.approveTokenId),
-          {}
+          "{}"
         );
         console.log("Lock Hash:", lock.hash());
         //@ts-ignore

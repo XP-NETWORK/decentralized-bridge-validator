@@ -10,6 +10,8 @@ import TonWeb from "tonweb";
 import { userSignerToSigner } from "xp-decentralized-sdk";
 import { IGeneratedWallets } from "../../types";
 import { getChainConfigs } from "./chainConfigs";
+import { Ed25519KeyIdentity } from "@dfinity/identity";
+import { HttpAgent } from "@dfinity/agent";
 
 const int = createInterface({
   input: process.stdin,
@@ -43,6 +45,11 @@ export async function generateConfig(
       })(),
       config: configs.bsc,
       address: genWallets.evmWallet.address,
+    },
+    icp: {
+      signer: HttpAgent.createSync({host: configs.icp.rpcURL, identity: Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex"))}),
+      config: configs.icp,
+      address:Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex")).getPrincipal().toString()
     },
     matic: {
       signer: await(async () => {

@@ -390,6 +390,11 @@
   resolved "https://registry.yarnpkg.com/@dfinity/utils/-/utils-2.4.0.tgz#4fd14dbcdd3ba09b05d1cfc41abc7cd26ad6d916"
   integrity sha512-1Bc+IcZTPXtPvDlDQElTjLRdHcpNOnu1vQyhQpFSXdwsnaXpdJzEhswq4GyzNjxRzaFnR0yrGCmbMjkb6UIe2A==
 
+"@dfinity/utils@^2.5.0":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@dfinity/utils/-/utils-2.5.1.tgz#c5f3ec95cae0e93f00bb50ab7ba6f7d4f2e9de73"
+  integrity sha512-ypu63xSX/7f79rVVe/T/2eiEwwi2+XvPNEuHz+isj8zf4jvEoG8DDDBZF9hedDgYC5uxuBDm1UJqHGYUcaCmRg==
+
 "@ethereumjs/rlp@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@ethereumjs/rlp/-/rlp-4.0.1.tgz#626fabfd9081baab3d0a3074b0c7ecaf674aaa41"
@@ -1497,6 +1502,13 @@
     elliptic "^6.5.4"
     typedarray-to-buffer "^4.0.0"
 
+"@ton/core@=0.56.3":
+  version "0.56.3"
+  resolved "https://registry.yarnpkg.com/@ton/core/-/core-0.56.3.tgz#1162764573abb76032eba70f8497e5cb2ea532ee"
+  integrity sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==
+  dependencies:
+    symbol.inspect "1.0.1"
+
 "@ton/core@^0.54.0":
   version "0.54.0"
   resolved "https://registry.yarnpkg.com/@ton/core/-/core-0.54.0.tgz#811495859102d9868ac7a412b540df14eae15795"
@@ -1504,12 +1516,28 @@
   dependencies:
     symbol.inspect "1.0.1"
 
+"@ton/crypto-primitives@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ton/crypto-primitives/-/crypto-primitives-2.0.0.tgz#446256146d64fcec6e3f21d9f40b5148640329cc"
+  integrity sha512-wttiNClmGbI6Dfy/8oyNnsIV0b/qYkCJz4Gn4eP62lJZzMtVQ94Ko7nikDX1EfYHkLI1xpOitWpW+8ZuG6XtDg==
+  dependencies:
+    jssha "3.2.0"
+
 "@ton/crypto-primitives@2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@ton/crypto-primitives/-/crypto-primitives-2.1.0.tgz#8c9277c250b59aae3c819e0d6bd61e44d998e9ca"
   integrity sha512-PQesoyPgqyI6vzYtCXw4/ZzevePc4VGcJtFwf08v10OevVJHVfW238KBdpj1kEDQkxWLeuNHEpTECNFKnP6tow==
   dependencies:
     jssha "3.2.0"
+
+"@ton/crypto@=3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@ton/crypto/-/crypto-3.2.0.tgz#8fcb36cc93eafd05249c847d1f4ad39cf2565e46"
+  integrity sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==
+  dependencies:
+    "@ton/crypto-primitives" "2.0.0"
+    jssha "3.2.0"
+    tweetnacl "1.0.3"
 
 "@ton/crypto@^3.2.0":
   version "3.3.0"
@@ -1519,6 +1547,17 @@
     "@ton/crypto-primitives" "2.1.0"
     jssha "3.2.0"
     tweetnacl "1.0.3"
+
+"@ton/ton@=13.11.1":
+  version "13.11.1"
+  resolved "https://registry.yarnpkg.com/@ton/ton/-/ton-13.11.1.tgz#d72169a6a5bf7fce6e556126c56391139442b1e2"
+  integrity sha512-tcLdHzwhS5bmS0EGstcmfYK0ZeRrNz1AUIzUGKq/Xh0MGEwfP1qZBMloGGHLQnyZdRQ1D7Wx4g4mBKNrvG6DcQ==
+  dependencies:
+    axios "^1.6.7"
+    dataloader "^2.0.0"
+    symbol.inspect "1.0.1"
+    teslabot "^1.3.0"
+    zod "^3.21.4"
 
 "@ton/ton@^13.9.0":
   version "13.11.2"
@@ -6000,7 +6039,7 @@ ws@^8.8.1:
 
 "xp-decentralized-sdk@git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge":
   version "1.0.0"
-  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#b97304893896efa1f337de8af41dfdff171c352f"
+  resolved "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#4d9b53117013b3a9354d4c8422887f9b5447f95c"
   dependencies:
     "@aptos-labs/ts-sdk" "^1.22.2"
     "@cosmjs/amino" "^0.32.3"
@@ -6010,21 +6049,23 @@ ws@^8.8.1:
     "@dfinity/ledger-icp" "^2.3.1"
     "@dfinity/nns" "^5.1.2"
     "@dfinity/principal" "^1.4.0"
+    "@dfinity/utils" "^2.5.0"
     "@multiversx/sdk-core" "^13.2.1"
     "@multiversx/sdk-network-providers" "^2.2.1"
     "@multiversx/sdk-wallet" "^4.3.0"
     "@taquito/taquito" "^19.0.0"
     "@taquito/tzip16" "^19.0.0"
     "@taquito/utils" "^19.0.0"
-    "@ton/core" "^0.54.0"
-    "@ton/crypto" "^3.2.0"
-    "@ton/ton" "^13.9.0"
+    "@ton/core" "=0.56.3"
+    "@ton/crypto" "=3.2.0"
+    "@ton/ton" "=13.11.1"
     "@tzkt/sdk-api" "^2.2.1"
     "@xp/cosmos-client" "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge"
     aptos "^1.21.0"
     axios "^1.6.7"
     ethers "^6.10.0"
     hashconnect "^0.2.9"
+    near-api-js "^5.0.0"
     secretjs "^1.12.4-beta.0"
 
 xstream@^11.14.0:

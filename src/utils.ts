@@ -24,7 +24,9 @@ import type {
   IStakingConfig,
 } from "./types";
 
-export async function syncWallets(logger: LogInstance) {
+export async function syncWallets(
+  logger: LogInstance,
+): Promise<IGeneratedWallets> {
   const rootDirPath = path.resolve(__dirname, ".."); // Adjust based on actual structure
   const secretsPath = path.join(rootDirPath, "secrets.json");
   if (!fs.existsSync(secretsPath)) {
@@ -38,7 +40,8 @@ export async function syncWallets(logger: LogInstance) {
       icpWallet: await icpGw(),
       nearWallet: await nearGw(),
     };
-    return writeFile(secretsPath, JSON.stringify(wallets));
+    writeFile(secretsPath, JSON.stringify(wallets));
+    return wallets;
   }
   const sc = await readFile(secretsPath, { encoding: "utf-8" });
   const secrets = JSON.parse(sc);
@@ -61,10 +64,11 @@ export async function syncWallets(logger: LogInstance) {
     logger.warn("Generating new wallet for ICP");
     secrets.icpWallet = await icpGw();
   } else if (!("nearWallet" in secrets)) {
-    logger.error("No wallet for near found, please add it to secrets.json");
-    return;
+    logger.fatal("No wallet for near found, please add it to secrets.json");
+    process.exit(1);
   }
-  return writeFile(secretsPath, JSON.stringify(secrets));
+  writeFile(secretsPath, JSON.stringify(secrets));
+  return secrets;
 }
 
 export async function requireEnoughBalance(

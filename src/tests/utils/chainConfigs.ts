@@ -1,6 +1,7 @@
 import {
   IEvmChainConfig,
   IHederaChainConfig,
+  IICPChainConfig,
   IMultiversXChainConfig,
   ISecretChainConfig,
   ITezosChainConfig,
@@ -32,5 +33,6 @@ export function getChainConfigs(bridgeTestChains: TChain[]) {
     )! as ISecretChainConfig,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     ton: bridgeTestChains.find((e) => e.chain === "TON")! as ITonChainConfig,
+    icp: bridgeTestChains.find((e) => e.chain === "ICP")! as IICPChainConfig
   };
 }

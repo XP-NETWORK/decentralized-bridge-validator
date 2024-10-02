@@ -1,5 +1,6 @@
 import {
   DeployCollection,
+  DeployNFTCollection,
   MetaMap,
   MintNft,
   ReadClaimed721Event,
@@ -17,7 +18,7 @@ type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, any, any> ? R : never;
 
 type InferDeployArgs<FC extends keyof MetaMap> =
-  TInferChainH<FC> extends DeployCollection<any, infer R, any, any> ? R : never;
+  TInferChainH<FC> extends DeployNFTCollection<any, infer R, any, any> ? R : never;
 
 type InferMintArgs<FC extends keyof MetaMap> = TInferChainH<FC> extends MintNft<
   any,
@@ -83,7 +84,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
   for (const tx of args) {
     const chain = await factory.inner(tx.fromChain);
 
-    const contract = await chain.deployCollection(
+    const contract = await chain.deployNftCollection(
       tx.signer as any,
       tx.deployArgs as any,
     );
@@ -277,6 +278,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
             tx.fromChain,
             tx.signerAddress,
             BigInt(decodedValue.token_id),
+            ""
           );
           lockedAgain = true;
           console.log(`Locked on ${tx.toChain} at ${lockAgain.hash()}`)

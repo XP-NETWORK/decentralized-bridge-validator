@@ -6,6 +6,7 @@ import { Wallet as SecretWallet } from "secretjs";
 import { keyPairFromSecretKey } from "ton-crypto";
 import { userSignerToSigner } from "xp-decentralized-sdk";
 import { IGeneratedWallets } from "../../types";
+import { Ed25519KeyIdentity } from "@dfinity/identity";
 
 export function getSigners(genWallets: IGeneratedWallets) {
   return {
@@ -26,5 +27,6 @@ export function getSigners(genWallets: IGeneratedWallets) {
       Buffer.from(genWallets.secretWallet.privateKey, "hex"),
       "terra",
     ),
+    icp: Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex"))
   };
 }

@@ -1,5 +1,5 @@
 import { setTimeout } from "node:timers/promises";
-import type { AxiosInstance } from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { ERC20Staking__factory, ERC20__factory } from "../contractsTypes/evm";
 import type { IGeneratedWallets, IStakingConfig } from "../types";
@@ -128,10 +128,17 @@ export async function fetchHttpOrIpfs(uri: string, http: AxiosInstance) {
     return response.data;
   }
   if (url.protocol === "ipfs:") {
-    const response = await http.get(
-      `https://ipfs.io/ipfs/${uri.replace("ipfs://", "")}`,
-    );
-    return response.data;
+    try {
+      return (
+        await http.get(`https://ipfs.io/ipfs/${uri.replace("ipfs://", "")}`)
+      ).data;
+    } catch (ex) {
+      return (
+        await http.get(
+          `https://xpnetwork.infura-ipfs.io/ipfs/${uri.replace("ipfs://", "")}`,
+        )
+      ).data;
+    }
   }
   throw new Error("Unsupported protocol");
 }

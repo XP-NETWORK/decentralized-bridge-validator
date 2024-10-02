@@ -8,6 +8,7 @@ import {
   storeClaimData,
 } from "../../../contractsTypes/ton/tonBridge";
 import type { LogInstance, TNftTransferDetailsObject } from "../../types";
+import { buildJettonContent } from "./tep64";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,
@@ -82,10 +83,11 @@ export default async function signClaimData(
     },
     data4: {
       $$type: "ClaimData4",
-      newContent: beginCell()
-        .storeInt(0x01, 8)
-        .storeStringRefTail(metadata)
-        .endCell(),
+      newContent: buildJettonContent({
+        name: name,
+        symbol: symbol,
+        description: "",
+      }),
       royalty: {
         $$type: "RoyaltyParams",
         denominator: BigInt(10000),

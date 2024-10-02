@@ -218,7 +218,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       blockChunks: 1000,
       chain: "TEZOS",
       chainType: "tezos",
-      contractAddress: "KT1M4hZZG2zcRT1aohZsSmXcoeAVpwG9Xz3N",
+      contractAddress: "KT1UMVUP3XBpPrMUwuC6DXjEcLgZykV7p1PW",
       decimals: 9,
       intialFund: "100000000",
       lastBlock: 6625053,

@@ -132,34 +132,32 @@ export async function listenEvents(
 
       const approveLockTx = async () => {
         log.trace("Getting Nonce");
-        const nonce = await useMutexAndRelease(fetchNonce, async (nonce) => {
-          return nonce;
-        });
-        log.trace("Nonce", nonce);
-
-        return await useMutexAndRelease(fetchStorage, async (storage) => {
-          const feeData = await storageProvider.getFeeData();
-          log.info(
-            `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
-          );
-          const response = await (
-            await storage.approveLockNft(
-              inft.transactionHash,
-              chain.chainIdent,
-              signature.signature,
-              signature.signer,
-              {
-                nonce,
-                maxFeePerGas: feeData.maxFeePerGas,
-                maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
-              },
-            )
-          ).wait();
-          log.info(
-            `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
-          );
-          await setTimeout(5 * 1000);
-          return response;
+        return await useMutexAndRelease(fetchNonce, async (nonce) => {
+          log.trace("Nonce", nonce);
+          return await useMutexAndRelease(fetchStorage, async (storage) => {
+            const feeData = await storageProvider.getFeeData();
+            log.info(
+              `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+            );
+            const response = await (
+              await storage.approveLockNft(
+                inft.transactionHash,
+                chain.chainIdent,
+                signature.signature,
+                signature.signer,
+                {
+                  nonce,
+                  maxFeePerGas: feeData.maxFeePerGas,
+                  maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+                },
+              )
+            ).wait();
+            log.info(
+              `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+            );
+            await setTimeout(5 * 1000);
+            return response;
+          });
         });
       };
 

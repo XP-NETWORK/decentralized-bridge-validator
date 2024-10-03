@@ -499,17 +499,22 @@ export async function configDeps(
 ) {
   const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
   const stakingProvider = new JsonRpcProvider(config.stakingConfig.rpcURL);
-  const storageSigner = new NonceManager(
-    new Wallet(secrets.evmWallet.privateKey, storageProvider),
+  const storageSigner = new Wallet(
+    secrets.evmWallet.privateKey,
+    storageProvider,
   );
-  let nonce = (await storageSigner.getNonce()) + 1;
+  let nonce = await storageSigner.getNonce();
   const lock = new Mutex();
 
   const fetchNonce = async () => {
-    const release = await lock.acquire();
+    const _release = await lock.acquire();
+    const release = async () => {
+      nonce = await storageSigner.getNonce();
+      return _release();
+    };
     const used = async () => {
       nonce += 1;
-      release();
+      return _release();
     };
     return [nonce, used, release] as const;
   };

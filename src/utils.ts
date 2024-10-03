@@ -40,7 +40,7 @@ export async function syncWallets(
       icpWallet: await icpGw(),
       nearWallet: await nearGw(),
     };
-    writeFile(secretsPath, JSON.stringify(wallets));
+    await writeFile(secretsPath, JSON.stringify(wallets));
     return wallets;
   }
   const sc = await readFile(secretsPath, { encoding: "utf-8" });
@@ -67,7 +67,7 @@ export async function syncWallets(
     logger.fatal("No wallet for near found, please add it to secrets.json");
     process.exit(1);
   }
-  writeFile(secretsPath, JSON.stringify(secrets));
+  await writeFile(secretsPath, JSON.stringify(secrets));
   return secrets;
 }
 

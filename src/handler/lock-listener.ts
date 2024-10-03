@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 import { type EntityManager, wrap } from "@mikro-orm/sqlite";
-import { Mutex, type MutexInterface } from "async-mutex";
+import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { JsonRpcProvider } from "ethers";
@@ -20,9 +20,7 @@ export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   storageProvider: JsonRpcProvider,
-  fetchNonce: () => Promise<
-    readonly [number, () => Promise<void>, MutexInterface.Releaser]
-  >,
+  fetchNonce: () => Promise<readonly [number, () => void, () => Promise<void>]>,
   em: EntityManager,
   serverLinkHandler: AxiosInstance | undefined,
   log: LogInstance,
@@ -134,7 +132,7 @@ export async function listenEvents(
 
       const approveLockTx = async () => {
         log.trace("Getting Nonce");
-        const [nonce, release] = await fetchNonce();
+        const [nonce, used, release] = await fetchNonce();
         log.trace("Nonce", nonce);
         try {
           return await useMutexAndRelease(fetchStorage, async (storage) => {
@@ -155,6 +153,7 @@ export async function listenEvents(
                 },
               )
             ).wait();
+            used();
             log.info(
               `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
             );

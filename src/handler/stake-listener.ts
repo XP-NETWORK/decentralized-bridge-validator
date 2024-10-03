@@ -1,5 +1,4 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { MutexInterface } from "async-mutex";
 import type { TSupportedChainTypes } from "../config";
 import type { BridgeStorage } from "../contractsTypes/evm";
 import { eventBuilder } from "./event-builder";
@@ -10,9 +9,7 @@ export async function listenStakeEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
-  fetchNonce: () => Promise<
-    readonly [number, () => Promise<void>, MutexInterface.Releaser]
-  >,
+  fetchNonce: () => Promise<readonly [number, () => void, () => Promise<void>]>,
   em: EntityManager,
   log: LogInstance,
 ) {
@@ -58,7 +55,7 @@ export async function listenStakeEvents(
               nonce,
             })
           ).wait();
-          await used();
+          used();
           // @ts-ignore
           if (!tx?.status) {
             throw new Error("TxFailed");

@@ -512,7 +512,7 @@ export async function configDeps(
       nonce = await storageSigner.getNonce();
       return _release();
     };
-    const used = async () => {
+    const used = () => {
       nonce += 1;
       return _release();
     };

@@ -1,5 +1,4 @@
 import {
-  DeployCollection,
   DeployNFTCollection,
   MetaMap,
   MintNft,
@@ -13,6 +12,7 @@ import {
 import { waitForMSWithMsg } from "../../handler/utils";
 import { BridgeStorage__factory } from "../../contractsTypes/evm";
 import { JsonRpcProvider } from "ethers";
+import { storageTestnetConfig } from "../../config";
 
 type InferSigner<FC extends keyof MetaMap> =
   TInferChainH<FC> extends TApproveNFT<infer R, any, any> ? R : never;
@@ -123,6 +123,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
     let approved = false;
     while (!approved) {
       try {
+        //@ts-ignore
         const approve = await chain.approveNft(
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           tx.signer as any,
@@ -153,7 +154,8 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tx.toChain,
           tx.receiver,
           BigInt(tx.approveTokenId),
-          {},
+          "",
+          
         );
         console.log(`Lock Hash on ${tx.fromChain}:`, lock.hash());
         //@ts-ignore
@@ -249,6 +251,7 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
        let approved = false;
       while (!approved) {
         try {
+          //@ts-ignore
           const approve = await tc.approveNft(
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tx.claimSigner as any,
@@ -306,9 +309,9 @@ async function transferBack<FC extends keyof MetaMap, TC extends keyof MetaMap>(
 
       console.log(`fetching signatures for`, claimHash, tx.toChain);
         let againsignatures = await BridgeStorage__factory.connect(
-          "0x8411EeadD374bDE549F61a166FFBeFca592bC60a",
+          storageTestnetConfig.contractAddress,
           new JsonRpcProvider(
-            "https://public.stackup.sh/api/v1/node/optimism-sepolia",
+            storageTestnetConfig.rpcURL
           ),
         ).getLockNftSignatures(lockBackClaimData.transactionHash, tx.toChain);
         const againneededSignatures =

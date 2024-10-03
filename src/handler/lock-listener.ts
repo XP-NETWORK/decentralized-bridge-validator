@@ -20,7 +20,9 @@ export async function listenEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   storageProvider: JsonRpcProvider,
-  fetchNonce: () => Promise<readonly [number, MutexInterface.Releaser]>,
+  fetchNonce: () => Promise<
+    readonly [number, () => Promise<void>, MutexInterface.Releaser]
+  >,
   em: EntityManager,
   serverLinkHandler: AxiosInstance | undefined,
   log: LogInstance,
@@ -132,8 +134,9 @@ export async function listenEvents(
 
       const approveLockTx = async () => {
         log.trace("Getting Nonce");
-        return await useMutexAndRelease(fetchNonce, async (nonce) => {
-          log.trace("Nonce", nonce);
+        const [nonce, release] = await fetchNonce();
+        log.trace("Nonce", nonce);
+        try {
           return await useMutexAndRelease(fetchStorage, async (storage) => {
             const feeData = await storageProvider.getFeeData();
             log.info(
@@ -158,7 +161,13 @@ export async function listenEvents(
             await setTimeout(5 * 1000);
             return response;
           });
-        });
+        } finally {
+          release();
+        }
+
+        // return await useMutexAndRelease(fetchNonce, async (nonce) => {
+
+        // });
       };
 
       try {

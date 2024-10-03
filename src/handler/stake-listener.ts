@@ -1,4 +1,5 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
+import type { MutexInterface } from "async-mutex";
 import type { TSupportedChainTypes } from "../config";
 import type { BridgeStorage } from "../contractsTypes/evm";
 import { eventBuilder } from "./event-builder";
@@ -9,6 +10,9 @@ export async function listenStakeEvents(
   chains: Array<THandler>,
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
+  fetchNonce: () => Promise<
+    readonly [number, () => Promise<void>, MutexInterface.Releaser]
+  >,
   em: EntityManager,
   log: LogInstance,
 ) {
@@ -47,13 +51,14 @@ export async function listenStakeEvents(
       }
 
       const approvalFn = async () => {
-        const approveStakeTx = async () =>
-          await (
-            await deps.storage.approveStake(stakerAddress, signatures)
-          ).wait();
+        const [nonce, used, release] = await fetchNonce();
         try {
-          const tx = await approveStakeTx();
-
+          const tx = await (
+            await deps.storage.approveStake(stakerAddress, signatures, {
+              nonce,
+            })
+          ).wait();
+          await used();
           // @ts-ignore
           if (!tx?.status) {
             throw new Error("TxFailed");
@@ -66,6 +71,8 @@ export async function listenStakeEvents(
           }
           log.error(err_, "Error while approving stake");
           throw err;
+        } finally {
+          await release();
         }
       };
       const approved = await retry(

@@ -502,13 +502,16 @@ export async function configDeps(
   const storageSigner = new NonceManager(
     new Wallet(secrets.evmWallet.privateKey, storageProvider),
   );
-  let nonce = await storageSigner.getNonce();
+  let nonce = (await storageSigner.getNonce()) + 1;
   const lock = new Mutex();
 
   const fetchNonce = async () => {
     const release = await lock.acquire();
-    nonce += 1;
-    return [nonce, release] as const;
+    const used = async () => {
+      nonce += 1;
+      release();
+    };
+    return [nonce, used, release] as const;
   };
 
   const storage = BridgeStorage__factory.connect(

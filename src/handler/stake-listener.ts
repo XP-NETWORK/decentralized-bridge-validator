@@ -62,14 +62,13 @@ export async function listenStakeEvents(
           }
           return tx;
         } catch (err) {
+          await release();
           const err_ = err as unknown as { shortMessage: string };
           if (err_.shortMessage?.includes("Already voted for this validator")) {
             return null;
           }
           log.error(err_, "Error while approving stake");
           throw err;
-        } finally {
-          await release();
         }
       };
       const approved = await retry(

@@ -160,13 +160,10 @@ export async function listenEvents(
             await setTimeout(5 * 1000);
             return response;
           });
-        } finally {
+        } catch (err) {
           release();
+          throw err;
         }
-
-        // return await useMutexAndRelease(fetchNonce, async (nonce) => {
-
-        // });
       };
 
       try {

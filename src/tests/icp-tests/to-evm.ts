@@ -42,7 +42,6 @@ export const icp_to_evm = async () => {
       token_id: 400n,
     },
     approveTokenId: "400",
-    signerAddress: (await configs.icp.signer.getPrincipal()).toText(),
   });
   return firstTest;
 };

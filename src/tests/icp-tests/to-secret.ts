@@ -48,7 +48,6 @@ export const icp_to_secret = async () => {
       token_id: 400n,
     },
     approveTokenId: "400",
-    signerAddress: (await configs.icp.signer.getPrincipal()).toText(),
   });
   return firstTest;
 };

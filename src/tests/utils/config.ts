@@ -47,7 +47,11 @@ export async function generateConfig(
       address: genWallets.evmWallet.address,
     },
     icp: {
-      signer: HttpAgent.createSync({host: configs.icp.rpcURL, identity: Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex"))}),
+      signer: await (async () => {
+        const agent = HttpAgent.createSync({host: configs.icp.rpcURL, identity: Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex"))})
+        await agent.fetchRootKey()
+        return agent
+      })(),
       config: configs.icp,
       address:Ed25519KeyIdentity.fromSecretKey(Buffer.from(genWallets.icpWallet.privateKey, "hex")).getPrincipal().toString()
     },
@@ -103,20 +107,20 @@ export async function generateConfig(
       config: configs.multiversx,
       address: genWallets.multiversXWallet.userWallet.address,
     },
-    eth: {
-      signer: await(async () => {
-        const provider = new JsonRpcProvider(configs.eth.rpcURL);
-        const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
-        await requireFundsForAddress(
-          async () => (await provider.getBalance(wallet)) ?? 0n,
-          wallet.address,
-          "ETH"
-        );
-        return wallet;
-      })(),
-      config: configs.eth,
-      address: genWallets.evmWallet.address,
-    },
+    // eth: {
+    //   signer: await(async () => {
+    //     const provider = new JsonRpcProvider(configs.eth.rpcURL);
+    //     const wallet = new Wallet(genWallets.evmWallet.privateKey, provider);
+    //     await requireFundsForAddress(
+    //       async () => (await provider.getBalance(wallet)) ?? 0n,
+    //       wallet.address,
+    //       "ETH"
+    //     );
+    //     return wallet;
+    //   })(),
+    //   config: configs.eth,
+    //   address: genWallets.evmWallet.address,
+    // },
     tezos: {
       signer: await(async () => {
         const signer = new InMemorySigner(genWallets.tezosWallet.secretKey);

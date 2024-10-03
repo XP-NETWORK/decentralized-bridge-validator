@@ -1,5 +1,4 @@
 import {
-  DeployCollection,
   DeployNFTCollection,
   MetaMap,
   MintNft,
@@ -118,6 +117,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
       let approved = false;
       while (!approved) {
         try {
+          //@ts-ignore
           const approve = await chain.approveNft(
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             tx.signer as any,
@@ -148,7 +148,7 @@ async function transfer<FC extends keyof MetaMap, TC extends keyof MetaMap>(
           tx.toChain,
           tx.receiver,
           BigInt(tx.approveTokenId),
-          "{}"
+          "",
         );
         console.log("Lock Hash:", lock.hash());
         //@ts-ignore

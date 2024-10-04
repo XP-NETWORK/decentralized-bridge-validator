@@ -127,6 +127,7 @@ export default async function listenForLockEvents(
           const sourceChain = parsed.chain.toString("utf-8");
           const tokenId = parsed.token_id.toString();
           const tokenAmount = parsed.token_amount.toString();
+          const metaDataUri = parsed.metadata_uri.toString();
           await cb(
             await builder.nftLocked(
               tokenId,
@@ -138,7 +139,7 @@ export default async function listenForLockEvents(
               sourceChain,
               tx.hash,
               CHAIN_IDENT,
-              "",
+              metaDataUri,
             ),
           );
         }

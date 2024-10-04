@@ -12,7 +12,7 @@ config();
 export const bridgeTestChains = [
   {
     chain: "BSC",
-    rpcURL: "https://bsc-testnet.public.blastapi.io",
+    rpcURL: "https://bsc-testnet-rpc.publicnode.com",
     nativeCoinSymbol: "BNB",
     intialFund: "50000000000000000",
     contractAddress: "0xA86704500C991a5C1976756Ee3f458d59240A6cE",
@@ -83,7 +83,7 @@ export const bridgeTestChains = [
     chain: "MULTIVERSX",
     chainID: "D",
     contractAddress:
-      "erd1qqqqqqqqqqqqqpgqhrd7fhw946fsq2kpl753xxthvy4jawvnd9yq03u2hq",
+      "erd1qqqqqqqqqqqqqpgq7a8fkj6jgh259jd978297099murcdlsnd9yqyc6jlu",
     decimals: 18,
     elasticSearchURL: "https://devnet-index.multiversx.com",
     gatewayURL: "https://devnet-gateway.multiversx.com",

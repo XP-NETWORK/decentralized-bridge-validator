@@ -12,7 +12,7 @@ config();
 export const bridgeTestChains = [
   {
     chain: "BSC",
-    rpcURL: "https://bsc-testnet-rpc.publicnode.com",
+    rpcURL: "https://bsc-testnet.public.blastapi.io",
     nativeCoinSymbol: "BNB",
     intialFund: "50000000000000000",
     contractAddress: "0xA86704500C991a5C1976756Ee3f458d59240A6cE",

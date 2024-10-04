@@ -64,8 +64,8 @@ export async function syncWallets(
     logger.warn("Generating new wallet for ICP");
     secrets.icpWallet = await icpGw();
   } else if (!("nearWallet" in secrets)) {
-    logger.fatal("No wallet for near found, please add it to secrets.json");
-    process.exit(1);
+    logger.warn("No wallet for near found, please add it to secrets.json");
+    // process.exit(1);
   }
   await writeFile(secretsPath, JSON.stringify(secrets));
   return secrets;

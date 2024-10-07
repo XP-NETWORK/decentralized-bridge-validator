@@ -73,7 +73,19 @@ const nftData = (fetchProvider: EVMProviderFetch, logger: LogInstance) => {
     const metadata = await evmRetryIfFunctionExistsElse(
       async () => {
         const result = useMutexAndRelease(nft, async (ctr) => {
-          return ctr.tokenURI(tokenId);
+          try {
+            const uri = await ctr.tokenURI(tokenId);
+            return uri;
+          } catch (e) {
+            if (
+              String(e).includes(
+                "ERC721Metadata: URI query for nonexistent token",
+              )
+            ) {
+              return undefined;
+            }
+            throw e;
+          }
         });
         return result;
       },

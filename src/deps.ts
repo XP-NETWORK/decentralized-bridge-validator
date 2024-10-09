@@ -454,7 +454,6 @@ export async function configTonHandler(
   const endpoint = await getHttpEndpoint({
     network: conf.network,
   }); // get the decentralized RPC endpoint
-  console.log(endpoint);
   const client = new TonClient({
     endpoint: endpoint,
   });

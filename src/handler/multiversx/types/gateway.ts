@@ -35,33 +35,26 @@ export interface ShardBlock {
 }
 
 export interface Transaction {
-  type: string;
-  processingTypeOnSource: string;
-  processingTypeOnDestination: string;
-  hash: string;
-  nonce: number;
-  round: number;
-  epoch: number;
-  value: string;
-  receiver: string;
-  sender: string;
+  txHash: string;
+  gasLimit: number;
   gasPrice: number;
-  gasLimit?: number;
-  data: string;
-  signature?: string;
-  sourceShard: number;
-  destinationShard: number;
-  miniblockType: string;
-  miniblockHash: string;
+  gasUsed: number;
+  miniBlockHash: string;
+  nonce: number;
+  receiver: string;
+  receiverShard: number;
+  round: number;
+  sender: string;
+  senderShard: number;
+  signature: string;
   status: string;
-  operation: string;
-  function?: string;
-  initiallyPaidFee?: string;
-  chainID?: string;
-  version?: number;
-  options: number;
-  previousTransactionHash?: string;
-  originalTransactionHash?: string;
-  isRefund?: boolean;
-  callType?: string;
+  value: string;
+  fee: string;
+  timestamp: number;
+  data: string;
+  function: string;
+  action: {
+    category: string;
+    name: string;
+  };
 }

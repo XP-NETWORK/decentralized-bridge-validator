@@ -89,7 +89,7 @@ export const bridgeTestChains = [
     gatewayURL: "https://devnet-gateway.multiversx.com",
     intialFund: "50000000000000000",
     nativeCoinSymbol: "EGLD",
-    lastBlock: 4757826,
+    lastBlock: 1728382333,
   },
   {
     chainType: "icp",

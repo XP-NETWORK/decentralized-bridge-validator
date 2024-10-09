@@ -13,18 +13,10 @@ import { tryRerunningFailed } from "../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { MXProviderFetch } from "../types";
-import type { Root } from "../types/gateway";
+import type { Transaction } from "../types/gateway";
 
 const CHAIN_IDENT = "MULTIVERSX";
 const WAIT_TIME = 10000;
-
-function generateWaitTime(num1: number, num2: number) {
-  const difference = Math.abs(num1 - num2);
-  const maxDifference = 1000;
-  const score =
-    3 * (1 - Math.min(difference, maxDifference) / maxDifference) + 1;
-  return Math.round(score * 10) / 10;
-}
 
 export default async function listenForLockEvents(
   builder: EventBuilder,
@@ -67,48 +59,35 @@ export default async function listenForLockEvents(
     try {
       {
         const txs = (
-          await gateway.get<Root>(
-            `hyperblock/by-nonce/${lastBlock_.toString()}`,
+          await gateway.get<[Transaction]>(
+            `/transactions?receiver=${bridge}&after=${lastBlock_}&order=asc`,
           )
         ).data;
 
-        const txsForBridge = txs.data.hyperblock.transactions.filter(
+        const txsForBridge = txs.filter(
           (e) => e.function === "lock721" || e.function === "lock1155",
         );
 
         if (!txsForBridge.length) {
-          const lastestStatus = await useMutexAndRelease(
-            provider,
-            async (p) => await p.getNetworkStatus(),
-          );
-          const lastNonce = lastestStatus.HighestFinalNonce;
-          const wt = generateWaitTime(lastBlock_, lastNonce);
           logger.info(
-            `No TX Since: ${lastBlock_}. Awaiting ${Math.round(wt)}s`,
+            `No TX Since: ${lastBlock_}. Awaiting ${WAIT_TIME / 1000}s`,
           );
-          lastBlock_ = lastBlock_ + 1;
-          if (lastBlock_ >= lastNonce) {
-            await setTimeout(30 * 1000); // 30 seconds
-            continue;
-          }
           await em.upsert(Block, {
             chain: CHAIN_IDENT,
             contractAddress: bridge,
             lastBlock: Number(lastBlock_),
           });
           await em.flush();
-          await setTimeout(wt * 1000);
           continue;
         }
-        logger.info(`Found ${txsForBridge.length} TXs in ${lastBlock_ - 1}`);
+        logger.info(`Found ${txsForBridge.length} TXs after ${lastBlock_}ms`);
         for (const tx of txsForBridge) {
-          logger.trace(`Waiting for TX Completion: ${tx.hash}`);
-          await waitForTx(tx.hash);
-          logger.trace(`TX Completed: ${tx.hash}`);
-          if (!(tx.type === "normal")) continue;
+          logger.trace(`Waiting for TX Completion: ${tx.txHash}`);
+          await waitForTx(tx.txHash);
+          logger.trace(`TX Completed: ${tx.txHash}`);
           const txo = await useMutexAndRelease(
             provider,
-            async (p) => await p.getTransaction(tx.hash),
+            async (p) => await p.getTransaction(tx.txHash),
           );
           const transactionOnNetworkMultisig = await apin.getTransaction(
             txo.contractResults.items[0].hash,
@@ -137,13 +116,13 @@ export default async function listenForLockEvents(
               tokenAmount,
               parsed.nft_type.toString("utf-8"),
               sourceChain,
-              tx.hash,
+              tx.txHash,
               CHAIN_IDENT,
               metaDataUri,
             ),
           );
         }
-        lastBlock_ = lastBlock_ + 1;
+        lastBlock_ = txsForBridge[txsForBridge.length - 1].timestamp + 1;
         await em.upsert(Block, {
           chain: CHAIN_IDENT,
           contractAddress: bridge,

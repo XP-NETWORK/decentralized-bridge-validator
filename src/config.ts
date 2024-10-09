@@ -236,6 +236,19 @@ export const prodBridgeConfig: IBridgeConfig = {
     //   nativeCoinSymbol: "ICP",
     //   rpcURL: "https://ic0.app",
     // },
+    {
+      chainType: "multiversX",
+      chain: "MULTIVERSX",
+      chainID: "1",
+      contractAddress:
+        "erd1qqqqqqqqqqqqqpgqeeywrgux5h7saz98a6g7eu9rqx7ekt67txsqw34867",
+      decimals: 18,
+      elasticSearchURL: "https://index.multiversx.com",
+      gatewayURL: "https://gateway.multiversx.com",
+      intialFund: "50000000000000000",
+      nativeCoinSymbol: "EGLD",
+      lastBlock: 1728301060,
+    },
   ],
   storageConfig: {
     chain: "OP",

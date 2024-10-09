@@ -87,6 +87,7 @@ export default async function listenForLockEvents(
           //   lastBlock: Number(lastBlock_),
           // });
           // await em.flush();
+          await setTimeout(WAIT_TIME);
           continue;
         }
         logger.info(`Found ${txsForBridge.length} TXs after ${lastBlock_}ms`);

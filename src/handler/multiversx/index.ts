@@ -5,7 +5,6 @@ import {
   TransactionsConverter,
 } from "@multiversx/sdk-core/out";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
-import axios from "axios";
 import { multiversXBridgeABI } from "../../contractsTypes/multiversx/abi/multiversXBridgeABI";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
@@ -50,9 +49,9 @@ export function multiversxHandler({
   });
   const converter = new TransactionsConverter();
 
-  const gateway = axios.create({
-    baseURL: gatewayURL,
-  });
+  // const gateway = axios.create({
+  //   baseURL: gatewayURL,
+  // });
 
   return {
     pollForLockEvents: async (builder, cb) => {
@@ -95,7 +94,7 @@ export function multiversxHandler({
         cb,
         lastBlock,
         bridge,
-        gateway,
+        // gateway,
         provider,
         gatewayURL,
         em,

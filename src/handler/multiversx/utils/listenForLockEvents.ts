@@ -6,7 +6,7 @@ import {
   findEventsByFirstTopic,
 } from "@multiversx/sdk-core/out";
 import { ApiNetworkProvider } from "@multiversx/sdk-network-providers/out";
-import type { Axios } from "axios";
+import { Axios } from "axios";
 import { Block } from "../../../persistence/entities/block";
 import type { EventBuilder } from "../../event-builder";
 import { tryRerunningFailed } from "../../poller/utils";
@@ -23,7 +23,6 @@ export default async function listenForLockEvents(
   cb: LockEventIter,
   lastBlock: number,
   bridge: string,
-  gateway: Axios,
   provider: MXProviderFetch,
   gatewayURL: string,
   em: EntityManager,
@@ -54,15 +53,25 @@ export default async function listenForLockEvents(
   };
   const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
+  const apiax = new Axios({
+    baseURL: gatewayURL.replace("gateway", "api"),
+  });
   while (true) {
     await tryRerunningFailed(CHAIN_IDENT, em, builder, cb, logger);
     try {
       {
-        const txs = (
-          await gateway.get<[Transaction]>(
-            `/transactions?status=success&receiver=${bridge}&after=${lastBlock_}&order=asc`,
+        const response = (
+          await apiax.get<string>(
+            `/transactions?receiver=${bridge}&after=${lastBlock_}&order=asc`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+            },
           )
         ).data;
+        const txs: [Transaction] = JSON.parse(response as string);
 
         const txsForBridge = txs.filter(
           (e) => e.function === "lock721" || e.function === "lock1155",
@@ -131,7 +140,11 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      logger.error(`${e} while listening for events. Sleeping for 10 seconds`);
+      //@ts-ignore
+      logger.error(
+        `While listening for events. Awaiting ${WAIT_TIME / 1000}s`,
+        e,
+      );
       await setTimeout(WAIT_TIME);
     }
   }

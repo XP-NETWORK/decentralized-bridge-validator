@@ -62,7 +62,7 @@ export default async function listenForLockEvents(
       {
         const response = (
           await apiax.get<string>(
-            `/transactions?receiver=${bridge}&after=${lastBlock_}&order=asc`,
+            `/transactions?status=success&receiver=${bridge}&after=${lastBlock_}&order=asc`,
             {
               headers: {
                 "Content-Type": "application/json",

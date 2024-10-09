@@ -60,7 +60,7 @@ export default async function listenForLockEvents(
       {
         const txs = (
           await gateway.get<[Transaction]>(
-            `/transactions?receiver=${bridge}&after=${lastBlock_}&order=asc`,
+            `/transactions?status=success&receiver=${bridge}&after=${lastBlock_}&order=asc`,
           )
         ).data;
 

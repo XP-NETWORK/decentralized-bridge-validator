@@ -81,12 +81,12 @@ export default async function listenForLockEvents(
           logger.info(
             `No TX Since: ${lastBlock_}. Awaiting ${WAIT_TIME / 1000}s`,
           );
-          await em.upsert(Block, {
-            chain: CHAIN_IDENT,
-            contractAddress: bridge,
-            lastBlock: Number(lastBlock_),
-          });
-          await em.flush();
+          // await em.upsert(Block, {
+          //   chain: CHAIN_IDENT,
+          //   contractAddress: bridge,
+          //   lastBlock: Number(lastBlock_),
+          // });
+          // await em.flush();
           continue;
         }
         logger.info(`Found ${txsForBridge.length} TXs after ${lastBlock_}ms`);

@@ -52,8 +52,8 @@ export default async function listenForLockEvents(
     await tryRerunningFailed(CHAIN_IDENT, em, builder, cb, logger);
     try {
       {
-        const response = (
-          await apiax.get<string>(
+        const txs = (
+          await apiax.get<Transaction[]>(
             `/transactions?status=success&receiver=${bridge}&after=${lastBlock_}&order=asc`,
             {
               headers: {
@@ -63,9 +63,6 @@ export default async function listenForLockEvents(
             },
           )
         ).data;
-        const txs: Transaction[] = JSON.parse(
-          JSON.stringify(response) as string,
-        );
 
         const txsForBridge = txs.filter(
           (e) => e.function === "lock721" || e.function === "lock1155",

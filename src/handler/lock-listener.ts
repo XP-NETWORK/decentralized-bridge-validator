@@ -78,18 +78,20 @@ export async function listenEvents(
     );
 
     let imgUri = "";
+    const metadataUri = nftDetails.metadata || ev.metaDataUri;
+
     try {
-      const data = await fetchHttpOrIpfs(nftDetails.metadata, axios.create());
+      const data = await fetchHttpOrIpfs(metadataUri, axios.create());
       imgUri = data?.image || data?.displayUri;
     } catch (ex) {
-      imgUri = nftDetails.metadata;
+      imgUri = metadataUri;
     }
 
     const inft: TNftTransferDetailsObject = {
       destinationChain: ev.destinationChain,
       destinationUserAddress: ev.destinationUserAddress,
       fee: fee.toString(),
-      metadata: nftDetails.metadata,
+      metadata: metadataUri,
       name: nftDetails.name,
       nftType: ev.nftType,
       royalty: nftDetails.royalty.toString(),

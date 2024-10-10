@@ -52,7 +52,7 @@ export default async function addSelfAsValidator(
       const add = await staking.addNewChains([
         {
           chainType: "multiversX",
-          validatorAddress: signer.getAddress().bech32(),
+          validatorAddress: signer.getAddress().pubkey().toString("hex"),
         },
       ]);
       const receipt = await add.wait();
@@ -63,7 +63,9 @@ export default async function addSelfAsValidator(
 
     let validatorCount = Number(await vc());
     let signatureCount = Number(
-      await storage.getStakingSignaturesCount(signer.getAddress().bech32()),
+      await storage.getStakingSignaturesCount(
+        signer.getAddress().pubkey().toString("hex"),
+      ),
     );
 
     while (signatureCount < confirmationCountNeeded(validatorCount)) {

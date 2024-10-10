@@ -63,7 +63,7 @@ export default async function listenForLockEvents(
             },
           )
         ).data;
-        const txs: [Transaction] = JSON.parse(
+        const txs: Transaction[] = JSON.parse(
           JSON.stringify(response) as string,
         );
 

@@ -1,9 +1,4 @@
-import {
-  AbiRegistry,
-  SmartContract,
-  TransactionEventsParser,
-  TransactionsConverter,
-} from "@multiversx/sdk-core/out";
+import { AbiRegistry, SmartContract } from "@multiversx/sdk-core/out";
 import { Address } from "@multiversx/sdk-network-providers/out/primitives";
 import { multiversXBridgeABI } from "../../contractsTypes/multiversx/abi/multiversXBridgeABI";
 import pollForLockEvents from "../poller";
@@ -44,10 +39,6 @@ export function multiversxHandler({
     address: multiversXBridgeAddress,
     abi: abiRegistry,
   });
-  const eventsParser = new TransactionEventsParser({
-    abi: abiRegistry,
-  });
-  const converter = new TransactionsConverter();
 
   // const gateway = axios.create({
   //   baseURL: gatewayURL,
@@ -115,8 +106,6 @@ export function multiversxHandler({
         provider,
         gatewayURL,
         em,
-        converter,
-        eventsParser,
         logger,
       ),
     nftData: (tid, ctr) => nftData(tid, ctr, provider, gatewayURL, logger),

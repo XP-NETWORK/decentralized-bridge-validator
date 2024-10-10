@@ -1,11 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
-import {
-  type TransactionEventsParser,
-  type TransactionsConverter,
-  findEventsByFirstTopic,
-} from "@multiversx/sdk-core/out";
-import { ApiNetworkProvider } from "@multiversx/sdk-network-providers/out";
+import type { TransactionEvent } from "@multiversx/sdk-network-providers/out";
 import { Axios } from "axios";
 import { Block } from "../../../persistence/entities/block";
 import type { EventBuilder } from "../../event-builder";
@@ -26,8 +21,6 @@ export default async function listenForLockEvents(
   provider: MXProviderFetch,
   gatewayURL: string,
   em: EntityManager,
-  converter: TransactionsConverter,
-  eventsParser: TransactionEventsParser,
   logger: LogInstance,
 ) {
   const waitForTx = async (hash: string) => {
@@ -51,7 +44,6 @@ export default async function listenForLockEvents(
       retries -= 1;
     }
   };
-  const apin = new ApiNetworkProvider(gatewayURL.replace("gateway", "api"));
   let lastBlock_ = lastBlock;
   const apiax = new Axios({
     baseURL: gatewayURL.replace("gateway", "api"),
@@ -101,36 +93,57 @@ export default async function listenForLockEvents(
             provider,
             async (p) => await p.getTransaction(tx.txHash),
           );
-          const transactionOnNetworkMultisig = await apin.getTransaction(
-            txo.contractResults.items[0].hash,
-          );
-          const transactionOutcomeLock =
-            converter.transactionOnNetworkToOutcome(
-              transactionOnNetworkMultisig,
-            );
-          const [event] = findEventsByFirstTopic(
-            transactionOutcomeLock,
-            "Locked",
-          );
+          let event: TransactionEvent[] = [];
+
+          for (const contractEvent of txo.logs.events) {
+            if (contractEvent.topics[0].toString() === "Locked") {
+              event = [contractEvent];
+            }
+
+            if (event.length) break;
+          }
+          if (!event.length) {
+            for (const subTx of txo.contractResults.items) {
+              try {
+                event = subTx.logs.events.filter((e) => {
+                  return e.topics[0].toString() === "Locked";
+                });
+                if (event.length) break;
+              } catch (ex) {}
+            }
+          }
+
           if (!event) continue;
-          const parsed = eventsParser.parseEvent({ event });
-          const destinationChain = parsed.destination_chain.toString("utf-8");
-          const sourceChain = parsed.chain.toString("utf-8");
-          const tokenId = parsed.token_id.toString();
-          const tokenAmount = parsed.token_amount.toString();
-          const metaDataUri = parsed.metadata_uri.toString();
+
+          const parsed = event[0];
+
+          const tokenId = Number.parseInt(
+            parsed.topics[1].hex(),
+            16,
+          ).toString();
+          const destinationChain = parsed.topics[2].toString();
+          const destinationUserAddress = Buffer.from(
+            parsed.topics[3].hex(),
+            "hex",
+          ).toString();
+          const sourceNftContractAddress = parsed.topics[4].toString();
+          const tokenAmount = parsed.topics[5].valueOf()[0].toString();
+          const nftType = parsed.topics[6].toString();
+          const sourceChain = parsed.topics[7].toString();
+          const metadataUri = parsed.topics[8].toString();
+
           await cb(
             await builder.nftLocked(
               tokenId,
               destinationChain,
-              parsed.destination_user_address.toString("utf-8"),
-              parsed.source_nft_contract_address,
+              destinationUserAddress,
+              sourceNftContractAddress,
               tokenAmount,
-              parsed.nft_type.toString("utf-8"),
+              nftType,
               sourceChain,
               tx.txHash,
               CHAIN_IDENT,
-              metaDataUri,
+              metadataUri,
             ),
           );
         }

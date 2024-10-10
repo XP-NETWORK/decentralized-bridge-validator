@@ -80,18 +80,19 @@ export async function listenEvents(
     let imgUri = "";
     const metadataUri = nftDetails.metadata || ev.metaDataUri;
 
-    log.trace(
-      "METADATA URI",
-      nftDetails.metadata,
-      ev.metaDataUri,
-      metadataUri,
-      nftDetails.metadata || ev.metaDataUri,
-    );
+    log.trace({
+      "1": "METADATA URI",
+      "2": nftDetails.metadata,
+      "3": ev.metaDataUri,
+      "4": metadataUri,
+      "5": nftDetails.metadata || ev.metaDataUri,
+    });
 
     try {
       const data = await fetchHttpOrIpfs(metadataUri, axios.create());
       imgUri = data?.image || data?.displayUri;
     } catch (ex) {
+      log.trace("CATCH fetchHttpOrIpfs");
       imgUri = metadataUri;
     }
 

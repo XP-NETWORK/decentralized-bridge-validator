@@ -115,10 +115,10 @@ export default async function listenForLockEvents(
 
           const parsed = event[0];
 
-          const tokenId = Number.parseInt(
-            parsed.topics[1].hex(),
-            16,
-          ).toString();
+          const tokenId =
+            Number.parseInt(parsed.topics[1].hex(), 16).toString() === "NaN"
+              ? "0"
+              : Number.parseInt(parsed.topics[1].hex(), 16).toString();
           const destinationChain = parsed.topics[2].toString();
           const destinationUserAddress = Buffer.from(
             parsed.topics[3].hex(),

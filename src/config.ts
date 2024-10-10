@@ -241,7 +241,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       chain: "MULTIVERSX",
       chainID: "1",
       contractAddress:
-        "erd1qqqqqqqqqqqqqpgqeeywrgux5h7saz98a6g7eu9rqx7ekt67txsqw34867",
+        "erd1qqqqqqqqqqqqqpgqgpeqtg36880f8rn6r6ngfcu73uq4dkextxsq7zjmm9",
       decimals: 18,
       elasticSearchURL: "https://index.multiversx.com",
       gatewayURL: "https://gateway.multiversx.com",

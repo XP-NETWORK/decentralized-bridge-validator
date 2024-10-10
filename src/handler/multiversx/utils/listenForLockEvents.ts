@@ -55,14 +55,12 @@ export default async function listenForLockEvents(
         const txs = (
           await apiax.get<Transaction[]>(
             `/transactions?status=success&receiver=${bridge}&after=${lastBlock_}&order=asc`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            },
           )
         ).data;
+
+        logger.trace(
+          `LENGTH:·${txs.length.toString()}·${lastBlock_.toString()}`,
+        );
 
         const txsForBridge = txs.filter(
           (e) => e.function === "lock721" || e.function === "lock1155",

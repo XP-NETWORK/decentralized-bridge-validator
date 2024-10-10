@@ -64,6 +64,14 @@ export async function listenEvents(
       log,
     );
 
+    const vr = destinationChain.validateNftData(nftDetails);
+    if (!vr.valid) {
+      log.warn(
+        `Invalid NFT data for ${ev.transactionHash} on ${sourceChain.chainIdent}. Reason: ${vr.reason}`,
+      );
+      return;
+    }
+
     const fee = await deps.storage.chainFee(ev.destinationChain);
     const royaltyReceiver = await deps.storage.chainRoyalty(
       ev.destinationChain,

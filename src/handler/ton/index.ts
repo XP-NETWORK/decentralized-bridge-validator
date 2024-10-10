@@ -62,6 +62,9 @@ export function tonHandler({
     currency: "TON",
     address: signer.address.toString(),
     getBalance: () => getBalance(fetchClient, signer.address),
+    validateNftData() {
+      return { valid: true };
+    },
     signClaimData: (d) => signClaimData(d, secretKey, signer, logger),
     addSelfAsValidator: () =>
       addSelfAsValidator(storage, bc, signer, walletSender, logger),

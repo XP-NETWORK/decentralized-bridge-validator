@@ -75,6 +75,9 @@ export function icpHandler({
     },
     signData: (buf) => signData(buf, identity, bc),
     chainType,
+    validateNftData() {
+      return { valid: true };
+    },
     initialFunds: initialFunds,
     chainIdent,
     currency: "ICP",

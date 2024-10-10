@@ -44,6 +44,9 @@ export function evmHandler({
     chainType,
     getBalance: () => getBalance(signer, fetchProvider),
     chainIdent,
+    validateNftData() {
+      return { valid: true };
+    },
     initialFunds,
     currency,
     address: signer.address,

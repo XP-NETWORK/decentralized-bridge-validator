@@ -84,6 +84,9 @@ export async function nearHandler({
     chainIdent,
     currency: "NEAR",
     address,
+    validateNftData() {
+      return { valid: true };
+    },
     signClaimData: (data) => signClaimData(data, kp),
     selfIsValidator: () => selfIsValidator(bc as never, publicKeyInHex),
     listenForLockEvents: (cb, iter) =>

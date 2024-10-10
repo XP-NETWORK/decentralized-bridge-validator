@@ -75,6 +75,9 @@ export async function tezosHandler({
     signClaimData: (data) => signClaimData(data, signer),
     nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
     selfIsValidator: () => selfIsValidator(bc, signer),
+    validateNftData() {
+      return { valid: true };
+    },
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,

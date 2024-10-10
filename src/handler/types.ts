@@ -44,6 +44,9 @@ export interface THandler {
     contract: string,
     logger: LogInstance,
   ): Promise<TNftData>;
+  validateNftData(
+    data: TNftData,
+  ): { valid: false; reason: string } | { valid: true };
   chainIdent: TSupportedChains;
   selfIsValidator(): Promise<boolean>;
   getBalance(): Promise<bigint>;

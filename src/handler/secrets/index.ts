@@ -54,6 +54,9 @@ export async function secretsHandler({
     signData: (buf) => signData(buf, privateKey, publicKey),
     chainType,
     initialFunds: initialFunds,
+    validateNftData() {
+      return { valid: true };
+    },
     chainIdent,
     currency: "USCRT",
     address: address,

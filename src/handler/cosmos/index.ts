@@ -44,6 +44,9 @@ export async function cosmWasmHandler({
     initialFunds: initialFunds,
     chainIdent: chainIdent,
     currency: currency,
+    validateNftData() {
+      return { valid: true };
+    },
     address: sender.address,
     signClaimData: (data) => signClaimData(data, privateKey, publicKey),
     selfIsValidator: () => selfIsValidator(bc, Buffer.from(sender.pubkey)),

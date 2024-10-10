@@ -71,7 +71,9 @@ export default async function listenForLockEvents(
             },
           )
         ).data;
-        const txs: [Transaction] = JSON.parse(response as string);
+        const txs: [Transaction] = JSON.parse(
+          JSON.stringify(response) as string,
+        );
 
         const txsForBridge = txs.filter(
           (e) => e.function === "lock721" || e.function === "lock1155",

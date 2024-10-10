@@ -83,7 +83,7 @@ export const bridgeTestChains = [
     chain: "MULTIVERSX",
     chainID: "D",
     contractAddress:
-      "erd1qqqqqqqqqqqqqpgql0f449zdvdezjlzfmqcl4m8qmak0wemctxsqhma53h",
+      "erd1qqqqqqqqqqqqqpgqzwm7jgeqcgg60cryhsnl7vw7xm9vxnq3txsqwmu3n0",
     decimals: 18,
     elasticSearchURL: "https://devnet-index.multiversx.com",
     gatewayURL: "https://devnet-gateway.multiversx.com",

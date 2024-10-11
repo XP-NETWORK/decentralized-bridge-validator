@@ -115,6 +115,17 @@ export const bridgeTestChains = [
     theGraphApiUrl:
       "https://api.studio.thegraph.com/query/89122/near-xp/version/latest",
   },
+  {
+    chain: "BLAST",
+    rpcURL: "https://blast-sepolia.blockpi.network/v1/rpc/public",
+    nativeCoinSymbol: "ETH",
+    intialFund: "50000000000000000",
+    contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
+    chainType: "evm",
+    lastBlock: 11980723,
+    decimals: 18,
+    blockChunks: 1000,
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

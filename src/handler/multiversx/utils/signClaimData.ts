@@ -51,7 +51,7 @@ export default async function signClaimData(
           buf.symbol
             .replace(/[^a-zA-Z0-9]/g, "")
             .toUpperCase()
-            .substring(0, 10),
+            .substring(0, 8),
         ),
       ),
       "symbol",

@@ -46,13 +46,13 @@ export function multiversxHandler({
 
   return {
     validateNftData(data) {
-      if (data.name.length > 3 && data.name.length < 50) {
+      if (data.name.length > 50 || data.name.length < 3) {
         return {
           valid: false,
           reason: "Name must be between 3 and 50 characters",
         };
       }
-      if (data.symbol.length > 3 && data.symbol.length < 10) {
+      if (data.symbol.length > 10 || data.symbol.length < 3) {
         return {
           valid: false,
           reason: "Symbol must be between 3 and 10 characters",

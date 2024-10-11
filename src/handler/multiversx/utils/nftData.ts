@@ -45,7 +45,7 @@ export default async function nftData(
   );
   return {
     name: nftDetails?.name ?? "XP Wrapped Nft",
-    symbol: nftDetails?.ticker ?? "XPNFT",
+    symbol: nftDetails?.ticker.split("-")[0] ?? "XPNFT",
     metadata: metaData,
     royalty: BigInt(royalties),
   };

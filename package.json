@@ -25,6 +25,7 @@
     "useTsNode": true
   },
   "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.29.1",
     "@bogeychan/elysia-polyfills": "^0.6.4",
     "@cosmjs/amino": "^0.32.3",
     "@cosmjs/cosmwasm-stargate": "^0.32.3",
@@ -48,6 +49,7 @@
     "@taquito/signer": "^19.0.2",
     "@taquito/taquito": "^19.0.2",
     "@taquito/tzip16": "^19.0.2",
+    "@thalalabs/surf": "^1.7.3",
     "@ton/core": "^0.54.0",
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.9.0",

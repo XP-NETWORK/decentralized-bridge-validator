@@ -1,3 +1,9 @@
+import {
+  Aptos,
+  AptosConfig,
+  Ed25519Account,
+  Ed25519PrivateKey,
+} from "@aptos-labs/ts-sdk";
 import { MikroORM } from "@mikro-orm/core";
 import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers/out";
 import { UserSigner } from "@multiversx/sdk-wallet/out";
@@ -36,6 +42,7 @@ import {
   keyStores,
 } from "near-api-js";
 import { ERC20Staking__factory } from "./contractsTypes/evm";
+import { aptosHandler } from "./handler/aptos";
 import { cosmWasmHandler } from "./handler/cosmos";
 import { evmStakingHandler } from "./handler/evm/stakingHandler";
 import type { MutexReleaser } from "./handler/evm/types";
@@ -46,6 +53,8 @@ import MikroOrmConfig from "./mikro-orm.config";
 import { Block } from "./persistence/entities/block";
 import type {
   CosmWasmWallet,
+  IAptosChainConfig,
+  IAptosWallet,
   IBridgeConfig,
   ICosmWasmChainConfig,
   IEvmChainConfig,
@@ -443,6 +452,48 @@ export async function configNearHandler(
   });
 }
 
+export async function configAptosHandler(
+  conf: IAptosChainConfig,
+  storage: BridgeStorage,
+  em: EntityManager,
+  aptosWallet: IAptosWallet,
+  serverLinkHandler: AxiosInstance | undefined,
+  aptosLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
+) {
+  const cfg = new AptosConfig({
+    network: conf.network,
+  });
+  const signer = new Ed25519Account({
+    privateKey: new Ed25519PrivateKey(aptosWallet.privateKey),
+    address: aptosWallet.address,
+  });
+  const aptos = new Aptos(cfg);
+  const mutex = new Mutex();
+  async function fetchProvider() {
+    const release = await mutex.acquire();
+    return [aptos, release] as const;
+  }
+
+  return aptosHandler({
+    fetchProvider: fetchProvider,
+    bridge: conf.contractAddress,
+    chainIdent: "APTOS",
+    chainType: "aptos",
+    decimals: 8,
+    em,
+    initialFunds: 10000000n,
+    lastBlock_: 3,
+    logger: aptosLogger,
+    serverLinkHandler,
+    signer,
+    staking,
+    storage,
+    validatorAddress,
+  });
+}
+
 export async function configTonHandler(
   conf: ITonChainConfig,
   storage: BridgeStorage,
@@ -618,6 +669,21 @@ export async function configDeps(
       )
     : undefined;
 
+  const aptosc = config.bridgeChains.find((e) => e.chainType === "aptos");
+
+  const aptos = aptosc
+    ? await configAptosHandler(
+        aptosc,
+        storage,
+        em.fork(),
+        secrets.aptosWallet,
+        serverLinkHandler,
+        logger.getSubLogger({ name: "APTOS" }),
+        staking,
+        secrets.evmWallet.address,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -685,6 +751,7 @@ export async function configDeps(
       ton,
       icp,
       near,
+      aptos,
     ].filter((e) => e !== undefined) as THandler[],
   };
 }

@@ -1,22 +1,20 @@
 import fs from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { type Interface, createInterface } from "node:readline/promises";
+import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
+import { ERC20Token__factory } from "./contractsTypes/evm";
+import { ERC20Staking__factory } from "./contractsTypes/evm";
+import { generateWallet as aptosGw } from "./handler/aptos/utils";
 import { generateWallet as evmGw } from "./handler/evm/utils";
+import { getBalance } from "./handler/evm/utils";
 import { generateWallet as icpGw } from "./handler/icp/utils";
 import { generateWallet as mxGw } from "./handler/multiversx/utils";
 import { generateWallet as nearGw } from "./handler/near/utils";
 import { generateWallet as secretGw } from "./handler/secrets/utils";
 import { generateWallet as tzGw } from "./handler/tezos/utils";
-import { generateWallet as tonGw } from "./handler/ton/utils";
-
-import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
-
-import { type Interface, createInterface } from "node:readline/promises";
-
-import { ERC20Token__factory } from "./contractsTypes/evm";
-import { ERC20Staking__factory } from "./contractsTypes/evm";
-import { getBalance } from "./handler/evm/utils";
 import { raise } from "./handler/ton";
+import { generateWallet as tonGw } from "./handler/ton/utils";
 import type { LogInstance, THandler } from "./handler/types";
 import type {
   IEvmChainConfig,
@@ -39,6 +37,7 @@ export async function syncWallets(
       tonWallet: await tonGw(),
       icpWallet: await icpGw(),
       nearWallet: await nearGw(),
+      aptosWallet: await aptosGw(),
     };
     await writeFile(secretsPath, JSON.stringify(wallets));
     return wallets;
@@ -66,8 +65,11 @@ export async function syncWallets(
   } else if (!("nearWallet" in secrets)) {
     logger.warn("No wallet for near found, please add it to secrets.json");
     // process.exit(1);
+  } else if (!("aptosWallet" in secrets)) {
+    logger.warn("Generating new wallet for Aptos");
+    secrets.aptosWallet = await aptosGw();
   }
-  await writeFile(secretsPath, JSON.stringify(secrets));
+  await writeFile(secretsPath, JSON.stringify(secrets, null, 4));
   return secrets;
 }
 

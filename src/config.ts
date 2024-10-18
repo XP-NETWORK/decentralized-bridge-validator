@@ -260,6 +260,17 @@ export const prodBridgeConfig: IBridgeConfig = {
       nativeCoinSymbol: "EGLD",
       lastBlock: 1728301060,
     },
+    {
+      chain: "BLAST",
+      rpcURL: "https://blastl2-mainnet.public.blastapi.io",
+      nativeCoinSymbol: "ETH",
+      intialFund: "1000000000000000",
+      contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
+      chainType: "evm",
+      lastBlock: 10219223,
+      decimals: 18,
+      blockChunks: 1000,
+    },
   ],
   storageConfig: {
     chain: "OP",

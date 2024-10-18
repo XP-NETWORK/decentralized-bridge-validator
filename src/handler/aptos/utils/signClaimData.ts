@@ -16,7 +16,7 @@ export default async function signClaimData(
   const signature = signer.sign(hash);
 
   return {
-    signer: signer.publicKey.bcsToHex().toStringWithoutPrefix(),
+    signer: Buffer.from(signer.publicKey.toUint8Array()).toString("hex"),
     signature: signature.bcsToHex().toString(),
   };
 }

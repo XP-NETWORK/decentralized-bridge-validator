@@ -1,4 +1,4 @@
-import { Network } from "@aptos-labs/ts-sdk";
+// import { Network } from "@aptos-labs/ts-sdk";
 import type {
   IBridgeConfig,
   IEvmChainConfig,
@@ -127,17 +127,17 @@ export const bridgeTestChains = [
     decimals: 18,
     blockChunks: 1000,
   },
-  {
-    chain: "APTOS",
-    chainType: "aptos",
-    contractAddress:
-      "eea0db4fdc3d8915808c67268a668f3ee0810e864a40b4bde6c371b09337250a",
-    decimals: 8,
-    intialFund: "100000000",
-    lastBlock: 0,
-    nativeCoinSymbol: "APT",
-    network: Network.TESTNET,
-  },
+  // {
+  //   chain: "APTOS",
+  //   chainType: "aptos",
+  //   contractAddress:
+  //     "0xeea0db4fdc3d8915808c67268a668f3ee0810e864a40b4bde6c371b09337250a",
+  //   decimals: 8,
+  //   intialFund: "100000000",
+  //   lastBlock: 0,
+  //   nativeCoinSymbol: "APT",
+  //   network: Network.TESTNET,
+  // },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

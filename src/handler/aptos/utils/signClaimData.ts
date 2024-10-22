@@ -17,6 +17,6 @@ export default async function signClaimData(
 
   return {
     signer: Buffer.from(signer.publicKey.toUint8Array()).toString("hex"),
-    signature: signature.bcsToHex().toString(),
+    signature: `0x${Buffer.from(signature.toUint8Array()).toString("hex")}`,
   };
 }

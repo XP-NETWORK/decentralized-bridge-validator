@@ -86,7 +86,8 @@ export function aptosHandler({
         validatorAddress,
       ),
     getBalance: () => getBalance(fetchProvider, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
+    nftData: (tid, ctr) =>
+      nftData(tid, ctr, fetchProvider, () => bc(fetchProvider, bridge), logger),
     decimals: BigInt(10 ** decimals),
   };
 }

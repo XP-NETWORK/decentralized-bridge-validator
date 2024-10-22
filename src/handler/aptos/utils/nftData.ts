@@ -1,16 +1,25 @@
+import type { TAptosBridgeClient } from "..";
 import type { LogInstance } from "../../types";
 import { useMutexAndRelease } from "../../utils";
 import type { AptosProviderFetch } from "../types";
 
 export default async function nftData(
   tokenId: string,
-  _contract: string,
+  contract: string,
   fetchProvider: AptosProviderFetch,
-  log: LogInstance,
+  fetchBridge: () => Promise<readonly [TAptosBridgeClient, () => void]>,
+  _log: LogInstance,
 ) {
+  console.log({ tokenId, contract });
+  const [taddr] = await useMutexAndRelease(fetchBridge, async (b) =>
+    b.view.token_id_from_nonce_and_collection({
+      functionArguments: [tokenId, Buffer.from(contract.slice(2), "hex")],
+      typeArguments: [],
+    }),
+  );
   const md = await useMutexAndRelease(fetchProvider, async (a) => {
     return a.digitalAsset.getDigitalAssetData({
-      digitalAssetAddress: tokenId,
+      digitalAssetAddress: taddr,
     });
   });
   const cd = await useMutexAndRelease(fetchProvider, async (a) => {
@@ -18,7 +27,6 @@ export default async function nftData(
       collectionId: md.collection_id,
     });
   });
-  log.silly(`Metadata for ${tokenId}:${_contract}-`, md, cd);
   return {
     metadata: md.token_uri,
     name: cd.collection_name,

@@ -59,13 +59,13 @@ export default async function listenForLockEvents(
             data.collection_address,
             data.token_amount,
             aptosHexStringToStr(data.nft_type),
-            aptosHexStringToStr(data.self_chain),
+            aptosHexStringToStr(data.source_chain),
             ev.transaction_version.toString(),
             CHAIN_IDENT,
             data.metadata_uri,
           ),
         );
-        lastBlock = data.transaction_version;
+        lastBlock = ev.transaction_version + 1;
       }
       await em.upsert(Block, {
         chain: CHAIN_IDENT,

@@ -1,6 +1,6 @@
 export const ABI = (address: string) => {
   return {
-    address,
+    address: address,
     name: "aptos_nft_bridge",
     friends: [],
     exposed_functions: [
@@ -147,6 +147,15 @@ export const ABI = (address: string) => {
         return: ["bool"],
       },
       {
+        name: "token_id_from_nonce_and_collection",
+        visibility: "public",
+        is_entry: false,
+        is_view: true,
+        generic_type_params: [],
+        params: ["u256", "vector<u8>"],
+        return: ["address"],
+      },
+      {
         name: "validator_count",
         visibility: "public",
         is_entry: false,
@@ -182,25 +191,25 @@ export const ABI = (address: string) => {
         fields: [
           {
             name: "validators",
-            type: "0x1::simple_map::SimpleMap<vector<u8>, 0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::Validator>",
+            type: "0x1::simple_map::SimpleMap<vector<u8>, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::Validator>",
           },
           { name: "signer_cap", type: "0x1::account::SignerCapability" },
           {
             name: "collection_objects",
-            type: "0x1::table::Table<0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::CollectionObject, u256>",
+            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::CollectionObject, u256>",
           },
           { name: "nfts_counter", type: "u64" },
           {
             name: "original_to_duplicate_mapping",
-            type: "0x1::table::Table<0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::OriginalToDuplicateKey, 0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::OriginalToDuplicateInfo>",
+            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::OriginalToDuplicateKey, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::OriginalToDuplicateInfo>",
           },
           {
             name: "duplicate_to_original_mapping",
-            type: "0x1::table::Table<0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::DuplicateToOriginalKey, 0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::DuplicateToOriginalInfo>",
+            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::DuplicateToOriginalKey, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::DuplicateToOriginalInfo>",
           },
           {
             name: "nft_collection_tokens",
-            type: "0x1::simple_map::SimpleMap<0x8af7551f9ef82cb29a950655d4e8afa8ece900475c671d5bfcd00ddb86c861b6::aptos_nft_bridge::CollectionNftObject, address>",
+            type: "0x1::simple_map::SimpleMap<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::CollectionNftObject, address>",
           },
           {
             name: "nft_collections_counter",
@@ -319,7 +328,7 @@ export const ABI = (address: string) => {
           { name: "token_amount", type: "u64" },
           { name: "nft_type", type: "vector<u8>" },
           { name: "destination_chain", type: "vector<u8>" },
-          { name: "self_chain", type: "vector<u8>" },
+          { name: "source_chain", type: "vector<u8>" },
           { name: "collection_address", type: "vector<u8>" },
           { name: "token_address", type: "address" },
           { name: "metadata_uri", type: "0x1::string::String" },

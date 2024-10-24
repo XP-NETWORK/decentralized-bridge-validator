@@ -18,5 +18,5 @@ export default async function selfIsValidator(
       },
     })) as { validator: { data: { added: boolean } } };
   });
-  return res.validator.data.added && res.validator.data.added;
+  return (res?.validator?.data?.added && res?.validator?.data?.added) ?? false;
 }

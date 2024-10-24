@@ -8,7 +8,6 @@ import type { LogInstance } from "../../types";
 export type AptosHandlerParams = {
   fetchProvider: AptosProviderFetch;
   signer: Account;
-  bridgeAccount: Account;
   bridge: string;
   storage: BridgeStorage;
   lastBlock_: number;
@@ -23,4 +22,4 @@ export type AptosHandlerParams = {
   validatorAddress: string;
 };
 
-export type AptosProviderFetch = () => Promise<[Aptos, () => void]>;
+export type AptosProviderFetch = () => Promise<readonly [Aptos, () => void]>;

@@ -15,9 +15,9 @@ import {
 import { createSurfClient } from "@thalalabs/surf";
 import { ABI } from "./abi/bridge";
 
-const bc = async (fetchProvider: AptosProviderFetch) => {
+const bc = async (fetchProvider: AptosProviderFetch, ba: string) => {
   const [agent, release] = await fetchProvider();
-  return [createSurfClient(agent).useABI(ABI), release] as const;
+  return [createSurfClient(agent).useABI(ABI(ba)), release] as const;
 };
 
 export type TAptosBridgeClient = Awaited<ReturnType<typeof bc>>[0];
@@ -36,7 +36,6 @@ export function aptosHandler({
   logger,
   signer,
   staking,
-  bridgeAccount,
   validatorAddress,
 }: AptosHandlerParams): THandler {
   return {
@@ -62,16 +61,17 @@ export function aptosHandler({
     },
     initialFunds: initialFunds,
     chainIdent,
-    currency: "ICP",
+    currency: "APT",
     address: signer.accountAddress.toString(),
     signClaimData: (data) => signClaimData(data, signer),
-    selfIsValidator: () => selfIsValidator(() => bc(fetchProvider), signer),
+    selfIsValidator: () =>
+      selfIsValidator(() => bc(fetchProvider, bridge), signer),
     listenForLockEvents: (cb, iter) =>
       listenForLockEvents(
         cb,
         iter,
         lastBlock_,
-        () => bc(fetchProvider),
+        fetchProvider,
         bridge,
         em,
         logger,
@@ -79,15 +79,15 @@ export function aptosHandler({
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,
-        () => bc(fetchProvider),
-        bridgeAccount,
+        () => bc(fetchProvider, bridge),
         signer,
         logger,
         staking,
         validatorAddress,
       ),
     getBalance: () => getBalance(fetchProvider, signer),
-    nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),
+    nftData: (tid, ctr) =>
+      nftData(tid, ctr, fetchProvider, () => bc(fetchProvider, bridge), logger),
     decimals: BigInt(10 ** decimals),
   };
 }

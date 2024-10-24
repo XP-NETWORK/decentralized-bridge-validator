@@ -1,3 +1,5 @@
+import type { Network } from "@aptos-labs/ts-sdk";
+
 type ISecretKeyCrypto = {
   ciphertext: string;
   cipherparams: {
@@ -31,6 +33,12 @@ type IMultiversXWallet = {
 type ITonWallet = {
   publicKey: string;
   secretKey: string;
+};
+
+type IAptosWallet = {
+  privateKey: string;
+  publicKey: string;
+  address: string;
 };
 
 type INearWallet = {
@@ -75,6 +83,7 @@ type IGeneratedWallets = {
   tezosWallet: ITezosWallet;
   icpWallet: IICPWallet;
   nearWallet: INearWallet;
+  aptosWallet: IAptosWallet;
 };
 
 type IConfigAndWallets = {
@@ -116,6 +125,12 @@ type ITonChainConfig = {
   chainType: "ton";
   rpcURL: string;
   network: "testnet" | "mainnet";
+} & IChainConfig;
+
+type IAptosChainConfig = {
+  chainType: "aptos";
+  // ENUMS are not structural
+  network: Network;
 } & IChainConfig;
 
 type INearChainConfig = {
@@ -168,7 +183,8 @@ type TChain =
   | IHederaChainConfig
   | ICosmWasmChainConfig
   | IICPChainConfig
-  | INearChainConfig;
+  | INearChainConfig
+  | IAptosChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -203,5 +219,7 @@ export type {
   ITonWallet,
   INearChainConfig,
   INearWallet,
+  IAptosChainConfig,
+  IAptosWallet,
   TChain,
 };

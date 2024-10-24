@@ -8,7 +8,7 @@ export default async function selfIsValidator(
 ) {
   const [validator] = await useMutexAndRelease(fetchBridge, async (bridge) => {
     return bridge.view.has_validator({
-      functionArguments: [identity.publicKey.bcsToBytes()],
+      functionArguments: [identity.publicKey.toUint8Array()],
       typeArguments: [],
     });
   });

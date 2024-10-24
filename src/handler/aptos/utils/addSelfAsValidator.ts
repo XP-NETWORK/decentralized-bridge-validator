@@ -12,7 +12,6 @@ import {
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
   fetchBridge: () => Promise<readonly [TAptosBridgeClient, () => void]>,
-  bridgeAccount: Account,
   identity: Account,
   logger: LogInstance,
   staking: ERC20Staking,
@@ -79,7 +78,7 @@ export default async function addSelfAsValidator(
       fetchBridge,
       async (bridge) =>
         await bridge.entry.add_validator({
-          account: bridgeAccount,
+          account: identity,
           functionArguments: [
             identity.publicKey.bcsToHex().toString(),
             signatures.map((e) => {

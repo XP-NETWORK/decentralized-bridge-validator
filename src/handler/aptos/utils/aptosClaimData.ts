@@ -52,8 +52,18 @@ export class ClaimData extends Serializable {
   serialize(serializer: Serializer): void {
     serializer.serializeU256(this.tokenId);
     serializer.serializeBytes(Buffer.from(this.sourceChain));
-    serializer.serializeBytes(Buffer.from(this.user));
+    serializer.serializeBytes(Buffer.from(this.destinationChain));
+    serializer.serializeBytes(Buffer.from(this.user.slice(2)));
     serializer.serializeBytes(Buffer.from(this.sourceNftContractAddress));
-    serializer.serialize;
+    serializer.serializeStr(this.name);
+    serializer.serializeU64(this.royaltyPercentage);
+    serializer.serializeBytes(Buffer.from(this.royaltyPayeeAddress.slice(2)));
+    serializer.serializeStr(this.metadata);
+    serializer.serializeBytes(Buffer.from(this.transactionHash));
+    serializer.serializeU256(this.tokenAmount);
+    serializer.serializeBytes(Buffer.from(this.nftType));
+    serializer.serializeU64(this.fee);
+    serializer.serializeStr(this.symbol);
+    serializer;
   }
 }

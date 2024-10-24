@@ -62,7 +62,7 @@ export const bridgeTestChains = [
     chainType: "scrt",
     chainId: "pulsar-3",
     contractAddress: "secret1lmh5n3gdzss9qlfyzn6k7vmja9nexesz5vlpj8",
-    decimals: 6,
+    decimals: 7,
     intialFund: "100000000",
     lastBlock: 6949981,
     nativeCoinSymbol: "SCRT",

@@ -286,7 +286,7 @@ export const prodBridgeConfig: IBridgeConfig = {
     },
     {
       chain: "FANTOM",
-      rpcURL: "https://rpc.fantom.network",
+      rpcURL: process.env.FANTOM_RPC || "https://rpc.fantom.network",
       nativeCoinSymbol: "FTM",
       intialFund: "1000000000000000",
       contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",

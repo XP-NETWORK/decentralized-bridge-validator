@@ -17,6 +17,7 @@ export const Env = z.object({
   HEDERA_RPC: z.string().optional(),
   TON_RPC: z.string().optional(),
   TEZOS_RPC: z.string().optional(),
+  FANTOM_RPC: z.string().optional(),
 });
 export type Env = z.infer<typeof Env>;
 

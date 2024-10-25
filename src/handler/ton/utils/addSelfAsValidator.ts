@@ -7,7 +7,7 @@ import {
 } from "@ton/core";
 import { Dictionary, WalletContractV4 } from "@ton/ton";
 import TonWeb from "tonweb";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type {
   Bridge,
   NewValidator,
@@ -27,8 +27,24 @@ export default async function addSelfAsValidator(
   signer: WalletContractV4,
   walletSender: Sender,
   logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ): Promise<"success" | "failure"> {
   try {
+    signer.address.toString();
+    const stakedAmt = await staking.stakingBalances(validatorAddress);
+    if (stakedAmt > 0n) {
+      const add = await staking.addNewChains([
+        {
+          chainType: "ton",
+          validatorAddress: signer.publicKey.toString("hex"),
+        },
+      ]);
+      const receipt = await add.wait();
+      logger.info(
+        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+      );
+    }
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
     // let [bridge, release] = await bc();
     let validatorsCount = await useMutexAndRelease(bc, async (bridge) =>

@@ -4,7 +4,7 @@ import type { TonClient, WalletContractV4 } from "@ton/ton";
 import type { AxiosInstance } from "axios";
 import type { HttpProvider } from "tonweb/dist/types/providers/http-provider";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type TonParams = {
@@ -23,6 +23,8 @@ export type TonParams = {
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
+  staking: ERC20Staking;
+  validatorAddress: string;
 };
 
 export type TONProviderFetch = () => Promise<[TonClient, () => void]>;

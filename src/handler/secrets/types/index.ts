@@ -2,7 +2,7 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
 import type { SecretNetworkClient, Wallet } from "secretjs";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { LogInstance } from "../../types";
 
 export type SecretsHandlerParams = {
@@ -22,6 +22,8 @@ export type SecretsHandlerParams = {
   chainIdent: TSupportedChains;
   serverLinkHandler: AxiosInstance | undefined;
   logger: LogInstance;
+  staking: ERC20Staking;
+  validatorAddress: string;
 };
 
 export type SecretProviderFetch = () => Promise<

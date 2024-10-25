@@ -31,6 +31,8 @@ export function tonHandler({
   chainIdent,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: TonParams): THandler {
   const bc = async () => {
     const [client, release] = await fetchClient();
@@ -67,7 +69,15 @@ export function tonHandler({
     },
     signClaimData: (d) => signClaimData(d, secretKey, signer, logger),
     addSelfAsValidator: () =>
-      addSelfAsValidator(storage, bc, signer, walletSender, logger),
+      addSelfAsValidator(
+        storage,
+        bc,
+        signer,
+        walletSender,
+        logger,
+        staking,
+        validatorAddress,
+      ),
     selfIsValidator: () => selfIsValidator(signer, tonweb, bridge),
     nftData: (_, ctr) =>
       retry(

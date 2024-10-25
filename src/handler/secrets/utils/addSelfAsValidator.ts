@@ -1,6 +1,6 @@
 import { type Wallet, pubkeyToAddress } from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { AddValidatorType } from "../../../contractsTypes/secret/secretBridge";
 import type { LogInstance } from "../../types";
 import {
@@ -19,8 +19,23 @@ export default async function addSelfAsValidator(
   bridgeCodeHash: string,
   wallet: Wallet,
   logger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ): Promise<"success" | "failure"> {
   try {
+    const stakedAmt = await staking.stakingBalances(validatorAddress);
+    if (stakedAmt > 0n) {
+      const add = await staking.addNewChains([
+        {
+          chainType: "scrt",
+          validatorAddress: publicKey,
+        },
+      ]);
+      const receipt = await add.wait();
+      logger.info(
+        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
+      );
+    }
     async function getStakingSignatureCount() {
       const res = await useMutexAndRelease(
         fetchProvider,

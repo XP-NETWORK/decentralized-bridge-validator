@@ -309,6 +309,8 @@ export async function configSecretHandler(
   em: EntityManager,
   secretWallet: ISecretWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  staking: ERC20Staking,
+  validatorAddress: string,
   scrtLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
@@ -349,6 +351,8 @@ export async function configSecretHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: scrtLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -500,6 +504,8 @@ export async function configTonHandler(
   em: EntityManager,
   tonWallet: ITonWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  staking: ERC20Staking,
+  validatorAddress: string,
   tonLogger: LogInstance,
 ) {
   const endpoint = await getHttpEndpoint({
@@ -539,6 +545,8 @@ export async function configTonHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: tonLogger,
+    staking,
+    validatorAddress,
   });
 }
 
@@ -608,6 +616,8 @@ export async function configDeps(
         em.fork(),
         secrets.secretWallet,
         serverLinkHandler,
+        staking,
+        secrets.evmWallet.address,
         logger.getSubLogger({ name: "SECRET" }),
       )
     : undefined;
@@ -635,6 +645,8 @@ export async function configDeps(
         em.fork(),
         secrets.tonWallet,
         serverLinkHandler,
+        staking,
+        secrets.evmWallet.address,
         logger.getSubLogger({ name: "TON" }),
       )
     : undefined;

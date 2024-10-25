@@ -30,6 +30,8 @@ export async function secretsHandler({
   chainType,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: SecretsHandlerParams): Promise<THandler> {
   const address = await useMutexAndRelease(
     fetchProvider,
@@ -83,6 +85,8 @@ export async function secretsHandler({
         bridgeCodeHash,
         wallet,
         logger,
+        staking,
+        validatorAddress,
       ),
     getBalance: () => getBalance(fetchProvider),
     nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, logger),

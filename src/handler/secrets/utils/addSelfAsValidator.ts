@@ -1,5 +1,8 @@
 import { type Wallet, pubkeyToAddress } from "secretjs";
-import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
+import {
+  encodeSecp256k1Pubkey,
+  encodeSecp256k1Signature,
+} from "secretjs/dist/wallet_amino";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { AddValidatorType } from "../../../contractsTypes/secret/secretBridge";
 import type { LogInstance } from "../../types";
@@ -50,9 +53,10 @@ export default async function addSelfAsValidator(
       );
       return res.validator_count_response.count;
     }
-    const newV = Buffer.from(publicKey).toString("base64");
     let validatorsCount = await getStakingSignatureCount();
-    let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+    let signatureCount = Number(
+      await storage.getStakingSignaturesCount(publicKey),
+    );
 
     while (signatureCount < confirmationCountNeeded(validatorsCount)) {
       await waitForMSWithMsg(
@@ -61,10 +65,12 @@ export default async function addSelfAsValidator(
           validatorsCount,
         )}`,
       );
-      signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+      signatureCount = Number(
+        await storage.getStakingSignaturesCount(publicKey),
+      );
       validatorsCount = await getStakingSignatureCount();
     }
-    const signatures = [...(await storage.getStakingSignatures(newV))].map(
+    const signatures = [...(await storage.getStakingSignatures(publicKey))].map(
       (item) => {
         return {
           signerAddress: item.signerAddress,
@@ -73,7 +79,7 @@ export default async function addSelfAsValidator(
       },
     );
 
-    const validatorToAddPublicKeyUint8 = Buffer.from(wallet.address, "hex");
+    const validatorToAddPublicKeyUint8 = Buffer.from(publicKey, "hex");
     const msg: AddValidatorType = {
       add_validator: {
         data: {
@@ -83,17 +89,19 @@ export default async function addSelfAsValidator(
           ],
           signatures: signatures.map((item) => {
             return {
-              signature: Buffer.from(
-                item.signature.replace("0x", ""),
-                "hex",
-              ).toString("base64"),
-              signer_address: item.signerAddress,
+              signature: encodeSecp256k1Signature(
+                Buffer.from(item.signerAddress, "hex"),
+                Buffer.from(item.signature.replace("0x", ""), "hex"),
+              ).signature,
+              signer_address: encodeSecp256k1Pubkey(
+                Buffer.from(item.signerAddress, "hex"),
+              ).value,
             };
           }),
         },
       },
     };
-    await useMutexAndRelease(
+    const add = await useMutexAndRelease(
       fetchProvider,
       async (client) =>
         await client.tx.compute.executeContract(
@@ -107,6 +115,10 @@ export default async function addSelfAsValidator(
             gasLimit: 200_000,
           },
         ),
+    );
+    logger.info(
+      `Added self as chain at hash: ${add.transactionHash}. TX:`,
+      add,
     );
     return "success";
   } catch (e) {

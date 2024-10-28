@@ -112,15 +112,21 @@ export default async function addSelfAsValidator(
             sender: pubkeyToAddress(Buffer.from(wallet.publicKey)),
           },
           {
-            gasLimit: 200_000,
+            gasLimit: 250_000,
           },
         ),
     );
     logger.info(
-      `Added self as chain at hash: ${add.transactionHash}. TX:`,
+      `Submitted tx to add self as validator at hash: ${
+        add.transactionHash
+      }. Status: ${
+        add.rawLog.includes("AddNewValidatorEventInfo") ? "success" : "failure"
+      }. TX:`,
       add,
     );
-    return "success";
+    return add.rawLog.includes("AddNewValidatorEventInfo")
+      ? "success"
+      : "failure";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
     return "failure";

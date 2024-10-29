@@ -1,6 +1,9 @@
+import type { Ed25519Account } from "@aptos-labs/ts-sdk";
+import { createSurfClient } from "@thalalabs/surf";
 import pollForLockEvents from "../poller";
 import { raise } from "../ton";
 import type { THandler } from "../types";
+import { ABI } from "./abi/bridge";
 import type { AptosHandlerParams, AptosProviderFetch } from "./types";
 import {
   addSelfAsValidator,
@@ -11,9 +14,6 @@ import {
   signClaimData,
   signData,
 } from "./utils";
-
-import { createSurfClient } from "@thalalabs/surf";
-import { ABI } from "./abi/bridge";
 
 const bc = async (fetchProvider: AptosProviderFetch, ba: string) => {
   const [agent, release] = await fetchProvider();
@@ -54,7 +54,7 @@ export function aptosHandler({
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );
     },
-    signData: (buf) => signData(buf, signer),
+    signData: (buf) => signData(buf, signer as Ed25519Account),
     chainType,
     validateNftData() {
       return { valid: true };
@@ -63,7 +63,7 @@ export function aptosHandler({
     chainIdent,
     currency: "APT",
     address: signer.accountAddress.toString(),
-    signClaimData: (data) => signClaimData(data, signer),
+    signClaimData: (data) => signClaimData(data, signer as Ed25519Account),
     selfIsValidator: () =>
       selfIsValidator(() => bc(fetchProvider, bridge), signer),
     listenForLockEvents: (cb, iter) =>

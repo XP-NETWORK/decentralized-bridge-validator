@@ -6,17 +6,19 @@ import {
   BridgeStorage__factory,
   ERC20Staking__factory,
 } from "./contractsTypes/evm";
-import { configAptosHandler } from "./handler/aptos/config";
-import { configCosmWasmChainHandler } from "./handler/cosmos/config";
-import { configEvmHandler } from "./handler/evm/config";
-import { configHederaHandler } from "./handler/evm/config-hedera";
-import { configStakingHandler } from "./handler/evm/config-staking";
-import { configIcpHandler } from "./handler/icp/config";
-import { configMultiversXHandler } from "./handler/multiversx/config";
-import { configNearHandler } from "./handler/near/config";
-import { configSecretHandler } from "./handler/secrets/config";
-import { configTezosHandler } from "./handler/tezos/config";
-import { configTonHandler } from "./handler/ton/config";
+import {
+  configAptosHandler,
+  configCosmWasmChainHandler,
+  configEvmHandler,
+  configHederaHandler,
+  configIcpHandler,
+  configMultiversXHandler,
+  configNearHandler,
+  configSecretHandler,
+  configStakingHandler,
+  configTezosHandler,
+  configTonHandler,
+} from "./handler/chains";
 import type { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
 import type {

@@ -19,7 +19,7 @@
     "ignore": [
       "src/contractsTypes/**/*.ts",
       "src/tests/**/*.ts",
-      "src/handler/ton/utils/tep64.ts"
+      "src/handler/chains/ton/utils/tep64.ts"
     ]
   }
 }

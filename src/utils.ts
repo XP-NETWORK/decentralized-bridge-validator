@@ -5,16 +5,16 @@ import { type Interface, createInterface } from "node:readline/promises";
 import { JsonRpcProvider, VoidSigner, ethers } from "ethers";
 import { ERC20Token__factory } from "./contractsTypes/evm";
 import { ERC20Staking__factory } from "./contractsTypes/evm";
-import { generateWallet as aptosGw } from "./handler/aptos/utils";
-import { generateWallet as evmGw } from "./handler/evm/utils";
-import { getBalance } from "./handler/evm/utils";
-import { generateWallet as icpGw } from "./handler/icp/utils";
-import { generateWallet as mxGw } from "./handler/multiversx/utils";
-import { generateWallet as nearGw } from "./handler/near/utils";
-import { generateWallet as secretGw } from "./handler/secrets/utils";
-import { generateWallet as tzGw } from "./handler/tezos/utils";
-import { raise } from "./handler/ton";
-import { generateWallet as tonGw } from "./handler/ton/utils";
+import { generateWallet as aptosGw } from "./handler/chains/aptos/utils";
+import { generateWallet as evmGw } from "./handler/chains/evm/utils";
+import { getBalance } from "./handler/chains/evm/utils";
+import { generateWallet as icpGw } from "./handler/chains/icp/utils";
+import { generateWallet as mxGw } from "./handler/chains/multiversx/utils";
+import { generateWallet as nearGw } from "./handler/chains/near/utils";
+import { generateWallet as secretGw } from "./handler/chains/secrets/utils";
+import { generateWallet as tzGw } from "./handler/chains/tezos/utils";
+import { raise } from "./handler/chains/ton/handler";
+import { generateWallet as tonGw } from "./handler/chains/ton/utils";
 import type { LogInstance, THandler } from "./handler/types";
 import type {
   IEvmChainConfig,

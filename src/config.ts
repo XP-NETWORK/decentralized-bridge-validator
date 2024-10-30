@@ -132,7 +132,7 @@ export const bridgeTestChains = [
     chain: "APTOS",
     chainType: "aptos",
     contractAddress:
-      "0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9",
+      "0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a",
     decimals: 8,
     intialFund: "100000000",
     lastBlock: 0,

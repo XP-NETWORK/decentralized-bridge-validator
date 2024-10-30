@@ -18,11 +18,16 @@ export default async function addSelfAsValidator(
   validatorAddress: string,
 ): Promise<"success" | "failure"> {
   const stakedAmt = await staking.stakingBalances(validatorAddress);
+  const pubKeyHex = Buffer.from(identity.publicKey.toUint8Array()).toString(
+    "hex",
+  );
+  const address = identity.accountAddress.toString();
+  const vad = `${pubKeyHex}|${address}`;
   if (stakedAmt > 0n) {
     const add = await staking.addNewChains([
       {
         chainType: "aptos",
-        validatorAddress: identity.publicKey.bcsToHex().toString(),
+        validatorAddress: vad,
       },
     ]);
     const receipt = await add.wait();
@@ -30,7 +35,6 @@ export default async function addSelfAsValidator(
       `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
     );
   }
-  const publicKey = identity.publicKey.bcsToHex().toString();
   try {
     async function getStakingSignatureCount() {
       return Number(
@@ -44,9 +48,8 @@ export default async function addSelfAsValidator(
         ),
       );
     }
-    const newV = publicKey;
     let validatorsCount = await getStakingSignatureCount();
-    let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+    let signatureCount = Number(await storage.getStakingSignaturesCount(vad));
 
     while (signatureCount < confirmationCountNeeded(validatorsCount)) {
       await waitForMSWithMsg(
@@ -55,10 +58,10 @@ export default async function addSelfAsValidator(
           validatorsCount,
         )}`,
       );
-      signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+      signatureCount = Number(await storage.getStakingSignaturesCount(vad));
       validatorsCount = await getStakingSignatureCount();
     }
-    const signatures = [...(await storage.getStakingSignatures(newV))].map(
+    const signatures = [...(await storage.getStakingSignatures(vad))].map(
       (item) => {
         return {
           signerAddress: item.signerAddress,
@@ -74,23 +77,25 @@ export default async function addSelfAsValidator(
         };
       }),
     );
-    await useMutexAndRelease(
+    const added = await useMutexAndRelease(
       fetchBridge,
       async (bridge) =>
         await bridge.entry.add_validator({
           account: identity,
           functionArguments: [
-            identity.publicKey.bcsToHex().toString(),
+            identity.publicKey.toUint8Array(),
+            identity.accountAddress.toString(),
             signatures.map((e) => {
-              return Buffer.from(e.signature.slice(2));
+              return Buffer.from(e.signature.slice(2), "hex");
             }),
             signatures.map((e) => {
-              return Buffer.from(e.signerAddress);
+              return Buffer.from(e.signerAddress, "hex");
             }),
           ],
           typeArguments: [],
         }),
     );
+    logger.info(`Added self as validator at hash: ${added.hash}`);
     return "success";
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);

@@ -1,6 +1,6 @@
 export const ABI = (address: string) => {
   return {
-    address: address,
+    address,
     name: "aptos_nft_bridge",
     friends: [],
     exposed_functions: [
@@ -10,7 +10,12 @@ export const ABI = (address: string) => {
         is_entry: true,
         is_view: false,
         generic_type_params: [],
-        params: ["vector<u8>", "vector<vector<u8>>", "vector<vector<u8>>"],
+        params: [
+          "vector<u8>",
+          "address",
+          "vector<vector<u8>>",
+          "vector<vector<u8>>",
+        ],
         return: [],
       },
       {
@@ -83,7 +88,7 @@ export const ABI = (address: string) => {
         is_entry: true,
         is_view: false,
         generic_type_params: [],
-        params: ["signer", "address", "vector<u8>"],
+        params: ["signer", "vector<u8>"],
         return: [],
       },
       {
@@ -101,7 +106,13 @@ export const ABI = (address: string) => {
         is_entry: true,
         is_view: false,
         generic_type_params: [],
-        params: ["&signer", "vector<vector<u8>>", "vector<u8>", "vector<u8>"],
+        params: [
+          "&signer",
+          "vector<vector<u8>>",
+          "vector<address>",
+          "vector<u8>",
+          "vector<u8>",
+        ],
         return: [],
       },
       {
@@ -191,25 +202,25 @@ export const ABI = (address: string) => {
         fields: [
           {
             name: "validators",
-            type: "0x1::simple_map::SimpleMap<vector<u8>, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::Validator>",
+            type: "0x1::simple_map::SimpleMap<vector<u8>, 0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::Validator>",
           },
           { name: "signer_cap", type: "0x1::account::SignerCapability" },
           {
             name: "collection_objects",
-            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::CollectionObject, u256>",
+            type: "0x1::table::Table<0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::CollectionObject, u256>",
           },
           { name: "nfts_counter", type: "u64" },
           {
             name: "original_to_duplicate_mapping",
-            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::OriginalToDuplicateKey, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::OriginalToDuplicateInfo>",
+            type: "0x1::table::Table<0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::OriginalToDuplicateKey, 0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::OriginalToDuplicateInfo>",
           },
           {
             name: "duplicate_to_original_mapping",
-            type: "0x1::table::Table<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::DuplicateToOriginalKey, 0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::DuplicateToOriginalInfo>",
+            type: "0x1::table::Table<0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::DuplicateToOriginalKey, 0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::DuplicateToOriginalInfo>",
           },
           {
             name: "nft_collection_tokens",
-            type: "0x1::simple_map::SimpleMap<0x13f8d626e383e8621a89caeb05c56a95fda38aa2dddfa8c2b1ed063f0edb23c9::aptos_nft_bridge::CollectionNftObject, address>",
+            type: "0x1::simple_map::SimpleMap<0x68c508b1b20701c8ddecbbc8e603e788be96c1dcb6ccdcf43ac8594f6f49077a::aptos_nft_bridge::CollectionNftObject, address>",
           },
           {
             name: "nft_collections_counter",
@@ -412,7 +423,21 @@ export const ABI = (address: string) => {
         is_event: false,
         abilities: ["copy", "drop", "store"],
         generic_type_params: [],
-        fields: [{ name: "pending_reward", type: "u64" }],
+        fields: [
+          { name: "pending_reward", type: "u64" },
+          { name: "addr", type: "address" },
+        ],
+      },
+      {
+        name: "ValidatorWithAddress",
+        is_native: false,
+        is_event: false,
+        abilities: ["copy", "drop"],
+        generic_type_params: [],
+        fields: [
+          { name: "public_key", type: "vector<u8>" },
+          { name: "addr", type: "address" },
+        ],
       },
     ],
   } as const;

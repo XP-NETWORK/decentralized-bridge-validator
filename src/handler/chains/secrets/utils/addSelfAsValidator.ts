@@ -115,7 +115,7 @@ export default async function addSelfAsValidator(
             sender: pubkeyToAddress(Buffer.from(wallet.publicKey)),
           },
           {
-            gasLimit: 250_000,
+            gasLimit: 300_000,
           },
         ),
     );

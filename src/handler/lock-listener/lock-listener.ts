@@ -4,17 +4,18 @@ import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { JsonRpcProvider } from "ethers";
-import type { TSupportedChains } from "../config";
-import type { BridgeStorage } from "../contractsTypes/evm";
-import { LockedEvent } from "../persistence/entities/locked";
-import { eventBuilder } from "./event-builder";
+import type { TSupportedChains } from "../../config";
+import type { BridgeStorage } from "../../contractsTypes/evm";
+import { LockedEvent } from "../../persistence/entities/locked";
+import { eventBuilder } from "../event-builder";
 import type {
   LockEvent,
   LogInstance,
   THandler,
   TNftTransferDetailsObject,
-} from "./types";
-import { fetchHttpOrIpfs, retry, useMutexAndRelease } from "./utils";
+} from "../types";
+import { fetchHttpOrIpfs, retry, useMutexAndRelease } from "../utils";
+import { processEventsFailSafe } from "./process-fail-safe";
 
 export async function listenEvents(
   chains: Array<THandler>,
@@ -46,14 +47,14 @@ export async function listenEvents(
     const sourceChain = map.get(ev.sourceChain as TSupportedChains);
     if (!sourceChain) {
       log.warn(
-        `Unsupported src chain: ${sourceChain} for ${ev.transactionHash}`,
+        `Unsupported src chain: ${ev.sourceChain} for ${ev.transactionHash} on ${ev.listenerChain}`,
       );
       return;
     }
     const destinationChain = map.get(ev.destinationChain as TSupportedChains);
     if (!destinationChain) {
       log.warn(
-        `Unsupported dest chain: ${destinationChain} for ${ev.transactionHash} ${destinationChain} ${ev.destinationChain}`,
+        `Unsupported dest chain: ${ev.destinationChain} for ${ev.transactionHash} on ${ev.listenerChain}`,
       );
       return;
     }
@@ -234,22 +235,3 @@ export async function listenEvents(
     serverLinkHandler === undefined ? poolEvents(chain) : pollEvents(chain);
   }
 }
-
-const processEventsFailSafe = async (
-  chain: THandler,
-  ev: LockEvent,
-  log: LogInstance,
-  processEvent: (chain: THandler, ev: LockEvent) => Promise<void>,
-) => {
-  let success = false;
-  while (!success) {
-    try {
-      await processEvent(chain, ev);
-      success = true;
-    } catch (e) {
-      log.error("Error processing poll events", ev, e);
-      log.info("Awaiting 2s");
-      await setTimeout(2 * 1000);
-    }
-  }
-};

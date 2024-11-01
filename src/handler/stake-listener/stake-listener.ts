@@ -1,9 +1,9 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
-import type { TSupportedChainTypes } from "../config";
-import type { BridgeStorage } from "../contractsTypes/evm";
-import { eventBuilder } from "./event-builder";
-import type { LogInstance, THandler, TStakingHandler } from "./types";
-import { retry } from "./utils";
+import type { TSupportedChainTypes } from "../../config";
+import type { BridgeStorage } from "../../contractsTypes/evm";
+import { eventBuilder } from "../event-builder";
+import type { LogInstance, THandler, TStakingHandler } from "../types";
+import { retry } from "../utils";
 
 export async function listenStakeEvents(
   chains: Array<THandler>,

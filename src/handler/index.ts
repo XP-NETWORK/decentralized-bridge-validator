@@ -1,2 +1,2 @@
-export { listenEvents } from "./lock-listener";
-export { listenStakeEvents } from "./stake-listener";
+export { listenEvents } from "./lock-listener/lock-listener";
+export { listenStakeEvents } from "./stake-listener/stake-listener";

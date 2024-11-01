@@ -38,7 +38,7 @@ export default async function listenForLockEvents(
             ? lastBlock + blockChunks
             : latestBlockNumber;
 
-        const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
+        const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height < ${latestBlock}`;
         const logs = await useMutexAndRelease(
           fetchProvider,
           async (c) => await c.query.txsQuery(query),

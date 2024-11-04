@@ -51,6 +51,11 @@ type IEvmWallet = {
   address: string;
   privateKey: string;
 };
+type ICasperWallet = {
+  address: string;
+  privateKey: string;
+  publicKey: string;
+};
 type IHederaWallet = {
   address: string;
   privateKey: string;
@@ -133,6 +138,13 @@ type IAptosChainConfig = {
   network: Network;
 } & IChainConfig;
 
+type ICasperChainConfig = {
+  chainType: "casper";
+  rpcURL: string;
+  chainId: string;
+  ess: string;
+} & IChainConfig;
+
 type INearChainConfig = {
   chainType: "near";
   rpcURL: string;
@@ -184,7 +196,8 @@ type TChain =
   | ICosmWasmChainConfig
   | IICPChainConfig
   | INearChainConfig
-  | IAptosChainConfig;
+  | IAptosChainConfig
+  | ICasperChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -222,4 +235,6 @@ export type {
   IAptosChainConfig,
   IAptosWallet,
   TChain,
+  ICasperChainConfig,
+  ICasperWallet,
 };

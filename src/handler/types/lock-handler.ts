@@ -1,4 +1,7 @@
-import type { TNftTransferDetailsObject } from ".";
+import type {
+  TNftTransferDetailsObject,
+  TNftTransferDetailsObjectIter,
+} from ".";
 import type { LockEventIter, LogInstance, TNftData } from ".";
 import type { TSupportedChainTypes, TSupportedChains } from "../../config";
 import type { EventBuilder } from "../event-builder";
@@ -6,7 +9,10 @@ import type { EventBuilder } from "../event-builder";
 export interface THandler {
   addSelfAsValidator(): Promise<"success" | "failure">;
   listenForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
-  pollForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
+  pollForLockEvents(
+    builder: EventBuilder,
+    cb: TNftTransferDetailsObjectIter,
+  ): Promise<void>;
   signClaimData(
     nfto: TNftTransferDetailsObject,
   ): Promise<{ signer: string; signature: string }>;

@@ -39,16 +39,9 @@ export async function secretsHandler({
   );
   return {
     publicKey,
-    pollForLockEvents: async (builder, cb) => {
+    pollForLockEvents: async (_, cb) => {
       serverLinkHandler
-        ? pollForLockEvents(
-            chainIdent,
-            builder,
-            cb,
-            em,
-            serverLinkHandler,
-            logger,
-          )
+        ? pollForLockEvents(chainIdent, cb, em, serverLinkHandler, logger)
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

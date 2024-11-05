@@ -34,12 +34,12 @@ export async function listenEvents(
     return [storage, releaser] as const;
   };
 
-  const builder = eventBuilder(em);
+  const builder = eventBuilder();
 
   async function pollEvents(chain: THandler) {
     log.info(`Polling for events on: ${chain.chainIdent}`);
-    chain.pollForLockEvents(builder, async (ev) => {
-      processEventsFailSafe(chain, ev, log, processEvent);
+    chain.pollForLockEvents(builder, async (ev, evId) => {
+      signAndSubmitSignature(ev, evId);
     });
   }
 
@@ -116,6 +116,29 @@ export async function listenEvents(
       imgUri: imgUri?.substring(imgUri?.indexOf("https://")) || "",
     };
 
+    await signAndSubmitSignature(inft, ev.id);
+  }
+
+  async function signAndSubmitSignature(
+    inft: TNftTransferDetailsObject,
+    evId?: number,
+  ) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const sourceChain = map.get(inft.sourceChain as TSupportedChains)!;
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const destinationChain = map.get(
+      inft.destinationChain as TSupportedChains,
+    )!;
+    const evs = await em.findOne(LockedEvent, {
+      transactionHash: inft.transactionHash,
+      listenerChain: inft.lockTxChain,
+    });
+    if (!evs) {
+      const nev = new LockedEvent(inft);
+      if (evId) nev.id = evId;
+      await em.persistAndFlush(nev);
+    }
+
     log.trace(inft);
 
     const signature = await destinationChain.signClaimData(inft);
@@ -136,8 +159,8 @@ export async function listenEvents(
         `Signature already processed for ${inft.transactionHash} on ${sourceChain.chainIdent}`,
       );
       const found = await em.findOne(LockedEvent, {
-        transactionHash: ev.transactionHash,
-        listenerChain: ev.listenerChain,
+        transactionHash: inft.transactionHash,
+        listenerChain: inft.lockTxChain,
       });
       if (found) {
         wrap(found).assign({
@@ -163,7 +186,7 @@ export async function listenEvents(
             const response = await (
               await storage.approveLockNft(
                 inft.transactionHash,
-                chain.chainIdent,
+                inft.lockTxChain,
                 signature.signature,
                 signature.signer,
                 {
@@ -209,8 +232,8 @@ export async function listenEvents(
       `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
     const found = await em.findOne(LockedEvent, {
-      transactionHash: ev.transactionHash,
-      listenerChain: ev.listenerChain,
+      transactionHash: inft.transactionHash,
+      listenerChain: inft.lockTxChain,
     });
     if (found) {
       wrap(found).assign({

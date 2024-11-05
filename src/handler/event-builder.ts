@@ -1,8 +1,6 @@
-import type { EntityManager } from "@mikro-orm/sqlite";
-import { LockedEvent } from "../persistence/entities/locked";
 import type { StakeEvent } from "./types";
 
-export function eventBuilder(em: EntityManager) {
+export function eventBuilder() {
   return {
     staked(stake: StakeEvent) {
       return stake;
@@ -20,26 +18,6 @@ export function eventBuilder(em: EntityManager) {
       metaDataUri: string,
       id?: number,
     ) {
-      const found = await em.findOne(LockedEvent, {
-        transactionHash: transactionHash,
-        listenerChain,
-      });
-      if (!found) {
-        const ev = new LockedEvent(
-          tokenId,
-          destinationChain,
-          destinationUserAddress,
-          sourceNftContractAddress,
-          tokenAmount,
-          nftType,
-          sourceChain,
-          transactionHash,
-          listenerChain,
-          metaDataUri,
-        );
-        if (id) ev.id = id;
-        await em.persistAndFlush(ev);
-      }
       return {
         tokenAmount,
         tokenId,
@@ -51,6 +29,7 @@ export function eventBuilder(em: EntityManager) {
         transactionHash,
         metaDataUri,
         listenerChain,
+        id,
       };
     },
   };

@@ -67,16 +67,9 @@ export async function cosmWasmHandler({
     getBalance: () => getBalance(fetchProvider, sender),
     nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, sender, logger),
     decimals: BigInt(10 ** decimals),
-    pollForLockEvents: async (builder, cb) => {
+    pollForLockEvents: async (_, cb) => {
       serverLinkHandler
-        ? pollForLockEvents(
-            chainIdent,
-            builder,
-            cb,
-            em,
-            serverLinkHandler,
-            logger,
-          )
+        ? pollForLockEvents(chainIdent, cb, em, serverLinkHandler, logger)
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

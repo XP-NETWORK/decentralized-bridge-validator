@@ -3,14 +3,15 @@ import type { EntityManager } from "@mikro-orm/sqlite";
 import { setTimeout } from "node:timers/promises";
 import type { AxiosInstance, AxiosResponse } from "axios";
 import { LockedEvent } from "../../persistence/entities/locked";
-import type { EventBuilder } from "../event-builder";
-import type { LockEventIter, LogInstance } from "../types";
-import type { LockEventRes } from "./types";
+import type {
+  LogInstance,
+  TNftTransferDetailsObject,
+  TNftTransferDetailsObjectIter,
+} from "../types";
 
 export default async function pollForLockEvents(
   identifier: string,
-  builder: EventBuilder,
-  cb: LockEventIter,
+  cb: TNftTransferDetailsObjectIter,
   em: EntityManager,
   serverLinkHandler: AxiosInstance,
   logger: LogInstance,
@@ -40,21 +41,7 @@ export default async function pollForLockEvents(
 
     for (const tx of failedData) {
       try {
-        await cb(
-          await builder.nftLocked(
-            tx.tokenId.toString(),
-            tx.destinationChain,
-            tx.destinationUserAddress,
-            tx.sourceNftContractAddress,
-            tx.tokenAmount.toString(),
-            tx.nftType,
-            tx.sourceChain,
-            tx.transactionHash,
-            tx.listenerChain,
-            tx.metaDataUri,
-            tx.id,
-          ),
-        );
+        await cb(tx.toNTO(), tx.id);
       } catch (e) {
         logger.error(
           identifier,
@@ -68,12 +55,12 @@ export default async function pollForLockEvents(
     if (lastId) {
       lastId += 1;
     }
-
+    type NTOWithID = { id?: number } & TNftTransferDetailsObject;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let fetch: AxiosResponse<LockEventRes[], any>;
+    let fetch: AxiosResponse<NTOWithID[], any>;
     try {
       const url = `/${identifier}?cursor=${lastId}&limit=10`;
-      fetch = await serverLinkHandler.get<Array<LockEventRes>>(url);
+      fetch = await serverLinkHandler.get<Array<NTOWithID>>(url);
     } catch (e) {
       const error = e as Error;
       logger.error(`Error fetching data: ${error.message}`);
@@ -90,21 +77,7 @@ export default async function pollForLockEvents(
     }
     for (const tx of fetch.data) {
       try {
-        await cb(
-          await builder.nftLocked(
-            tx.token_id.toString(),
-            tx.destination_chain,
-            tx.destination_user_address,
-            tx.source_nft_contract_address,
-            tx.token_amount.toString(),
-            tx.nft_type,
-            tx.source_chain,
-            tx.transaction_hash,
-            tx.listener_chain,
-            tx.meta_data_uri,
-            tx.id,
-          ),
-        );
+        await cb(tx, tx.id);
       } catch (e) {
         logger.error(
           identifier,

@@ -10,13 +10,13 @@ export async function listenStakeEvents(
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
   fetchNonce: () => Promise<readonly [number, () => void, () => Promise<void>]>,
-  em: EntityManager,
+  _em: EntityManager,
   log: LogInstance,
 ) {
   const map = new Map<TSupportedChainTypes, THandler>();
   const deps = { storage };
 
-  const builder = eventBuilder(em);
+  const builder = eventBuilder();
 
   async function poolEvents(chain: TStakingHandler) {
     log.info("Listening for Staking Events");

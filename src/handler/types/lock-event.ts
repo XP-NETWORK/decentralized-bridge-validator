@@ -9,4 +9,5 @@ export type LockEvent = {
   sourceChain: string;
   transactionHash: string;
   metaDataUri: string;
+  id?: number;
 };

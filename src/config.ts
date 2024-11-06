@@ -61,7 +61,7 @@ export const bridgeTestChains = [
     blockChunks: 1000,
     chainType: "scrt",
     chainId: "secret-4",
-    contractAddress: "secret1pauswg8l0dzfzaq0gcjy2zunzjyc4sv7n2q57d",
+    contractAddress: "secret1zyd2j3wqkeagcuzhklewfa6u26epn672cuktnm",
     decimals: 6,
     intialFund: "10000000",
     lastBlock: 16747304,

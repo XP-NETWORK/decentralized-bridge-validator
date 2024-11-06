@@ -64,9 +64,9 @@ export async function nearHandler({
   release();
   return {
     publicKey: publicKeyInHex,
-    pollForLockEvents: async (_, cb) => {
+    pollForLockEvents: async (_, cb, cbLe) => {
       serverLinkHandler
-        ? pollForLockEvents(chainIdent, cb, em, serverLinkHandler, logger)
+        ? pollForLockEvents(chainIdent, cbLe, cb, em, serverLinkHandler, logger)
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

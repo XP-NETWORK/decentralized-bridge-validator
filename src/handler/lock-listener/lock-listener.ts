@@ -38,9 +38,13 @@ export async function listenEvents(
 
   async function pollEvents(chain: THandler) {
     log.info(`Polling for events on: ${chain.chainIdent}`);
-    chain.pollForLockEvents(builder, async (ev, evId) => {
-      signAndSubmitSignature(ev, evId);
-    });
+    chain.pollForLockEvents(
+      builder,
+      async (ev, evId) => {
+        signAndSubmitSignature(ev, evId);
+      },
+      async (le) => await processEvent(chain, le),
+    );
   }
 
   async function processEvent(chain: THandler, ev: LockEvent) {

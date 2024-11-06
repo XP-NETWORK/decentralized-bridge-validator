@@ -57,7 +57,7 @@ export class LockedEvent {
   royaltyReceiver!: string;
 
   @Property()
-  fee!: string;
+  fee!: bigint;
 
   @Property({ nullable: true })
   imgUri?: string;
@@ -94,7 +94,7 @@ export class LockedEvent {
     this.royaltyReceiver = royaltyReceiver;
     this.name = name;
     this.symbol = symbol;
-    this.fee = fee;
+    this.fee = BigInt(fee);
     this.royalty = BigInt(royalty);
   }
 
@@ -102,7 +102,7 @@ export class LockedEvent {
     return {
       destinationChain: this.destinationChain,
       destinationUserAddress: this.destinationUserAddress,
-      fee: this.fee,
+      fee: this.fee.toString(),
       lockTxChain: this.listenerChain,
       metadata: this.metaDataUri,
       name: this.name,

@@ -12,6 +12,7 @@ export interface THandler {
   pollForLockEvents(
     builder: EventBuilder,
     cb: TNftTransferDetailsObjectIter,
+    cbLe: LockEventIter,
   ): Promise<void>;
   signClaimData(
     nfto: TNftTransferDetailsObject,

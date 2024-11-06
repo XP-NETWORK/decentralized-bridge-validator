@@ -61,15 +61,23 @@ export default async function pollForLockEvents(
       });
 
     for (const tx of failedData) {
-      try {
-        await cb(tx.toNTO(), tx.id);
-      } catch (e) {
-        logger.error(
-          identifier,
-          `${e} while polling for events. Sleeping for 10 seconds`,
-        );
-        await setTimeout(10000);
+      console.log(tx);
+      if (tx.name === "") {
+        return await _cbLe({
+          destinationChain: tx.destinationChain,
+          destinationUserAddress: tx.destinationUserAddress,
+          listenerChain: tx.listenerChain,
+          metaDataUri: tx.metaDataUri,
+          nftType: tx.nftType,
+          sourceChain: tx.sourceChain,
+          sourceNftContractAddress: tx.sourceNftContractAddress,
+          tokenAmount: tx.tokenAmount.toString(),
+          tokenId: tx.tokenId.toString(),
+          transactionHash: tx.transactionHash,
+          id: tx.id,
+        });
       }
+      return await cbNto(tx.toNTO());
     }
 
     let lastId = lastEv?.id ?? 0;
@@ -78,10 +86,10 @@ export default async function pollForLockEvents(
     }
 
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let fetch: AxiosResponse<NTOWithID[], any>;
+    let fetch: AxiosResponse<Response[], any>;
     try {
       const url = `/${identifier}?cursor=${lastId}&limit=10`;
-      fetch = await serverLinkHandler.get<Array<NTOWithID>>(url);
+      fetch = await serverLinkHandler.get<Array<Response>>(url);
     } catch (e) {
       const error = e as Error;
       logger.error(`Error fetching data: ${error.message}`);
@@ -97,24 +105,64 @@ export default async function pollForLockEvents(
       continue;
     }
     for (const tx of fetch.data) {
+      console.log(tx);
       if (tx.name === "") {
         return await _cbLe({
-          destinationChain: tx.destinationChain,
-          destinationUserAddress: tx.destinationUserAddress,
-          listenerChain: tx.lockTxChain,
-          metaDataUri: tx.metadata,
-          nftType: tx.nftType,
-          sourceChain: tx.sourceChain,
-          sourceNftContractAddress: tx.sourceNftContractAddress,
-          tokenAmount: tx.tokenAmount,
-          tokenId: tx.tokenId,
-          transactionHash: tx.transactionHash,
+          destinationChain: tx.destination_chain,
+          destinationUserAddress: tx.destination_user_address,
+          listenerChain: tx.listener_chain,
+          metaDataUri: tx.meta_data_uri,
+          nftType: tx.nft_type,
+          sourceChain: tx.source_chain,
+          sourceNftContractAddress: tx.source_nft_contract_address,
+          tokenAmount: tx.token_amount.toString(),
+          tokenId: tx.token_id.toString(),
+          transactionHash: tx.transaction_hash,
           id: tx.id,
         });
       }
-      return await cbNto(tx);
+      return await cbNto({
+        destinationChain: tx.destination_chain,
+        destinationUserAddress: tx.destination_user_address,
+        fee: tx.fee.toString(),
+        lockTxChain: tx.listener_chain,
+        metadata: tx.meta_data_uri,
+        name: tx.name,
+        nftType: tx.nft_type,
+        royalty: tx.royalty.toString(),
+        royaltyReceiver: tx.royalty_receiver,
+        sourceChain: tx.source_chain,
+        sourceNftContractAddress: tx.source_nft_contract_address,
+        symbol: tx.symbol,
+        tokenAmount: tx.token_amount.toString(),
+        tokenId: tx.token_id.toString(),
+        transactionHash: tx.transaction_hash,
+        id: tx.id,
+        imgUri: tx.img_uri,
+      });
     }
     logger.info(`${fetch.data.length} Tx, lastId: ${lastId}, wait: 1s`);
     await setTimeout(1 * 1000);
   }
 }
+
+export type Response = {
+  id: number;
+  token_amount: number;
+  token_id: number;
+  destination_user_address: string;
+  destination_chain: string;
+  source_nft_contract_address: string;
+  nft_type: string;
+  source_chain: string;
+  transaction_hash: string;
+  listener_chain: string;
+  meta_data_uri: string;
+  status: number;
+  name: string;
+  symbol: string;
+  royalty: number;
+  royalty_receiver: string;
+  fee: number;
+  img_uri: string;
+};

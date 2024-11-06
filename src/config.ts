@@ -64,7 +64,7 @@ export const bridgeTestChains = [
     contractAddress: "secret1zyd2j3wqkeagcuzhklewfa6u26epn672cuktnm",
     decimals: 6,
     intialFund: "10000000",
-    lastBlock: 16747304,
+    lastBlock: 16833475,
     nativeCoinSymbol: "SCRT",
     rpcURL: "https://rpc.ankr.com/http/scrt_cosmos",
   },

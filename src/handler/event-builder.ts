@@ -1,7 +1,6 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import { LockedEvent } from "../persistence/entities/locked";
 import type { StakeEvent } from "./types";
-import { convertNumbToHexToString, convertStringToHexToNumb } from "./utils";
 
 export function eventBuilder(em: EntityManager) {
   return {
@@ -25,17 +24,9 @@ export function eventBuilder(em: EntityManager) {
         transactionHash: transactionHash,
         listenerChain,
       });
-      let convertedTokenId = tokenId;
-      if (sourceChain === "SECRET") {
-        if (listenerChain === "SECRET") {
-          convertedTokenId = convertStringToHexToNumb(tokenId);
-        } else if (destinationChain === "SECRET") {
-          convertedTokenId = convertNumbToHexToString(tokenId);
-        }
-      }
       if (!found) {
         const ev = new LockedEvent(
-          convertedTokenId,
+          tokenId,
           destinationChain,
           destinationUserAddress,
           sourceNftContractAddress,

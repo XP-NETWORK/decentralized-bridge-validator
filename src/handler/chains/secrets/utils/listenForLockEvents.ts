@@ -3,7 +3,7 @@ import { Block } from "../../../../persistence/entities/block";
 import type { EventBuilder } from "../../../event-builder";
 import { tryRerunningFailed } from "../../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../../types";
-import { useMutexAndRelease } from "../../../utils";
+import { convertStringToHexToNumb, useMutexAndRelease } from "../../../utils";
 import type { SecretProviderFetch } from "../types";
 
 const CHAIN_IDENT = "SECRET";
@@ -77,9 +77,13 @@ export default async function listenForLockEvents(
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
           } = parsedLog;
+          let convertedTokenId = tokenId;
+          if (sourceChain === "SECRET") {
+            convertedTokenId = convertStringToHexToNumb(tokenId);
+          }
           await cb(
             await builder.nftLocked(
-              tokenId,
+              convertedTokenId,
               destinationChain,
               destinationUserAddress,
               sourceNftContractAddress,

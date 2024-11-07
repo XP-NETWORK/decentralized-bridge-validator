@@ -22,6 +22,8 @@ export async function tryRerunningFailed(
       id: "desc",
     });
 
+  logger.info("FAILED DATA", identifier, "DATA LENGTH", failedData.length);
+
   for (const tx of failedData) {
     try {
       logger.info(

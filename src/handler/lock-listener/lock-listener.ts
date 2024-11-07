@@ -41,7 +41,7 @@ export async function listenEvents(
     chain.pollForLockEvents(
       builder,
       async (ev, evId) => {
-        signAndSubmitSignature(ev, evId);
+        await signAndSubmitSignature(ev, evId);
       },
       async (le) => await processEvent(chain, le),
     );

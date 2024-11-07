@@ -60,10 +60,11 @@ export default async function pollForLockEvents(
         id: "desc",
       });
 
-    for (const tx of failedData) {
+    for (let index = 0; index < failedData.length; index++) {
+      const tx = failedData[index];
       console.log(tx);
       if (tx.name === "") {
-        return await _cbLe({
+        await _cbLe({
           destinationChain: tx.destinationChain,
           destinationUserAddress: tx.destinationUserAddress,
           listenerChain: tx.listenerChain,
@@ -76,8 +77,9 @@ export default async function pollForLockEvents(
           transactionHash: tx.transactionHash,
           id: tx.id,
         });
+        continue;
       }
-      return await cbNto(tx.toNTO());
+      await cbNto(tx.toNTO());
     }
 
     let lastId = lastEv?.id ?? 0;

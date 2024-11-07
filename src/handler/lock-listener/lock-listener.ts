@@ -167,6 +167,11 @@ export async function listenEvents(
         listenerChain: inft.lockTxChain,
       });
       if (found) {
+        console.log(
+          "+++++++++++++++++++++++++++++++++++ FOUND +++++++++++++++++++++++++++++++++++",
+          found.listenerChain,
+          found.transactionHash,
+        );
         wrap(found).assign({
           status: true,
         });
@@ -240,6 +245,11 @@ export async function listenEvents(
       listenerChain: inft.lockTxChain,
     });
     if (found) {
+      console.log(
+        "+++++++++++++++++++++++++++++++++++ FOUND +++++++++++++++++++++++++++++++++++",
+        found.listenerChain,
+        found.transactionHash,
+      );
       wrap(found).assign({
         status: true,
       });

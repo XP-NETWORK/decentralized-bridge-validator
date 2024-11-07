@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import type { TNftTransferDetailsObject } from "xp-decentralized-sdk";
 
 @Entity({
-  tableName: "locked_event_new",
+  tableName: "locked_event",
 })
 @Unique({
   properties: ["transactionHash", "listenerChain"],
@@ -15,7 +15,7 @@ export class LockedEvent {
   tokenAmount!: bigint;
 
   @Property()
-  tokenId!: string;
+  tokenId!: bigint;
 
   @Property()
   destinationUserAddress!: string;
@@ -80,7 +80,7 @@ export class LockedEvent {
     imgUri,
     sourceNftContractAddress,
   }: TNftTransferDetailsObject) {
-    this.tokenId = tokenId;
+    this.tokenId = BigInt(tokenId);
     this.destinationUserAddress = destinationUserAddress;
     this.sourceChain = sourceChain;
     this.tokenAmount = BigInt(tokenAmount);

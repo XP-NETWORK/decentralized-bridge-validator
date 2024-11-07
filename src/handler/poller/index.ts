@@ -109,7 +109,7 @@ export default async function pollForLockEvents(
     for (const tx of fetch.data) {
       console.log(tx);
       if (tx.name === "") {
-        return await _cbLe({
+        await _cbLe({
           destinationChain: tx.destination_chain,
           destinationUserAddress: tx.destination_user_address,
           listenerChain: tx.listener_chain,
@@ -122,8 +122,9 @@ export default async function pollForLockEvents(
           transactionHash: tx.transaction_hash,
           id: tx.id,
         });
+        continue;
       }
-      return await cbNto({
+      await cbNto({
         destinationChain: tx.destination_chain,
         destinationUserAddress: tx.destination_user_address,
         fee: tx.fee.toString(),

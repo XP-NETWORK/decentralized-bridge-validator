@@ -295,6 +295,19 @@ export const prodBridgeConfig: IBridgeConfig = {
       decimals: 18,
       blockChunks: 1000,
     },
+    {
+      chain: "AVALANCHE",
+      rpcURL:
+        process.env.AVALANCHE_RPC ||
+        "https://endpoints.omniatech.io/v1/avax/mainnet/public",
+      nativeCoinSymbol: "AVAX",
+      intialFund: "1000000000000000",
+      contractAddress: "0x92764FF21a1a8cC4e8eEec43ED04Bea3B76D8fD3",
+      chainType: "evm",
+      lastBlock: 52801405,
+      decimals: 18,
+      blockChunks: 1000,
+    },
   ],
   storageConfig: {
     chain: "OP",

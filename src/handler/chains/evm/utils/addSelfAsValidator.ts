@@ -19,7 +19,7 @@ const addSelfAsValidator = (
   staking: ERC20Staking,
   validatorAddress: string,
 ) => {
-  return async (): Promise<"success" | "failure"> => {
+  return async (): Promise<boolean> => {
     try {
       await addNewChain(
         staking,
@@ -68,9 +68,9 @@ const addSelfAsValidator = (
           await bridge.addValidator(signer.address, stakingSignatures),
       );
       await added.wait();
-      return "success";
+      return true;
     } catch (e) {
-      return "failure";
+      return false;
     }
   };
 };

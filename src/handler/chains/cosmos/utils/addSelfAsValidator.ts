@@ -23,7 +23,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   const newV = Buffer.from(wallet.pubkey).toString("base64");
   await addNewChain(staking, "cosmos", validatorAddress, newV, logger);
   try {
@@ -80,9 +80,9 @@ export default async function addSelfAsValidator(
         }),
     );
     logger.info(`Added self as validator at ${result.transactionHash}`);
-    return "success";
+    return true;
   } catch (e) {
     logger.error(identifier, "Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

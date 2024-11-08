@@ -7,7 +7,7 @@ import type { TSupportedChainTypes, TSupportedChains } from "../../config";
 import type { EventBuilder } from "../event-builder";
 
 export interface THandler {
-  addSelfAsValidator(): Promise<"success" | "failure">;
+  addSelfAsValidator(): Promise<boolean>;
   listenForLockEvents(builder: EventBuilder, cb: LockEventIter): Promise<void>;
   pollForLockEvents(
     builder: EventBuilder,

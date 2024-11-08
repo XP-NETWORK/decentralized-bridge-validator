@@ -30,7 +30,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
     const vc = async (): Promise<bigint> => {
       const query = bc.createQuery({
@@ -124,7 +124,7 @@ export default async function addSelfAsValidator(
         }).awaitCompleted(receipt),
     );
     if (watcher.status.isSuccessful()) {
-      return "success";
+      return true;
     }
     throw new Error(
       `Failed to add self as validator: ${JSON.stringify(
@@ -133,6 +133,6 @@ export default async function addSelfAsValidator(
     );
   } catch (error) {
     logger.error("Failed to add self as validator: ", error);
-    return "failure";
+    return false;
   }
 }

@@ -28,7 +28,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
     await addNewChain(staking, "scrt", validatorAddress, publicKey, logger);
     async function getStakingSignatureCount() {
@@ -116,11 +116,9 @@ export default async function addSelfAsValidator(
       }. TX:`,
       add,
     );
-    return add.rawLog.includes("AddNewValidatorEventInfo")
-      ? "success"
-      : "failure";
+    return add.rawLog.includes("AddNewValidatorEventInfo");
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

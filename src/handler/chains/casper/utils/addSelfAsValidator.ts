@@ -13,7 +13,7 @@ export default async function addSelfAsValidator(
   _logger: LogInstance,
   _staking: ERC20Staking,
   _validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   throw new Error("PANIC: Not yet implemented.");
   // const stakedAmt = await staking.stakingBalances(validatorAddress);
   // const pubKeyHex = Buffer.from(identity.publicKey.toUint8Array()).toString(

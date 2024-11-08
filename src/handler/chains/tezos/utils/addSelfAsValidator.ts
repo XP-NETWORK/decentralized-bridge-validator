@@ -22,7 +22,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
     const stakedAmt = await staking.stakingBalances(validatorAddress);
     if (stakedAmt > 0n) {
@@ -95,9 +95,9 @@ export default async function addSelfAsValidator(
         .send();
     });
 
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

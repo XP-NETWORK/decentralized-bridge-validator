@@ -21,7 +21,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   const vid = `${identity.getPrincipal()},${Buffer.from(
     identity.getPublicKey().toRaw(),
   ).toString("hex")}`;
@@ -75,9 +75,9 @@ export default async function addSelfAsValidator(
           }),
         ),
     );
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

@@ -54,7 +54,15 @@ async function main() {
   );
 
   await retry(
-    () => stakeTokens(config.stakingConfig, secrets, deps.chains, logger),
+    () =>
+      stakeTokens(
+        config.stakingConfig,
+        deps.stakingSigner,
+        deps.staker,
+        secrets,
+        deps.chains,
+        logger,
+      ),
     "Staking Tokens",
     logger,
   );

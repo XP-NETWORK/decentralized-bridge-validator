@@ -33,7 +33,7 @@ export async function configDeps(
     config.storageConfig.rpcURL,
     secrets.evmWallet.privateKey,
   );
-  const [, stakingSigner] = initializeEvmProviderAndWallet(
+  const [stakingHandler, stakingSigner] = initializeEvmProviderAndWallet(
     config.stakingConfig.rpcURL,
     secrets.evmWallet.privateKey,
   );
@@ -234,6 +234,9 @@ export async function configDeps(
       config.stakingConfig,
       logger,
     ),
+    stakingHandler,
+    stakingSigner,
+    staker: staking,
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...evmChains,

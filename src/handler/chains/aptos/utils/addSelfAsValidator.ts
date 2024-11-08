@@ -20,7 +20,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   async function getStakingSignatureCount() {
     return Number(
       useMutexAndRelease(
@@ -81,9 +81,9 @@ export default async function addSelfAsValidator(
         }),
     );
     logger.info(`Added self as validator at hash: ${added.hash}`);
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

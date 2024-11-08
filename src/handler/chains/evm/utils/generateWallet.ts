@@ -6,6 +6,7 @@ const generateWallet = () => {
     return Promise.resolve({
       address: evmWallet.address,
       privateKey: evmWallet.privateKey,
+      publicKey: evmWallet.publicKey,
     });
   };
 };

@@ -15,6 +15,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 import type { SecretProviderFetch } from "../types";
 
 export default async function addSelfAsValidator(
@@ -29,19 +30,7 @@ export default async function addSelfAsValidator(
   validatorAddress: string,
 ): Promise<"success" | "failure"> {
   try {
-    const stakedAmt = await staking.stakingBalances(validatorAddress);
-    if (stakedAmt > 0n) {
-      const add = await staking.addNewChains([
-        {
-          chainType: "scrt",
-          validatorAddress: publicKey,
-        },
-      ]);
-      const receipt = await add.wait();
-      logger.info(
-        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-      );
-    }
+    await addNewChain(staking, "scrt", validatorAddress, publicKey, logger);
     async function getStakingSignatureCount() {
       const res = await useMutexAndRelease(
         fetchProvider,

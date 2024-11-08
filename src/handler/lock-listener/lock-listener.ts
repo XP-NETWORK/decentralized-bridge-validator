@@ -15,6 +15,7 @@ import type {
   TNftTransferDetailsObject,
 } from "../types";
 import { fetchHttpOrIpfs, retry, useMutexAndRelease } from "../utils";
+import { unreachable } from "../utils/unreachable";
 import { processEventsFailSafe } from "./process-fail-safe";
 
 export async function listenEvents(
@@ -127,12 +128,10 @@ export async function listenEvents(
     inft: TNftTransferDetailsObject,
     evId?: number,
   ) {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const sourceChain = map.get(inft.sourceChain as TSupportedChains)!;
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const destinationChain = map.get(
-      inft.destinationChain as TSupportedChains,
-    )!;
+    const sourceChain = map.get(inft.sourceChain as TSupportedChains);
+    if (!sourceChain) unreachable();
+    const destinationChain = map.get(inft.destinationChain as TSupportedChains);
+    if (!destinationChain) unreachable();
     const evs = await em.findOne(LockedEvent, {
       transactionHash: inft.transactionHash,
       listenerChain: inft.lockTxChain,
@@ -167,11 +166,6 @@ export async function listenEvents(
         listenerChain: inft.lockTxChain,
       });
       if (found) {
-        console.log(
-          "+++++++++++++++++++++++++++++++++++ FOUND +++++++++++++++++++++++++++++++++++",
-          found.listenerChain,
-          found.transactionHash,
-        );
         wrap(found).assign({
           status: true,
         });
@@ -238,18 +232,13 @@ export async function listenEvents(
     );
 
     log.info(
-      `Approved and Signed Data for ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
+      `Approved: ${inft.transactionHash} on ${sourceChain.chainIdent} at TX: ${approved?.hash}`,
     );
     const found = await em.findOne(LockedEvent, {
       transactionHash: inft.transactionHash,
       listenerChain: inft.lockTxChain,
     });
     if (found) {
-      console.log(
-        "+++++++++++++++++++++++++++++++++++ FOUND +++++++++++++++++++++++++++++++++++",
-        found.listenerChain,
-        found.transactionHash,
-      );
       wrap(found).assign({
         status: true,
       });
@@ -266,7 +255,7 @@ export async function listenEvents(
 
   for (const chain of chains) {
     if (map.get(chain.chainIdent) !== undefined) {
-      throw Error("Duplicate chain nonce!");
+      throw Error("Duplicate chain ident!");
     }
     map.set(chain.chainIdent, chain);
     serverLinkHandler === undefined ? poolEvents(chain) : pollEvents(chain);

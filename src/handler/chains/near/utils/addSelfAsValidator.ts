@@ -10,6 +10,7 @@ import {
   confirmationCountNeeded,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
@@ -25,19 +26,7 @@ export default async function addSelfAsValidator(
   signer: Account,
 ): Promise<"success" | "failure"> {
   const payload = `${accountId}|${publicKey}`;
-  const stakedAmt = await staking.stakingBalances(validatorAddress);
-  if (stakedAmt > 0n) {
-    const add = await staking.addNewChains([
-      {
-        chainType: "near",
-        validatorAddress: payload,
-      },
-    ]);
-    const receipt = await add.wait();
-    logger.info(
-      `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-    );
-  }
+  await addNewChain(staking, "near", validatorAddress, payload, logger);
   try {
     async function getStakingSignatureCount() {
       const [bridge, release] = await fetchBridge();

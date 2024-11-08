@@ -1,4 +1,5 @@
 import { MikroORM } from "@mikro-orm/core";
+import type { Migrator } from "@mikro-orm/migrations";
 import { Mutex } from "async-mutex";
 import axios from "axios";
 import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
@@ -21,28 +22,22 @@ import {
 } from "./handler/chains";
 import type { LogInstance, THandler } from "./handler/types";
 import MikroOrmConfig from "./mikro-orm.config";
-import type {
-  IBridgeConfig,
-  ICosmWasmChainConfig,
-  IEvmChainConfig,
-  IGeneratedWallets,
-  IMultiversXChainConfig,
-  ISecretChainConfig,
-  ITezosChainConfig,
-  ITonChainConfig,
-} from "./types";
+import type { IBridgeConfig, IGeneratedWallets } from "./types";
 
 export async function configDeps(
   config: IBridgeConfig,
   secrets: IGeneratedWallets,
   logger: LogInstance,
 ) {
-  const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
-  const stakingProvider = new JsonRpcProvider(config.stakingConfig.rpcURL);
-  const storageSigner = new Wallet(
+  const [storageProvider, storageSigner] = initializeEvmProviderAndWallet(
+    config.storageConfig.rpcURL,
     secrets.evmWallet.privateKey,
-    storageProvider,
   );
+  const [, stakingSigner] = initializeEvmProviderAndWallet(
+    config.stakingConfig.rpcURL,
+    secrets.evmWallet.privateKey,
+  );
+
   let nonce = await storageSigner.getNonce();
   const lock = new Mutex();
 
@@ -65,15 +60,10 @@ export async function configDeps(
   );
   const staking = ERC20Staking__factory.connect(
     config.stakingConfig.contractAddress,
-    new NonceManager(new Wallet(secrets.evmWallet.privateKey, stakingProvider)),
+    new NonceManager(stakingSigner),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
-  const migrator = orm.getMigrator();
-  const pendingMigs = await migrator.getPendingMigrations();
-  if (pendingMigs.length > 0) {
-    const migrated = await migrator.up();
-    logger.info("Applied the following migrations:", migrated);
-  }
+  await runMigrationsIfAny(orm.getMigrator(), logger);
   const em = orm.em;
   const serverLinkHandler = process.env.SERVER_LINK
     ? axios.create({
@@ -84,7 +74,7 @@ export async function configDeps(
   const tz = config.bridgeChains.find((e) => e.chainType === "tezos");
   const tzHelper = tz
     ? await configTezosHandler(
-        tz as ITezosChainConfig,
+        tz,
         storage,
         em.fork(),
         secrets.tezosWallet,
@@ -98,7 +88,7 @@ export async function configDeps(
   const scrtc = config.bridgeChains.find((e) => e.chainType === "scrt");
   const scrt = scrtc
     ? await configSecretHandler(
-        scrtc as ISecretChainConfig,
+        scrtc,
         storage,
         em.fork(),
         secrets.secretWallet,
@@ -112,7 +102,7 @@ export async function configDeps(
   const mxc = config.bridgeChains.find((e) => e.chainType === "multiversX");
   const mx = mxc
     ? await configMultiversXHandler(
-        mxc as IMultiversXChainConfig,
+        mxc,
         storage,
         em.fork(),
         secrets.multiversXWallet,
@@ -127,7 +117,7 @@ export async function configDeps(
 
   const ton = tonc
     ? await configTonHandler(
-        tonc as ITonChainConfig,
+        tonc,
         storage,
         em.fork(),
         secrets.tonWallet,
@@ -187,7 +177,7 @@ export async function configDeps(
     config.bridgeChains
       .filter((e) => e.chainType === "evm")
       .map((c) => {
-        const config = c as IEvmChainConfig;
+        const config = c;
         return configEvmHandler(
           config,
           storage,
@@ -204,7 +194,7 @@ export async function configDeps(
     config.bridgeChains
       .filter((e) => e.chainType === "cosmwasm")
       .map((c) => {
-        const config = c as ICosmWasmChainConfig;
+        const config = c;
         return configCosmWasmChainHandler(
           config,
           storage,
@@ -212,6 +202,8 @@ export async function configDeps(
           secrets.secretWallet,
           serverLinkHandler,
           logger.getSubLogger({ name: c.chain }),
+          staking,
+          secrets.evmWallet.address,
         );
       }),
   );
@@ -256,4 +248,18 @@ export async function configDeps(
       aptos,
     ].filter((e) => e !== undefined) as THandler[],
   };
+}
+
+function initializeEvmProviderAndWallet(rpc: string, sk: string) {
+  const provider = new JsonRpcProvider(rpc);
+  const wallet = new Wallet(sk, provider);
+  return [provider, wallet] as const;
+}
+
+async function runMigrationsIfAny(migrator: Migrator, logger: LogInstance) {
+  const pendingMigs = await migrator.getPendingMigrations();
+  if (pendingMigs.length > 0) {
+    const migrated = await migrator.up();
+    logger.info("Applied the following migrations:", migrated);
+  }
 }

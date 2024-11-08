@@ -3,7 +3,7 @@ import type { KeyPairEd25519 } from "near-api-js/lib/utils";
 
 export default function generateWallet() {
   const kp = KeyPair.fromRandom("ed25519") as KeyPairEd25519;
-  const publicKey = kp.getPublicKey().data;
+  const publicKey = kp.getPublicKey();
   const privateKey = kp.secretKey;
 
   return Promise.resolve({

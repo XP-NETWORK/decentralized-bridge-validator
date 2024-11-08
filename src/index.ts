@@ -79,7 +79,6 @@ async function main() {
     deps.storage,
     deps.staking,
     deps.fetchNonce,
-    deps.em.fork(),
     logger,
   );
 }

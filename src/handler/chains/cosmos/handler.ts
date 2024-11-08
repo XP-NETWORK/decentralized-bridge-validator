@@ -30,6 +30,8 @@ export async function cosmWasmHandler({
   chainType,
   serverLinkHandler,
   logger,
+  staking,
+  validatorAddress,
 }: CosmosHandlerParams): Promise<THandler> {
   const sender = (await wallet.getAccounts())[0];
   const bc = async () => {
@@ -63,8 +65,16 @@ export async function cosmWasmHandler({
         logger,
       ),
     addSelfAsValidator: () =>
-      addSelfAsValidator(chainIdent, storage, bc, sender, logger),
-    getBalance: () => getBalance(fetchProvider, sender),
+      addSelfAsValidator(
+        chainIdent,
+        storage,
+        bc,
+        sender,
+        logger,
+        staking,
+        validatorAddress,
+      ),
+    getBalance: () => getBalance(fetchProvider, sender, currency),
     nftData: (tid, ctr) => nftData(tid, ctr, fetchProvider, sender, logger),
     decimals: BigInt(10 ** decimals),
     pollForLockEvents: async (_, cb, cbLe) => {

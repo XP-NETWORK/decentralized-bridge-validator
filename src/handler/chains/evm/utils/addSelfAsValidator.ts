@@ -8,6 +8,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 import type { MutexReleaser } from "../types";
 
 const addSelfAsValidator = (
@@ -20,19 +21,13 @@ const addSelfAsValidator = (
 ) => {
   return async (): Promise<"success" | "failure"> => {
     try {
-      const stakedAmt = await staking.stakingBalances(validatorAddress);
-      if (stakedAmt > 0n) {
-        const add = await staking.addNewChains([
-          {
-            chainType: "evm",
-            validatorAddress,
-          },
-        ]);
-        const receipt = await add.wait();
-        logger.info(
-          `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-        );
-      }
+      await addNewChain(
+        staking,
+        "evm",
+        validatorAddress,
+        validatorAddress,
+        logger,
+      );
       let validatorsCount = Number(
         await useMutexAndRelease(bc, async (bridge) => {
           return bridge.validatorsCount();
@@ -67,10 +62,12 @@ const addSelfAsValidator = (
           signature: item.signature,
         };
       });
-      const [bC, r] = await bc();
-      const added = await bC.addValidator(signer.address, stakingSignatures);
+      const added = await useMutexAndRelease(
+        bc,
+        async (bridge) =>
+          await bridge.addValidator(signer.address, stakingSignatures),
+      );
       await added.wait();
-      r();
       return "success";
     } catch (e) {
       return "failure";

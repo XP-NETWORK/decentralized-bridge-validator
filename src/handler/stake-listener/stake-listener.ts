@@ -1,4 +1,3 @@
-import type { EntityManager } from "@mikro-orm/sqlite";
 import type { TSupportedChainTypes } from "../../config";
 import type { BridgeStorage } from "../../contractsTypes/evm";
 import { eventBuilder } from "../event-builder";
@@ -10,7 +9,6 @@ export async function listenStakeEvents(
   storage: BridgeStorage,
   stakingChain: TStakingHandler,
   fetchNonce: () => Promise<readonly [number, () => void, () => Promise<void>]>,
-  _em: EntityManager,
   log: LogInstance,
 ) {
   const map = new Map<TSupportedChainTypes, THandler>();
@@ -37,12 +35,12 @@ export async function listenStakeEvents(
         if (!dc) {
           throw new Error(`Unknown destination chain type: ${sig.chainType}`);
         }
-        const signerAndSignature = await dc.signData(sig.validatorAddress);
+        const { signature, signer } = await dc.signData(sig.validatorAddress);
         signatures.push({
           validatorAddress: sig.validatorAddress,
           signerAndSignature: {
-            signature: signerAndSignature.signature,
-            signerAddress: signerAndSignature.signer,
+            signature: signature,
+            signerAddress: signer,
           },
         });
       }
@@ -85,13 +83,6 @@ export async function listenStakeEvents(
   }
 
   for (const chain of chains) {
-    if (chain.chainType === "evm") {
-      if (chain.chainIdent === "BSC") {
-        map.set(chain.chainType, chain);
-        continue;
-      }
-      continue;
-    }
     map.set(chain.chainType, chain);
   }
   poolEvents(stakingChain);

@@ -5,7 +5,7 @@ import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import { cosmWasmHandler } from ".";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
-import type { BridgeStorage } from "../../../contractsTypes/evm";
+import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import type { CosmWasmWallet, ICosmWasmChainConfig } from "../../../types";
 import type { LogInstance } from "../../types";
 import type { MutexReleaser } from "../evm/types";
@@ -17,6 +17,8 @@ export async function configCosmWasmChainHandler(
   cosmWasmWallet: CosmWasmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   cwLogger: LogInstance,
+  staking: ERC20Staking,
+  validatorAddress: string,
 ) {
   const directWallet = await DirectSecp256k1Wallet.fromKey(
     Buffer.from(cosmWasmWallet.privateKey, "hex"),
@@ -48,5 +50,7 @@ export async function configCosmWasmChainHandler(
     chainType: conf.chainType as TSupportedChainTypes,
     serverLinkHandler,
     logger: cwLogger,
+    staking,
+    validatorAddress,
   });
 }

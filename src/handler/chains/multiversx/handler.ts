@@ -62,16 +62,9 @@ export function multiversxHandler({
         valid: true,
       };
     },
-    pollForLockEvents: async (builder, cb) => {
+    pollForLockEvents: async (_, cb, cbLe) => {
       serverLinkHandler
-        ? pollForLockEvents(
-            chainIdent,
-            builder,
-            cb,
-            em,
-            serverLinkHandler,
-            logger,
-          )
+        ? pollForLockEvents(chainIdent, cbLe, cb, em, serverLinkHandler, logger)
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

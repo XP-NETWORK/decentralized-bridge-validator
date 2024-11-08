@@ -40,16 +40,9 @@ export function aptosHandler({
 }: AptosHandlerParams): THandler {
   return {
     publicKey: signer.publicKey.bcsToHex().toStringWithoutPrefix(),
-    pollForLockEvents: async (builder, cb) => {
+    pollForLockEvents: async (_, cb, cbLe) => {
       serverLinkHandler
-        ? pollForLockEvents(
-            chainIdent,
-            builder,
-            cb,
-            em,
-            serverLinkHandler,
-            logger,
-          )
+        ? pollForLockEvents(chainIdent, cbLe, cb, em, serverLinkHandler, logger)
         : raise(
             "Unreachable. Wont be called if serverLinkHandler is not present.",
           );

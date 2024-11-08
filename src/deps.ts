@@ -68,7 +68,12 @@ export async function configDeps(
     new NonceManager(new Wallet(secrets.evmWallet.privateKey, stakingProvider)),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
-  await orm.schema.updateSchema();
+  const migrator = orm.getMigrator();
+  const pendingMigs = await migrator.getPendingMigrations();
+  if (pendingMigs.length > 0) {
+    const migrated = await migrator.up();
+    logger.info("Applied the following migrations:", migrated);
+  }
   const em = orm.em;
   const serverLinkHandler = process.env.SERVER_LINK
     ? axios.create({

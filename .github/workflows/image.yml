@@ -7,7 +7,7 @@ name: Docker
 
 on:
   push:
-    branches: [ 'main' ]
+    branches: [ 'main', 'feat/poll-refactor' ]
 
 env:
   # Use docker.io for Docker Hub if empty

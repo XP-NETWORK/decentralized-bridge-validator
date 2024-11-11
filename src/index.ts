@@ -3,13 +3,18 @@ import { Logger } from "tslog";
 import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import "./environment";
+import { createInterface } from "node:readline/promises";
 import { configureValidator } from "./environment";
 import { listenEvents, listenStakeEvents } from "./handler";
 import { stakeTokens } from "./handler/stake-listener";
 import { checkOrAddSelfAsVal, retry } from "./handler/utils";
 import { configureRouter } from "./http";
 import type { IBridgeConfig, IGeneratedWallets } from "./types";
-import { requireEnoughBalance, syncWallets } from "./utils";
+import {
+  requireEnoughBalance,
+  requireEnoughBalanceInChains,
+  syncWallets,
+} from "./utils";
 
 async function main() {
   const logger = new Logger({
@@ -44,12 +49,22 @@ async function main() {
       logger.info(`Server listening on port ${process.env.SERVER_PORT}`);
     });
   }
+  const tio = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
   await requireEnoughBalance(
     deps.chains,
     config.storageConfig,
     config.stakingConfig,
     secrets,
+    logger,
+  );
+
+  const chainsThatNeedToBeAddedAsValidator = await requireEnoughBalanceInChains(
+    deps.chains,
+    tio,
     logger,
   );
 
@@ -68,7 +83,7 @@ async function main() {
   );
 
   await retry(
-    () => checkOrAddSelfAsVal(deps.chains, logger),
+    () => checkOrAddSelfAsVal(chainsThatNeedToBeAddedAsValidator, logger),
     "Add self as Validator",
     logger,
   );

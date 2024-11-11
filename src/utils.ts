@@ -88,11 +88,7 @@ export async function requireEnoughBalance(
     chains.find((chain) => chain.chainIdent === "BSC") ||
     raise("BSC Chain not found");
 
-  const otherChains = chains.filter((chain) => chain.chainIdent !== "BSC");
-
   await requireEnoughStorageChainBalance(storageConfig, stdio, secrets, log);
-
-  await requireEnoughBalanceInChains(otherChains, stdio, log);
 
   await requireEnoughStakingBalanceAndChainBalance(
     stakingConfig,
@@ -137,21 +133,29 @@ async function requireEnoughStorageChainBalance(
   log.info("Storage Has Enough Funds: ✅");
 }
 
-async function requireEnoughBalanceInChains(
+export async function requireEnoughBalanceInChains(
   chains: THandler[],
   stdio: Interface,
   log: LogInstance,
 ) {
-  for (const chain of chains) {
-    let funded = false;
+  const notValidatorChains = (
+    await Promise.all(
+      chains.map(async (chain) => {
+        try {
+          if (await chain.selfIsValidator()) {
+            log.warn(`${chain.chainIdent} Validator ✅.`);
+            return [];
+          }
+        } catch (e) {
+          return [chain];
+        }
+        throw new Error("Unreachable");
+      }),
+    )
+  ).flat();
+  let funded = false;
+  for (const chain of notValidatorChains) {
     while (!funded) {
-      if (await chain.selfIsValidator()) {
-        log.warn(
-          `Chain ${chain.chainIdent} is a validator. Skipping Checking for funding.`,
-        );
-        funded = true;
-        continue;
-      }
       const balance = await chain.getBalance();
       const remainingRaw = chain.initialFunds - BigInt(balance);
       if (balance < BigInt(chain.initialFunds)) {
@@ -172,6 +176,7 @@ async function requireEnoughBalanceInChains(
       log.info(`${chain.chainIdent} Has Enough Funds: ✅`);
     }
   }
+  return notValidatorChains;
 }
 
 async function requireEnoughStakingBalanceAndChainBalance(

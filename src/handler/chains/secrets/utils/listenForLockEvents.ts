@@ -3,7 +3,7 @@ import { Block } from "../../../../persistence/entities/block";
 import type { EventBuilder } from "../../../event-builder";
 import { tryRerunningFailed } from "../../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../../types";
-import { useMutexAndRelease } from "../../../utils";
+import { convertStringToHexToNumb, useMutexAndRelease } from "../../../utils";
 import type { SecretProviderFetch } from "../types";
 
 const CHAIN_IDENT = "SECRET";
@@ -38,18 +38,18 @@ export default async function listenForLockEvents(
             ? lastBlock + blockChunks
             : latestBlockNumber;
 
-        const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height < ${latestBlock}`;
+        const query = `message.contract_address = '${bridge}' AND tx.height >= ${lastBlock} AND tx.height <= ${latestBlock}`;
         const logs = await useMutexAndRelease(
           fetchProvider,
           async (c) => await c.query.txsQuery(query),
         );
         const startBlock = lastBlock;
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlockNumber + 1;
         if (!logs.length) {
           logger.info(
             `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
-          lastBlock = latestBlockNumber;
+          lastBlock = latestBlockNumber + 1;
           await em.upsert(Block, {
             chain: CHAIN_IDENT,
             contractAddress: bridge,
@@ -77,9 +77,13 @@ export default async function listenForLockEvents(
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
           } = parsedLog;
+          let convertedTokenId = tokenId;
+          if (sourceChain === "SECRET") {
+            convertedTokenId = convertStringToHexToNumb(tokenId);
+          }
           await cb(
             await builder.nftLocked(
-              tokenId,
+              convertedTokenId,
               destinationChain,
               destinationUserAddress,
               sourceNftContractAddress,
@@ -92,7 +96,7 @@ export default async function listenForLockEvents(
             ),
           );
         }
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlockNumber + 1;
         await em.upsert(Block, {
           chain: CHAIN_IDENT,
           contractAddress: bridge,

@@ -4,17 +4,15 @@ import { prodBridgeConfig, testnetBridgeConfig } from "./config";
 import { configDeps } from "./deps";
 import "./environment";
 import { createInterface } from "node:readline/promises";
+import { requireEnoughBalanceForStakingAndStorage } from "./balances";
+import { requireEnoughBalanceInChains } from "./balances/chains-balance";
 import { configureValidator } from "./environment";
 import { listenEvents, listenStakeEvents } from "./handler";
 import { stakeTokens } from "./handler/stake-listener";
 import { checkOrAddSelfAsVal, retry } from "./handler/utils";
 import { configureRouter } from "./http";
 import type { IBridgeConfig, IGeneratedWallets } from "./types";
-import {
-  requireEnoughBalance,
-  requireEnoughBalanceInChains,
-  syncWallets,
-} from "./utils";
+import { syncWallets } from "./wallets";
 
 async function main() {
   const logger = new Logger({
@@ -54,7 +52,7 @@ async function main() {
     output: process.stdout,
   });
 
-  await requireEnoughBalance(
+  await requireEnoughBalanceForStakingAndStorage(
     deps.chains,
     config.storageConfig,
     config.stakingConfig,

@@ -63,6 +63,7 @@ export async function configDeps(
     new NonceManager(stakingSigner),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
+  await orm.schema.updateSchema();
   await runMigrationsIfAny(orm.getMigrator(), logger);
   const em = orm.em;
   const serverLinkHandler = process.env.SERVER_LINK

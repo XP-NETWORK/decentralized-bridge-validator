@@ -15,9 +15,9 @@ import type { LogInstance } from "../../types";
 
 export async function configAptosHandler(
   conf: IAptosChainConfig,
+  aptosWallet: IAptosWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  aptosWallet: IAptosWallet,
   serverLinkHandler: AxiosInstance | undefined,
   aptosLogger: LogInstance,
   staking: ERC20Staking,

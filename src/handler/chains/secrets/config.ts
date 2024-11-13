@@ -13,13 +13,13 @@ import { secretsHandler } from "./handler";
 
 export async function configSecretHandler(
   conf: ISecretChainConfig,
+  secretWallet: ISecretWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  secretWallet: ISecretWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  scrtLogger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-  scrtLogger: LogInstance,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,

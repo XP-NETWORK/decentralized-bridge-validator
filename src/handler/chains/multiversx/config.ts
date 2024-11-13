@@ -13,9 +13,9 @@ import { multiversxHandler } from "./handler";
 
 export async function configMultiversXHandler(
   conf: IMultiversXChainConfig,
+  multiversXWallet: IMultiversXWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  multiversXWallet: IMultiversXWallet,
   serverLinkHandler: AxiosInstance | undefined,
   mxLogger: LogInstance,
   staking: ERC20Staking,

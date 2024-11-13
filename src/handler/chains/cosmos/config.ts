@@ -12,9 +12,9 @@ import type { MutexReleaser } from "../evm/types";
 
 export async function configCosmWasmChainHandler(
   conf: ICosmWasmChainConfig,
+  cosmWasmWallet: CosmWasmWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  cosmWasmWallet: CosmWasmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   cwLogger: LogInstance,
   staking: ERC20Staking,

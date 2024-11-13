@@ -1,12 +1,11 @@
 import { MikroORM } from "@mikro-orm/core";
-import type { Migrator } from "@mikro-orm/migrations";
 import { Mutex } from "async-mutex";
 import axios from "axios";
-import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
+import { NonceManager } from "ethers";
 import {
   BridgeStorage__factory,
   ERC20Staking__factory,
-} from "./contractsTypes/evm";
+} from "../contractsTypes/evm";
 import {
   configAptosHandler,
   configCosmWasmChainHandler,
@@ -19,10 +18,12 @@ import {
   configStakingHandler,
   configTezosHandler,
   configTonHandler,
-} from "./handler/chains";
-import type { LogInstance, THandler } from "./handler/types";
-import MikroOrmConfig from "./mikro-orm.config";
-import type { IBridgeConfig, IGeneratedWallets } from "./types";
+} from "../handler/chains";
+import type { LogInstance, THandler } from "../handler/types";
+import MikroOrmConfig from "../mikro-orm.config";
+import type { IBridgeConfig, IGeneratedWallets } from "../types";
+import { initializeEvmProviderAndWallet } from "./init-evm-provider-wallet";
+import { runMigrationsIfAny } from "./run-migrations-if-any";
 
 export async function configDeps(
   config: IBridgeConfig,
@@ -72,17 +73,23 @@ export async function configDeps(
       })
     : undefined;
 
+  function otherArguments(name: string) {
+    return [
+      storage,
+      em.fork(),
+      serverLinkHandler,
+      logger.getSubLogger({ name }),
+      staking,
+      secrets.evmWallet.address,
+    ] as const;
+  }
+
   const tz = config.bridgeChains.find((e) => e.chainType === "tezos");
   const tzHelper = tz
     ? await configTezosHandler(
         tz,
-        storage,
-        em.fork(),
         secrets.tezosWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "TEZOS" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("TEZOS"),
       )
     : undefined;
 
@@ -90,13 +97,8 @@ export async function configDeps(
   const scrt = scrtc
     ? await configSecretHandler(
         scrtc,
-        storage,
-        em.fork(),
         secrets.secretWallet,
-        serverLinkHandler,
-        staking,
-        secrets.evmWallet.address,
-        logger.getSubLogger({ name: "SECRET" }),
+        ...otherArguments("SECRET"),
       )
     : undefined;
 
@@ -104,44 +106,21 @@ export async function configDeps(
   const mx = mxc
     ? await configMultiversXHandler(
         mxc,
-        storage,
-        em.fork(),
         secrets.multiversXWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "MULTIVERSX" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("MULTIVERSX"),
       )
     : undefined;
 
   const tonc = config.bridgeChains.find((e) => e.chainType === "ton");
 
   const ton = tonc
-    ? await configTonHandler(
-        tonc,
-        storage,
-        em.fork(),
-        secrets.tonWallet,
-        serverLinkHandler,
-        staking,
-        secrets.evmWallet.address,
-        logger.getSubLogger({ name: "TON" }),
-      )
+    ? await configTonHandler(tonc, secrets.tonWallet, ...otherArguments("TON"))
     : undefined;
 
   const icpc = config.bridgeChains.find((e) => e.chainType === "icp");
 
   const icp = icpc
-    ? await configIcpHandler(
-        icpc,
-        storage,
-        em.fork(),
-        secrets.icpWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "ICP" }),
-        staking,
-        secrets.evmWallet.address,
-      )
+    ? await configIcpHandler(icpc, secrets.icpWallet, ...otherArguments("ICP"))
     : undefined;
 
   const nearc = config.bridgeChains.find((e) => e.chainType === "near");
@@ -149,13 +128,8 @@ export async function configDeps(
   const near = nearc
     ? await configNearHandler(
         nearc,
-        storage,
-        em.fork(),
         secrets.nearWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "NEAR" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("NEAR"),
       )
     : undefined;
 
@@ -164,13 +138,8 @@ export async function configDeps(
   const aptos = aptosc
     ? await configAptosHandler(
         aptosc,
-        storage,
-        em.fork(),
         secrets.aptosWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "APTOS" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("APTOS"),
       )
     : undefined;
 
@@ -181,12 +150,8 @@ export async function configDeps(
         const config = c;
         return configEvmHandler(
           config,
-          storage,
-          em.fork(),
           secrets.evmWallet,
-          serverLinkHandler,
-          logger.getSubLogger({ name: c.chain }),
-          staking,
+          ...otherArguments(config.chain),
         );
       }),
   );
@@ -198,13 +163,8 @@ export async function configDeps(
         const config = c;
         return configCosmWasmChainHandler(
           config,
-          storage,
-          em.fork(),
           secrets.secretWallet,
-          serverLinkHandler,
-          logger.getSubLogger({ name: c.chain }),
-          staking,
-          secrets.evmWallet.address,
+          ...otherArguments(c.chain),
         );
       }),
   );
@@ -214,12 +174,8 @@ export async function configDeps(
   const hedera = hederaConf
     ? await configHederaHandler(
         hederaConf,
-        storage,
-        em.fork(),
         secrets.evmWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "HEDERA" }),
-        staking,
+        ...otherArguments("HEDERA"),
       )
     : undefined;
 
@@ -252,18 +208,4 @@ export async function configDeps(
       aptos,
     ].filter((e) => e !== undefined) as THandler[],
   };
-}
-
-function initializeEvmProviderAndWallet(rpc: string, sk: string) {
-  const provider = new JsonRpcProvider(rpc);
-  const wallet = new Wallet(sk, provider);
-  return [provider, wallet] as const;
-}
-
-async function runMigrationsIfAny(migrator: Migrator, logger: LogInstance) {
-  const pendingMigs = await migrator.getPendingMigrations();
-  if (pendingMigs.length > 0) {
-    const migrated = await migrator.up();
-    logger.info("Applied the following migrations:", migrated);
-  }
 }

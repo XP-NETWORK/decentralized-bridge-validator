@@ -12,9 +12,9 @@ import { icpHandler } from "./handler";
 
 export async function configIcpHandler(
   conf: IICPChainConfig,
+  icpWallet: IICPWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  icpWallet: IICPWallet,
   serverLinkHandler: AxiosInstance | undefined,
   icpLogger: LogInstance,
   staking: ERC20Staking,

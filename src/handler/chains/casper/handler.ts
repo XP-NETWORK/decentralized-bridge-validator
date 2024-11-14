@@ -24,6 +24,7 @@ export function casperHandler({
   decimals,
   chainIdent,
   chainType,
+  chainName,
   ess,
   serverLinkHandler,
   logger,
@@ -61,6 +62,7 @@ export function casperHandler({
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,
+        chainName,
         bc,
         signer,
         logger,

@@ -51,5 +51,6 @@ export async function configCasperHandler(
     storage,
     validatorAddress,
     ess: conf.ess,
+    chainName: conf.chainId,
   });
 }

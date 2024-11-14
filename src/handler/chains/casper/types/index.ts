@@ -18,6 +18,7 @@ export type CasperHandlerParams = {
   storage: BridgeStorage;
   lastBlock_: number;
   initialFunds: bigint;
+  chainName: string;
   em: EntityManager;
   decimals: number;
   chainType: TSupportedChainTypes;

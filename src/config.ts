@@ -308,6 +308,17 @@ export const prodBridgeConfig: IBridgeConfig = {
       decimals: 18,
       blockChunks: 1000,
     },
+    {
+      chain: "MOONBEAM",
+      rpcURL: process.env.MOONBEAM_RPC || "https://1rpc.io/glmr",
+      nativeCoinSymbol: "GLMR",
+      intialFund: "6000000000000000000",
+      contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
+      chainType: "evm",
+      lastBlock: 8335997,
+      decimals: 18,
+      blockChunks: 1000,
+    },
   ],
   storageConfig: {
     chain: "OP",

@@ -57,7 +57,7 @@ export class LockedEvent {
   royaltyReceiver!: string;
 
   @Property()
-  fee!: bigint;
+  fee!: string;
 
   @Property({ nullable: true })
   imgUri?: string;
@@ -94,7 +94,7 @@ export class LockedEvent {
     this.royaltyReceiver = royaltyReceiver;
     this.name = name;
     this.symbol = symbol;
-    this.fee = BigInt(fee);
+    this.fee = fee;
     this.royalty = BigInt(royalty);
   }
 

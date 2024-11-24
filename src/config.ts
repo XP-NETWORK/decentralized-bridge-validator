@@ -320,7 +320,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       blockChunks: 1000,
     },
     {
-      chain: "ETHEREUM",
+      chain: "ETH",
       rpcURL: process.env.ETH_RPC || "https://eth.llamarpc.com",
       nativeCoinSymbol: "ETH",
       intialFund: "3000000000000000",

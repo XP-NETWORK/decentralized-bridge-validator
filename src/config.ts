@@ -319,6 +319,17 @@ export const prodBridgeConfig: IBridgeConfig = {
       decimals: 18,
       blockChunks: 1000,
     },
+    {
+      chain: "ETHEREUM",
+      rpcURL: process.env.ETH_RPC || "https://eth.llamarpc.com",
+      nativeCoinSymbol: "ETH",
+      intialFund: "3000000000000000",
+      contractAddress: "0x4B2A837613bA45C734439155CC7030c79095a2ed",
+      chainType: "evm",
+      lastBlock: 21257516,
+      decimals: 18,
+      blockChunks: 1000,
+    },
   ],
   storageConfig: {
     chain: "OP",

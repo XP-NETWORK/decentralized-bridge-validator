@@ -19,7 +19,6 @@ export type CasperHandlerParams = {
   storage: BridgeStorage;
   lastBlock_: number;
   initialFunds: bigint;
-  chainName: string;
   em: EntityManager;
   decimals: number;
   chainType: TSupportedChainTypes;
@@ -29,6 +28,7 @@ export type CasperHandlerParams = {
   logger: LogInstance;
   staking: ERC20Staking;
   validatorAddress: string;
+  network: "casper-test" | "casper";
 };
 
 export type CasperProviderFetch = () => Promise<

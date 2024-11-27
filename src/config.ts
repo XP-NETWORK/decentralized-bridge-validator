@@ -142,8 +142,9 @@ export const bridgeTestChains = [
   {
     chainType: "casper",
     chain: "CASPER",
+    network: "casper-test",
     contractAddress:
-      "9d0e8388048cf7e2f283dcdde83b925aa403588e4c49d71b63013bdb1a2cafeb",
+      "1acfa310d1ffde79f4680c3b7afe7416c292dbb745cbc2f70c41599a3d3a727d",
     decimals: 9,
     intialFund: "1000000000",
     lastBlock: 4106745,

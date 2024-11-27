@@ -49,7 +49,7 @@ export async function configCasperHandler(
     staking,
     storage,
     validatorAddress,
-    chainName: conf.chain,
+    network: conf.network,
     rpc: conf.rpcURL,
   });
 }

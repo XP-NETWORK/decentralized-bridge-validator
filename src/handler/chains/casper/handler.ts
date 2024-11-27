@@ -25,7 +25,6 @@ export async function casperHandler({
   decimals,
   chainIdent,
   chainType,
-  chainName,
   bridge,
   rpc,
   serverLinkHandler,
@@ -33,6 +32,7 @@ export async function casperHandler({
   signer,
   staking,
   validatorAddress,
+  network,
 }: CasperHandlerParams): Promise<THandler> {
   async function bc() {
     const [provider, release] = await fetchProvider();
@@ -79,7 +79,7 @@ export async function casperHandler({
     addSelfAsValidator: () =>
       addSelfAsValidator(
         storage,
-        chainName,
+        network,
         bc,
         fetchProvider,
         rpc,

@@ -19,7 +19,7 @@ import { getDeploy } from "./get-deploy";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
-  chainName: string,
+  network: "casper-test" | "casper",
   fetchBridge: () => Promise<readonly [TCasperBridgeClient, () => void]>,
   fetchProvider: () => Promise<readonly [CasperClient, () => void]>,
   rpc: string,
@@ -51,7 +51,7 @@ export default async function addSelfAsValidator(
   try {
     const submit = await useMutexAndRelease(fetchBridge, async (bridge) => {
       // bridge.callEntrypoint("submit_signatures", RuntimeArgs.fromMap(), identity.publicKey, )
-
+      console.log(signatures);
       const clSignerAndSignature = signatures.map(
         ({ signature, signerAddress }) => {
           const signerClValue = CLValueBuilder.publicKey(
@@ -59,7 +59,7 @@ export default async function addSelfAsValidator(
             CLPublicKeyTag.ED25519,
           );
           const signatureClValue = CLValueBuilder.byteArray(
-            Buffer.from(signature, "hex"),
+            Buffer.from(signature.replace("0x", ""), "hex"),
           );
           return CLValueBuilder.tuple2([signerClValue, signatureClValue]);
         },
@@ -79,7 +79,7 @@ export default async function addSelfAsValidator(
           "submit_signatures",
           rt_args,
           identity.publicKey,
-          chainName,
+          network,
           "20000000000",
           [identity],
         )
@@ -90,6 +90,7 @@ export default async function addSelfAsValidator(
       fetchProvider,
       async (provider) => await getDeploy(provider, submit),
     );
+    logger.info("Submitted Signatures to add validator");
 
     const response = await useMutexAndRelease(fetchBridge, async (bridge) => {
       return bridge
@@ -99,7 +100,7 @@ export default async function addSelfAsValidator(
             new_validator_public_key_arg: identity.publicKey,
           }),
           identity.publicKey,
-          chainName,
+          network,
           "15000000000",
           [identity],
         )
@@ -108,6 +109,7 @@ export default async function addSelfAsValidator(
     await useMutexAndRelease(fetchProvider, async (provider) => {
       return await getDeploy(provider, response);
     });
+    logger.info("Added self as validator.");
     return true;
   } catch (e) {
     logger.error("Failed to add self as validator:", e);

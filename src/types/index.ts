@@ -142,6 +142,7 @@ type IAptosChainConfig = {
 type ICasperChainConfig = {
   chainType: "casper";
   rpcURL: string;
+  network: "casper-test" | "casper";
 } & IChainConfig;
 
 type INearChainConfig = {

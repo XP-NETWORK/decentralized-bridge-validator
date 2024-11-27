@@ -73,6 +73,8 @@ export default async function addSelfAsValidator(
         data_type_arg: CLValueBuilder.u8(1),
         signatures_arg: clSignerAndSignatureList,
       });
+      const costOfSignatures =
+        10000000000 * clSignerAndSignatureList.value().length;
 
       return bridge
         .callEntrypoint(
@@ -80,7 +82,7 @@ export default async function addSelfAsValidator(
           rt_args,
           identity.publicKey,
           network,
-          "20000000000",
+          String(35000000000 + costOfSignatures),
           [identity],
         )
         .send(rpc);

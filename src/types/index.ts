@@ -89,6 +89,7 @@ type IGeneratedWallets = {
   icpWallet: IICPWallet;
   nearWallet: INearWallet;
   aptosWallet: IAptosWallet;
+  casperWallet: ICasperWallet;
 };
 
 type IConfigAndWallets = {
@@ -141,8 +142,6 @@ type IAptosChainConfig = {
 type ICasperChainConfig = {
   chainType: "casper";
   rpcURL: string;
-  chainId: string;
-  ess: string;
 } & IChainConfig;
 
 type INearChainConfig = {

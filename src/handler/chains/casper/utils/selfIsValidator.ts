@@ -7,14 +7,14 @@ export default async function selfIsValidator(
   identity: Ed25519,
 ): Promise<boolean> {
   try {
-    await useMutexAndRelease(fetchBridge, async (bridge) => {
-      return bridge.queryContractDictionary(
-        "validators",
-        Buffer.from(identity.publicKey.value()).toString("hex"),
+    const response = await useMutexAndRelease(fetchBridge, async (bridge) => {
+      return await bridge.queryContractDictionary(
+        "validators_dict",
+        identity.publicKey.toAccountRawHashStr(),
       );
     });
-    return true;
-  } catch {
+    return response.data[0].data;
+  } catch (e) {
     return false;
   }
 }

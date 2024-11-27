@@ -1,7 +1,8 @@
+import crypto from "node:crypto";
 import {
   CLPublicKeyTag,
-  type CLU64,
   CLValueBuilder,
+  type CasperClient,
   type Keys,
   RuntimeArgs,
 } from "casper-js-sdk";
@@ -14,54 +15,98 @@ import type { LogInstance } from "../../../types";
 import { useMutexAndRelease } from "../../../utils";
 import { addNewChain } from "../../common/add-new-chain";
 import { getSignatures } from "../../common/get-signatures";
+import { getDeploy } from "./get-deploy";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
   chainName: string,
   fetchBridge: () => Promise<readonly [TCasperBridgeClient, () => void]>,
+  fetchProvider: () => Promise<readonly [CasperClient, () => void]>,
+  rpc: string,
   identity: Keys.Ed25519,
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
 ): Promise<boolean> {
-  const vid = Buffer.from(identity.publicKey.value()).toString("hex");
-  await addNewChain(staking, "casper", validatorAddress, vid, logger);
-  const func = async () => {
-    const num: CLU64 = await useMutexAndRelease(fetchBridge, async (br) => {
-      return await br.queryContractData(["validator_count"]);
+  const vid = crypto
+    .createHash("sha256")
+    .update(identity.publicKey.data)
+    .digest();
+  await addNewChain(
+    staking,
+    "casper",
+    validatorAddress,
+    vid.toString("hex"),
+    logger,
+  );
+  const func = async (): Promise<number> => {
+    const num = await useMutexAndRelease(fetchBridge, async (br) => {
+      return await br.queryContractData(["validators_count"]);
     });
-    return num.value().toNumber();
+    return num.toNumber();
   };
 
+  const signatures = await getSignatures(func, storage, vid.toString("hex"));
+
   try {
-    const signatures = await getSignatures(func, storage, vid);
-    useMutexAndRelease(fetchBridge, async (bridge) => {
-      bridge.callEntrypoint(
-        "add_validator",
-        RuntimeArgs.fromMap({
-          new_validator_public_key_arg: CLValueBuilder.publicKey(
-            identity.publicKey.value(),
+    const submit = await useMutexAndRelease(fetchBridge, async (bridge) => {
+      // bridge.callEntrypoint("submit_signatures", RuntimeArgs.fromMap(), identity.publicKey, )
+
+      const clSignerAndSignature = signatures.map(
+        ({ signature, signerAddress }) => {
+          const signerClValue = CLValueBuilder.publicKey(
+            Buffer.from(signerAddress, "hex"),
             CLPublicKeyTag.ED25519,
-          ),
-          signatures_arg: CLValueBuilder.list(
-            signatures.map((signature) => {
-              return CLValueBuilder.tuple2([
-                CLValueBuilder.publicKey(
-                  Buffer.from(signature.signerAddress, "hex"),
-                  CLPublicKeyTag.ED25519,
-                ),
-                CLValueBuilder.byteArray(
-                  Buffer.from(signature.signature.slice(2), "hex"),
-                ),
-              ]);
-            }),
-          ),
-        }),
-        identity.publicKey,
-        chainName,
-        "10000000000",
-        [identity],
+          );
+          const signatureClValue = CLValueBuilder.byteArray(
+            Buffer.from(signature, "hex"),
+          );
+          return CLValueBuilder.tuple2([signerClValue, signatureClValue]);
+        },
       );
+
+      const clSignerAndSignatureList =
+        CLValueBuilder.list(clSignerAndSignature);
+
+      const rt_args = RuntimeArgs.fromMap({
+        data_hash_arg: CLValueBuilder.byteArray(vid),
+        data_type_arg: CLValueBuilder.u8(1),
+        signatures_arg: clSignerAndSignatureList,
+      });
+
+      return bridge
+        .callEntrypoint(
+          "submit_signatures",
+          rt_args,
+          identity.publicKey,
+          chainName,
+          "20000000000",
+          [identity],
+        )
+        .send(rpc);
+    });
+
+    await useMutexAndRelease(
+      fetchProvider,
+      async (provider) => await getDeploy(provider, submit),
+    );
+
+    const response = await useMutexAndRelease(fetchBridge, async (bridge) => {
+      return bridge
+        .callEntrypoint(
+          "add_validator",
+          RuntimeArgs.fromMap({
+            new_validator_public_key_arg: identity.publicKey,
+          }),
+          identity.publicKey,
+          chainName,
+          "15000000000",
+          [identity],
+        )
+        .send(rpc);
+    });
+    await useMutexAndRelease(fetchProvider, async (provider) => {
+      return await getDeploy(provider, response);
     });
     return true;
   } catch (e) {

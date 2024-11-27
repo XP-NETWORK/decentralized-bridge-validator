@@ -7,9 +7,9 @@ export default async function getBalance(
   signer: Keys.Ed25519,
 ) {
   const balance = await useMutexAndRelease(fetchProvider, async (provider) => {
-    return provider.nodeClient.queryBalance(
+    return await provider.nodeClient.queryBalance(
       PurseIdentifier.MainPurseUnderAccountHash,
-      signer.accountHash().toFormattedString(),
+      signer.publicKey.toAccountHashStr(),
     );
   });
   return balance.toBigInt();

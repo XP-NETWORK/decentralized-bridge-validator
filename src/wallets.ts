@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { generateWallet as aptosGw } from "./handler/chains/aptos/utils";
+import casperGw from "./handler/chains/casper/utils/generateWallet";
 import { generateWallet as evmGw } from "./handler/chains/evm/utils";
 import { generateWallet as icpGw } from "./handler/chains/icp/utils";
 import { generateWallet as mxGw } from "./handler/chains/multiversx/utils";
@@ -28,6 +29,7 @@ export async function syncWallets(
       icpWallet: await icpGw(),
       nearWallet: await nearGw(),
       aptosWallet: await aptosGw(),
+      casperWallet: await casperGw(),
     };
     await writeFile(secretsPath, JSON.stringify(wallets));
     return wallets;
@@ -58,6 +60,9 @@ export async function syncWallets(
   } else if (!("aptosWallet" in secrets)) {
     logger.warn("Generating new wallet for Aptos");
     secrets.aptosWallet = await aptosGw();
+  } else if (!("casperWallet" in secrets)) {
+    logger.warn("Generating new wallet for Casper");
+    secrets.casperWallet = await casperGw();
   }
   await writeFile(secretsPath, JSON.stringify(secrets, null, 4));
   return secrets;

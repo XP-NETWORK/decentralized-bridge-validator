@@ -19,6 +19,7 @@ import {
   configTezosHandler,
   configTonHandler,
 } from "../handler/chains";
+import { configCasperHandler } from "../handler/chains/casper";
 import type { LogInstance, THandler } from "../handler/types";
 import MikroOrmConfig from "../mikro-orm.config";
 import type { IBridgeConfig, IGeneratedWallets } from "../types";
@@ -179,6 +180,21 @@ export async function configDeps(
       )
     : undefined;
 
+  const casperConf = config.bridgeChains.find((e) => e.chainType === "casper");
+
+  const casper = casperConf
+    ? await configCasperHandler(
+        casperConf,
+        storage,
+        em.fork(),
+        secrets.casperWallet,
+        serverLinkHandler,
+        logger.getSubLogger({ name: "CASPER" }),
+        staking,
+        secrets.evmWallet.address,
+      )
+    : undefined;
+
   return {
     storage,
     em,
@@ -199,6 +215,7 @@ export async function configDeps(
       ...evmChains,
       ...cosmwasmChains,
       hedera,
+      casper,
       tzHelper,
       scrt,
       mx,

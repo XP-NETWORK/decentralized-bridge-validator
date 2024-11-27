@@ -12,13 +12,15 @@ export async function requireEnoughBalanceInChains(
       chains.map(async (chain) => {
         try {
           if (await chain.selfIsValidator()) {
-            log.warn(`${chain.chainIdent} Validator ✅.`);
+            log.info(`${chain.chainIdent} Validator ✅.`);
             return [];
           }
+          log.warn(`${chain.chainIdent} Validator ❌.`);
+          return [chain];
         } catch (e) {
           return [chain];
         }
-        throw new Error("Unreachable");
+        // throw new Error("Unreachable");
       }),
     )
   ).flat();

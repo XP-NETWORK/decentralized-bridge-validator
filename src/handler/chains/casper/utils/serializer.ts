@@ -14,6 +14,10 @@ export function Serializer() {
   const accountHashSerializer = new CLAccountHashBytesParser();
   return {
     claimNft(args: TCasperClaimArgs) {
+      let source_nft = args.source_nft_contract_address_arg;
+      if (args.source_chain_arg === "CASPER") {
+        source_nft = `contract-hash-${source_nft}`;
+      }
       const tokenIdentifier = stringSerializer
         .toBytes(new CLString(args.token_id_arg))
         .expect(
@@ -43,7 +47,7 @@ export function Serializer() {
         );
 
       const source_nft_contract_address = stringSerializer
-        .toBytes(new CLString(args.source_nft_contract_address_arg))
+        .toBytes(new CLString(source_nft))
         .expect(
           "Serialize(ClaimArgs): Failed to serialize source_nft_contract_address_arg to bytes.",
         );

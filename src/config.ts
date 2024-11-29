@@ -144,10 +144,10 @@ export const bridgeTestChains = [
     chain: "CASPER",
     network: "casper-test",
     contractAddress:
-      "116764563ee0dd927b6e8f49f311d5ac0ed398a3e7f49f3af3ccb3e8def1cc38",
+      "b12ad8fe67cf638e872007f2892179511bd521842c1bb607eadb165ea771b8cd",
     decimals: 9,
     intialFund: "1000000000",
-    lastBlock: 4106745,
+    lastBlock: 4114810,
     nativeCoinSymbol: "CSPR",
     rpcURL: "https://rpc.testnet.casperlabs.io",
   },

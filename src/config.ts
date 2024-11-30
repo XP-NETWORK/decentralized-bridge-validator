@@ -148,7 +148,7 @@ export const bridgeTestChains = [
       "b10b6755154a26a5ec7c8584301f20fec19f4ff426c6de253eebfd7b8d3a4af8",
     decimals: 9,
     intialFund: "1000000000",
-    lastBlock: 4115755,
+    lastBlock: 4116675,
     nativeCoinSymbol: "CSPR",
     rpcURL: "https://rpc.testnet.casperlabs.io",
   },

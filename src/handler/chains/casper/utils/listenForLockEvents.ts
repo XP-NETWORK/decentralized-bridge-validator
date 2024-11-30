@@ -7,6 +7,7 @@ import type { Parser } from "@make-software/ces-js-parser";
 import type { CasperClient } from "casper-js-sdk";
 import { Block } from "../../../../persistence/entities/block";
 import { useMutexAndRelease } from "../../../utils";
+import type { Any } from "./any";
 
 const CHAIN_IDENT = "CASPER";
 const WAIT_TIME = 1000;
@@ -55,10 +56,17 @@ export default async function listenForLockEvents(
             fetchCasper,
             async (cc) => await cc.nodeClient.getDeployInfo(hash),
           );
+          const args = deploy.deploy.session.ModuleBytes
+            ?.args as unknown as Any[];
+          if (!args) continue;
+          if (args[0].length < 2) continue;
+          const bridge_cntract = args[0][0] || undefined;
+          const address = args[0][1] || { bytes: undefined };
           if (
             deploy.execution_results.length > 0 &&
             deploy.execution_results[0].result.Success &&
-            deploy.deploy.session.StoredContractByHash?.hash === bridge
+            bridge_cntract === "bridge_contract" &&
+            address.parsed === bridge
           ) {
             const event = await useMutexAndRelease(
               fetchParser,

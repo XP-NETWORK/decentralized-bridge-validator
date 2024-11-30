@@ -84,10 +84,23 @@ export async function listenEvents(
     );
 
     let imgUri = "";
-    const metadataUri =
-      ev.sourceChain === "CASPER"
-        ? ev.metaDataUri
-        : nftDetails.metadata || ev.metaDataUri;
+    let metadataUri = "";
+    // const metadataUri =
+    //   ev.sourceChain === "CASPER"
+    //     ? ev.metaDataUri
+    //     : nftDetails.metadata || ev.metaDataUri;
+
+    if (ev.sourceChain === "CASPER") {
+      metadataUri = ev.metaDataUri;
+    } else {
+      metadataUri = nftDetails.metadata || ev.metaDataUri;
+    }
+
+    if (ev.destinationChain === "CASPER") {
+      metadataUri = JSON.stringify({
+        token_uri: metadataUri,
+      });
+    }
 
     log.trace({
       "1": "METADATA URI",

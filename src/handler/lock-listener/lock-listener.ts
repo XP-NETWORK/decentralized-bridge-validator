@@ -84,7 +84,10 @@ export async function listenEvents(
     );
 
     let imgUri = "";
-    const metadataUri = nftDetails.metadata || ev.metaDataUri;
+    const metadataUri =
+      ev.sourceChain === "CASPER"
+        ? ev.metaDataUri
+        : nftDetails.metadata || ev.metaDataUri;
 
     log.trace({
       "1": "METADATA URI",
@@ -96,7 +99,7 @@ export async function listenEvents(
 
     try {
       const data = await fetchHttpOrIpfs(metadataUri, axios.create());
-      imgUri = data?.image || data?.displayUri;
+      imgUri = data?.image || data?.displayUri || data?.asset;
     } catch (ex) {
       log.trace("CATCH fetchHttpOrIpfs");
       imgUri = metadataUri;

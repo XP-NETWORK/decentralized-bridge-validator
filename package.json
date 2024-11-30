@@ -10,7 +10,8 @@
     "format": "npx @biomejs/biome format src/ --write",
     "lint": "npx @biomejs/biome lint src/ --write",
     "postinstall": "lefthook install",
-    "dev": "tsc && node dist/index.js"
+    "dev": "tsc && node dist/index.js",
+    "start": "ts-node src/index.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",

@@ -13,12 +13,13 @@ import type { MutexReleaser } from "./types";
 
 export async function configHederaHandler(
   conf: IHederaChainConfig,
+  wallet: IEvmWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   hederaLogger: LogInstance,
   staking: ERC20Staking,
+  _validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,

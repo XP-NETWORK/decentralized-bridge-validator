@@ -23,6 +23,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
@@ -32,28 +33,19 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
-    signer.address.toString();
-    const stakedAmt = await staking.stakingBalances(validatorAddress);
-    if (stakedAmt > 0n) {
-      const add = await staking.addNewChains([
-        {
-          chainType: "ton",
-          validatorAddress: signer.publicKey.toString("hex"),
-        },
-      ]);
-      const receipt = await add.wait();
-      logger.info(
-        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-      );
-    }
+    await addNewChain(
+      staking,
+      "ton",
+      validatorAddress,
+      signer.publicKey.toString("hex"),
+      logger,
+    );
     const publicKey = TonWeb.utils.bytesToHex(signer.publicKey);
-    // let [bridge, release] = await bc();
     let validatorsCount = await useMutexAndRelease(bc, async (bridge) =>
       Number(await bridge.getValidatorsCount()),
     );
-    // release();
     let signatureCount = Number(
       await storage.getStakingSignaturesCount(publicKey),
     );
@@ -134,9 +126,9 @@ export default async function addSelfAsValidator(
         },
       );
     });
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

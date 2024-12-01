@@ -13,9 +13,9 @@ import { tezosHandler } from "./handler";
 
 export async function configTezosHandler(
   conf: ITezosChainConfig,
+  tezosWallet: ITezosWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  tezosWallet: ITezosWallet,
   serverLinkHandler: AxiosInstance | undefined,
   tzLogger: LogInstance,
   staking: ERC20Staking,

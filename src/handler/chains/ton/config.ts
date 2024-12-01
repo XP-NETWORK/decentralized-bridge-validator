@@ -14,13 +14,13 @@ import { tonHandler } from "./handler";
 
 export async function configTonHandler(
   conf: ITonChainConfig,
+  tonWallet: ITonWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  tonWallet: ITonWallet,
   serverLinkHandler: AxiosInstance | undefined,
+  tonLogger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-  tonLogger: LogInstance,
 ) {
   const endpoint = await getHttpEndpoint({
     network: conf.network,

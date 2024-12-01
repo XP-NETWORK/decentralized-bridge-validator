@@ -7,9 +7,10 @@ export async function checkOrAddSelfAsVal(
   for (const chain of chains) {
     const selfIsValidator = await chain.selfIsValidator();
     if (!selfIsValidator) {
-      const added = await chain.addSelfAsValidator();
-      if (added === "failure") {
-        throw new Error(
+      let success = false;
+      while (!success) {
+        success = await chain.addSelfAsValidator();
+        log.error(
           `Failed to add self as validator for chain ${chain.chainIdent}`,
         );
       }

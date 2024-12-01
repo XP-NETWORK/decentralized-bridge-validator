@@ -1,11 +1,11 @@
 import { MikroORM } from "@mikro-orm/core";
 import { Mutex } from "async-mutex";
 import axios from "axios";
-import { JsonRpcProvider, NonceManager, Wallet } from "ethers";
+import { NonceManager } from "ethers";
 import {
   BridgeStorage__factory,
   ERC20Staking__factory,
-} from "./contractsTypes/evm";
+} from "../contractsTypes/evm";
 import {
   configAptosHandler,
   configCosmWasmChainHandler,
@@ -18,31 +18,28 @@ import {
   configStakingHandler,
   configTezosHandler,
   configTonHandler,
-} from "./handler/chains";
-import type { LogInstance, THandler } from "./handler/types";
-import MikroOrmConfig from "./mikro-orm.config";
-import type {
-  IBridgeConfig,
-  ICosmWasmChainConfig,
-  IEvmChainConfig,
-  IGeneratedWallets,
-  IMultiversXChainConfig,
-  ISecretChainConfig,
-  ITezosChainConfig,
-  ITonChainConfig,
-} from "./types";
+} from "../handler/chains";
+import { configCasperHandler } from "../handler/chains/casper";
+import type { LogInstance, THandler } from "../handler/types";
+import MikroOrmConfig from "../mikro-orm.config";
+import type { IBridgeConfig, IGeneratedWallets } from "../types";
+import { initializeEvmProviderAndWallet } from "./init-evm-provider-wallet";
+import { runMigrationsIfAny } from "./run-migrations-if-any";
 
 export async function configDeps(
   config: IBridgeConfig,
   secrets: IGeneratedWallets,
   logger: LogInstance,
 ) {
-  const storageProvider = new JsonRpcProvider(config.storageConfig.rpcURL);
-  const stakingProvider = new JsonRpcProvider(config.stakingConfig.rpcURL);
-  const storageSigner = new Wallet(
+  const [storageProvider, storageSigner] = initializeEvmProviderAndWallet(
+    config.storageConfig.rpcURL,
     secrets.evmWallet.privateKey,
-    storageProvider,
   );
+  const [stakingHandler, stakingSigner] = initializeEvmProviderAndWallet(
+    config.stakingConfig.rpcURL,
+    secrets.evmWallet.privateKey,
+  );
+
   let nonce = await storageSigner.getNonce();
   const lock = new Mutex();
 
@@ -65,15 +62,11 @@ export async function configDeps(
   );
   const staking = ERC20Staking__factory.connect(
     config.stakingConfig.contractAddress,
-    new NonceManager(new Wallet(secrets.evmWallet.privateKey, stakingProvider)),
+    new NonceManager(stakingSigner),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
-  const migrator = orm.getMigrator();
-  const pendingMigs = await migrator.getPendingMigrations();
-  if (pendingMigs.length > 0) {
-    const migrated = await migrator.up();
-    logger.info("Applied the following migrations:", migrated);
-  }
+  await orm.schema.updateSchema();
+  await runMigrationsIfAny(orm.getMigrator(), logger);
   const em = orm.em;
   const serverLinkHandler = process.env.SERVER_LINK
     ? axios.create({
@@ -81,76 +74,54 @@ export async function configDeps(
       })
     : undefined;
 
+  function otherArguments(name: string) {
+    return [
+      storage,
+      em.fork(),
+      serverLinkHandler,
+      logger.getSubLogger({ name }),
+      staking,
+      secrets.evmWallet.address,
+    ] as const;
+  }
+
   const tz = config.bridgeChains.find((e) => e.chainType === "tezos");
   const tzHelper = tz
     ? await configTezosHandler(
-        tz as ITezosChainConfig,
-        storage,
-        em.fork(),
+        tz,
         secrets.tezosWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "TEZOS" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("TEZOS"),
       )
     : undefined;
 
   const scrtc = config.bridgeChains.find((e) => e.chainType === "scrt");
   const scrt = scrtc
     ? await configSecretHandler(
-        scrtc as ISecretChainConfig,
-        storage,
-        em.fork(),
+        scrtc,
         secrets.secretWallet,
-        serverLinkHandler,
-        staking,
-        secrets.evmWallet.address,
-        logger.getSubLogger({ name: "SECRET" }),
+        ...otherArguments("SECRET"),
       )
     : undefined;
 
   const mxc = config.bridgeChains.find((e) => e.chainType === "multiversX");
   const mx = mxc
     ? await configMultiversXHandler(
-        mxc as IMultiversXChainConfig,
-        storage,
-        em.fork(),
+        mxc,
         secrets.multiversXWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "MULTIVERSX" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("MULTIVERSX"),
       )
     : undefined;
 
   const tonc = config.bridgeChains.find((e) => e.chainType === "ton");
 
   const ton = tonc
-    ? await configTonHandler(
-        tonc as ITonChainConfig,
-        storage,
-        em.fork(),
-        secrets.tonWallet,
-        serverLinkHandler,
-        staking,
-        secrets.evmWallet.address,
-        logger.getSubLogger({ name: "TON" }),
-      )
+    ? await configTonHandler(tonc, secrets.tonWallet, ...otherArguments("TON"))
     : undefined;
 
   const icpc = config.bridgeChains.find((e) => e.chainType === "icp");
 
   const icp = icpc
-    ? await configIcpHandler(
-        icpc,
-        storage,
-        em.fork(),
-        secrets.icpWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "ICP" }),
-        staking,
-        secrets.evmWallet.address,
-      )
+    ? await configIcpHandler(icpc, secrets.icpWallet, ...otherArguments("ICP"))
     : undefined;
 
   const nearc = config.bridgeChains.find((e) => e.chainType === "near");
@@ -158,13 +129,8 @@ export async function configDeps(
   const near = nearc
     ? await configNearHandler(
         nearc,
-        storage,
-        em.fork(),
         secrets.nearWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "NEAR" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("NEAR"),
       )
     : undefined;
 
@@ -173,13 +139,8 @@ export async function configDeps(
   const aptos = aptosc
     ? await configAptosHandler(
         aptosc,
-        storage,
-        em.fork(),
         secrets.aptosWallet,
-        serverLinkHandler,
-        logger.getSubLogger({ name: "APTOS" }),
-        staking,
-        secrets.evmWallet.address,
+        ...otherArguments("APTOS"),
       )
     : undefined;
 
@@ -187,15 +148,11 @@ export async function configDeps(
     config.bridgeChains
       .filter((e) => e.chainType === "evm")
       .map((c) => {
-        const config = c as IEvmChainConfig;
+        const config = c;
         return configEvmHandler(
           config,
-          storage,
-          em.fork(),
           secrets.evmWallet,
-          serverLinkHandler,
-          logger.getSubLogger({ name: c.chain }),
-          staking,
+          ...otherArguments(config.chain),
         );
       }),
   );
@@ -204,14 +161,11 @@ export async function configDeps(
     config.bridgeChains
       .filter((e) => e.chainType === "cosmwasm")
       .map((c) => {
-        const config = c as ICosmWasmChainConfig;
+        const config = c;
         return configCosmWasmChainHandler(
           config,
-          storage,
-          em.fork(),
           secrets.secretWallet,
-          serverLinkHandler,
-          logger.getSubLogger({ name: c.chain }),
+          ...otherArguments(c.chain),
         );
       }),
   );
@@ -221,12 +175,23 @@ export async function configDeps(
   const hedera = hederaConf
     ? await configHederaHandler(
         hederaConf,
+        secrets.evmWallet,
+        ...otherArguments("HEDERA"),
+      )
+    : undefined;
+
+  const casperConf = config.bridgeChains.find((e) => e.chainType === "casper");
+
+  const casper = casperConf
+    ? await configCasperHandler(
+        casperConf,
         storage,
         em.fork(),
-        secrets.evmWallet,
+        secrets.casperWallet,
         serverLinkHandler,
-        logger.getSubLogger({ name: "HEDERA" }),
+        logger.getSubLogger({ name: "CASPER" }),
         staking,
+        secrets.evmWallet.address,
       )
     : undefined;
 
@@ -242,11 +207,15 @@ export async function configDeps(
       config.stakingConfig,
       logger,
     ),
+    stakingHandler,
+    stakingSigner,
+    staker: staking,
     chains: [
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...evmChains,
       ...cosmwasmChains,
       hedera,
+      casper,
       tzHelper,
       scrt,
       mx,

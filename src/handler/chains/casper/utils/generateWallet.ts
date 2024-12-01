@@ -1,15 +1,11 @@
-import { Ed25519Account } from "@aptos-labs/ts-sdk";
+import { Keys } from "casper-js-sdk";
 
-export default function icpGw() {
-  const identity = Ed25519Account.generate();
+export default function casperGw() {
+  const identity = Keys.Ed25519.new();
 
   return Promise.resolve({
-    publicKey: `0x${Buffer.from(identity.publicKey.toUint8Array()).toString(
-      "hex",
-    )}`,
-    privateKey: `0x${Buffer.from(identity.privateKey.toUint8Array()).toString(
-      "hex",
-    )}`,
-    address: identity.accountAddress.toString(),
+    publicKey: Buffer.from(identity.publicKey.value()).toString("hex"),
+    privateKey: Buffer.from(identity.privateKey).toString("hex"),
+    address: identity.publicKey.toAccountHashStr(),
   });
 }

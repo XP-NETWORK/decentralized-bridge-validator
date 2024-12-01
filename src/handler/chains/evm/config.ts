@@ -13,12 +13,13 @@ import type { MutexReleaser } from "./types";
 
 export async function configEvmHandler(
   conf: IEvmChainConfig,
+  wallet: IEvmWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  wallet: IEvmWallet,
   serverLinkHandler: AxiosInstance | undefined,
   evmLogger: LogInstance,
   staking: ERC20Staking,
+  _validatorAddress: string,
 ) {
   const lb = await em.findOne(Block, {
     chain: conf.chain,

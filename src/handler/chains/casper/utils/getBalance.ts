@@ -6,11 +6,18 @@ export default async function getBalance(
   fetchProvider: CasperProviderFetch,
   signer: Keys.Ed25519,
 ) {
-  const balance = await useMutexAndRelease(fetchProvider, async (provider) => {
-    return provider.nodeClient.queryBalance(
-      PurseIdentifier.MainPurseUnderAccountHash,
-      signer.accountHash().toFormattedString(),
+  try {
+    const balance = await useMutexAndRelease(
+      fetchProvider,
+      async (provider) => {
+        return await provider.nodeClient.queryBalance(
+          PurseIdentifier.MainPurseUnderAccountHash,
+          signer.publicKey.toAccountHashStr(),
+        );
+      },
     );
-  });
-  return balance.toBigInt();
+    return balance.toBigInt();
+  } catch {
+    return 0n;
+  }
 }

@@ -17,5 +17,6 @@ export default async function generateWallet() {
   return {
     publicKey: await tezosSigner.publicKey(),
     secretKey: await tezosSigner.secretKey(),
+    address: await tezosSigner.publicKeyHash(),
   };
 }

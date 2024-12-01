@@ -18,6 +18,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 import type { MXProviderFetch } from "../types";
 
 export default async function addSelfAsValidator(
@@ -29,7 +30,7 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
     const vc = async (): Promise<bigint> => {
       const query = bc.createQuery({
@@ -50,26 +51,10 @@ export default async function addSelfAsValidator(
       const count = firstValue.valueOf();
       return count;
     };
-    const stakedAmt = await staking.stakingBalances(validatorAddress);
-    if (stakedAmt > 0n) {
-      const add = await staking.addNewChains([
-        {
-          chainType: "multiversX",
-          validatorAddress: signer.getAddress().pubkey().toString("hex"),
-        },
-      ]);
-      const receipt = await add.wait();
-      logger.info(
-        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-      );
-    }
-
+    const vid = signer.getAddress().pubkey().toString("hex");
+    await addNewChain(staking, "multiversX", validatorAddress, vid, logger);
     let validatorCount = Number(await vc());
-    let signatureCount = Number(
-      await storage.getStakingSignaturesCount(
-        signer.getAddress().pubkey().toString("hex"),
-      ),
-    );
+    let signatureCount = Number(await storage.getStakingSignaturesCount(vid));
 
     while (signatureCount < confirmationCountNeeded(validatorCount)) {
       await waitForMSWithMsg(
@@ -124,7 +109,6 @@ export default async function addSelfAsValidator(
     transaction.applySignature(
       await signer.sign(transaction.serializeForSigning()),
     );
-    // [p, r] = await provider();
 
     const receipt = await useMutexAndRelease(
       provider,
@@ -140,7 +124,7 @@ export default async function addSelfAsValidator(
         }).awaitCompleted(receipt),
     );
     if (watcher.status.isSuccessful()) {
-      return "success";
+      return true;
     }
     throw new Error(
       `Failed to add self as validator: ${JSON.stringify(
@@ -149,6 +133,6 @@ export default async function addSelfAsValidator(
     );
   } catch (error) {
     logger.error("Failed to add self as validator: ", error);
-    return "failure";
+    return false;
   }
 }

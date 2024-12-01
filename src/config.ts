@@ -1,4 +1,5 @@
 // import { Network } from "@aptos-labs/ts-sdk";
+// import { Network } from "@aptos-labs/ts-sdk";
 import { Network } from "@aptos-labs/ts-sdk";
 import type {
   IBridgeConfig,
@@ -103,20 +104,20 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "ICP",
     rpcURL: "https://tools.xp.network/",
   },
-  {
-    chain: "NEAR",
-    chainType: "near",
-    contractAddress: "xp-bridge-test.testnet",
-    decimals: 24,
-    intialFund: "100000000000000000000000",
-    lastBlock: 0,
-    nativeCoinSymbol: "NEAR",
-    nearBlocksUrl: "https://api-testnet.nearblocks.io/v1/",
-    networkId: "testnet",
-    rpcURL: "https://archival-rpc.testnet.near.org",
-    theGraphApiUrl:
-      "https://api.studio.thegraph.com/query/89122/near-xp/version/latest",
-  },
+  // {
+  //   chain: "NEAR",
+  //   chainType: "near",
+  //   contractAddress: "xp-bridge-test.testnet",
+  //   decimals: 24,
+  //   intialFund: "100000000000000000000000",
+  //   lastBlock: 0,
+  //   nativeCoinSymbol: "NEAR",
+  //   nearBlocksUrl: "https://api-testnet.nearblocks.io/v1/",
+  //   networkId: "testnet",
+  //   rpcURL: "https://archival-rpc.testnet.near.org",
+  //   theGraphApiUrl:
+  //     "https://api.studio.thegraph.com/query/89122/near-xp/version/latest",
+  // },
   {
     chain: "BLAST",
     rpcURL: "https://blast-sepolia.blockpi.network/v1/rpc/public",
@@ -138,6 +139,18 @@ export const bridgeTestChains = [
     lastBlock: 0,
     nativeCoinSymbol: "APT",
     network: Network.TESTNET,
+  },
+  {
+    chainType: "casper",
+    chain: "CASPER",
+    network: "casper-test",
+    contractAddress:
+      "047ddacdb2d4c44b3d0d6c02341ff96e951409d30d4627d7b580db46743a6111",
+    decimals: 9,
+    intialFund: "1000000000",
+    lastBlock: 4123388,
+    nativeCoinSymbol: "CSPR",
+    rpcURL: "https://rpc.testnet.casperlabs.io",
   },
 ] as const satisfies TChain[];
 

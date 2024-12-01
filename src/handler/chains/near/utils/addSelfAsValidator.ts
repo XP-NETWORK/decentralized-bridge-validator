@@ -8,8 +8,10 @@ import type { LogInstance } from "../../../types";
 import {
   ProcessDelayMilliseconds,
   confirmationCountNeeded,
+  useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
@@ -23,27 +25,14 @@ export default async function addSelfAsValidator(
   staking: ERC20Staking,
   validatorAddress: string,
   signer: Account,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   const payload = `${accountId}|${publicKey}`;
-  const stakedAmt = await staking.stakingBalances(validatorAddress);
-  if (stakedAmt > 0n) {
-    const add = await staking.addNewChains([
-      {
-        chainType: "near",
-        validatorAddress: payload,
-      },
-    ]);
-    const receipt = await add.wait();
-    logger.info(
-      `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-    );
-  }
+  await addNewChain(staking, "near", validatorAddress, payload, logger);
   try {
     async function getStakingSignatureCount() {
-      const [bridge, release] = await fetchBridge();
-      const vc = Number(await bridge.validator_count());
-      release();
-      return vc;
+      return useMutexAndRelease(fetchBridge, async (bridge) =>
+        Number(await bridge.validator_count()),
+      );
     }
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(
@@ -79,9 +68,9 @@ export default async function addSelfAsValidator(
       },
     });
     logger.trace(`Added self as validator at: ${av.transaction.hash}`);
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

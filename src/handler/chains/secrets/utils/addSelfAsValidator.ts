@@ -15,6 +15,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 import type { SecretProviderFetch } from "../types";
 
 export default async function addSelfAsValidator(
@@ -27,21 +28,9 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
+): Promise<boolean> {
   try {
-    const stakedAmt = await staking.stakingBalances(validatorAddress);
-    if (stakedAmt > 0n) {
-      const add = await staking.addNewChains([
-        {
-          chainType: "scrt",
-          validatorAddress: publicKey,
-        },
-      ]);
-      const receipt = await add.wait();
-      logger.info(
-        `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-      );
-    }
+    await addNewChain(staking, "scrt", validatorAddress, publicKey, logger);
     async function getStakingSignatureCount() {
       const res = await useMutexAndRelease(
         fetchProvider,
@@ -127,11 +116,9 @@ export default async function addSelfAsValidator(
       }. TX:`,
       add,
     );
-    return add.rawLog.includes("AddNewValidatorEventInfo")
-      ? "success"
-      : "failure";
+    return add.rawLog.includes("AddNewValidatorEventInfo");
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

@@ -17,9 +17,9 @@ import { nearHandler } from "./handler";
 
 export async function configNearHandler(
   conf: INearChainConfig,
+  nearWallet: INearWallet,
   storage: BridgeStorage,
   em: EntityManager,
-  nearWallet: INearWallet,
   serverLinkHandler: AxiosInstance | undefined,
   nearLogger: LogInstance,
   staking: ERC20Staking,

@@ -1,4 +1,4 @@
-import type { Account, Aptos } from "@aptos-labs/ts-sdk";
+import type { Aptos, Ed25519Account } from "@aptos-labs/ts-sdk";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
 import type {
@@ -13,7 +13,7 @@ import type { LogInstance } from "../../../types";
 
 export type AptosHandlerParams = {
   fetchProvider: AptosProviderFetch;
-  signer: Account;
+  signer: Ed25519Account;
   bridge: string;
   storage: BridgeStorage;
   lastBlock_: number;

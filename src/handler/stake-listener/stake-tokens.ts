@@ -1,21 +1,17 @@
-import { JsonRpcProvider, Wallet } from "ethers";
-import {
-  ERC20Staking__factory,
-  ERC20__factory,
-} from "../../contractsTypes/evm";
+import type { Wallet } from "ethers";
+import { type ERC20Staking, ERC20__factory } from "../../contractsTypes/evm";
 import type { IGeneratedWallets, IStakingConfig } from "../../types";
 import type { LogInstance, THandler } from "../types";
 
 export async function stakeTokens(
   conf: IStakingConfig,
+  signer: Wallet,
+  staker: ERC20Staking,
   secrets: IGeneratedWallets,
   chains: THandler[],
   logger: LogInstance,
 ) {
   const others = chains.filter((e) => e.chainType !== "evm");
-  const provider = new JsonRpcProvider(conf.rpcURL);
-  const signer = new Wallet(secrets.evmWallet.privateKey, provider);
-  const staker = ERC20Staking__factory.connect(conf.contractAddress, signer);
   const token = ERC20__factory.connect(conf.coinAddress, signer);
   const staked = await staker.stakingBalances(secrets.evmWallet.address);
   if (staked > 0n) {

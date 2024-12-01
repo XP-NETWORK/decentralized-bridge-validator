@@ -11,9 +11,9 @@ export default async function nftData(
 ) {
   async function fetchNftContract() {
     const [provider, release] = await fetchProvider();
-    const contract = new Contracts.Contract(provider);
-    contract.setContractHash(`hash-${contract}`);
-    return [contract, release] as const;
+    const client = new Contracts.Contract(provider);
+    client.setContractHash(`hash-${contract}`);
+    return [client, release] as const;
   }
   const [cn, cs] = await useMutexAndRelease(fetchNftContract, async (a) => {
     const cn = await a.queryContractData(["collection_name"]);

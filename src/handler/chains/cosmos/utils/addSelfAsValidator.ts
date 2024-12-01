@@ -2,7 +2,10 @@ import type { AccountData } from "@cosmjs/amino";
 import type { Bridge } from "@xp/cosmos-client";
 import { pubkeyToAddress } from "secretjs";
 import { encodeSecp256k1Pubkey } from "secretjs/dist/wallet_amino";
-import type { BridgeStorage } from "../../../../contractsTypes/evm";
+import type {
+  BridgeStorage,
+  ERC20Staking,
+} from "../../../../contractsTypes/evm";
 import type { LogInstance } from "../../../types";
 import {
   ProcessDelayMilliseconds,
@@ -10,6 +13,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 
 export default async function addSelfAsValidator(
   identifier: string,
@@ -17,7 +21,11 @@ export default async function addSelfAsValidator(
   bc: () => Promise<readonly [Bridge.BridgeClient, () => void]>,
   wallet: AccountData,
   logger: LogInstance,
-): Promise<"success" | "failure"> {
+  staking: ERC20Staking,
+  validatorAddress: string,
+): Promise<boolean> {
+  const newV = Buffer.from(wallet.pubkey).toString("base64");
+  await addNewChain(staking, "cosmos", validatorAddress, newV, logger);
   try {
     async function getStakingSignatureCount() {
       const res = await useMutexAndRelease(
@@ -26,7 +34,7 @@ export default async function addSelfAsValidator(
       );
       return res.count;
     }
-    const newV = Buffer.from(wallet.pubkey).toString("base64");
+
     let validatorsCount = await getStakingSignatureCount();
     let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
 
@@ -72,9 +80,9 @@ export default async function addSelfAsValidator(
         }),
     );
     logger.info(`Added self as validator at ${result.transactionHash}`);
-    return "success";
+    return true;
   } catch (e) {
     logger.error(identifier, "Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

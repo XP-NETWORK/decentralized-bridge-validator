@@ -1,3 +1,4 @@
+import { setTimeout } from "node:timers/promises";
 import type { EntityManager } from "@mikro-orm/sqlite";
 import { Block } from "../../../../persistence/entities/block";
 import type { EventBuilder } from "../../../event-builder";
@@ -50,7 +51,7 @@ export default async function listenForLockEvents(
             lastBlock: lastBlock,
           });
           await em.flush();
-          await new Promise<undefined>((e) => setTimeout(e, 10000));
+          await setTimeout(10000);
           continue;
         }
         for (const log of logs) {
@@ -94,10 +95,7 @@ export default async function listenForLockEvents(
         await em.flush();
       }
     } catch (e) {
-      log.error(
-        identifier,
-        `${e} while listening for events. Sleeping for 10 seconds`,
-      );
-      await new Promise<undefined>((resolve) => setTimeout(resolve, 10000));
+      log.error("Error in listening for events. Awaiting 10", e);
+      await setTimeout(10000);
     }
 }

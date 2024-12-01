@@ -23,12 +23,11 @@ export async function configCasperHandler(
     chain: conf.chain,
     contractAddress: conf.contractAddress,
   });
-  const priv = Keys.Secp256K1.parsePrivateKey(
-    Buffer.from(casperWallet.privateKey, "base64"),
+  const priv = Keys.Ed25519.parsePrivateKey(
+    Buffer.from(casperWallet.privateKey, "hex"),
   );
-
-  const pub = Keys.Secp256K1.privateToPublicKey(priv);
-  const key = Keys.Secp256K1.parseKeyPair(pub, priv, "raw");
+  const pub = Keys.Ed25519.privateToPublicKey(priv);
+  const key = Keys.Ed25519.parseKeyPair(pub, priv);
   const mutex = new Mutex();
   async function fetchProvider() {
     const release = await mutex.acquire();
@@ -40,9 +39,9 @@ export async function configCasperHandler(
     bridge: conf.contractAddress,
     chainIdent: "CASPER",
     chainType: "casper",
-    decimals: 9,
+    decimals: conf.decimals,
     em,
-    initialFunds: 10000000n,
+    initialFunds: BigInt(conf.intialFund),
     lastBlock_: lb?.lastBlock || conf.lastBlock,
     logger: casperLogger,
     serverLinkHandler,
@@ -50,6 +49,7 @@ export async function configCasperHandler(
     staking,
     storage,
     validatorAddress,
-    ess: conf.ess,
+    network: conf.network,
+    rpc: conf.rpcURL,
   });
 }

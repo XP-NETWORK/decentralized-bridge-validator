@@ -12,6 +12,7 @@ import {
   useMutexAndRelease,
   waitForMSWithMsg,
 } from "../../../utils";
+import { addNewChain } from "../../common/add-new-chain";
 
 export default async function addSelfAsValidator(
   storage: BridgeStorage,
@@ -20,27 +21,15 @@ export default async function addSelfAsValidator(
   logger: LogInstance,
   staking: ERC20Staking,
   validatorAddress: string,
-): Promise<"success" | "failure"> {
-  const stakedAmt = await staking.stakingBalances(validatorAddress);
-  if (stakedAmt > 0n) {
-    const add = await staking.addNewChains([
-      {
-        chainType: "icp",
-        validatorAddress: `${identity.getPrincipal()},${Buffer.from(
-          identity.getPublicKey().toRaw(),
-        ).toString("hex")}`,
-      },
-    ]);
-    const receipt = await add.wait();
-    logger.info(
-      `Added self as new chain at hash: ${receipt?.hash}. BN: ${receipt?.blockNumber}`,
-    );
-  }
+): Promise<boolean> {
+  const vid = `${identity.getPrincipal()},${Buffer.from(
+    identity.getPublicKey().toRaw(),
+  ).toString("hex")}`;
+  await addNewChain(staking, "icp", validatorAddress, vid, logger);
   const publicKey = Buffer.from(identity.getPublicKey().toRaw()).toString(
     "hex",
   );
   try {
-    // let [bridge, release] = await fetchBridge();
     async function getStakingSignatureCount() {
       return Number(
         useMutexAndRelease(
@@ -49,10 +38,8 @@ export default async function addSelfAsValidator(
         ),
       );
     }
-    // release();
-    const newV = `${identity.getPrincipal()},${publicKey}`;
     let validatorsCount = await getStakingSignatureCount();
-    let signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+    let signatureCount = Number(await storage.getStakingSignaturesCount(vid));
 
     while (signatureCount < confirmationCountNeeded(validatorsCount)) {
       await waitForMSWithMsg(
@@ -61,24 +48,16 @@ export default async function addSelfAsValidator(
           validatorsCount,
         )}`,
       );
-      signatureCount = Number(await storage.getStakingSignaturesCount(newV));
+      signatureCount = Number(await storage.getStakingSignaturesCount(vid));
       validatorsCount = await getStakingSignatureCount();
     }
-    const signatures = [...(await storage.getStakingSignatures(newV))].map(
+    const signatures = [...(await storage.getStakingSignatures(vid))].map(
       (item) => {
         return {
           signerAddress: item.signerAddress,
           signature: item.signature,
         };
       },
-    );
-    console.log(
-      signatures.map((e) => {
-        return {
-          signature: e.signature,
-          signer: e.signerAddress,
-        };
-      }),
     );
     await useMutexAndRelease(
       fetchBridge,
@@ -96,9 +75,9 @@ export default async function addSelfAsValidator(
           }),
         ),
     );
-    return "success";
+    return true;
   } catch (e) {
     logger.error("Failed to add self as validator: ", e);
-    return "failure";
+    return false;
   }
 }

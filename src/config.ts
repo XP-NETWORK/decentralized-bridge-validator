@@ -343,6 +343,18 @@ export const prodBridgeConfig: IBridgeConfig = {
       decimals: 18,
       blockChunks: 1000,
     },
+    {
+      chainType: "casper",
+      chain: "CASPER",
+      network: "casper",
+      contractAddress:
+        "284d7eeee5d0ece8b0d56cc7162a3cf72e6fabc62946e3a9abae219c646d56c3",
+      decimals: 9,
+      intialFund: "100000000000",
+      lastBlock: 3983916,
+      nativeCoinSymbol: "CSPR",
+      rpcURL: "https://rpc.mainnet.casperlabs.io/rpc",
+    },
   ],
   storageConfig: {
     chain: "OP",

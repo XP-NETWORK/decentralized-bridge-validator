@@ -1,8 +1,11 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
+import { Driver, SimpleNet } from "@vechain/connex-driver";
+import { Framework } from "@vechain/connex-framework";
 import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
-import { JsonRpcProvider, Wallet } from "ethers";
+import { BrowserProvider, JsonRpcProvider, Wallet } from "ethers";
 import { privateKeyToAccount } from "web3-eth-accounts";
+import * as thor from "web3-providers-connex";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
@@ -26,8 +29,22 @@ export async function configEvmHandler(
     contractAddress: conf.contractAddress,
   });
   const mutex = new Mutex();
-  const provider = new JsonRpcProvider(conf.rpcURL);
-  const fetchProvider = async (): Promise<[JsonRpcProvider, MutexReleaser]> => {
+  let provider: JsonRpcProvider | BrowserProvider;
+  if (conf.chain === "VECHAIN") {
+    const net = new SimpleNet(conf.rpcURL);
+    const driver = await Driver.connect(net);
+    const connexObj = new Framework(driver);
+    provider = new BrowserProvider(
+      new thor.ConnexProvider({
+        connex: connexObj,
+      }),
+    );
+  } else {
+    provider = new JsonRpcProvider(conf.rpcURL);
+  }
+  const fetchProvider = async (): Promise<
+    [JsonRpcProvider | BrowserProvider, MutexReleaser]
+  > => {
     const release = await mutex.acquire();
     return [provider, release];
   };

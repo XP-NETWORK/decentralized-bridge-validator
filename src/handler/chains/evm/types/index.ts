@@ -1,6 +1,6 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import type { AxiosInstance } from "axios";
-import type { JsonRpcProvider, Wallet } from "ethers";
+import type { BrowserProvider, JsonRpcProvider, Wallet } from "ethers";
 import type { Web3Account } from "web3-eth-accounts";
 import type {
   TSupportedChainTypes,
@@ -34,4 +34,6 @@ export type EVMHandlerParams = {
 
 export type MutexReleaser = () => void;
 
-export type EVMProviderFetch = () => Promise<[JsonRpcProvider, MutexReleaser]>;
+export type EVMProviderFetch = () => Promise<
+  [JsonRpcProvider | BrowserProvider, MutexReleaser]
+>;

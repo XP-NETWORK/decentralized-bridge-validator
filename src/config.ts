@@ -154,7 +154,7 @@ export const bridgeTestChains = [
   },
   {
     chain: "VECHAIN",
-    rpcURL: "https://rpc-testnet.vechain.energy",
+    rpcURL: "https://sync-testnet.veblocks.net",
     nativeCoinSymbol: "ETH",
     intialFund: "50000000000000000",
     contractAddress: "0x7111eb5f8d9dA472e9608f2ab3De275C040D60B2",

@@ -1,4 +1,5 @@
 import type { Contract } from "near-api-js";
+import { useMutexAndRelease } from "../../../utils";
 
 export default async function selfIsValidator(
   fetchBridge: () => Promise<
@@ -7,9 +8,10 @@ export default async function selfIsValidator(
   publicKeyInHex: string,
 ) {
   try {
-    const [bridge, release] = await fetchBridge();
-    const validator = await bridge.validator({ public_key: publicKeyInHex });
-    release();
+    const validator = await useMutexAndRelease(
+      fetchBridge,
+      async (bridge) => await bridge.validator({ public_key: publicKeyInHex }),
+    );
     if (!validator) return false;
     return true;
   } catch (e) {

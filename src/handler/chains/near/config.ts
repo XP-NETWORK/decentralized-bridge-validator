@@ -25,11 +25,6 @@ export async function configNearHandler(
   staking: ERC20Staking,
   validatorAddress: string,
 ) {
-  const near = await connect({
-    networkId: conf.networkId,
-    nodeUrl: conf.rpcURL,
-  });
-
   const lb = await em.findOne(Block, {
     chain: conf.chain,
     contractAddress: conf.contractAddress,
@@ -42,6 +37,11 @@ export async function configNearHandler(
     nearWallet.accountId,
     KeyPair.fromString(nearWallet.secretKey as never),
   );
+  const near = await connect({
+    networkId: conf.networkId,
+    nodeUrl: conf.rpcURL,
+    keyStore: ks,
+  });
   const mutex = new Mutex();
   async function fetchProvider() {
     const release = await mutex.acquire();

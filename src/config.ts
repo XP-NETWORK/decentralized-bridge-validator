@@ -364,7 +364,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       lastBlock: 0,
       nativeCoinSymbol: "NEAR",
       nearBlocksUrl: "https://api.nearblocks.io/v1/",
-      networkId: "testnet",
+      networkId: "mainnet",
       rpcURL: "https://rpc.mainnet.near.org",
       theGraphApiUrl:
         "https://api.studio.thegraph.com/query/97240/d-live/version/latest",

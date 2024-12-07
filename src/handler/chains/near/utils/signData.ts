@@ -3,10 +3,10 @@ import type { KeyPairEd25519 } from "near-api-js/lib/utils";
 
 export class AddValidator {
   @field({ type: "string" })
-  account_id: string;
+  public_key: string;
 
   @field({ type: "string" })
-  public_key: string;
+  account_id: string;
 
   constructor(account_id: string, public_key: string) {
     this.account_id = account_id;

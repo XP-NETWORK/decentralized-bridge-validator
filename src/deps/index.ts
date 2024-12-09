@@ -20,6 +20,7 @@ import {
   configTonHandler,
 } from "../handler/chains";
 import { configCasperHandler } from "../handler/chains/casper";
+import { configVechainHandler } from "../handler/chains/evm/config-vechain";
 import type { LogInstance, THandler } from "../handler/types";
 import MikroOrmConfig from "../mikro-orm.config";
 import type { IBridgeConfig, IGeneratedWallets } from "../types";
@@ -180,6 +181,18 @@ export async function configDeps(
       )
     : undefined;
 
+  const vechainConf = config.bridgeChains.find(
+    (e) => e.chainType === "vechain",
+  );
+
+  const vechain = vechainConf
+    ? await configVechainHandler(
+        vechainConf,
+        secrets.evmWallet,
+        ...otherArguments("VECHAIN"),
+      )
+    : undefined;
+
   const casperConf = config.bridgeChains.find((e) => e.chainType === "casper");
 
   const casper = casperConf
@@ -214,6 +227,7 @@ export async function configDeps(
       // Configure Ethereum Virtual Machine (EVM) chains iteratively as they share the same configuration pattern
       ...evmChains,
       ...cosmwasmChains,
+      vechain,
       hedera,
       casper,
       tzHelper,

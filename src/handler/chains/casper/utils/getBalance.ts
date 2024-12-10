@@ -7,12 +7,17 @@ export default async function getBalance(
   signer: Keys.Ed25519,
 ) {
   try {
+    console.log(
+      "casper",
+      signer.publicKey.toHex(),
+      signer.publicKey.toAccountHashStr(),
+    );
     const balance = await useMutexAndRelease(
       fetchProvider,
       async (provider) => {
         return await provider.nodeClient.queryBalance(
-          PurseIdentifier.MainPurseUnderAccountHash,
-          signer.publicKey.toAccountHashStr(),
+          PurseIdentifier.MainPurseUnderPublicKey,
+          signer.publicKey.toHex(),
         );
       },
     );

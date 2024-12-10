@@ -1,11 +1,11 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
-import { Driver, SimpleNet } from "@vechain/connex-driver";
+import { Driver, SimpleNet, SimpleWallet } from "@vechain/connex-driver";
 import { Framework } from "@vechain/connex-framework";
+import * as thor from "@vechain/web3-providers-connex";
 import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
 import { BrowserProvider, Wallet } from "ethers";
 import { privateKeyToAccount } from "web3-eth-accounts";
-import * as thor from "web3-providers-connex";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
@@ -29,14 +29,18 @@ export async function configVechainHandler(
   });
   const mutex = new Mutex();
   const net = new SimpleNet(conf.rpcURL);
-  const driver = await Driver.connect(net);
+  const simpleWalletObj = new SimpleWallet();
+  simpleWalletObj.import(wallet.privateKey);
+  const driver = await Driver.connect(net, simpleWalletObj);
   const connexObj = new Framework(driver);
   const provider = thor.ethers.modifyProvider(
     new BrowserProvider(
-      new thor.ConnexProvider({
+      new thor.Provider({
         connex: connexObj,
-      }) as never,
-    ) as never,
+        net,
+        wallet: simpleWalletObj,
+      }),
+    ),
   );
   const fetchProvider = async () => {
     const release = await mutex.acquire();

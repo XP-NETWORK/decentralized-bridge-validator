@@ -58,6 +58,7 @@
     "@ton/ton": "^13.9.0",
     "@vechain/connex-driver": "^2.0.8",
     "@vechain/connex-framework": "^2.0.8",
+    "@vechain/web3-providers-connex": "^1.1.2",
     "@xp/cosmos-client": "git+https://github.com/XP-NETWORK/cosmos-client#bleeding-edge",
     "async-mutex": "^0.5.0",
     "axios": "^1.6.7",
@@ -66,7 +67,7 @@
     "chalk": "4",
     "dotenv": "^16.4.5",
     "elysia": "^1.0.25",
-    "ethers": "^6.11.1",
+    "ethers": "^6.10.0",
     "express": "^4.19.2",
     "fp-ts": "^2.16.6",
     "http-status-codes": "^2.3.0",
@@ -83,7 +84,6 @@
     "tonweb": "^0.0.62",
     "tslog": "^4.9.3",
     "web3-eth-accounts": "^4.1.1",
-    "web3-providers-connex": "^0.3.1",
     "xp-decentralized-sdk": "git+https://github.com/XP-NETWORK/xp-decentralized-client-library#bleeding-edge",
     "zod": "^3.22.4"
   }

@@ -140,18 +140,18 @@ export const bridgeTestChains = [
     nativeCoinSymbol: "APT",
     network: Network.TESTNET,
   },
-  {
-    chainType: "casper",
-    chain: "CASPER",
-    network: "casper-test",
-    contractAddress:
-      "047ddacdb2d4c44b3d0d6c02341ff96e951409d30d4627d7b580db46743a6111",
-    decimals: 9,
-    intialFund: "1000000000",
-    lastBlock: 4123388,
-    nativeCoinSymbol: "CSPR",
-    rpcURL: "https://rpc.testnet.casperlabs.io",
-  },
+  // {
+  //   chainType: "casper",
+  //   chain: "CASPER",
+  //   network: "casper-test",
+  //   contractAddress:
+  //     "047ddacdb2d4c44b3d0d6c02341ff96e951409d30d4627d7b580db46743a6111",
+  //   decimals: 9,
+  //   intialFund: "1000000000",
+  //   lastBlock: 4123388,
+  //   nativeCoinSymbol: "CSPR",
+  //   rpcURL: "https://rpc.testnet.casperlabs.io",
+  // },
   {
     chain: "VECHAIN",
     rpcURL: "https://sync-testnet.veblocks.net",

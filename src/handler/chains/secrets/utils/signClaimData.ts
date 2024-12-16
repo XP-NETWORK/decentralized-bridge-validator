@@ -2,7 +2,7 @@ import { sha256 } from "@noble/hashes/sha256";
 import * as secp256k1 from "@noble/secp256k1";
 
 import type { TNftTransferDetailsObject } from "../../../types";
-import { convertNumbToHexToString } from "../../../utils/token-id-conversion";
+import { convertNumbToHexToString } from "../../../utils";
 
 export default async function signClaimData(
   data: TNftTransferDetailsObject,

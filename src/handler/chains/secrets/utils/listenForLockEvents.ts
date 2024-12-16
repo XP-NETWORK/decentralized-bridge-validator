@@ -76,6 +76,7 @@ export default async function listenForLockEvents(
             token_amount: tokenAmount, // amount of nfts to be transfered ( 1 in 721 case )
             nft_type: nftType, // Sigular or multiple ( 721 / 1155)
             source_chain: sourceChain, // Source chain of NFT
+            metadata_uri: metadataUri, // Source chain of NFT
           } = parsedLog;
           let convertedTokenId = tokenId;
           if (sourceChain === "SECRET") {
@@ -92,7 +93,7 @@ export default async function listenForLockEvents(
               sourceChain,
               log.transactionHash,
               CHAIN_IDENT,
-              "",
+              metadataUri,
             ),
           );
         }

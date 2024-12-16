@@ -1,17 +1,20 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
+import { Driver, SimpleNet, SimpleWallet } from "@vechain/connex-driver";
+import { Framework } from "@vechain/connex-framework";
+import * as thor from "@vechain/web3-providers-connex";
 import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
-import { JsonRpcProvider, Wallet } from "ethers";
+import { BrowserProvider, Wallet } from "ethers";
 import { privateKeyToAccount } from "web3-eth-accounts";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
 import { Block } from "../../../persistence/entities/block";
-import type { IEvmChainConfig, IEvmWallet } from "../../../types";
+import type { IEvmWallet, IVeChainConfig } from "../../../types";
 import type { LogInstance } from "../../types";
 import { evmHandler } from "./handler";
 
-export async function configEvmHandler(
-  conf: IEvmChainConfig,
+export async function configVechainHandler(
+  conf: IVeChainConfig,
   wallet: IEvmWallet,
   storage: BridgeStorage,
   em: EntityManager,
@@ -25,7 +28,20 @@ export async function configEvmHandler(
     contractAddress: conf.contractAddress,
   });
   const mutex = new Mutex();
-  const provider = new JsonRpcProvider(conf.rpcURL);
+  const net = new SimpleNet(conf.rpcURL);
+  const simpleWalletObj = new SimpleWallet();
+  simpleWalletObj.import(wallet.privateKey);
+  const driver = await Driver.connect(net, simpleWalletObj);
+  const connexObj = new Framework(driver);
+  const provider = thor.ethers.modifyProvider(
+    new BrowserProvider(
+      new thor.Provider({
+        connex: connexObj,
+        net,
+        wallet: simpleWalletObj,
+      }),
+    ),
+  );
   const fetchProvider = async () => {
     const release = await mutex.acquire();
     return [provider, release] as const;
@@ -39,7 +55,7 @@ export async function configEvmHandler(
     em: em.fork(),
     initialFunds: BigInt(conf.intialFund),
     lastBlock_: lb?.lastBlock ?? conf.lastBlock,
-    fetchProvider: fetchProvider,
+    fetchProvider: fetchProvider as never,
     signer: new Wallet(wallet.privateKey),
     storage,
     txSigner: privateKeyToAccount(wallet.privateKey),

@@ -1,7 +1,7 @@
 import type { EntityManager } from "@mikro-orm/sqlite";
 import { Mutex } from "async-mutex";
 import type { AxiosInstance } from "axios";
-import { type BrowserProvider, JsonRpcProvider, Wallet } from "ethers";
+import { JsonRpcProvider, Wallet } from "ethers";
 import { privateKeyToAccount } from "web3-eth-accounts";
 import type { TSupportedChainTypes, TSupportedChains } from "../../../config";
 import type { BridgeStorage, ERC20Staking } from "../../../contractsTypes/evm";
@@ -9,7 +9,6 @@ import { Block } from "../../../persistence/entities/block";
 import type { IEvmWallet, IHederaChainConfig } from "../../../types";
 import type { LogInstance } from "../../types";
 import { evmHandler } from "./handler";
-import type { MutexReleaser } from "./types";
 
 export async function configHederaHandler(
   conf: IHederaChainConfig,
@@ -27,11 +26,9 @@ export async function configHederaHandler(
   });
   const mutex = new Mutex();
   const provider = new JsonRpcProvider(conf.rpcURL);
-  const fetchProvider = async (): Promise<
-    [JsonRpcProvider | BrowserProvider, MutexReleaser]
-  > => {
+  const fetchProvider = async () => {
     const release = await mutex.acquire();
-    return [provider, release];
+    return [provider, release] as const;
   };
   return evmHandler({
     blockChunks: conf.blockChunks,

@@ -120,6 +120,12 @@ type IHederaChainConfig = {
   blockChunks: number;
 } & IChainConfig;
 
+type IVeChainConfig = {
+  chainType: "vechain";
+  rpcURL: string;
+  blockChunks: number;
+} & IChainConfig;
+
 type ISecretChainConfig = {
   chainType: "scrt";
   rpcURL: string;
@@ -197,7 +203,8 @@ type TChain =
   | IICPChainConfig
   | INearChainConfig
   | IAptosChainConfig
-  | ICasperChainConfig;
+  | ICasperChainConfig
+  | IVeChainConfig;
 
 type IBridgeConfig = {
   bridgeChains: TChain[];
@@ -237,4 +244,5 @@ export type {
   TChain,
   ICasperChainConfig,
   ICasperWallet,
+  IVeChainConfig,
 };

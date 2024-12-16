@@ -40,7 +40,7 @@ export const bridgeTestChains = [
     rpcURL: "https://testnet.hashio.io/api",
     nativeCoinSymbol: "HBAR",
     intialFund: "50000000000000000",
-    contractAddress: "0xf33e51DccC7727F1ac62782de7811712420841a0",
+    contractAddress: "0x0C687Dc235f8e461441d69Dc6aD123EAe7401744",
     chainType: "evm",
     lastBlock: 6959861,
     decimals: 18,

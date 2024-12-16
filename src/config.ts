@@ -163,6 +163,20 @@ export const bridgeTestChains = [
     decimals: 18,
     blockChunks: 1000,
   },
+  {
+    chain: "TERRA",
+    chainType: "cosmwasm",
+    blockChunks: 1000,
+    chainId: "pisco-1",
+    contractAddress:
+      "terra1sryye399v0wrq5aap0s9jlqn9s6wm34gmd27pnlmceghd9qsgyqsugalra",
+    decimals: 6,
+    intialFund: "1000000",
+    lastBlock: 14343708,
+    nativeCoinSymbol: "LUNA",
+    rpcURL: "https://rpc.testcosmos.directory/terra2testnet",
+    walletPrefix: "terra",
+  },
 ] as const satisfies TChain[];
 
 export const storageTestnetConfig: IEvmChainConfig = {

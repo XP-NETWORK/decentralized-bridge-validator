@@ -14,7 +14,12 @@ import type {
   THandler,
   TNftTransferDetailsObject,
 } from "../types";
-import { fetchHttpOrIpfs, retry, useMutexAndRelease } from "../utils";
+import {
+  convertNumbToHexToString,
+  fetchHttpOrIpfs,
+  retry,
+  useMutexAndRelease,
+} from "../utils";
 import { unreachable } from "../utils/unreachable";
 import { processEventsFailSafe } from "./process-fail-safe";
 
@@ -65,7 +70,9 @@ export async function listenEvents(
     }
 
     const nftDetails = await sourceChain.nftData(
-      ev.tokenId,
+      ev.sourceChain === "SECRET" && ev.destinationChain === "SECRET"
+        ? convertNumbToHexToString(ev.tokenId)
+        : ev.tokenId,
       ev.sourceNftContractAddress,
       log,
     );

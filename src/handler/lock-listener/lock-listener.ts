@@ -16,6 +16,7 @@ import type {
 } from "../types";
 import {
   convertNumbToHexToString,
+  convertStringToHexToNumb,
   fetchHttpOrIpfs,
   retry,
   useMutexAndRelease,
@@ -69,9 +70,18 @@ export async function listenEvents(
       return;
     }
 
+    let convertedTokenId = ev.tokenId;
+    if (ev.sourceChain === "SECRET") {
+      if (chain.chainIdent === "SECRET") {
+        convertedTokenId = convertStringToHexToNumb(ev.tokenId);
+      } else if (ev.destinationChain === "SECRET") {
+        convertedTokenId = convertNumbToHexToString(ev.tokenId);
+      }
+    }
+
     const nftDetails = await sourceChain.nftData(
       ev.sourceChain === "SECRET" && ev.destinationChain === "SECRET"
-        ? convertNumbToHexToString(ev.tokenId)
+        ? convertedTokenId
         : ev.tokenId,
       ev.sourceNftContractAddress,
       log,
@@ -138,7 +148,7 @@ export async function listenEvents(
       sourceNftContractAddress: ev.sourceNftContractAddress,
       symbol: nftDetails.symbol,
       tokenAmount: ev.tokenAmount,
-      tokenId: ev.tokenId,
+      tokenId: convertedTokenId,
       transactionHash: ev.transactionHash,
       lockTxChain: chain.chainIdent,
       imgUri: imgUri?.substring(imgUri?.indexOf("https://")) || "",
@@ -207,7 +217,9 @@ export async function listenEvents(
           return await useMutexAndRelease(fetchStorage, async (storage) => {
             const feeData = await storageProvider.getFeeData();
             log.info(
-              `Using nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+              `Using nonce: ${nonce}, txHash: ${
+                inft.transactionHash
+              } ${new Date().getSeconds()} ${+new Date()}`,
             );
             const response = await (
               await storage.approveLockNft(
@@ -224,7 +236,9 @@ export async function listenEvents(
             ).wait();
             used();
             log.info(
-              `Used nonce: ${nonce}, txHash: ${inft.transactionHash} ${new Date().getSeconds()} ${+new Date()}`,
+              `Used nonce: ${nonce}, txHash: ${
+                inft.transactionHash
+              } ${new Date().getSeconds()} ${+new Date()}`,
             );
             await setTimeout(5 * 1000);
             return response;

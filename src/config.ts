@@ -364,7 +364,7 @@ export const prodBridgeConfig: IBridgeConfig = {
       intialFund: "100000000000",
       lastBlock: 3983916,
       nativeCoinSymbol: "CSPR",
-      rpcURL: "http://81.221.228.236:7777/rpc",
+      rpcURL: "http://37.27.69.30:7777/rpc",
     },
     {
       chain: "NEAR",

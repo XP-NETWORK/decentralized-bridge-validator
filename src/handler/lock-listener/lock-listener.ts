@@ -16,7 +16,6 @@ import type {
 } from "../types";
 import {
   convertNumbToHexToString,
-  convertStringToHexToNumb,
   fetchHttpOrIpfs,
   retry,
   useMutexAndRelease,
@@ -70,18 +69,9 @@ export async function listenEvents(
       return;
     }
 
-    let convertedTokenId = ev.tokenId;
-    if (ev.sourceChain === "SECRET") {
-      if (chain.chainIdent === "SECRET") {
-        convertedTokenId = convertStringToHexToNumb(ev.tokenId);
-      } else if (ev.destinationChain === "SECRET") {
-        convertedTokenId = convertNumbToHexToString(ev.tokenId);
-      }
-    }
-
     const nftDetails = await sourceChain.nftData(
       ev.sourceChain === "SECRET" && ev.destinationChain === "SECRET"
-        ? convertedTokenId
+        ? convertNumbToHexToString(ev.tokenId)
         : ev.tokenId,
       ev.sourceNftContractAddress,
       log,
@@ -148,7 +138,7 @@ export async function listenEvents(
       sourceNftContractAddress: ev.sourceNftContractAddress,
       symbol: nftDetails.symbol,
       tokenAmount: ev.tokenAmount,
-      tokenId: convertedTokenId,
+      tokenId: ev.tokenId,
       transactionHash: ev.transactionHash,
       lockTxChain: chain.chainIdent,
       imgUri: imgUri?.substring(imgUri?.indexOf("https://")) || "",

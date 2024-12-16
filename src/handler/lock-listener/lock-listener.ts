@@ -70,7 +70,7 @@ export async function listenEvents(
     }
 
     const nftDetails = await sourceChain.nftData(
-      ev.sourceChain === "SECRET" && ev.destinationChain === "SECRET"
+      ev.sourceChain === "SECRET"
         ? convertNumbToHexToString(ev.tokenId)
         : ev.tokenId,
       ev.sourceNftContractAddress,

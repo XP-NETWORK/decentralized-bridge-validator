@@ -3,8 +3,7 @@ import { Block } from "../../../../persistence/entities/block";
 import type { EventBuilder } from "../../../event-builder";
 import { tryRerunningFailed } from "../../../poller/utils";
 import type { LockEventIter, LogInstance } from "../../../types";
-import { useMutexAndRelease } from "../../../utils";
-import { convertStringToHexToNumb } from "../../../utils/token-id-conversion";
+import { convertStringToHexToNumb, useMutexAndRelease } from "../../../utils";
 import type { SecretProviderFetch } from "../types";
 
 const CHAIN_IDENT = "SECRET";
@@ -45,12 +44,12 @@ export default async function listenForLockEvents(
           async (c) => await c.query.txsQuery(query),
         );
         const startBlock = lastBlock;
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlockNumber + 1;
         if (!logs.length) {
           logger.info(
             `${startBlock} -> ${latestBlockNumber}: 0 TXs. Awaiting 10s`,
           );
-          lastBlock = latestBlockNumber;
+          lastBlock = latestBlockNumber + 1;
           await em.upsert(Block, {
             chain: CHAIN_IDENT,
             contractAddress: bridge,
@@ -98,7 +97,7 @@ export default async function listenForLockEvents(
             ),
           );
         }
-        lastBlock = latestBlockNumber;
+        lastBlock = latestBlockNumber + 1;
         await em.upsert(Block, {
           chain: CHAIN_IDENT,
           contractAddress: bridge,

@@ -25,7 +25,7 @@ import type { LogInstance, THandler } from "../handler/types";
 import MikroOrmConfig from "../mikro-orm.config";
 import type { IBridgeConfig, IGeneratedWallets } from "../types";
 import { initializeEvmProviderAndWallet } from "./init-evm-provider-wallet";
-import { runMigrationsIfAny } from "./run-migrations-if-any";
+// import { runMigrationsIfAny } from "./run-migrations-if-any";
 
 export async function configDeps(
   config: IBridgeConfig,
@@ -66,8 +66,8 @@ export async function configDeps(
     new NonceManager(stakingSigner),
   );
   const orm = await MikroORM.init(MikroOrmConfig);
-  await orm.schema.updateSchema();
-  await runMigrationsIfAny(orm.getMigrator(), logger);
+  // await orm.schema.updateSchema();
+  // await runMigrationsIfAny(orm.getMigrator(), logger);
   const em = orm.em;
   const serverLinkHandler = process.env.SERVER_LINK
     ? axios.create({

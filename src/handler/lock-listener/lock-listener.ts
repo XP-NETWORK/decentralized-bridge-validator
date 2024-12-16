@@ -97,7 +97,7 @@ export async function listenEvents(
     //     ? ev.metaDataUri
     //     : nftDetails.metadata || ev.metaDataUri;
 
-    if (ev.sourceChain === "CASPER") {
+    if (ev.sourceChain === "CASPER" || data.sourceChain === "SECRET") {
       metadataUri = ev.metaDataUri;
     } else {
       metadataUri = nftDetails.metadata || ev.metaDataUri;

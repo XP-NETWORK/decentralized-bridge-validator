@@ -1,3 +1,4 @@
+import type { ContractRunner } from "ethers";
 import { raise } from "xp-decentralized-sdk";
 import { type Bridge, Bridge__factory } from "../../../contractsTypes/evm";
 import pollForLockEvents from "../../poller";
@@ -35,7 +36,13 @@ export function evmHandler({
 }: EVMHandlerParams): THandler {
   const bc = async (): Promise<[Bridge, MutexReleaser]> => {
     const [provider, release] = await fetchProvider();
-    const contract = Bridge__factory.connect(bridge, signer.connect(provider));
+    let runner: ContractRunner;
+    if (chainIdent === "VECHAIN") {
+      runner = await provider.getSigner(signer.address);
+    } else {
+      runner = signer.connect(provider);
+    }
+    const contract = Bridge__factory.connect(bridge, runner);
     return [contract, release];
   };
   return {

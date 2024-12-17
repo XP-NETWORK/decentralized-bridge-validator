@@ -64,7 +64,7 @@ export const bridgeTestChains = [
     chainId: "secret-4",
     contractAddress: "secret1ym9jslryg6r8nlch2036py92gd50vejznwhuvx",
     decimals: 6,
-    intialFund: "10000000",
+    intialFund: "5000000",
     lastBlock: 16833475,
     nativeCoinSymbol: "SCRT",
     rpcURL: "https://rpc.ankr.com/http/scrt_cosmos",
@@ -393,6 +393,18 @@ export const prodBridgeConfig: IBridgeConfig = {
       rpcURL: "https://rpc.mainnet.near.org",
       theGraphApiUrl:
         "https://api.studio.thegraph.com/query/97240/d-live/version/latest",
+    },
+    {
+      chain: "SECRET",
+      blockChunks: 1000,
+      chainType: "scrt",
+      chainId: "secret-4",
+      contractAddress: "secret160da5pcn05xz2nhwudjvcg7rjzs9sc50pdlp0d",
+      decimals: 6,
+      intialFund: "5000000",
+      lastBlock: 17440691,
+      nativeCoinSymbol: "SCRT",
+      rpcURL: "https://rpc.ankr.com/http/scrt_cosmos",
     },
   ],
   storageConfig: {

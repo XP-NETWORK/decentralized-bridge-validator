@@ -59,6 +59,9 @@ const listenForStakingEvents = (
           logger.info(`Processing TX at: ${log.transactionHash}`);
           const decoded = stakerInt.parseLog(log);
           const receipt = await log.getTransactionReceipt();
+          const erc = ERC20Staking__factory.connect(staker, provider);
+          const balance = await erc.stakingBalances(receipt.from);
+          if (balance <= 0) continue;
           if (!decoded) continue;
           await cb(
             builder.staked(

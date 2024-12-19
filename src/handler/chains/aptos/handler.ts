@@ -37,8 +37,12 @@ export function aptosHandler({
   staking,
   validatorAddress,
 }: AptosHandlerParams): THandler {
+  const pubKeyHex = Buffer.from(signer.publicKey.toUint8Array()).toString(
+    "hex",
+  );
+  const address = signer.accountAddress.toString();
   return {
-    publicKey: signer.publicKey.bcsToHex().toStringWithoutPrefix(),
+    publicKey: `${pubKeyHex}|${address}`,
     pollForLockEvents: async (_, cb, cbLe) => {
       serverLinkHandler
         ? pollForLockEvents(chainIdent, cbLe, cb, em, serverLinkHandler, logger)

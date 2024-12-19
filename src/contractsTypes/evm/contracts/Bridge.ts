@@ -108,6 +108,8 @@ export interface BridgeInterface extends Interface {
       | "originalStorageMapping721"
       | "originalToDuplicateMapping"
       | "proxiableUUID"
+      | "resetReward"
+      | "rewardVals"
       | "selfChain"
       | "storageDeployer"
       | "uniqueIdentifier"
@@ -207,6 +209,14 @@ export interface BridgeInterface extends Interface {
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "resetReward",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardVals",
+    values: [AddressLike[]]
+  ): string;
   encodeFunctionData(functionFragment: "selfChain", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "storageDeployer",
@@ -304,6 +314,11 @@ export interface BridgeInterface extends Interface {
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "resetReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "rewardVals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "selfChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storageDeployer",
@@ -715,6 +730,14 @@ export interface Bridge extends BaseContract {
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
 
+  resetReward: TypedContractMethod<[], [boolean], "view">;
+
+  rewardVals: TypedContractMethod<
+    [validatorsToReward: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
+
   selfChain: TypedContractMethod<[], [string], "view">;
 
   storageDeployer: TypedContractMethod<[], [string], "view">;
@@ -862,6 +885,16 @@ export interface Bridge extends BaseContract {
   getFunction(
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "resetReward"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "rewardVals"
+  ): TypedContractMethod<
+    [validatorsToReward: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "selfChain"
   ): TypedContractMethod<[], [string], "view">;

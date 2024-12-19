@@ -198,7 +198,7 @@ export const stakingTestChain: IStakingConfig = {
   nativeCoinSymbol: "sFUEL",
   chainType: "evm",
   coinAddress: "0x491f505AbD292372f7D9a8C6B12d3a8d3894C8b6",
-  contractAddress: "0x2b4082b5cBe5958888d68985524939ec1c871007",
+  contractAddress: "0x94Fa17B47397cD2d7D58B467Dd9aC5Ad7C5D8c7d",
   intialFund: "0",
   lastBlock: 2209753,
   decimals: 18,

@@ -63,7 +63,7 @@ export async function nearHandler({
   const account = await provider.account(address);
   release();
   return {
-    publicKey: publicKeyInHex,
+    publicKey: `${address}|${publicKeyInHex}`,
     pollForLockEvents: async (_, cb, cbLe) => {
       serverLinkHandler
         ? pollForLockEvents(chainIdent, cbLe, cb, em, serverLinkHandler, logger)

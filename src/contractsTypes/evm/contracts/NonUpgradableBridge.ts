@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../common";
 
 export type SignerAndSignatureStruct = {
   signerAddress: string;
@@ -33,7 +33,7 @@ export type SignerAndSignatureStructOutput = [
   signature: string
 ] & { signerAddress: string; signature: string };
 
-export declare namespace HederaBridge {
+export declare namespace NonUpgradableBridge {
   export type ClaimDataStruct = {
     tokenId: BigNumberish;
     sourceChain: string;
@@ -87,50 +87,44 @@ export declare namespace HederaBridge {
   };
 }
 
-export interface HederaBridgeInterface extends Interface {
+export interface NonUpgradableBridgeInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "DEFAULT_EXPIRY"
-      | "MAX_INT"
       | "addValidator"
       | "blackListValidator"
       | "blackListedValidators"
+      | "claimNFT1155"
       | "claimNFT721"
       | "claimValidatorRewards"
+      | "collectionDeployer"
+      | "duplicateStorageMapping1155"
       | "duplicateStorageMapping721"
       | "duplicateToOriginalMapping"
-      | "keyToValue"
+      | "lock1155"
       | "lock721"
+      | "originalStorageMapping1155"
       | "originalStorageMapping721"
       | "originalToDuplicateMapping"
-      | "redirectForToken"
       | "selfChain"
       | "storageDeployer"
-      | "transferFrom"
-      | "transferFromNFT"
       | "uniqueIdentifier"
       | "validators"
       | "validatorsCount"
-      | "valueToKey"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "AddNewValidator"
       | "BlackListValidator"
-      | "CallResponseEvent"
-      | "Claimed"
+      | "Claim1155"
+      | "Claimed721"
       | "Locked"
       | "LogHash"
       | "RewardValidator"
+      | "UnLock1155"
       | "UnLock721"
   ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "DEFAULT_EXPIRY",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "MAX_INT", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addValidator",
     values: [AddressLike, SignerAndSignatureStruct[]]
@@ -144,12 +138,24 @@ export interface HederaBridgeInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "claimNFT1155",
+    values: [NonUpgradableBridge.ClaimDataStruct, BytesLike[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "claimNFT721",
-    values: [HederaBridge.ClaimDataStruct, BytesLike[]]
+    values: [NonUpgradableBridge.ClaimDataStruct, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "claimValidatorRewards",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "collectionDeployer",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "duplicateStorageMapping1155",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "duplicateStorageMapping721",
@@ -160,12 +166,16 @@ export interface HederaBridgeInterface extends Interface {
     values: [AddressLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "keyToValue",
-    values: [string, string, BigNumberish]
+    functionFragment: "lock1155",
+    values: [BigNumberish, string, string, AddressLike, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "lock721",
     values: [BigNumberish, string, string, AddressLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "originalStorageMapping1155",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "originalStorageMapping721",
@@ -175,22 +185,10 @@ export interface HederaBridgeInterface extends Interface {
     functionFragment: "originalToDuplicateMapping",
     values: [string, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "redirectForToken",
-    values: [AddressLike, BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "selfChain", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "storageDeployer",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [AddressLike, AddressLike, AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFromNFT",
-    values: [AddressLike, AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "uniqueIdentifier",
@@ -204,16 +202,7 @@ export interface HederaBridgeInterface extends Interface {
     functionFragment: "validatorsCount",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "valueToKey",
-    values: [string, string, BigNumberish]
-  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_EXPIRY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "MAX_INT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addValidator",
     data: BytesLike
@@ -227,11 +216,23 @@ export interface HederaBridgeInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "claimNFT1155",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "claimNFT721",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "claimValidatorRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collectionDeployer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "duplicateStorageMapping1155",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -242,8 +243,12 @@ export interface HederaBridgeInterface extends Interface {
     functionFragment: "duplicateToOriginalMapping",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "keyToValue", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lock1155", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lock721", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "originalStorageMapping1155",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "originalStorageMapping721",
     data: BytesLike
@@ -252,21 +257,9 @@ export interface HederaBridgeInterface extends Interface {
     functionFragment: "originalToDuplicateMapping",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "redirectForToken",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "selfChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storageDeployer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFromNFT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -278,7 +271,6 @@ export interface HederaBridgeInterface extends Interface {
     functionFragment: "validatorsCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "valueToKey", data: BytesLike): Result;
 }
 
 export namespace AddNewValidatorEvent {
@@ -305,12 +297,30 @@ export namespace BlackListValidatorEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace CallResponseEventEvent {
-  export type InputTuple = [arg0: boolean, arg1: BytesLike];
-  export type OutputTuple = [arg0: boolean, arg1: string];
+export namespace Claim1155Event {
+  export type InputTuple = [
+    lockTxChain: string,
+    sourceChain: string,
+    transactionHash: string,
+    nftContract: AddressLike,
+    tokenId: BigNumberish,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    lockTxChain: string,
+    sourceChain: string,
+    transactionHash: string,
+    nftContract: string,
+    tokenId: bigint,
+    amount: bigint
+  ];
   export interface OutputObject {
-    arg0: boolean;
-    arg1: string;
+    lockTxChain: string;
+    sourceChain: string;
+    transactionHash: string;
+    nftContract: string;
+    tokenId: bigint;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -318,27 +328,27 @@ export namespace CallResponseEventEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace ClaimedEvent {
+export namespace Claimed721Event {
   export type InputTuple = [
     lockTxChain: string,
     sourceChain: string,
     transactionHash: string,
     nftContract: AddressLike,
-    emittedTokenId: BigNumberish
+    tokenId: BigNumberish
   ];
   export type OutputTuple = [
     lockTxChain: string,
     sourceChain: string,
     transactionHash: string,
     nftContract: string,
-    emittedTokenId: bigint
+    tokenId: bigint
   ];
   export interface OutputObject {
     lockTxChain: string;
     sourceChain: string;
     transactionHash: string;
     nftContract: string;
-    emittedTokenId: bigint;
+    tokenId: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -408,6 +418,31 @@ export namespace RewardValidatorEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace UnLock1155Event {
+  export type InputTuple = [
+    to: AddressLike,
+    tokenId: BigNumberish,
+    contractAddr: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    to: string,
+    tokenId: bigint,
+    contractAddr: string,
+    amount: bigint
+  ];
+  export interface OutputObject {
+    to: string;
+    tokenId: bigint;
+    contractAddr: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace UnLock721Event {
   export type InputTuple = [
     to: AddressLike,
@@ -426,11 +461,11 @@ export namespace UnLock721Event {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface HederaBridge extends BaseContract {
-  connect(runner?: ContractRunner | null): HederaBridge;
+export interface NonUpgradableBridge extends BaseContract {
+  connect(runner?: ContractRunner | null): NonUpgradableBridge;
   waitForDeployment(): Promise<this>;
 
-  interface: HederaBridgeInterface;
+  interface: NonUpgradableBridgeInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -469,10 +504,6 @@ export interface HederaBridge extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  DEFAULT_EXPIRY: TypedContractMethod<[], [bigint], "view">;
-
-  MAX_INT: TypedContractMethod<[], [bigint], "view">;
-
   addValidator: TypedContractMethod<
     [_validator: AddressLike, signatures: SignerAndSignatureStruct[]],
     [void],
@@ -491,8 +522,14 @@ export interface HederaBridge extends BaseContract {
     "view"
   >;
 
+  claimNFT1155: TypedContractMethod<
+    [data: NonUpgradableBridge.ClaimDataStruct, signatures: BytesLike[]],
+    [void],
+    "payable"
+  >;
+
   claimNFT721: TypedContractMethod<
-    [data: HederaBridge.ClaimDataStruct, signatures: BytesLike[]],
+    [data: NonUpgradableBridge.ClaimDataStruct, signatures: BytesLike[]],
     [void],
     "payable"
   >;
@@ -501,6 +538,14 @@ export interface HederaBridge extends BaseContract {
     [_validator: AddressLike],
     [void],
     "nonpayable"
+  >;
+
+  collectionDeployer: TypedContractMethod<[], [string], "view">;
+
+  duplicateStorageMapping1155: TypedContractMethod<
+    [arg0: string, arg1: string],
+    [string],
+    "view"
   >;
 
   duplicateStorageMapping721: TypedContractMethod<
@@ -515,17 +560,17 @@ export interface HederaBridge extends BaseContract {
     "view"
   >;
 
-  keyToValue: TypedContractMethod<
-    [arg0: string, arg1: string, arg2: BigNumberish],
+  lock1155: TypedContractMethod<
     [
-      [bigint, string, string, boolean] & {
-        tokenId: bigint;
-        chain: string;
-        contract_: string;
-        exists: boolean;
-      }
+      tokenId: BigNumberish,
+      destinationChain: string,
+      destinationUserAddress: string,
+      sourceNftContractAddress: AddressLike,
+      tokenAmount: BigNumberish,
+      metaDataUri: string
     ],
-    "view"
+    [void],
+    "nonpayable"
   >;
 
   lock721: TypedContractMethod<
@@ -540,6 +585,12 @@ export interface HederaBridge extends BaseContract {
     "nonpayable"
   >;
 
+  originalStorageMapping1155: TypedContractMethod<
+    [arg0: string, arg1: string],
+    [string],
+    "view"
+  >;
+
   originalStorageMapping721: TypedContractMethod<
     [arg0: string, arg1: string],
     [string],
@@ -552,37 +603,9 @@ export interface HederaBridge extends BaseContract {
     "view"
   >;
 
-  redirectForToken: TypedContractMethod<
-    [token: AddressLike, encodedFunctionSelector: BytesLike],
-    [[bigint, string] & { responseCode: bigint; response: string }],
-    "nonpayable"
-  >;
-
   selfChain: TypedContractMethod<[], [string], "view">;
 
   storageDeployer: TypedContractMethod<[], [string], "view">;
-
-  transferFrom: TypedContractMethod<
-    [
-      token: AddressLike,
-      from: AddressLike,
-      to: AddressLike,
-      amount: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
-
-  transferFromNFT: TypedContractMethod<
-    [
-      token: AddressLike,
-      from: AddressLike,
-      to: AddressLike,
-      serialNumber: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
 
   uniqueIdentifier: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
@@ -594,29 +617,10 @@ export interface HederaBridge extends BaseContract {
 
   validatorsCount: TypedContractMethod<[], [bigint], "view">;
 
-  valueToKey: TypedContractMethod<
-    [arg0: string, arg1: string, arg2: BigNumberish],
-    [
-      [bigint, string, string, boolean] & {
-        tokenId: bigint;
-        chain: string;
-        contract_: string;
-        exists: boolean;
-      }
-    ],
-    "view"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "DEFAULT_EXPIRY"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "MAX_INT"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "addValidator"
   ): TypedContractMethod<
@@ -635,15 +639,28 @@ export interface HederaBridge extends BaseContract {
     nameOrSignature: "blackListedValidators"
   ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "claimNFT1155"
+  ): TypedContractMethod<
+    [data: NonUpgradableBridge.ClaimDataStruct, signatures: BytesLike[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
     nameOrSignature: "claimNFT721"
   ): TypedContractMethod<
-    [data: HederaBridge.ClaimDataStruct, signatures: BytesLike[]],
+    [data: NonUpgradableBridge.ClaimDataStruct, signatures: BytesLike[]],
     [void],
     "payable"
   >;
   getFunction(
     nameOrSignature: "claimValidatorRewards"
   ): TypedContractMethod<[_validator: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "collectionDeployer"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "duplicateStorageMapping1155"
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
     nameOrSignature: "duplicateStorageMapping721"
   ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
@@ -655,18 +672,18 @@ export interface HederaBridge extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "keyToValue"
+    nameOrSignature: "lock1155"
   ): TypedContractMethod<
-    [arg0: string, arg1: string, arg2: BigNumberish],
     [
-      [bigint, string, string, boolean] & {
-        tokenId: bigint;
-        chain: string;
-        contract_: string;
-        exists: boolean;
-      }
+      tokenId: BigNumberish,
+      destinationChain: string,
+      destinationUserAddress: string,
+      sourceNftContractAddress: AddressLike,
+      tokenAmount: BigNumberish,
+      metaDataUri: string
     ],
-    "view"
+    [void],
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "lock721"
@@ -682,6 +699,9 @@ export interface HederaBridge extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "originalStorageMapping1155"
+  ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
+  getFunction(
     nameOrSignature: "originalStorageMapping721"
   ): TypedContractMethod<[arg0: string, arg1: string], [string], "view">;
   getFunction(
@@ -692,42 +712,11 @@ export interface HederaBridge extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "redirectForToken"
-  ): TypedContractMethod<
-    [token: AddressLike, encodedFunctionSelector: BytesLike],
-    [[bigint, string] & { responseCode: bigint; response: string }],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "selfChain"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "storageDeployer"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "transferFrom"
-  ): TypedContractMethod<
-    [
-      token: AddressLike,
-      from: AddressLike,
-      to: AddressLike,
-      amount: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "transferFromNFT"
-  ): TypedContractMethod<
-    [
-      token: AddressLike,
-      from: AddressLike,
-      to: AddressLike,
-      serialNumber: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "uniqueIdentifier"
   ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
@@ -741,20 +730,6 @@ export interface HederaBridge extends BaseContract {
   getFunction(
     nameOrSignature: "validatorsCount"
   ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "valueToKey"
-  ): TypedContractMethod<
-    [arg0: string, arg1: string, arg2: BigNumberish],
-    [
-      [bigint, string, string, boolean] & {
-        tokenId: bigint;
-        chain: string;
-        contract_: string;
-        exists: boolean;
-      }
-    ],
-    "view"
-  >;
 
   getEvent(
     key: "AddNewValidator"
@@ -771,18 +746,18 @@ export interface HederaBridge extends BaseContract {
     BlackListValidatorEvent.OutputObject
   >;
   getEvent(
-    key: "CallResponseEvent"
+    key: "Claim1155"
   ): TypedContractEvent<
-    CallResponseEventEvent.InputTuple,
-    CallResponseEventEvent.OutputTuple,
-    CallResponseEventEvent.OutputObject
+    Claim1155Event.InputTuple,
+    Claim1155Event.OutputTuple,
+    Claim1155Event.OutputObject
   >;
   getEvent(
-    key: "Claimed"
+    key: "Claimed721"
   ): TypedContractEvent<
-    ClaimedEvent.InputTuple,
-    ClaimedEvent.OutputTuple,
-    ClaimedEvent.OutputObject
+    Claimed721Event.InputTuple,
+    Claimed721Event.OutputTuple,
+    Claimed721Event.OutputObject
   >;
   getEvent(
     key: "Locked"
@@ -804,6 +779,13 @@ export interface HederaBridge extends BaseContract {
     RewardValidatorEvent.InputTuple,
     RewardValidatorEvent.OutputTuple,
     RewardValidatorEvent.OutputObject
+  >;
+  getEvent(
+    key: "UnLock1155"
+  ): TypedContractEvent<
+    UnLock1155Event.InputTuple,
+    UnLock1155Event.OutputTuple,
+    UnLock1155Event.OutputObject
   >;
   getEvent(
     key: "UnLock721"
@@ -836,26 +818,26 @@ export interface HederaBridge extends BaseContract {
       BlackListValidatorEvent.OutputObject
     >;
 
-    "CallResponseEvent(bool,bytes)": TypedContractEvent<
-      CallResponseEventEvent.InputTuple,
-      CallResponseEventEvent.OutputTuple,
-      CallResponseEventEvent.OutputObject
+    "Claim1155(string,string,string,address,uint256,uint256)": TypedContractEvent<
+      Claim1155Event.InputTuple,
+      Claim1155Event.OutputTuple,
+      Claim1155Event.OutputObject
     >;
-    CallResponseEvent: TypedContractEvent<
-      CallResponseEventEvent.InputTuple,
-      CallResponseEventEvent.OutputTuple,
-      CallResponseEventEvent.OutputObject
+    Claim1155: TypedContractEvent<
+      Claim1155Event.InputTuple,
+      Claim1155Event.OutputTuple,
+      Claim1155Event.OutputObject
     >;
 
-    "Claimed(string,string,string,address,uint256)": TypedContractEvent<
-      ClaimedEvent.InputTuple,
-      ClaimedEvent.OutputTuple,
-      ClaimedEvent.OutputObject
+    "Claimed721(string,string,string,address,uint256)": TypedContractEvent<
+      Claimed721Event.InputTuple,
+      Claimed721Event.OutputTuple,
+      Claimed721Event.OutputObject
     >;
-    Claimed: TypedContractEvent<
-      ClaimedEvent.InputTuple,
-      ClaimedEvent.OutputTuple,
-      ClaimedEvent.OutputObject
+    Claimed721: TypedContractEvent<
+      Claimed721Event.InputTuple,
+      Claimed721Event.OutputTuple,
+      Claimed721Event.OutputObject
     >;
 
     "Locked(uint256,string,string,string,uint256,string,string,string)": TypedContractEvent<
@@ -889,6 +871,17 @@ export interface HederaBridge extends BaseContract {
       RewardValidatorEvent.InputTuple,
       RewardValidatorEvent.OutputTuple,
       RewardValidatorEvent.OutputObject
+    >;
+
+    "UnLock1155(address,uint256,address,uint256)": TypedContractEvent<
+      UnLock1155Event.InputTuple,
+      UnLock1155Event.OutputTuple,
+      UnLock1155Event.OutputObject
+    >;
+    UnLock1155: TypedContractEvent<
+      UnLock1155Event.InputTuple,
+      UnLock1155Event.OutputTuple,
+      UnLock1155Event.OutputObject
     >;
 
     "UnLock721(address,uint256,address)": TypedContractEvent<

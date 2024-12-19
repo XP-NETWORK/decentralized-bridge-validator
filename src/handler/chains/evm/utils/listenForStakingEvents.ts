@@ -58,17 +58,16 @@ const listenForStakingEvents = (
         for (const log of logs) {
           logger.info(`Processing TX at: ${log.transactionHash}`);
           const decoded = stakerInt.parseLog(log);
-          const receipt = await log.getTransactionReceipt();
-          const erc = ERC20Staking__factory.connect(staker, provider);
-          const balance = await erc.stakingBalances(receipt.from);
-          if (balance <= 0) continue;
           if (!decoded) continue;
+          const erc = ERC20Staking__factory.connect(staker, provider);
+          const balance = await erc.stakingBalances(decoded?.args.sender);
+          if (balance <= 0) continue;
           await cb(
             builder.staked(
               // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               decoded.args.validatorAddressAndChainType.map((e: any) => {
                 return {
-                  caller: receipt.from,
+                  caller: decoded.args.sender,
                   chainType: e.chainType as TSupportedChainTypes,
                   validatorAddress: e.validatorAddress,
                 };

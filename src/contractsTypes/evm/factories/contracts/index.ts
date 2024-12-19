@@ -13,3 +13,4 @@ export { NFTCollectionDeployer__factory } from "./NFTCollectionDeployer__factory
 export { NFTStorageDeployer__factory } from "./NFTStorageDeployer__factory";
 export { NFTStorageERC1155__factory } from "./NFTStorageERC1155__factory";
 export { NFTStorageERC721__factory } from "./NFTStorageERC721__factory";
+export { NonUpgradableBridge__factory } from "./NonUpgradableBridge__factory";

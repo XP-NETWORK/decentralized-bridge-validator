@@ -84,14 +84,17 @@ export interface ERC20StakingInterface extends Interface {
 
 export namespace StakedEvent {
   export type InputTuple = [
+    sender: AddressLike,
     amount: BigNumberish,
     validatorAddressAndChainType: ValidatorAddressAndChainTypeStruct[]
   ];
   export type OutputTuple = [
+    sender: string,
     amount: bigint,
     validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[]
   ];
   export interface OutputObject {
+    sender: string;
     amount: bigint;
     validatorAddressAndChainType: ValidatorAddressAndChainTypeStructOutput[];
   }
@@ -199,7 +202,7 @@ export interface ERC20Staking extends BaseContract {
   >;
 
   filters: {
-    "Staked(uint256,tuple[])": TypedContractEvent<
+    "Staked(address,uint256,tuple[])": TypedContractEvent<
       StakedEvent.InputTuple,
       StakedEvent.OutputTuple,
       StakedEvent.OutputObject

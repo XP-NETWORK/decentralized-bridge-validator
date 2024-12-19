@@ -15,3 +15,4 @@ export type { NFTCollectionDeployer } from "./NFTCollectionDeployer";
 export type { NFTStorageDeployer } from "./NFTStorageDeployer";
 export type { NFTStorageERC1155 } from "./NFTStorageERC1155";
 export type { NFTStorageERC721 } from "./NFTStorageERC721";
+export type { NonUpgradableBridge } from "./NonUpgradableBridge";

@@ -423,7 +423,6 @@ export const prodBridgeConfig: IBridgeConfig = {
   stakingConfig: {
     chain: "BSC",
     rpcURL:
-      process.env.BSC_RPC ||
       "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",

@@ -422,8 +422,7 @@ export const prodBridgeConfig: IBridgeConfig = {
   },
   stakingConfig: {
     chain: "BSC",
-    rpcURL:
-      "https://bsc-mainnet.core.chainstack.com/4ede26f00678567eeb2f7baee8101e04",
+    rpcURL: "https://rpc.ankr.com/bsc",
     coinSymbol: "XPNET",
     nativeCoinSymbol: "BNB",
     chainType: "evm",

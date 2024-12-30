@@ -10,41 +10,9 @@ This project aims to create a decentralized bridge that facilitates the transfer
 - **Configurable Chain Support**: Easily add support for new blockchain networks through configurable chain implementations.
 - **Automated Build and Formatting**: Streamlined development process with automated build and code formatting scripts.
 
-## Getting Started
+## How to run
 
-Follow these steps to get the project up and running on your local machine:
-
-1. **Clone the Repository**: 
-```shell
-git clone https://github.com/XP-NETWORK/decentralized-bridge-validator.git
-```
-2. **Install Dependencies**: 
-```shell
-cd decentralized-bridge-validator
-yarn
-```
-3. **Build the Project**: 
-```shell
-yarn build
-```
-4. **Configure Secrets**: 
-Update the `secrets.example.json` file with your private keys, addresses, and other sensitive information, then rename it to `secrets.json`.
-5. **Running the project**: 
-    
-    *for dev enviroment*
-    ```shell
-    yarn dev
-    ```
-    *for prod enviroment*
-    ```shell
-    node dist/index.js
-    ```
-    Use the --testnet flag to run the project on the testnet environment.
-
-
-
-
-
+Follow these steps mentioned in the [HOW_TO_RUN.md](HOW_TO_RUN.md) file to run the project.
 
 
 ## Project Structure

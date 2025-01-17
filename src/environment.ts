@@ -21,6 +21,7 @@ export const Env = z.object({
   AVALANCHE_RPC: z.string().optional(),
   MOONBEAM_RPC: z.string().optional(),
   ETH_RPC: z.string().optional(),
+  BITGERT_RPC: z.string().optional(),
 });
 export type Env = z.infer<typeof Env>;
 

@@ -428,6 +428,17 @@ export const prodBridgeConfig: IBridgeConfig = {
       decimals: 18,
       blockChunks: 1000,
     },
+    {
+      chain: "HARMONY",
+      rpcURL: process.env.HARMONY_RPC || "https://api.s0.t.hmny.io",
+      nativeCoinSymbol: "ONE",
+      intialFund: "142940000000000000000",
+      contractAddress: "0x2Aa8Dbb7543754d70B5A40D52cB81c2a0bB08B83",
+      chainType: "evm",
+      lastBlock: 69103267,
+      decimals: 18,
+      blockChunks: 1000,
+    },
   ],
   storageConfig: {
     chain: "OP",
